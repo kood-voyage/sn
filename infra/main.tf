@@ -123,7 +123,7 @@ resource "aws_security_group" "dev_sg" {
 resource "aws_instance" "dev_node_a1_docker_golangsvelte_development" {
     instance_type = "t3.micro"
     ami = data.aws_ami.server_ami.id
-    key_name = aws_key_pair.dev_auth.id
+    //key_name = aws_key_pair.dev_auth.id
     vpc_security_group_ids = [aws_security_group.dev_sg.id]
     subnet_id = aws_subnet.dev_public_subnet.id
 
