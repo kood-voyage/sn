@@ -19,6 +19,6 @@ terraform {
 }
 provider "aws" {
     region                   = "us-east-1"
-    
+    shared_credentials_file = "/github/home/.aws/credentials"
     profile                  = "vscode"
   }
