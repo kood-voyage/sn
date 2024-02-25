@@ -113,10 +113,10 @@ resource "aws_security_group" "dev_sg" {
   }
 }
 
-resource "aws_key_pair" "dev_auth" {
-    key_name = "devenvkey"
-    public_key = file("~/.ssh/devenvkey.pub")
-}
+# resource "aws_key_pair" "dev_auth" {
+#     key_name = "devenvkey"
+#     public_key = file("~/.ssh/devenvkey.pub")
+# }
 
 //if we need to vertically scale the instance later we can, but currently i think that t3.micro will suit all our needs.
 
