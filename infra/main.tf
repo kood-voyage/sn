@@ -135,7 +135,7 @@ resource "aws_instance" "dev_node_a1_docker_golangsvelte_development" {
 
   tags = {
     Name    = var.developer_name
-    Feature = var.developer_name
+    Feature = "auto provisioned"
   }
 
   # provisioner "local-exec" {
