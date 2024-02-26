@@ -1,0 +1,35 @@
+  name: Creatin of Feature Staging Environment
+
+  on:
+  workflow_dispatch:
+    inputs:
+      PR_number:
+        description: 'pull request number ->'
+        required: true
+
+  jobs:
+    create:
+      name: 'Create and deploy staging'
+      defaults:
+        run:
+          shell: bash
+
+      runs-on: ubuntu-latest
+
+      steps:
+      - uses: actions/checkout@v4
+        name: 'Checkout repository and infra branch'
+        with:
+          ref: infra
+
+      # Terraform setup
+      - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+      # Creating the terraform staging environment
+
+      - name: 'Create terraform staging environment resource file'
+        id: create_resource_file
+        working-directory: infra/staging
+
+

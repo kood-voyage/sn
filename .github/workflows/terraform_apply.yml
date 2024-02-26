@@ -1,9 +1,11 @@
 name: Terraform Apply
 
 on:
-  push:
-    branches:
-      - dev
+  workflow_dispatch:
+    inputs:
+      PR_number:
+        description: 'pull request number ->'
+        required: true
 
 jobs:
   terraform_apply:
