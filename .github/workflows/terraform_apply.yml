@@ -19,6 +19,7 @@ jobs:
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
+      REF_NAME: ${{ github.ref_name }}
     runs-on: ubuntu-latest
     environment: development
 
@@ -51,7 +52,7 @@ jobs:
         tf_actions_working_dir: 'infra'
         tf_actions_comment: true
       env:                                                                                                   
-          TF_CLI_ARGS: '-lock=false -var="developer_name=${{ github.head_ref }}"' 
+          TF_CLI_ARGS: '-lock=false -var="developer_name=${{ github.ref_name }}"' 
     - name: Terraform Apply
       uses: hashicorp/terraform-github-actions@master
       with:
@@ -60,7 +61,7 @@ jobs:
         tf_actions_working_dir: 'infra'
         tf_actions_comment: true
       env:                                                                                                   
-        TF_CLI_ARGS: '-lock=false -var="developer_name=${{ github.head_ref }}"'
+        TF_CLI_ARGS: '-lock=false -var="developer_name=${{ github.ref_name }}"'
         
 
 
