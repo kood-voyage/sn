@@ -11,7 +11,7 @@ terraform {
     bucket         = "terraform-state-koodvoyage-sn"
     key            = "global/s3/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "terraform-koodvoyage-sn-state-locks"
+    #dynamodb_table = "terraform-koodvoyage-sn-state-locks"
     encrypt        = true
   }
 

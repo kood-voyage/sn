@@ -127,22 +127,22 @@ resource "aws_instance" "dev_node_a1_docker_golangsvelte_development" {
     vpc_security_group_ids = [aws_security_group.dev_sg.id]
     subnet_id = aws_subnet.dev_public_subnet.id
 
-    user_data = file("userdata.tpl")
+    #user_data = file("userdata.tpl")
 
     root_block_device {
         volume_size = 10
     }
 
     tags = {
-        Name = "dev_node_a1"
+        Name = "dev_environment_node"
     }
 
-    provisioner "local-exec" {
-        command = templatefile("${var.host_os}-ssh-config.tpl", {
-            hostname = self.public_ip,
-            user = "ubuntu",
-            identityfile = "~/.ssh/devenvkey"
-        })
-        interpreter = var.host_os == "windows" ? ["Powershell", "-Command"] : ["bash", "-c"]
-    }
+    # provisioner "local-exec" {
+    #     command = templatefile("${var.host_os}-ssh-config.tpl", {
+    #         hostname = self.public_ip,
+    #         user = "ubuntu",
+    #         identityfile = "~/.ssh/devenvkey"
+    #     })
+    #     interpreter = var.host_os == "windows" ? ["Powershell", "-Command"] : ["bash", "-c"]
+    #}
 }
