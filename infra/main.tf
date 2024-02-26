@@ -134,7 +134,7 @@ resource "aws_instance" "dev_node_a1_docker_golangsvelte_development" {
   }
 
   tags = {
-    Name    = "feature-${{ github.head_ref }}"
+    Name    = "feature-${replace(github.event.ref, 'refs/heads/', '')}"
     Feature = "auto provisioned"
   }
 
