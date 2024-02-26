@@ -57,7 +57,7 @@ jobs:
         tf_actions_working_dir: 'infra'
         tf_actions_comment: true
       env:                                                                                                   
-          TF_CLI_ARGS: '-lock=false'  
+        TF_CLI_ARGS: '-lock=false -var="developer_name=${{ github.head_ref }}"'
         
 
 
