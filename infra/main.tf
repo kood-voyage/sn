@@ -1,6 +1,6 @@
 resource "aws_s3_bucket" "terraform_state" {
   bucket = "terraform-state-koodvoyage-sn"
- 
+
   # whatever you do never change this to false, otherwise our whole state is gone
   lifecycle {
     prevent_destroy = true
@@ -121,28 +121,29 @@ resource "aws_security_group" "dev_sg" {
 //if we need to vertically scale the instance later we can, but currently i think that t3.micro will suit all our needs.
 
 resource "aws_instance" "dev_node_a1_docker_golangsvelte_development" {
-    instance_type = "t3.micro"
-    ami = data.aws_ami.server_ami.id
-    //key_name = aws_key_pair.dev_auth.id
-    vpc_security_group_ids = [aws_security_group.dev_sg.id]
-    subnet_id = aws_subnet.dev_public_subnet.id
+  instance_type = "t3.micro"
+  ami           = data.aws_ami.server_ami.id
+  //key_name = aws_key_pair.dev_auth.id
+  vpc_security_group_ids = [aws_security_group.dev_sg.id]
+  subnet_id              = aws_subnet.dev_public_subnet.id
 
-    #user_data = file("userdata.tpl")
+  #user_data = file("userdata.tpl")
 
-    root_block_device {
-        volume_size = 10
-    }
+  root_block_device {
+    volume_size = 10
+  }
 
-    tags = {
-        Name = "dev_environment_node"
-    }
+  tags = {
+    Name    = var.developer_name
+    Feature = var.developer_name
+  }
 
-    # provisioner "local-exec" {
-    #     command = templatefile("${var.host_os}-ssh-config.tpl", {
-    #         hostname = self.public_ip,
-    #         user = "ubuntu",
-    #         identityfile = "~/.ssh/devenvkey"
-    #     })
-    #     interpreter = var.host_os == "windows" ? ["Powershell", "-Command"] : ["bash", "-c"]
-    #}
+  # provisioner "local-exec" {
+  #     command = templatefile("${var.host_os}-ssh-config.tpl", {
+  #         hostname = self.public_ip,
+  #         user = "ubuntu",
+  #         identityfile = "~/.ssh/devenvkey"
+  #     })
+  #     interpreter = var.host_os == "windows" ? ["Powershell", "-Command"] : ["bash", "-c"]
+  #}
 }
