@@ -11,6 +11,7 @@ jobs:
       #AWS Secret access key and access key from github secrets
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
     runs-on: ubuntu-latest
     environment: development
 
@@ -24,6 +25,7 @@ jobs:
     - name: Terraform Init
       uses: hashicorp/terraform-github-actions@master
       with:
+        tf_actions_version: 0.14.3
         tf_actions_subcommand: 'init'
         tf_actions_working_dir: 'infra'
         tf_actions_comment: true
