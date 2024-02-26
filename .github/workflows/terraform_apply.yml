@@ -43,7 +43,8 @@ jobs:
         tf_actions_subcommand: 'plan -lock=false'
         tf_actions_working_dir: 'infra'
         tf_actions_comment: true
-
+      env:                                                                                                   
+          TF_CLI_ARGS: '-lock=false'  
     - name: Terraform Apply
       uses: hashicorp/terraform-github-actions@master
       with:
@@ -51,6 +52,8 @@ jobs:
         tf_actions_subcommand: 'apply -lock=false'
         tf_actions_working_dir: 'infra'
         tf_actions_comment: true
+      env:                                                                                                   
+          TF_CLI_ARGS: '-lock=false'  
         
 
 
