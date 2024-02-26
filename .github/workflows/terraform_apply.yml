@@ -2,7 +2,11 @@ name: Terraform Apply
 
 on:
   push:
-    branches: ["dev"]
+    branches:
+      - feature/*
+  pull_request:
+    branches:
+      - feature/*
 
 jobs:
   terraform:
