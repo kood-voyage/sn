@@ -7,5 +7,5 @@ func main() {
 	fmt.Println("arnis is a homosexual")
 	fmt.Println("yes")
 	fmt.Println("agree")
-	fmt.Println("lol")
+	fmt.Println("lol2")
 }
