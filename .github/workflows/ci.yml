@@ -1,0 +1,25 @@
+name: CI workflow
+
+# We trigger this workflow whenever we get a new pull reuqest to the main branch
+
+on:
+  pull_request:
+    branches:
+      - main
+
+defaults:
+  run:
+    shell: bash
+    # now we will be defining the directory for all the steps in the workflow
+    working-directory: ./server
+
+jobs:
+  #Running unit tests to make sure everything is working
+  test:
+    name: 'Run unit tests'
+    #specifying the OS that we want the workflow to run on
+    runs-on: ubuntu-latest
+    #defining steps for our job
+
+    steps:
+      
