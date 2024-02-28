@@ -88,7 +88,7 @@ func (a *Algorithm) Encode(payload *Claims) (string, error) {
 
 	b64Header := base64.RawURLEncoding.EncodeToString(jsonHeader)
 
-	jsonPayload, err := json.Marshal(payload)
+	jsonPayload, err := json.Marshal(payload.claimsMap)
 	if err != nil {
 		return "", err
 	}

@@ -80,6 +80,9 @@ func (s *server) jwtMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxUserID, claims.UserID)))
+		id, err := claims.Get("user_id")
+		if err != nil {
+			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxUserID, id)))
+		}
 	})
 }
