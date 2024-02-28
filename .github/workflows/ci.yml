@@ -2,10 +2,8 @@ name: CI workflow
 
 # We trigger this workflow whenever we get a new pull reuqest to the main branch
 
-on:
-  pull_request:
-    branches:
-      - main
+on: pull_request
+   
 
 defaults:
   run:
@@ -22,4 +20,3 @@ jobs:
     #defining steps for our job
 
     steps:
-      
