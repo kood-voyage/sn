@@ -20,14 +20,16 @@ var (
 	rxEmail        = regexp.MustCompile(Email)
 	rxAlpha        = regexp.MustCompile("^[a-zA-Z]+$")
 	rxAlphaNum     = regexp.MustCompile("^[a-zA-Z0-9]+$")
-	rxAlphaDash    = regexp.MustCompile(`^(?:[\w-]+)$`)
-	rxNumber       = regexp.MustCompile("^[0-9]+$")
 	rxInt          = regexp.MustCompile(Int)
 	rxFloat        = regexp.MustCompile(Float)
 	rxBase64       = regexp.MustCompile(Base64)
 	rxHasLowerCase = regexp.MustCompile(".*[[:lower:]]")
 	rxHasUpperCase = regexp.MustCompile(".*[[:upper:]]")
 )
+
+// type value interface {
+// 	string | int | int16 | int32 | int64 | int8 | uint | uint16 | uint32 | uint64 | uint8 | []string | float32 | float64 
+// }
 
 func Validate(data interface{}) error {
 	val := reflect.ValueOf(data)
@@ -77,6 +79,10 @@ func runValidationFunction(function, parameter string, val interface{}) error {
 		}, "maximum of")
 	case "email":
 		return email(val)
+	case "alpha":
+		return alpha(val)
+	case "alphanumeric":
+		return alphaNum(val)
 	default:
 		return errors.New("unkown validation function: " + function)
 	}
@@ -87,9 +93,35 @@ func email(val interface{}) error {
 	if !ok {
 		return errors.New("email validation only applicable to strings")
 	}
-	
+
 	if !rxEmail.MatchString(emailStr) {
 		return errors.New("invalid email format")
+	}
+
+	return nil
+}
+
+func alpha(val interface{}) error {
+	s, ok := val.(string)
+	if !ok {
+		return errors.New("alpha validation only applicable to strings")
+	}
+
+	if !rxAlpha.MatchString(s){
+		return errors.New("string containts more than just letters")
+	}
+
+	return nil
+}
+
+func alphaNum(val interface{}) error {
+	s, ok := val.(string)
+	if !ok {
+		return errors.New("alpha + num validation only applicable to strings")
+	}
+
+	if !rxAlphaNum.MatchString(s){
+		return errors.New("string containts more than just letters and numbers")
 	}
 
 	return nil
