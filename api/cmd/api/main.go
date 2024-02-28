@@ -20,13 +20,13 @@ func main() {
 
 func test() {
 	type user struct {
-		Email string `json:"email" validate:"required|min_len:5|max_len:25"`
+		Email string `json:"email" validate:"required|min_len:5|max_len:25|email"`
 		Username string `json:"username" validate:"min_len:5"`
 		Age int `json:"age"`
 	}
 
 	user1 := user{
-		Email: "john_doe@gmail.comd",
+		Email: "dsadsadsada",
 		Username: "johnd",
 		Age: 2,
 	}

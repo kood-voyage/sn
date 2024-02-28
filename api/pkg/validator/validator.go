@@ -10,23 +10,23 @@ import (
 )
 
 const (
-	Email        = `^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`
-	Int          = "^(?:[-+]?(?:0|[1-9][0-9]*))$"
-	Float        = "^(?:[-+]?(?:[0-9]+))?(?:\\.[0-9]*)?(?:[eE][\\+\\-]?(?:[0-9]+))?$"
-	Base64       = "^(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\\/]{3}=|[A-Za-z0-9+\\/]{4})$"
+	Email  = `^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`
+	Int    = "^(?:[-+]?(?:0|[1-9][0-9]*))$"
+	Float  = "^(?:[-+]?(?:[0-9]+))?(?:\\.[0-9]*)?(?:[eE][\\+\\-]?(?:[0-9]+))?$"
+	Base64 = "^(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\\/]{3}=|[A-Za-z0-9+\\/]{4})$"
 )
 
 var (
-	rxEmail          = regexp.MustCompile(Email)
-	rxAlpha          = regexp.MustCompile("^[a-zA-Z]+$")
-	rxAlphaNum       = regexp.MustCompile("^[a-zA-Z0-9]+$")
-	rxAlphaDash      = regexp.MustCompile(`^(?:[\w-]+)$`)
-	rxNumber         = regexp.MustCompile("^[0-9]+$")
-	rxInt            = regexp.MustCompile(Int)
-	rxFloat          = regexp.MustCompile(Float)
-	rxBase64         = regexp.MustCompile(Base64)
-	rxHasLowerCase   = regexp.MustCompile(".*[[:lower:]]")
-	rxHasUpperCase   = regexp.MustCompile(".*[[:upper:]]")
+	rxEmail        = regexp.MustCompile(Email)
+	rxAlpha        = regexp.MustCompile("^[a-zA-Z]+$")
+	rxAlphaNum     = regexp.MustCompile("^[a-zA-Z0-9]+$")
+	rxAlphaDash    = regexp.MustCompile(`^(?:[\w-]+)$`)
+	rxNumber       = regexp.MustCompile("^[0-9]+$")
+	rxInt          = regexp.MustCompile(Int)
+	rxFloat        = regexp.MustCompile(Float)
+	rxBase64       = regexp.MustCompile(Base64)
+	rxHasLowerCase = regexp.MustCompile(".*[[:lower:]]")
+	rxHasUpperCase = regexp.MustCompile(".*[[:upper:]]")
 )
 
 func Validate(data interface{}) error {
@@ -75,9 +75,24 @@ func runValidationFunction(function, parameter string, val interface{}) error {
 		return lengthValidation(val, parameter, func(length, threshold int) bool {
 			return length > threshold
 		}, "maximum of")
+	case "email":
+		return email(val)
 	default:
 		return errors.New("unkown validation function: " + function)
 	}
+}
+
+func email(val interface{}) error {
+	emailStr, ok := val.(string)
+	if !ok {
+		return errors.New("email validation only applicable to strings")
+	}
+	
+	if !rxEmail.MatchString(emailStr) {
+		return errors.New("invalid email format")
+	}
+
+	return nil
 }
 
 func required(val interface{}) error {
@@ -110,4 +125,3 @@ func lengthValidation(val interface{}, parameter string, compare func(int, int) 
 
 	return nil
 }
-
