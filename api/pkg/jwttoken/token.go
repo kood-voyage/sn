@@ -178,7 +178,10 @@ func (a *Algorithm) validateSignature(token string) error {
 }
 
 func (a *Algorithm) validateExp(claims *Claims) error {
-	exp := time.Unix(claims.Exp, 0)
+	exp, err := claims.GetTime("exp")
+	if err != nil {
+		return err
+	}
 	if exp.Before(time.Now()) {
 		return errors.New("token has expired")
 	}
