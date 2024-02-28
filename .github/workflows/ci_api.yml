@@ -2,9 +2,13 @@ name: CI workflow //API
 
 # We trigger this workflow whenever we get a new pull reuqest to the main branch
 
-on: pull_request
+on: 
+  pull_request:
   # paths:
   #     - 'api/**'
+  push:
+    branches:
+      - main
 
 env:
   GO_VERSION: 1.22.0
