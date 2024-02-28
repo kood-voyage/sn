@@ -21,13 +21,13 @@ func main() {
 func test() {
 	type user struct {
 		Email string `json:"email" validate:"required|min_len:5|max_len:25|email"`
-		Username string `json:"username" validate:"min_len:5|alpha"`
+		Username string `json:"username" validate:"min_len:5|integer"`
 		Age int `json:"age"`
 	}
 
 	user1 := user{
 		Email: "johndoe@gmail.com",
-		Username: "johnd",
+		Username: "22222",
 		Age: 2,
 	}
 	fmt.Println(validator.Validate(user1))

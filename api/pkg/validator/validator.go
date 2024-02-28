@@ -12,7 +12,6 @@ import (
 const (
 	Email  = `^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`
 	Int    = "^(?:[-+]?(?:0|[1-9][0-9]*))$"
-	Float  = "^(?:[-+]?(?:[0-9]+))?(?:\\.[0-9]*)?(?:[eE][\\+\\-]?(?:[0-9]+))?$"
 	Base64 = "^(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\\/]{3}=|[A-Za-z0-9+\\/]{4})$"
 )
 
@@ -21,15 +20,10 @@ var (
 	rxAlpha        = regexp.MustCompile("^[a-zA-Z]+$")
 	rxAlphaNum     = regexp.MustCompile("^[a-zA-Z0-9]+$")
 	rxInt          = regexp.MustCompile(Int)
-	rxFloat        = regexp.MustCompile(Float)
 	rxBase64       = regexp.MustCompile(Base64)
-	rxHasLowerCase = regexp.MustCompile(".*[[:lower:]]")
-	rxHasUpperCase = regexp.MustCompile(".*[[:upper:]]")
+	rxHasLowerCase = regexp.MustCompile("^[a-z]+$")
+	rxHasUpperCase = regexp.MustCompile("^[A-Z]+$")
 )
-
-// type value interface {
-// 	string | int | int16 | int32 | int64 | int8 | uint | uint16 | uint32 | uint64 | uint8 | []string | float32 | float64 
-// }
 
 func Validate(data interface{}) error {
 	val := reflect.ValueOf(data)
@@ -83,48 +77,56 @@ func runValidationFunction(function, parameter string, val interface{}) error {
 		return alpha(val)
 	case "alphanumeric":
 		return alphaNum(val)
+	case "integer":
+		return integer(val)
+	case "base64":
+		return base64(val)
+	case "lowercase":
+		return hasLowerCase(val)
+	case "uppercase":
+		return hasUpperCase(val)
 	default:
 		return errors.New("unkown validation function: " + function)
 	}
 }
 
-func email(val interface{}) error {
-	emailStr, ok := val.(string)
+func ValidateString(val interface{}, regex *regexp.Regexp, errorMsg string) error {
+	s, ok := val.(string)
 	if !ok {
-		return errors.New("email validation only applicable to strings")
+		return errors.New("only string allowed")
 	}
-
-	if !rxEmail.MatchString(emailStr) {
-		return errors.New("invalid email format")
+	if !regex.MatchString(s) {
+		return errors.New(errorMsg)
 	}
-
 	return nil
+}
+
+func email(val interface{}) error {
+	return ValidateString(val, rxEmail, "invalid email")
 }
 
 func alpha(val interface{}) error {
-	s, ok := val.(string)
-	if !ok {
-		return errors.New("alpha validation only applicable to strings")
-	}
-
-	if !rxAlpha.MatchString(s){
-		return errors.New("string containts more than just letters")
-	}
-
-	return nil
+	return ValidateString(val, rxAlpha, "string contains more than just letters")
 }
 
 func alphaNum(val interface{}) error {
-	s, ok := val.(string)
-	if !ok {
-		return errors.New("alpha + num validation only applicable to strings")
-	}
+	return ValidateString(val, rxAlphaNum, "string contains more than just letters and numbers")
+}
 
-	if !rxAlphaNum.MatchString(s){
-		return errors.New("string containts more than just letters and numbers")
-	}
+func integer(val interface{}) error {
+	return ValidateString(val, rxInt, "string containts more than just integers")
+}
 
-	return nil
+func base64(val interface{}) error {
+	return ValidateString(val, rxBase64, "string is not valid base64")
+}
+
+func hasLowerCase(val interface{}) error {
+	return ValidateString(val, rxHasLowerCase, "only lowercase letters allowed")
+}
+
+func hasUpperCase(val interface{}) error {
+	return ValidateString(val, rxHasUpperCase, "only uppercase letters allowed")
 }
 
 func required(val interface{}) error {
