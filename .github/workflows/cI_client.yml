@@ -1,0 +1,34 @@
+name: CI workflow // Client
+
+# so we trigger this workflow whenever we get a new pull request to the main branch or changes are pushed to the main branch
+
+on: 
+  pull_request:
+    paths:
+      - 'client/**'
+  push:
+    branches:
+      - main
+
+
+
+jobs:
+  test-client:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: checkouting Repository
+        uses: actions/checkout@v4
+
+      - name: settin up node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+# arnis/marco can later check if this worked correctly
+      - name: installing dependencies 
+        working-directory: client
+        run: npm install
+
+      - name: testing Client
+        working-directory: client
+        run: npm test
