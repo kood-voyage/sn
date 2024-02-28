@@ -1,0 +1,34 @@
+name: CI workflow //API
+
+# We trigger this workflow whenever we get a new pull reuqest to the main branch
+
+on: 
+  pull_request:
+  # paths:
+  #     - 'api/**'
+  push:
+    branches:
+      - main
+
+env:
+  GO_VERSION: 1.22.0
+   
+
+
+jobs:
+  #Running unit tests to make sure everything is working
+  test-infra: 
+    runs-on: ubuntu-latest
+    #defining steps for our job
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v2.1.3
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Testing JWT Function :D
+        working-directory: api/pkg/jwttoken
+        run: go test -v ./
