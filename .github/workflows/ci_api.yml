@@ -2,10 +2,10 @@ name: CI workflow //API
 
 # We trigger this workflow whenever we get a new pull reuqest to the main branch
 
-on: 
+on:
   pull_request:
-  paths:
-    - 'api/**'
+    paths:
+      - 'api/**'
   push:
     branches:
       - main
