@@ -34,7 +34,6 @@ func Validate(data interface{}) error {
 			if err := validateField(val.Field(i).Interface(), tag); err != nil {
 				return fmt.Errorf("%s %s", val.Type().Field(i).Name, err)
 			}
-			// fmt.Printf("Field: %s, Tag: %s\n", val.Type().Field(i).Name, tag)
 		}
 	}
 	return nil
