@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"social-network/api/internal/store/sqlstore"
+	"social-network/internal/store/sqlstore"
 )
 
 func Start(config *Config) error {

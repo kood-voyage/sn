@@ -1,5 +1,5 @@
 {
   "port": ":8080",
-  "database_url": "./api/internal/db/database.db",
-  "database_schema": "./api/internal/db/schema.sql"
+  "database_url": "./internal/db/database.db",
+  "database_schema": "./internal/db/schema.sql"
 }

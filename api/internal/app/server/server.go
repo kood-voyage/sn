@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"social-network/api/internal/store"
-	"social-network/api/pkg/router"
+	"social-network/internal/store"
+	"social-network/pkg/router"
 )
 
 const (

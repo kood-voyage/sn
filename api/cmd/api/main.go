@@ -2,12 +2,12 @@ package main
 
 import (
 	"log"
-	"social-network/api/internal/app/server"
+	"social-network/internal/app/server"
 )
 
 func main() {
 	config := server.NewConfig()
-	err := config.ReadConfig("api/config/config.json")
+	err := config.ReadConfig("config/config.json")
 	if err != nil {
 		log.Fatalf("Error reading config file: %s\n", err)
 	}

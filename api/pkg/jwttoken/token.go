@@ -30,7 +30,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"hash"
-	"social-network/api/pkg/errors"
+	"social-network/pkg/errors"
 	"strings"
 	"time"
 )

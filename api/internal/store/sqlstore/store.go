@@ -2,7 +2,7 @@ package sqlstore
 
 import (
 	"database/sql"
-	"social-network/api/internal/store"
+	"social-network/internal/store"
 )
 
 type Store struct {

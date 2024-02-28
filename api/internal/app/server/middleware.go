@@ -5,7 +5,7 @@ import (
 	"github.com/google/uuid"
 	"net/http"
 	"os"
-	"social-network/api/pkg/jwttoken"
+	"social-network/pkg/jwttoken"
 	"time"
 )
 
