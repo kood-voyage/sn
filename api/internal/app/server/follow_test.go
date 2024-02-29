@@ -80,3 +80,33 @@ func TestHandleFollowFail(t *testing.T) {
 		t.Errorf("Expected status code %d, got %d", http.StatusUnauthorized, rec.Code)
 	}
 }
+
+func TestHandleUnfollow(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("Error creating mock database: %v", err)
+	}
+	defer db.Close()
+
+	mock.ExpectExec("DELETE FROM follower").
+		WithArgs(sourceID, targetID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	store := sqlstore.New(db)
+	s := newServer(store)
+
+	req, err := http.NewRequest("GET", "/api/v1/unfollow/"+targetID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ctx := context.WithValue(req.Context(), ctxUserID, sourceID)
+	req = req.WithContext(ctx)
+
+	rec := httptest.NewRecorder()
+
+	s.ServeHTTP(rec, req)
+	if rec.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, rec.Code)
+	}
+}

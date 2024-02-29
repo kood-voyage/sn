@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"hash"
 	"social-network/pkg/errors"
 	"strings"
@@ -74,6 +75,9 @@ func (a *Algorithm) Encode(payload *Claims) (string, error) {
 	unsignedToken := b64Header + "." + b64Payload
 
 	signature, err := a.Sign(unsignedToken)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	b64Signature := base64.RawURLEncoding.EncodeToString(signature)
 

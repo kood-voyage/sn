@@ -13,10 +13,10 @@ import (
 )
 
 const (
-	sessionName     = "session"
-	jwtKey          = "JWT_KEY"
-	ctxKeyRequestID ctxKey = iota 
-	ctxUserID 
+	sessionName            = "session"
+	jwtKey                 = "JWT_KEY"
+	ctxKeyRequestID ctxKey = iota
+	ctxUserID
 )
 
 type ctxKey int
@@ -52,13 +52,16 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func configureRouter(s *Server) {
-	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware)
+	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware, s.jwtMiddleware)
 
 	s.router.GET("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
 	))
 	s.router.POST("/api/v1/users/create", s.createUser())
 	s.router.GET("/api/v1/follow/{id}", s.handleFollow())
+	s.router.GET("/api/v1/unfollow/{id}", s.handleUnfollow())
+	// s.router.GET("/login", s.login())
+
 }
 
 func (s *Server) error(w http.ResponseWriter, code int, err error) {
@@ -79,3 +82,23 @@ func (s *Server) decode(r *http.Request, data interface{}) error {
 	}
 	return nil
 }
+
+//FOR DEVELOPMENT PURPOSES TO GENERATE JWT TOKEN
+
+// func (s *Server) login() http.HandlerFunc {
+// 	return func(w http.ResponseWriter, r *http.Request) {
+// 		newToken := jwttoken.NewClaims()
+// 		newToken.Set("user_id", "testUSERid")
+// 		newToken.SetTime("exp", time.Now().Add(time.Hour*100))
+// 		a := jwttoken.HmacSha256(os.Getenv(jwtKey))
+
+// 		token, err := a.Encode(newToken)
+// 		if err != nil {
+// 			s.error(w, http.StatusBadRequest, err)
+// 			return
+// 		}
+// 		fmt.Println("TEST")
+
+// 		s.respond(w, http.StatusOK, Response{Data: token})
+// 	}
+// }

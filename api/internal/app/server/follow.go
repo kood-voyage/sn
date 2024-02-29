@@ -74,25 +74,12 @@ func (s *Server) handleUnfollow() http.HandlerFunc {
 			TargetID: r.PathValue("id"),
 		}
 
-		//follow user
-		if err := s.store.Follow().Create(follow); err != nil {
+		//unfollow a user
+		if err := s.store.Follow().Delete(follow); err != nil {
 			s.error(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		//create notification
-		notification := models.Request{
-			TypeID:   "notification",
-			SourceID: sourceID,
-			TargetID: r.PathValue("id"),
-			Message:  "started following you.",
-		}
-
-		if err := s.store.Request().Create(notification); err != nil {
-			s.error(w, http.StatusInternalServerError, err)
-			return
-		}
-
-		s.respond(w, http.StatusCreated, Response{Data: nil})
+		s.respond(w, http.StatusOK, Response{Data: nil})
 	}
 }
