@@ -152,6 +152,36 @@ paths:
       summary: Create a user with privacy state
       tags:
       - users
+  /api/v1/auth/user/privacy/{privacy_state}:
+    get:
+      parameters:
+      - description: Only public, private, selected allowed
+        in: path
+        name: privacy_state
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Updates user's privacy
+      tags:
+      - users
   /api/v1/posts/create:
     post:
       consumes:

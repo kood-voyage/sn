@@ -24,29 +24,27 @@ func (s *Server) handleFollow() http.HandlerFunc {
 			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 			return
 		}
-		follow := model.Follower{
-			SourceID: sourceID,
-			TargetID: r.PathValue("id"),
-		}
-
-		//follow user
-		if err := s.store.Follow().Create(follow); err != nil {
-			s.error(w, http.StatusInternalServerError, err)
+		//firstly check another user state
+		privacyCode, err := s.store.User().CheckPrivacy(r.PathValue("id"))
+		if err != nil {
+			s.error(w, http.StatusBadRequest, err)
 			return
 		}
 
-		//create notification
-		notification := model.Request{
-			TypeID:   s.types.Request.Notification,
-			SourceID: sourceID,
-			TargetID: r.PathValue("id"),
-			Message:  "started following you.",
+		//if privacy is public create follow, else create request
+		if privacyCode == s.types.Privacy.Public {
+			follow := model.Follower{
+				SourceID: sourceID,
+				TargetID: r.PathValue("id"),
+			}
+	
+			//follow user
+			if err := s.store.Follow().Create(follow); err != nil {
+				s.error(w, http.StatusInternalServerError, err)
+				return
+			}
 		}
 
-		if err := s.store.Request().Create(notification); err != nil {
-			s.error(w, http.StatusInternalServerError, err)
-			return
-		}
 
 		s.respond(w, http.StatusCreated, Response{Data: nil})
 	}

@@ -5,6 +5,7 @@ import "social-network/internal/model"
 type UserRepository interface {
 	Create(user *model.User, privacy int) error
 	UpdatePrivacy(user *model.User, privacy int) error
+	CheckPrivacy(userID string) (int, error)
 }
 
 type FollowRepository interface {

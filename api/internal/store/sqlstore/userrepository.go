@@ -1,6 +1,8 @@
 package sqlstore
 
 import (
+	"database/sql"
+	"errors"
 	"social-network/internal/model"
 )
 
@@ -38,4 +40,18 @@ func (u *UserRepository) UpdatePrivacy(user *model.User, privacy int) error {
 	}
 
 	return nil
+}
+
+func (u *UserRepository) CheckPrivacy(userID string) (int, error) {
+	query := `SELECT type_id FROM privacy WHERE id = ?`
+
+	var privacy int
+	if err := u.store.Db.QueryRow(query, userID).Scan(&privacy); err != nil {
+		if err == sql.ErrNoRows {
+			return -1, errors.New("user does not exist")
+		}
+		return -1, err
+	}
+
+	return privacy, nil
 }
