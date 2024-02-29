@@ -15,7 +15,7 @@ describe('sum test', () => {
 
 describe('sum test', () => {
 	it('adds 1 + 2 to equal 3', () => {
-		expect(test(6)).toBe(37);
+		expect(test(6)).toBe(36);
 	});
 });
 

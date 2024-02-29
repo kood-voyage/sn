@@ -12,13 +12,12 @@
 	});
 
 	const { form: formData, enhance } = form;
-
 </script>
 
 <form method="POST" action="?/signup" use:enhance>
 	<Form.Field {form} name="username">
 		<Form.Control let:attrs>
-			<Form.Label>Username</Form.Label>
+			<Form.Label>Username <span class="text-red-500">*</span></Form.Label>
 			<Input {...attrs} bind:value={$formData.username} />
 		</Form.Control>
 		<Form.Description class="rounded bg-secondary p-1 text-xs text-sky-500"
@@ -29,28 +28,50 @@
 
 	<Form.Field {form} name="email">
 		<Form.Control let:attrs>
-			<Form.Label>Email</Form.Label>
+			<Form.Label>Email <span class="text-red-500">*</span></Form.Label>
 			<Input {...attrs} bind:value={$formData.email} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
 
+	<div class="grid grid-cols-2 gap-8">
+		<Form.Field {form} name="firstName">
+			<Form.Control let:attrs>
+				<Form.Label>First Name <span class="text-red-500">*</span></Form.Label>
+				<Input {...attrs} bind:value={$formData.email} />
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
+
+		<Form.Field {form} name="lastName">
+			<Form.Control let:attrs>
+				<Form.Label>Last Name <span class="text-red-500">*</span></Form.Label>
+				<Input {...attrs} bind:value={$formData.email} />
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
+	</div>
+
 	<Form.Field {form} name="dateOfBirth">
 		<Form.Control let:attrs>
-			<Form.Label>Date Of Birth</Form.Label>
+			<Form.Label>Date Of Birth <span class="text-red-500">*</span></Form.Label>
 			<Input {...attrs} type="date" bind:value={$formData.dateOfBirth} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<Form.Field {form} name="password">
-		<Form.Control let:attrs>
-			<Form.Label>Password</Form.Label>
+	<div>
+		<Form.Field {form} name="password">
+			<Form.Control let:attrs>
+				<Form.Label>Password <span class="text-red-500">*</span></Form.Label>
 
-			<Input {...attrs} type="password" bind:value={$formData.password} />
-		</Form.Control>
-		<Form.FieldErrors />
-	</Form.Field>
+				<Input {...attrs} type="password" bind:value={$formData.password} />
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
+	</div>
+
+	<div class="my-8"></div>
 
 	<Form.Button class="w-full">Submit</Form.Button>
 </form>
