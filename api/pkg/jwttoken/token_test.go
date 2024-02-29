@@ -17,8 +17,10 @@ func RunTest(t *testing.T, command func(Algorithm)) {
 func TestEncodeAndValidateToken(t *testing.T) {
 	RunTest(t, func(a Algorithm) {
 		id := "123456"
-		exp := time.Now().Add(time.Duration(100) * time.Hour).Unix()
-		payload := NewClaims(id, exp)
+		exp := time.Now().Add(time.Duration(100) * time.Hour)
+		payload := NewClaims()
+		payload.Set("id", id)
+		payload.SetTime("exp", exp)
 
 		token, err := algorithm.Encode(payload)
 		if err != nil {
@@ -69,7 +71,9 @@ func TestValidateToken(t *testing.T) {
 	RunTest(t, func(a Algorithm) {
 		id := "123456"
 		exp := time.Now().Add(time.Duration(100) * time.Hour).Unix()
-		payload := NewClaims(id, exp)
+		payload := NewClaims()
+		payload.Set("id", id)
+		payload.Set("exp", exp)
 
 		token, err := algorithm.Encode(payload)
 		if err != nil {
@@ -90,8 +94,10 @@ func TestValidateToken(t *testing.T) {
 func TestValidateExpiredToken(t *testing.T) {
 	RunTest(t, func(a Algorithm) {
 		id := "123456"
-		exp := time.Now().Add(time.Duration(-1) * time.Hour).Unix()
-		payload := NewClaims(id, exp)
+		exp := time.Now().Add(time.Duration(-1) * time.Hour)
+		payload := NewClaims()
+		payload.Set("id", id)
+		payload.SetTime("exp", exp)
 
 		token, err := algorithm.Encode(payload)
 		if err != nil {

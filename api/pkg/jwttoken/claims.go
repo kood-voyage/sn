@@ -16,7 +16,6 @@ func NewClaims() *Claims {
 	claims := &Claims{claimsMap: claimsMap}
 
 	claims.SetTime("iat", time.Now())
-
 	return claims
 }
 
@@ -40,7 +39,7 @@ func (c *Claims) SetTime(key string, value time.Time) {
 func (c *Claims) GetTime(key string) (time.Time, error) {
 	raw, err := c.Get(key)
 	if err != nil {
-		return time.Unix(0, 0), errors.Join(err, fmt.Errorf("claim (%s) doesn't exist", key))
+		return time.Unix(0, 0), err
 	}
 
 	timeFloat, ok := raw.(float64)
