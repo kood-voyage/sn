@@ -12,6 +12,7 @@
 	});
 
 	const { form: formData, enhance } = form;
+
 </script>
 
 <form method="POST" action="?/signup" use:enhance>
