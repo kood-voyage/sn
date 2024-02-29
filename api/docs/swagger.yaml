@@ -1,4 +1,13 @@
 basePath: /
+definitions:
+  server.Error:
+    properties:
+      error: {}
+    type: object
+  server.Response:
+    properties:
+      data: {}
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -6,6 +15,30 @@ info:
   title: Social Network API
   version: "0.1"
 paths:
+  /api/v1/follow/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Target user ID to follow
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/server.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Follow a user
+      tags:
+      - users
   /users/create:
     get:
       consumes:

@@ -2,16 +2,14 @@ package server
 
 import (
 	"context"
-	"errors"
 	"github.com/google/uuid"
 	"net/http"
 	"os"
 	"social-network/pkg/jwttoken"
-	"strings"
 	"time"
 )
 
-func (s *server) setRequestID(next http.Handler) http.Handler {
+func (s *Server) setRequestID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id := uuid.New().String()
 		w.Header().Set("X-Request-ID", id)
@@ -19,7 +17,7 @@ func (s *server) setRequestID(next http.Handler) http.Handler {
 	})
 }
 
-func (s *server) logRequest(next http.Handler) http.Handler {
+func (s *Server) logRequest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		rw := &responseWriter{w, http.StatusOK}
 		if r.Method == http.MethodOptions {
@@ -45,7 +43,7 @@ func (s *server) logRequest(next http.Handler) http.Handler {
 	})
 }
 
-func (s *server) CORSMiddleware(next http.Handler) http.Handler {
+func (s *Server) CORSMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Set CORS headers dynamically based on the request's Origin header
 		origin := r.Header.Get("Origin")
@@ -66,19 +64,19 @@ func (s *server) CORSMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func (s *server) jwtMiddleware(next http.Handler) http.Handler {
+func (s *Server) jwtMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authHeader := r.Header.Get("Authorization")
-		if !strings.HasPrefix(authHeader, "Bearer ") || authHeader == "" {
-			s.error(w, r, http.StatusUnauthorized, errors.New("unauthorized"))
+		cookie, err := r.Cookie(sessionName)
+		if err != nil {
+			s.error(w, http.StatusUnauthorized, err)
 			return
 		}
 
-		token := strings.TrimPrefix(authHeader, "Bearer ")
+		// Parse the token
 		alg := jwttoken.HmacSha256(os.Getenv(jwtKey))
-		claims, err := alg.DecodeAndValidate(token)
+		claims, err := alg.DecodeAndValidate(cookie.Value)
 		if err != nil {
-			s.error(w, r, http.StatusUnauthorized, err)
+			s.error(w, http.StatusUnauthorized, err)
 			return
 		}
 

@@ -3,12 +3,13 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
 	_ "social-network/docs"
 	"social-network/internal/store"
 	"social-network/pkg/router"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 const (
@@ -22,42 +23,48 @@ type Response struct {
 	Data interface{} `json:"data"`
 }
 
-type server struct {
+type Error struct {
+	Error interface{} `json:"error"`
+}
+
+type Server struct {
 	router *router.Router
 	logger *log.Logger
 	store  store.Store
 }
 
-func newServer(store store.Store) *server {
-	s := &server{
+func newServer(store store.Store) *Server {
+	s := &Server{
 		router: router.New(),
 		logger: log.Default(),
 		store:  store,
 	}
 
-	s.configureRouter()
+	configureRouter(s)
 
 	return s
 }
 
-func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
+func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.router.ServeHTTP(w, r)
 }
 
-func (s *server) configureRouter() {
-	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware, s.jwtMiddleware)
+func configureRouter(s *Server) {
+	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware)
 
 	s.router.GET("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
 	))
 	s.router.POST("/api/v1/users/create", s.createUser())
+	s.router.GET("/api/v1/follow/{id}", s.handleFollow())
 }
 
-func (s *server) error(w http.ResponseWriter, r *http.Request, code int, err error) {
-	s.respond(w, r, code, map[string]string{"error": err.Error()})
+func (s *Server) error(w http.ResponseWriter, code int, err error) {
+	s.respond(w, code, Error{err.Error()})
 }
 
-func (s *server) respond(w http.ResponseWriter, r *http.Request, code int, data interface{}) {
+func (s *Server) respond(w http.ResponseWriter, code int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	if data != nil {
@@ -65,7 +72,7 @@ func (s *server) respond(w http.ResponseWriter, r *http.Request, code int, data 
 	}
 }
 
-func (s *server) decode(r *http.Request, data interface{}) error {
+func (s *Server) decode(r *http.Request, data interface{}) error {
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 		return fmt.Errorf("decode json: %w", err)
 	}

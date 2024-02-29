@@ -15,6 +15,43 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/follow/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Follow a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Target user ID to follow",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/server.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/users/create": {
             "get": {
                 "consumes": [
@@ -35,6 +72,20 @@ const docTemplate = `{
                         }
                     }
                 }
+            }
+        }
+    },
+    "definitions": {
+        "server.Error": {
+            "type": "object",
+            "properties": {
+                "error": {}
+            }
+        },
+        "server.Response": {
+            "type": "object",
+            "properties": {
+                "data": {}
             }
         }
     }
