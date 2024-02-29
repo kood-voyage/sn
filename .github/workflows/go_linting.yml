@@ -1,0 +1,17 @@
+name: Golang Code Linting Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  golang-linting-code:
+    runs-on: ubuntu-latest
+
+    steps:
+     - name: Super-Linter
+       uses: super-linter/super-linter@v6.3.0
