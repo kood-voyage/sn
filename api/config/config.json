@@ -1,5 +1,6 @@
 {
   "port": ":8080",
+  "database_driver": "sqlite3",
   "database_url": "./internal/db/database.db",
-  "database_schema": "./internal/db/schema.sql"
+  "database_migrations": "./migrations"
 }
