@@ -9,9 +9,25 @@ on:
       - main
 
 jobs:
-  golang-linting-code:
+  build:
+    name: Lint
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: read
+      # to report GitHub Actions status checks
+      statuses: write
+
     steps:
-     - name: Super-Linter
-       uses: super-linter/super-linter@v6.3.0
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # list of files that changed across commits
+          fetch-depth: 0
+
+      - name: Super-linter
+        uses: super-linter/super-linter@v6.3.0  
+        env:
+          # to report GitHub Actions status checks
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
