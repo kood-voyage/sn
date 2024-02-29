@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 
 
-function test(n){
+function test(n:number){
 	return n**2
 }
 
