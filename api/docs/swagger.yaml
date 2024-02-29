@@ -18,6 +18,11 @@ definitions:
     - title
     - user_id
     type: object
+  model.User:
+    properties:
+      id:
+        type: string
+    type: object
   server.Error:
     properties:
       error: {}
@@ -33,7 +38,7 @@ info:
   title: Social Network API
   version: "0.1"
 paths:
-  /api/v1/follow/{id}:
+  /api/v1/auth/follow/{id}:
     get:
       consumes:
       - application/json
@@ -61,7 +66,7 @@ paths:
       summary: Follow a user
       tags:
       - follow
-  /api/v1/follow/request/{id}:
+  /api/v1/auth/follow/request/{id}:
     get:
       consumes:
       - application/json
@@ -89,29 +94,7 @@ paths:
       summary: Request a follow for user
       tags:
       - follow
-  /api/v1/posts/create:
-    post:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.Post'
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/server.Error'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/server.Error'
-      summary: Create post
-      tags:
-      - posts
-  /api/v1/unfollow/{id}:
+  /api/v1/auth/unfollow/{id}:
     get:
       consumes:
       - application/json
@@ -139,18 +122,56 @@ paths:
       summary: Unfollow a user
       tags:
       - follow
-  /users/create:
+  /api/v1/auth/user/create/{privacy_state}:
     get:
+      parameters:
+      - description: Only public, private, selected allowed
+        in: path
+        name: privacy_state
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Create a user with privacy state
+      tags:
+      - users
+  /api/v1/posts/create:
+    post:
       consumes:
       - application/json
       produces:
       - application/json
       responses:
         "201":
-          description: ok
+          description: Created
           schema:
-            type: string
-      summary: Sign up
+            $ref: '#/definitions/model.Post'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Create post
       tags:
-      - users
+      - posts
 swagger: "2.0"

@@ -3,7 +3,8 @@ package store
 import "social-network/internal/model"
 
 type UserRepository interface {
-	Create(user *model.User) error
+	Create(user *model.User, privacy int) error
+	UpdatePrivacy(user *model.User, privacy int) error
 }
 
 type FollowRepository interface {

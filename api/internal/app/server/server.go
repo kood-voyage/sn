@@ -8,8 +8,9 @@ import (
 	_ "social-network/docs"
 	"social-network/internal/store"
 	"social-network/pkg/router"
+	"social-network/internal/model"
 
-	"github.com/swaggo/http-swagger"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 const (
@@ -33,6 +34,7 @@ type Server struct {
 	router *router.Router
 	logger *log.Logger
 	store  store.Store
+	types  model.Type
 }
 
 func newServer(store store.Store) *Server {
@@ -40,6 +42,7 @@ func newServer(store store.Store) *Server {
 		router: router.New(),
 		logger: log.Default(),
 		store:  store,
+		types:  model.InitializeTypes(),
 	}
 
 	configureRouter(s)
@@ -58,10 +61,8 @@ func configureRouter(s *Server) {
 	s.router.GET("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
 	))
-	s.router.POST("/api/v1/users/create", s.createUser())
-	s.router.GET("/api/v1/follow/{id}", s.handleFollow())
-	s.router.POST("/api/v1/posts/create", s.createPost())
-	s.router.POST("/api/v1/auth/users/create", s.createUser())
+	s.router.GET("/api/v1/auth/user/create/{privacy_state}", s.createUser())
+	s.router.GET("/api/v1/auth/user/privacy/{privacy_state}", s.updatePrivacy())
 	s.router.GET("/api/v1/auth/follow/{id}", s.handleFollow())
 	s.router.GET("/api/v1/auth/unfollow/{id}", s.handleUnfollow())
 	s.router.GET("/api/v1/auth/follow/request/{id}", s.handleFollowRequest())

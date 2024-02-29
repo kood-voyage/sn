@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/follow/request/{id}": {
+        "/api/v1/auth/follow/request/{id}": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -58,7 +58,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/follow/{id}": {
+        "/api/v1/auth/follow/{id}": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -101,41 +101,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/posts/create": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "posts"
-                ],
-                "summary": "Create post",
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/model.Post"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/server.Error"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/server.Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/unfollow/{id}": {
+        "/api/v1/auth/unfollow/{id}": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -178,8 +144,54 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/create": {
+        "/api/v1/auth/user/create/{privacy_state}": {
             "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Create a user with privacy state",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Only public, private, selected allowed",
+                        "name": "privacy_state",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/posts/create": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -187,14 +199,26 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "posts"
                 ],
-                "summary": "Sign up",
+                "summary": "Create post",
                 "responses": {
                     "201": {
-                        "description": "ok",
+                        "description": "Created",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.Post"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
                         }
                     }
                 }
@@ -224,6 +248,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "id": {
                     "type": "string"
                 }
             }

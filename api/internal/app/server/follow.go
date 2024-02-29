@@ -6,7 +6,7 @@ import (
 	"social-network/internal/model"
 )
 
-// handleFollow handles the follow action where one user follows another.
+// handleFollow handles the follow action where one user follows another. If another user profile is private, it creates a follow request instead.
 //
 // @Summary Follow a user
 // @Tags follow
@@ -16,7 +16,7 @@ import (
 // @Success 201 {object} Response
 // @Failure 401 {object} Error
 // @Failure 500 {object} Error
-// @Router /api/v1/follow/{id} [get]
+// @Router /api/v1/auth/follow/{id} [get]
 func (s *Server) handleFollow() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sourceID, ok := r.Context().Value(ctxUserID).(string)
@@ -37,7 +37,7 @@ func (s *Server) handleFollow() http.HandlerFunc {
 
 		//create notification
 		notification := model.Request{
-			TypeID:   "notification",
+			TypeID:   s.types.Request.Notification,
 			SourceID: sourceID,
 			TargetID: r.PathValue("id"),
 			Message:  "started following you.",
@@ -62,7 +62,7 @@ func (s *Server) handleFollow() http.HandlerFunc {
 // @Success 201 {object} Response
 // @Failure 401 {object} Error
 // @Failure 500 {object} Error
-// @Router /api/v1/unfollow/{id} [get]
+// @Router /api/v1/auth/unfollow/{id} [get]
 func (s *Server) handleUnfollow() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sourceID, ok := r.Context().Value(ctxUserID).(string)
@@ -94,7 +94,7 @@ func (s *Server) handleUnfollow() http.HandlerFunc {
 // @Success 201 {object} Response
 // @Failure 401 {object} Error
 // @Failure 500 {object} Error
-// @Router /api/v1/follow/request/{id} [get]
+// @Router /api/v1/auth/follow/request/{id} [get]
 func (s *Server) handleFollowRequest() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sourceID, ok := r.Context().Value(ctxUserID).(string)
@@ -102,7 +102,7 @@ func (s *Server) handleFollowRequest() http.HandlerFunc {
 			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 		}
 		request := model.Request{
-			TypeID:   "follow",
+			TypeID:   s.types.Request.Follow,
 			SourceID: sourceID,
 			TargetID: r.PathValue("id"),
 		}
