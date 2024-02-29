@@ -52,14 +52,17 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func configureRouter(s *Server) {
-	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware, s.jwtMiddleware)
+	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware)
+	s.router.UseWithPrefix("auth", s.jwtMiddleware)
 
 	s.router.GET("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
 	))
-	s.router.POST("/api/v1/users/create", s.createUser())
-	s.router.GET("/api/v1/follow/{id}", s.handleFollow())
-	s.router.GET("/api/v1/unfollow/{id}", s.handleUnfollow())
+	s.router.POST("/api/v1/auth/users/create", s.createUser())
+	s.router.GET("/api/v1/auth/follow/{id}", s.handleFollow())
+	s.router.GET("/api/v1/auth/unfollow/{id}", s.handleUnfollow())
+	s.router.GET("/api/v1/auth/follow/request/{id}", s.handleFollowRequest())
+
 	// s.router.GET("/login", s.login())
 
 }
