@@ -11,6 +11,7 @@
 	import Bell from 'svelte-radix/Bell.svelte';
 	import Calendar from 'svelte-radix/Calendar.svelte';
 	import ChatBubble from 'svelte-radix/ChatBubble.svelte';
+	import Globe from 'svelte-radix/Globe.svelte';
 	///
 
 	import { setMode, resetMode } from 'mode-watcher';
@@ -59,25 +60,31 @@
 				</div>
 			</a>
 
+			<a href="/app/g/group">
+				<div class="button">
+					<Globe class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
+				</div>
+			</a>
+
 			<a href="/app/chat">
 				<div class="button">
 					<ChatBubble class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
 				</div>
 			</a>
 
-			<a>
+			<a href="/app">
 				<div class="button">
 					<Bell class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
 				</div>
 			</a>
 
-			<a>
+			<a href="/app">
 				<div class="button">
 					<Calendar class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
 				</div>
 			</a>
 
-			<a>
+			<a href="/app">
 				<div class="button">
 					<Gear class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
 				</div>
