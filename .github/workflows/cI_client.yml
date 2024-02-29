@@ -2,15 +2,13 @@ name: CI workflow // Client
 
 # so we trigger this workflow whenever we get a new pull request to the main branch or changes are pushed to the main branch
 
-on: 
+on:
   pull_request:
     paths:
-      - 'client/**'
+      - "client/**"
   push:
     branches:
       - main
-
-
 
 jobs:
   test-client:
@@ -23,12 +21,12 @@ jobs:
       - name: settin up node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '14'
-# arnis/marco can later check if this worked correctly
-      - name: installing dependencies 
+          node-version: "18"
+      # arnis/marco can later check if this worked correctly
+      - name: installing dependencies
         working-directory: client
         run: npm install
 
       - name: testing Client
         working-directory: client
-        run: npm test
+        run: npm run test
