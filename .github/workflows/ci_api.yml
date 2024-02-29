@@ -32,3 +32,7 @@ jobs:
       - name: Testing JWT Function :D
         working-directory: api/pkg/jwttoken
         run: go test -v ./
+
+      - name: Testing Validator
+        working-directory: api/pkg/validator
+        run: go test -v ./
