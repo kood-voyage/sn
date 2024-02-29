@@ -2,6 +2,7 @@ package server
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/sqlite3"
@@ -47,7 +48,7 @@ func newDB(databaseURL, migrationSource, driver string) (*sql.DB, error) {
 		return nil, fmt.Errorf("migrations new: %w", err)
 	}
 
-	if err = m.Up(); err != nil {
+	if err = m.Up(); !errors.Is(err, migrate.ErrNoChange) {
 		return nil, fmt.Errorf("migrations run: %w", err)
 	}
 

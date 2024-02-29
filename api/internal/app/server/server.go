@@ -16,6 +16,10 @@ const (
 	ctxUserID
 )
 
+type Response struct {
+	Data interface{} `json:"data"`
+}
+
 type server struct {
 	router *router.Router
 	logger *log.Logger
@@ -42,6 +46,7 @@ func (s *server) configureRouter() {
 	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware)
 
 	s.router.GET("/", s.testRoute())
+	s.router.POST("/api/v1/users/create", s.createUser())
 }
 
 func (s *server) testRoute() http.HandlerFunc {
