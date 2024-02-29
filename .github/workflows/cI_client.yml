@@ -4,8 +4,8 @@ name: CI workflow // Client
 
 on:
   pull_request:
-    paths:
-      - "client/**"
+    branches:
+      - main
   push:
     branches:
       - main

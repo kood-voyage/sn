@@ -4,8 +4,8 @@ name: CI workflow //API
 
 on:
   pull_request:
-    paths:
-      - 'api/**'
+    branches:
+      - main
   push:
     branches:
       - main
