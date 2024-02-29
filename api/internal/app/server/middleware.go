@@ -34,7 +34,7 @@ func (s *Server) logRequest(next http.Handler) http.Handler {
 		start := time.Now()
 		next.ServeHTTP(rw, r)
 		s.logger.Printf("completed in %s with %d %s ----- remote_addr:%s  request_id:%s",
-			time.Now().Sub(start),
+			time.Since(start),
 			rw.code,
 			http.StatusText(rw.code),
 			r.RemoteAddr,

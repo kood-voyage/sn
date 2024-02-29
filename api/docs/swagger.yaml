@@ -32,11 +32,43 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/server.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/server.Error'
       summary: Follow a user
+      tags:
+      - users
+  /api/v1/unfollow/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Target user ID to Unfollow
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/server.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Unfollow a user
       tags:
       - users
   /users/create:

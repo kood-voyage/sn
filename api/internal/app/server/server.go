@@ -16,8 +16,11 @@ const (
 	sessionName     = "session"
 	jwtKey          = "JWT_KEY"
 	ctxKeyRequestID = iota
-	ctxUserID
 )
+
+type ctxKey int
+
+const ctxUserID ctxKey = 1
 
 type Response struct {
 	Data interface{} `json:"data"`
