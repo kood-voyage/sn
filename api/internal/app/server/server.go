@@ -15,12 +15,11 @@ import (
 const (
 	sessionName     = "session"
 	jwtKey          = "JWT_KEY"
-	ctxKeyRequestID = iota
+	ctxKeyRequestID ctxKey = iota 
+	ctxUserID 
 )
 
 type ctxKey int
-
-const ctxUserID ctxKey = 1
 
 type Response struct {
 	Data interface{} `json:"data"`
@@ -47,7 +46,6 @@ func newServer(store store.Store) *Server {
 
 	return s
 }
-
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.router.ServeHTTP(w, r)

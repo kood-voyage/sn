@@ -10,17 +10,18 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 )
 
-func TestHandleFollow(t *testing.T) {
+const (
+	sourceID = "source"
+	targetID = "target"
+)
+
+func TestHandleFollowSucceed(t *testing.T) {
 	// new sql mock
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("Error creating mock database: %v", err)
 	}
 	defer db.Close()
-
-	//set up test user id
-	sourceID := "source"
-	targetID := "target"
 
 	//mock expectation
 	mock.ExpectExec("INSERT INTO follower").
@@ -54,16 +55,28 @@ func TestHandleFollow(t *testing.T) {
 		t.Errorf("Expected status code %d, got %d", http.StatusCreated, rec.Code)
 	}
 
+}
+
+func TestHandleFollowFail(t *testing.T) {
+	// new sql mock
+	db, _, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("Error creating mock database: %v", err)
+	}
+	defer db.Close()
+
+	//create server to use this test on
+	store := sqlstore.New(db)
+	s := newServer(store)
 	//check request without context
-	req, err = http.NewRequest("GET", "/api/v1/follow/"+targetID, nil)
+	req, err := http.NewRequest("GET", "/api/v1/follow/"+targetID, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	rec = httptest.NewRecorder()
+	rec := httptest.NewRecorder()
 	s.ServeHTTP(rec, req)
 	if rec.Code != http.StatusUnauthorized {
 		t.Errorf("Expected status code %d, got %d", http.StatusUnauthorized, rec.Code)
 	}
-
 }

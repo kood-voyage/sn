@@ -2,7 +2,6 @@ package server
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	models "social-network/internal/model"
 )
@@ -32,7 +31,6 @@ func (s *Server) handleFollow() http.HandlerFunc {
 
 		//follow user
 		if err := s.store.Follow().Create(follow); err != nil {
-			fmt.Println(err)
 			s.error(w, http.StatusInternalServerError, err)
 			return
 		}
@@ -46,7 +44,6 @@ func (s *Server) handleFollow() http.HandlerFunc {
 		}
 
 		if err := s.store.Request().Create(notification); err != nil {
-			fmt.Println(err)
 			s.error(w, http.StatusInternalServerError, err)
 			return
 		}
@@ -79,7 +76,6 @@ func (s *Server) handleUnfollow() http.HandlerFunc {
 
 		//follow user
 		if err := s.store.Follow().Create(follow); err != nil {
-			fmt.Println(err)
 			s.error(w, http.StatusInternalServerError, err)
 			return
 		}
@@ -93,7 +89,6 @@ func (s *Server) handleUnfollow() http.HandlerFunc {
 		}
 
 		if err := s.store.Request().Create(notification); err != nil {
-			fmt.Println(err)
 			s.error(w, http.StatusInternalServerError, err)
 			return
 		}
