@@ -68,8 +68,8 @@ func (s *server) respond(w http.ResponseWriter, r *http.Request, code int, data 
 	}
 }
 
-func decode(r *http.Request, v interface{}) error {
-	if err := json.NewDecoder(r.Body).Decode(&v); err != nil {
+func (s *server) decode(r *http.Request, data interface{}) error {
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 		return fmt.Errorf("decode json: %w", err)
 	}
 	return nil

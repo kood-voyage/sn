@@ -3,15 +3,15 @@ package server
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/mattn/go-sqlite3"
-	"log"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/sqlite3"
+	"github.com/golang-migrate/migrate/v4/source/file"
 	"net/http"
-	"os"
 	"social-network/internal/store/sqlstore"
 )
 
 func Start(config *Config) error {
-	db, err := newDB(config.DatabaseURL, config.DatabaseSchema)
+	db, err := newDB(config.DatabaseURL, config.Migrations, config.Driver)
 	if err != nil {
 		return err
 	}
@@ -26,24 +26,33 @@ func Start(config *Config) error {
 	return http.ListenAndServe(config.Port, srv)
 }
 
-func newDB(databaseURL, dataBaseSchema string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", databaseURL)
+func newDB(databaseURL, migrationSource, driver string) (*sql.DB, error) {
+	db, err := sql.Open(driver, databaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("open db: %w", err)
 	}
 
-	sqlStmt, err := os.ReadFile(dataBaseSchema)
+	instance, err := sqlite3.WithInstance(db, &sqlite3.Config{})
 	if err != nil {
-		log.Fatal(err)
+		return nil, fmt.Errorf("instance: %w", err)
+	}
+
+	fileSource, err := (&file.File{}).Open(migrationSource)
+	if err != nil {
+		return nil, fmt.Errorf("fileSource: %w", err)
+	}
+
+	m, err := migrate.NewWithInstance("file", fileSource, driver, instance)
+	if err != nil {
+		return nil, fmt.Errorf("migrations new: %w", err)
+	}
+
+	if err = m.Up(); err != nil {
+		return nil, fmt.Errorf("migrations run: %w", err)
 	}
 
 	if err = db.Ping(); err != nil {
 		return nil, err
-	}
-
-	_, err = db.Exec(string(sqlStmt))
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	return db, nil

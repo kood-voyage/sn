@@ -14,18 +14,21 @@
 		</div>
 
 		<!-- user list -->
-		<div class="my-2 sm:p-2">
+		<div class=" sm:p-2">
 			<!-- header h1 -->
 
 			<div class="hidden sm:block p-2">
 				<p class="text-xs">DIRECT MESSAGES</p>
 			</div>
 
+			<div class="block sm:hidden h-12"></div>
+
 			<ol>
 				<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 active">
 					<img
 						src="https://notes.aimodels.fyi/content/images/2023/06/a_high_detail_shot_of_a_cat_wearing_a_suit_realism_8k_-n_9_.png"
 						alt="avatar"
+						class="m-auto sm:mx-2"
 					/>
 					<p>Nikita</p>
 				</li>
@@ -34,6 +37,7 @@
 					<img
 						src="https://notes.aimodels.fyi/content/images/2023/06/a_high_detail_shot_of_a_cat_wearing_a_suit_realism_8k_-n_9_.png"
 						alt="avatar"
+						class="m-auto sm:mx-2"
 					/>
 					<p>Marcus</p>
 				</li>
@@ -42,6 +46,7 @@
 					<img
 						src="https://notes.aimodels.fyi/content/images/2023/06/a_high_detail_shot_of_a_cat_wearing_a_suit_realism_8k_-n_9_.png"
 						alt="avatar"
+						class="m-auto sm:mx-2"
 					/>
 					<p>Harri</p>
 				</li>
@@ -71,7 +76,7 @@
 
 <style>
 	div ol li.user {
-		@apply flex cursor-pointer rounded-sm px-2 py-1;
+		@apply flex h-12 cursor-pointer self-center rounded-sm;
 	}
 
 	div ol li.user p {
@@ -85,7 +90,7 @@
 	}
 
 	div ol li.user img {
-		@apply w-9 rounded-full;
+		@apply h-8 items-center justify-center rounded-full;
 	}
 
 	.active {
