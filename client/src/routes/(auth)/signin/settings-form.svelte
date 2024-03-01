@@ -18,18 +18,16 @@
 	<Form.Field {form} name="login">
 		<Form.Control let:attrs>
 			<Form.Label>Login</Form.Label>
-			<Input {...attrs} bind:value={$formData.login} />
+			<Input {...attrs} bind:value={$formData.login} placeholder="Email/Username" />
 		</Form.Control>
-		<Form.Description class="rounded bg-secondary p-1 text-xs text-sky-500"
-			>This is your public display name.</Form.Description
-		>
+
 		<Form.FieldErrors />
 	</Form.Field>
 	<Form.Field {form} name="password">
 		<Form.Control let:attrs>
 			<Form.Label>Password</Form.Label>
 
-			<Input {...attrs} type="password" bind:value={$formData.password} />
+			<Input {...attrs} type="password" bind:value={$formData.password} placeholder="Password" />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
