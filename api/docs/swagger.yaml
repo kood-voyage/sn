@@ -122,6 +122,30 @@ paths:
       summary: Unfollow a user
       tags:
       - follow
+  /api/v1/auth/user/{id}/posts:
+    get:
+      parameters:
+      - description: User id to get followers
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Returns a list of user followers
+      tags:
+      - users
   /api/v1/auth/user/create/{privacy_state}:
     get:
       parameters:
@@ -152,30 +176,6 @@ paths:
       summary: Create a user with privacy state
       tags:
       - users
-  /api/v1/auth/user/followers/{id}:
-    get:
-      parameters:
-      - description: User id to get followers
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            items:
-              $ref: '#/definitions/model.User'
-            type: array
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/server.Error'
-      summary: Returns a list of user followers
-      tags:
-      - users
   /api/v1/auth/user/following/{id}:
     get:
       parameters:
@@ -187,8 +187,8 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
             items:
               $ref: '#/definitions/model.User'
@@ -198,6 +198,30 @@ paths:
           schema:
             $ref: '#/definitions/server.Error'
       summary: Return a list of users who is user following
+      tags:
+      - users
+  /api/v1/auth/user/posts/{id}:
+    get:
+      parameters:
+      - description: User id to get user's posts
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Post'
+            type: array
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Return a list of posts what user has created
       tags:
       - users
   /api/v1/auth/user/privacy/{privacy_state}:

@@ -86,9 +86,9 @@ func (s *Server) updatePrivacy() http.HandlerFunc {
 // @Tags users
 // @Produce json
 // @Param id path string true "User id to get followers"
-// @Success 201 {object} []model.User
+// @Success 200 {object} []model.User
 // @Failure 422 {object} Error
-// @Router /api/v1/auth/user/followers/{id} [get]
+// @Router /api/v1/auth/user/{id}/posts [get]
 func (s *Server) handleUserFollowers() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		followers, err := s.store.User().GetFollowers(r.PathValue("id"))
@@ -96,7 +96,7 @@ func (s *Server) handleUserFollowers() http.HandlerFunc {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
-		s.respond(w, http.StatusCreated, Response{Data: followers})
+		s.respond(w, http.StatusOK, Response{Data: followers})
 	}
 }
 
@@ -106,7 +106,7 @@ func (s *Server) handleUserFollowers() http.HandlerFunc {
 // @Tags users
 // @Produce json
 // @Param id path string true "User id to get followers"
-// @Success 201 {object} []model.User
+// @Success 200 {object} []model.User
 // @Failure 422 {object} Error
 // @Router /api/v1/auth/user/following/{id} [get]
 func (s *Server) handleUserFollowing() http.HandlerFunc {
@@ -116,6 +116,55 @@ func (s *Server) handleUserFollowing() http.HandlerFunc {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
-		s.respond(w, http.StatusCreated, Response{Data: followers})
+		s.respond(w, http.StatusOK, Response{Data: followers})
+	}
+}
+
+// handleUserFollowing Handles user own following.
+//
+// @Summary Return a list of posts what user has created
+// @Tags users
+// @Produce json
+// @Param user_id path string true "User id to get user's posts"
+// @Success 200 {object} []model.Post
+// @Failure 422 {object} Error
+// @Router /api/v1/auth/user/posts/{id} [get]
+func (s *Server) handleUserPosts() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		//firstly check if the request is done by the user itself or some other user
+		userID_request, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("unauthorized user"))
+			return
+		}
+
+		if userID_request != r.PathValue("id") {
+			//check requested user profile privacy
+			privacy, err := s.store.User().CheckPrivacy(r.PathValue("id"))
+			if err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+			if privacy == s.types.Privacy.Private {
+				//check if user follows
+				userFollows, err := s.store.User().IsFollowing(userID_request, r.PathValue("id"))
+				if err != nil {
+					s.error(w, http.StatusUnprocessableEntity, err)
+					return
+				}
+				if !userFollows {
+					s.error(w, http.StatusForbidden, errors.New("users profile is private"))
+					return
+				}
+			}
+		}
+
+		posts, err := s.store.Post().GetUsers(r.PathValue("id"))
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, http.StatusOK, Response{Data: posts})
 	}
 }

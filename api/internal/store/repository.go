@@ -8,6 +8,7 @@ type UserRepository interface {
 	CheckPrivacy(userID string) (int, error)
 	GetFollowers(userID string) ([]model.User, error)
 	GetFollowing(userID string) ([]model.User, error)
+	IsFollowing(source_id, target_id string) (bool, error)
 }
 
 type FollowRepository interface {
@@ -25,5 +26,6 @@ type PostRepository interface {
 	Create(post *model.Post) error
 	Delete(id string) error
 	Get(id string) (*model.Post, error)
+	GetUsers(user_id string) ([]model.Post, error)
 	// Update(string) error
 }

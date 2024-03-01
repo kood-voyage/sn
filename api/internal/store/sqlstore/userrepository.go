@@ -65,6 +65,8 @@ func (u *UserRepository) GetFollowers(userID string) ([]model.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	for rows.Next() {
 		var follower model.User
 		if err = rows.Scan(&follower.ID); err != nil {
@@ -85,6 +87,8 @@ func (u *UserRepository) GetFollowing(userID string) ([]model.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	for rows.Next() {
 		var follower model.User
 		if err = rows.Scan(&follower.ID); err != nil {
@@ -94,4 +98,16 @@ func (u *UserRepository) GetFollowing(userID string) ([]model.User, error) {
 	}
 
 	return followers, nil
+}
+
+func (u *UserRepository) IsFollowing(source_id, target_id string) (bool, error) {
+	query := `SELECT id FROM follower WHERE source_id = ? AND target_id = ?`
+	var target string
+	if err := u.store.Db.QueryRow(query, source_id, target_id).Scan(&target);err != nil{
+		if err == sql.ErrNoRows{
+			return false, nil
+		} 
+		return false, err
+	}
+	return true, nil
 }

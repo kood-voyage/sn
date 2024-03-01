@@ -1,6 +1,10 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Request struct {
 	ID        string    `db:"id" json:"id" validate:"required"`
@@ -15,3 +19,10 @@ type Request struct {
 // 	ID          string `db:"id" json:"id"`
 // 	Description string `db:"description" json:"description"`
 // }
+
+func NewRequest() *Request {
+	id := uuid.New().String()
+	return &Request{
+		ID: id,
+	}
+}

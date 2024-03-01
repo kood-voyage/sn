@@ -127,8 +127,8 @@ func TestHandleUser_GetFollowers(t *testing.T) {
 
 	rec := httptest.NewRecorder()
 	s.ServeHTTP(rec, req)
-	if rec.Code != http.StatusCreated {
-		t.Errorf("Expected status code %d, got %d", http.StatusCreated, rec.Code)
+	if rec.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, rec.Code)
 	}
 }
 
@@ -155,7 +155,7 @@ func TestHandleUser_GetFollowing(t *testing.T) {
 
 	rec := httptest.NewRecorder()
 	s.ServeHTTP(rec, req)
-	if rec.Code != http.StatusCreated {
-		t.Errorf("Expected status code %d, got %d", http.StatusCreated, rec.Code)
+	if rec.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, rec.Code)
 	}
 }
