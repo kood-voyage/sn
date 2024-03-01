@@ -50,7 +50,7 @@ func TestValidate(t *testing.T) {
 		{
 			Email:      "johndoe@gmail.com",
 			Username:   "johndoe",
-			TestField: []string{"hello", "world"},
+			TestField:  []string{"hello", "world"},
 			TestField1: "DSA2ASD",
 			want:       errors.New("TestField1 string contains more than just letters"),
 		},
@@ -70,17 +70,37 @@ func TestValidate(t *testing.T) {
 		{
 			Email:      "johndoe@gmail.com",
 			Username:   "johndoe",
-			TestField: []string{"hello", "world"},
+			TestField:  []string{"hello", "world"},
 			TestField1: "asd",
 			want:       errors.New("TestField1 only uppercase letters allowed"),
 		},
 		//test len for array
 		{
 			Email:     "johndoe@gmail.com",
-			Username: "johndoe",
+			Username:  "johndoe",
 			TestField: []string{},
 			want:      errors.New("TestField length must be minimum of 1"),
 		},
+	}
+
+	//test object as a pointer
+	pointerTests := []*struct {
+		Email    string `validate:"required|email"`
+		Username string `validate:"min_len:4|max_len:25|alphanumeric|lowercase"`
+		want     error
+	}{
+		{
+			Email:    "JohnDoe@gmail.com",
+			Username: "johndoe",
+			want:     nil,
+		},
+	}
+
+	for _, test := range pointerTests {
+		err := Validate(test)
+		if test.want != nil {
+			assertErrorsEqual(t, test.want, err)
+		}
 	}
 
 	for _, test := range tests {

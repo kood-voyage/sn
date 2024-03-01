@@ -6,7 +6,7 @@ COPY . .
 
 RUN go mod download
 
-RUN go build -o sn-api-go .
+RUN go build -o sn-api-go ./cmd/api
 
 EXPOSE 6940
 

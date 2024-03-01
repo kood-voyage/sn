@@ -3,8 +3,10 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
+	_ "social-network/docs"
 	"social-network/internal/store"
 	"social-network/pkg/router"
 )
@@ -15,6 +17,10 @@ const (
 	ctxKeyRequestID = iota
 	ctxUserID
 )
+
+type Response struct {
+	Data interface{} `json:"data"`
+}
 
 type server struct {
 	router *router.Router
@@ -39,21 +45,12 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) configureRouter() {
-	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware)
+	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware, s.jwtMiddleware)
 
-	s.router.GET("/", s.testRoute())
-}
-
-func (s *server) testRoute() http.HandlerFunc {
-	type respond struct {
-		Message string `json:"message"`
-	}
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		s.respond(w, r, http.StatusOK, respond{
-			Message: "Hello World!",
-		})
-	}
+	s.router.GET("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
+	))
+	s.router.POST("/api/v1/users/create", s.createUser())
 }
 
 func (s *server) error(w http.ResponseWriter, r *http.Request, code int, err error) {
