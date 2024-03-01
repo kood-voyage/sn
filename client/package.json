@@ -39,6 +39,10 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@types/better-sqlite3": "^7.6.9",
+    "@types/uuid": "^9.0.8",
+    "better-sqlite3": "^9.4.3",
+    "uuid": "^9.0.1",
 		"bits-ui": "^0.18.2",
 		"clsx": "^2.1.0",
 		"formsnap": "^0.5.1",
