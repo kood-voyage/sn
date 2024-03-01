@@ -7,9 +7,13 @@ export const signUpSchema = z.object({
 	email: z.string().email(),
 	dateOfBirth: z.string(),
 	password: z.string().min(8).max(32),
-	// firstName: z.string().min(2).max(24),
-	// lastName: z.string().min(2).max(24),
+	repeatPassword:z.string(),
+	firstName: z.string().min(2).max(32),
+	lastName: z.string().min(2).max(32),
 	// gender: z.string()
+}).refine(data=> data.password === data.repeatPassword,{
+	message:'Password do not match',
+	path:['repeatPassword'],
 });
 
 

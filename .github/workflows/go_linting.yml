@@ -1,0 +1,33 @@
+name: Golang Code Linting Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Lint
+    runs-on: ubuntu-latest
+    env:
+      VALIDATE_GO: "false"
+
+    permissions:
+      contents: read
+      packages: read
+      # to report GitHub Actions status checks
+      statuses: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Super-linter
+        uses: super-linter/super-linter@v6.3.0  
+        env:
+          # passing in our repo full access by GH token and ability to pass check with minor errors.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DISABLE_ERRORS: true
+          VALIDA_ALL_CODEBASE: false
+          VALIDATE_HTML: false
+          VALIDATE_SQL: false

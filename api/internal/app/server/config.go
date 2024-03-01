@@ -6,9 +6,10 @@ import (
 )
 
 type Config struct {
-	Port           string `json:"port"`
-	DatabaseURL    string `json:"database_url"`
-	DatabaseSchema string `json:"database_schema"`
+	Port        string `json:"port"`
+	Driver      string `json:"database_driver"`
+	DatabaseURL string `json:"database_url"`
+	Migrations  string `json:"database_migrations"`
 }
 
 func NewConfig() *Config {
