@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+  push:
+    branches:
+      - main
+
+
 jobs:
   build:
     name: Lint
@@ -31,3 +36,4 @@ jobs:
           VALIDA_ALL_CODEBASE: false
           VALIDATE_HTML: false
           VALIDATE_SQL: false
+
