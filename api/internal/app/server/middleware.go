@@ -2,10 +2,12 @@ package server
 
 import (
 	"context"
+	"errors"
 	"github.com/google/uuid"
 	"net/http"
 	"os"
 	"social-network/pkg/jwttoken"
+	"strings"
 	"time"
 )
 
@@ -66,15 +68,15 @@ func (s *server) CORSMiddleware(next http.Handler) http.Handler {
 
 func (s *server) jwtMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie(sessionName)
-		if err != nil {
-			s.error(w, r, http.StatusUnauthorized, err)
+		authHeader := r.Header.Get("Authorization")
+		if !strings.HasPrefix(authHeader, "Bearer ") || authHeader == "" {
+			s.error(w, r, http.StatusUnauthorized, errors.New("unauthorized"))
 			return
 		}
 
-		// Parse the token
+		token := strings.TrimPrefix(authHeader, "Bearer ")
 		alg := jwttoken.HmacSha256(os.Getenv(jwtKey))
-		claims, err := alg.DecodeAndValidate(cookie.Value)
+		claims, err := alg.DecodeAndValidate(token)
 		if err != nil {
 			s.error(w, r, http.StatusUnauthorized, err)
 			return
