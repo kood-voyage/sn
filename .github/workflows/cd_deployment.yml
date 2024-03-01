@@ -2,7 +2,7 @@ name: Golang Docker Image CD Deployment
 
 on:
   workflow_run:
-    workflows: ["Golang Docker Image CD "]
+    workflows: ["Golang Docker Image CD"]
     types: 
       - completed
 
