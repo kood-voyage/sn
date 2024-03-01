@@ -6,26 +6,48 @@ import { signUpSchema } from '../schema';
 
 import { zod} from 'sveltekit-superforms/adapters';
 
+
+// interface RegisterForm {
+// 	username:string,
+// 	email:string,
+// 	dateOfBirth: string,
+// 	password: string,
+// 	repeatPassword: string,
+// 	firstName:string,
+// 	lastName:string
+// }
+
+
 export const load: PageServerLoad = async () => {
 	const form = await superValidate(zod(signUpSchema));
 
 	return { form };
 };
 
+
+
 export const actions: Actions = {
 	signup: async (event) => {
 		const form = await superValidate(event, zod(signUpSchema));
-if (!event.locals.user) redirect(302, "/signup")
-		console.log('HERE');
-		console.log(form.data);
+
+		const {username,email,dateOfBirth,password,repeatPassword,firstName,lastName} = form.data
+
+
+
+
+
 
 		if (!form.valid) {
 			return fail(400, {
-				form
+				
 			});
 		}
-		return {
-			form
-		};
+
+
+
+
+		redirect(300, "/signin")
+
+
 	}
 };
