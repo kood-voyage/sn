@@ -1,0 +1,21 @@
+name: Golang Docker Image CD Deployment
+
+on:
+  workflow_run:
+    workflows: ["Golang Docker Image CD "]
+    types: 
+      - completed
+
+jobs:
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+
+    - name: Pulling docker image from dockerhub
+      run: sudo docker pull mannuk24/sn-api-go:latest
+    - name: Deleting old docker container
+      run: sudo docker rm - f sn-api-go-container || true
+    - name: Running docker container
+      run: sudo docker run -d -p 6940:6940 --name sn-api-go-container mannuk24/sn-api-go
