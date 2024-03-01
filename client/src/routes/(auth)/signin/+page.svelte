@@ -4,8 +4,10 @@
 	export let data: PageData;
 </script>
 
-<!-- <div class="w-0 flex hover:-bottom-28">
+<div>
+	<SettingsForm data={data.form} />
 
-</div> -->
-
-<SettingsForm data={data.form} />
+	<p class=" w-full py-2 text-center mt-2">
+		Don't have an account? <a href="/signup"><span class="text-blue-500">sign-up</span></a>
+	</p>
+</div>

@@ -14,10 +14,12 @@ export const load: PageServerLoad = async () => {
 
 export const actions: Actions = {
 	signin: async (event) => {
+    const login = "http://localhost:8080/api/v1/auth/login"
 		const form = await superValidate(event, zod(signInSchema));
 		if (!event.locals.user) redirect(302, "/signin")
 		console.log('HERE');
 		console.log(form.data);
+		console.log(login);
 
 		if (!form.valid) {
 			return fail(400, {
