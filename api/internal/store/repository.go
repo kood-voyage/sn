@@ -20,6 +20,7 @@ type RequestRepository interface {
 	Create(request model.Request) error
 	Delete(request model.Request) error
 	Get(request model.Request) (*model.Request, error)
+	DeleteByID(id string) error
 }
 
 type PostRepository interface {

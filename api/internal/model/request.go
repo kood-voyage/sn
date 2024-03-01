@@ -20,9 +20,27 @@ type Request struct {
 // 	Description string `db:"description" json:"description"`
 // }
 
-func NewRequest() *Request {
+func FollowRequest() *Request {
 	id := uuid.New().String()
 	return &Request{
 		ID: id,
+		TypeID: InitializeTypes().Request.Follow,
 	}
 }
+
+func NotificationRequest() *Request {
+	id := uuid.New().String()
+	return &Request{
+		ID: id,
+		TypeID: InitializeTypes().Request.Notification,
+	}
+}
+
+func InviteRequest() *Request {
+	id := uuid.New().String()
+	return &Request{
+		ID: id,
+		TypeID: InitializeTypes().Request.Invite,
+	}
+}
+

@@ -33,6 +33,17 @@ func (r *RequestRepository) Delete(request model.Request) error {
 	return nil
 }
 
+func (r *RequestRepository) DeleteByID(id string) error {
+	query := `DELETE FROM request WHERE id = ?`
+
+	_, err := r.store.Db.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (r *RequestRepository) Get(request model.Request) (*model.Request, error) {
 	query := `SELECT * FROM request WHERE type_id = ? AND source_id = ? AND target_id = ?`
 

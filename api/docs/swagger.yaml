@@ -18,6 +18,26 @@ definitions:
     - title
     - user_id
     type: object
+  model.Request:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      message:
+        type: string
+      source_id:
+        type: string
+      target_id:
+        type: string
+      type_id:
+        type: integer
+    required:
+    - id
+    - source_id
+    - target_id
+    - type_id
+    type: object
   model.User:
     properties:
       id:
@@ -94,6 +114,52 @@ paths:
       summary: Resolves a follow request
       tags:
       - follow
+  /api/v1/auth/notification/create:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Request'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Create a notification from source id to target id
+      tags:
+      - notification
+  /api/v1/auth/notification/delete/{id}:
+    delete:
+      parameters:
+      - description: Notification ID to delete
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Delete a notification by ID
+      tags:
+      - notification
   /api/v1/auth/unfollow/{id}:
     get:
       consumes:

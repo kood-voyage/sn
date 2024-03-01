@@ -89,6 +89,7 @@ func (s *Server) handleUnfollow() http.HandlerFunc {
 		sourceID, ok := r.Context().Value(ctxUserID).(string)
 		if !ok {
 			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+			return
 		}
 		follow := model.Follower{
 			SourceID: sourceID,

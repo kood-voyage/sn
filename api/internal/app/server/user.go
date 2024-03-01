@@ -80,7 +80,7 @@ func (s *Server) updatePrivacy() http.HandlerFunc {
 	}
 }
 
-// handleUserFollowers Handles the retrieval of provided users followers.
+// userFollowers Handles the retrieval of provided users followers.
 //
 // @Summary Returns a list of user followers
 // @Tags users
@@ -89,7 +89,7 @@ func (s *Server) updatePrivacy() http.HandlerFunc {
 // @Success 200 {object} []model.User
 // @Failure 422 {object} Error
 // @Router /api/v1/auth/user/{id}/posts [get]
-func (s *Server) handleUserFollowers() http.HandlerFunc {
+func (s *Server) userFollowers() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		followers, err := s.store.User().GetFollowers(r.PathValue("id"))
 		if err != nil {
@@ -100,7 +100,7 @@ func (s *Server) handleUserFollowers() http.HandlerFunc {
 	}
 }
 
-// handleUserFollowing Handles user own following.
+// userFollowing Handles user own following.
 //
 // @Summary Return a list of users who is user following
 // @Tags users
@@ -109,7 +109,7 @@ func (s *Server) handleUserFollowers() http.HandlerFunc {
 // @Success 200 {object} []model.User
 // @Failure 422 {object} Error
 // @Router /api/v1/auth/user/following/{id} [get]
-func (s *Server) handleUserFollowing() http.HandlerFunc {
+func (s *Server) userFollowing() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		followers, err := s.store.User().GetFollowing(r.PathValue("id"))
 		if err != nil {
@@ -120,7 +120,10 @@ func (s *Server) handleUserFollowing() http.HandlerFunc {
 	}
 }
 
-// handleUserFollowing Handles user own following.
+
+//NEED TO WRITE TEST FOR THAT FUNCTION AFTER FINISHING WITH POST PRIVACY CHECKING
+
+// userPosts Handles getting user profile posts.
 //
 // @Summary Return a list of posts what user has created
 // @Tags users
@@ -129,7 +132,7 @@ func (s *Server) handleUserFollowing() http.HandlerFunc {
 // @Success 200 {object} []model.Post
 // @Failure 422 {object} Error
 // @Router /api/v1/auth/user/posts/{id} [get]
-func (s *Server) handleUserPosts() http.HandlerFunc {
+func (s *Server) userPosts() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		//firstly check if the request is done by the user itself or some other user
 		userID_request, ok := r.Context().Value(ctxUserID).(string)
