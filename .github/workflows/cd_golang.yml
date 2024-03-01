@@ -22,9 +22,9 @@ jobs:
 
     - name: Building the docker image
       working-directory: api
-      run: docker build -t sn-go .
+      run: docker build -t sn-api-go .
 
 
     - name: Pushing the image to dockerhub
       working-directory: api
-      run: docker push mannuk24/sn-go:latest
+      run: docker push mannuk24/sn-api-go:latest
