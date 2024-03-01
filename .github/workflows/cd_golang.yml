@@ -13,18 +13,18 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: changing working directory to api
-        run: cd api
-
     - name: Logging in to dockerhub
+      working-directory: api
       env:
         DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
     - name: Building the docker image
+      working-directory: api
       run: docker build -t sn-go .
 
 
     - name: Pushing the image to dockerhub
+      working-directory: api
       run: docker push mannuk24/sn-go:latest
