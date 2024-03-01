@@ -51,7 +51,7 @@
 		<Form.Field {form} name="firstName">
 			<Form.Control let:attrs>
 				<Form.Label>First Name <RedStar /></Form.Label>
-				<Input {...attrs} bind:value={$formData.email} placeholder="first name" />
+				<Input {...attrs} bind:value={$formData.firstName} placeholder="first name" />
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
@@ -59,7 +59,7 @@
 		<Form.Field {form} name="lastName">
 			<Form.Control let:attrs>
 				<Form.Label>Last Name <RedStar /></Form.Label>
-				<Input {...attrs} bind:value={$formData.email} placeholder="last name" />
+				<Input {...attrs} bind:value={$formData.lastName} placeholder="last name" />
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
