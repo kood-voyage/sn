@@ -13,9 +13,9 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-	signup: async (event) => {
+	signin: async (event) => {
 		const form = await superValidate(event, zod(signUpSchema));
-if (!event.locals.user) redirect(302, "/signup")
+		if (!event.locals.user) redirect(302, "/signin")
 		console.log('HERE');
 		console.log(form.data);
 
