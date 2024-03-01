@@ -54,15 +54,9 @@ func (s *Server) handleFollow() http.HandlerFunc {
 				TargetID: r.PathValue("id"),
 			}
 
-			req, err := s.store.Request().Get(request)
+			_, err := s.store.Request().Get(request)
 			if err != nil && err != sql.ErrNoRows {
 				s.error(w, http.StatusUnprocessableEntity, err)
-				return
-			}
-
-			//if it already exists then just return
-			if req != nil {
-				s.error(w, http.StatusUnprocessableEntity, errors.New("request already exists"))
 				return
 			}
 
@@ -145,6 +139,7 @@ func (s *Server) handleFollowRequest() http.HandlerFunc {
 			SourceID: request.TargetID,
 			TypeID:   s.types.Request.Follow,
 		}
+
 		if request.Option == "reject" {
 			if err := s.store.Request().Delete(req); err != nil {
 				s.error(w, http.StatusUnprocessableEntity, err)
@@ -159,10 +154,7 @@ func (s *Server) handleFollowRequest() http.HandlerFunc {
 				s.error(w, http.StatusUnprocessableEntity, err)
 				return
 			}
-			if req_exists == nil {
-				s.error(w, http.StatusUnprocessableEntity, errors.New("request does not exist"))
-				return
-			}
+
 			//delete the request
 			if err := s.store.Request().Delete(*req_exists); err != nil {
 				s.error(w, http.StatusUnprocessableEntity, err)
@@ -174,6 +166,7 @@ func (s *Server) handleFollowRequest() http.HandlerFunc {
 				TargetID: request.TargetID,
 			}); err != nil {
 				s.error(w, http.StatusUnprocessableEntity, err)
+				return
 			}
 			s.respond(w, http.StatusOK, Response{Data: "Accepted user request"})
 			return

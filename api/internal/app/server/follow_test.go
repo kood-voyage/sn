@@ -1,11 +1,14 @@
 package server
 
 import (
+	"database/sql"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"social-network/internal/store/sqlstore"
 	"social-network/pkg/jwttoken"
+	"strings"
 	"testing"
 	"time"
 
@@ -56,43 +59,42 @@ func TestHandleFollow_PublicPrivacy(t *testing.T) {
 
 }
 
-// func TestHandleFollow_PrivatePrivacy(t *testing.T) {
-// 	db, mock, err := sqlmock.New()
-// 	if err != nil {
-// 		t.Fatalf("Error creating mock database: %v", err)
-// 	}
-// 	defer db.Close()
+func TestHandleFollow_PrivatePrivacy(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("Error creating mock database: %v", err)
+	}
+	defer db.Close()
 
-// 	store := sqlstore.New(db)
-// 	s := newServer(store)
+	store := sqlstore.New(db)
+	s := newServer(store)
 
-// 	mock.ExpectQuery("SELECT type_id FROM privacy").
-// 		WithArgs(targetID).
-// 		WillReturnRows(sqlmock.NewRows([]string{"type_id"}).AddRow(1))
-// 	mock.ExpectQuery(`SELECT * FROM request WHERE type_id = ? AND source_id = ? AND target_id = ?`).
-// 		WithArgs(s.types.Privacy.Private, sourceID, targetID).
-// 		WillReturnRows(sqlmock.NewRows([]string{"id", "type_id", "source_id", "target_id", "message", "created_at"}).AddRow(1, s.types.Privacy.Private, sourceID, targetID, "Test Message", "2022-01-01T00:00:00Z"))
-// 	mock.ExpectExec("INSERT INTO request").
-// 		WithArgs(sqlmock.AnyArg(), s.types.Request.Follow, sourceID, targetID, sqlmock.AnyArg()).
-// 		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectQuery("SELECT type_id FROM privacy").
+		WithArgs(targetID).
+		WillReturnRows(sqlmock.NewRows([]string{"type_id"}).AddRow(1))
+	mock.ExpectQuery("SELECT \\* FROM request").
+		WithArgs(s.types.Privacy.Private, sourceID, targetID).WillReturnError(sql.ErrNoRows)
+	mock.ExpectExec("INSERT INTO request").
+		WithArgs(sqlmock.AnyArg(), s.types.Request.Follow, sourceID, targetID, sqlmock.AnyArg()).
+		WillReturnResult(sqlmock.NewResult(1, 1))
 
-// 	req, err := http.NewRequest("GET", "/api/v1/auth/follow/"+targetID, nil)
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
+	req, err := http.NewRequest("GET", "/api/v1/auth/follow/"+targetID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	token := generateValidToken(t, sourceID)
-// 	req.Header.Set("Authorization", "Bearer "+token)
+	token := generateValidToken(t, sourceID)
+	req.Header.Set("Authorization", "Bearer "+token)
 
-// 	rec := httptest.NewRecorder()
+	rec := httptest.NewRecorder()
 
-// 	s.ServeHTTP(rec, req)
+	s.ServeHTTP(rec, req)
 
-// 	if rec.Code != http.StatusCreated {
-// 		t.Errorf("Expected status code %d, got %d", http.StatusCreated, rec.Code)
-// 	}
+	if rec.Code != http.StatusCreated {
+		t.Errorf("Expected status code %d, got %d", http.StatusCreated, rec.Code)
+	}
 
-// }
+}
 
 func TestHandleFollow_InvalidPrivacy(t *testing.T) {
 	db, mock, err := sqlmock.New()
@@ -181,34 +183,76 @@ func TestHandleUnfollow(t *testing.T) {
 	}
 }
 
-func TestHandleFollowRequestSucceed(t *testing.T) {
+func TestHandleFollowRequest_Reject(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("Error creating mock database: %v", err)
 	}
 	defer db.Close()
 
-	mock.ExpectExec("INSERT INTO request").
-		WithArgs(sqlmock.AnyArg(), "follow", sourceID, targetID, sqlmock.AnyArg()).
-		WillReturnResult(sqlmock.NewResult(1, 1))
-
 	store := sqlstore.New(db)
 	s := newServer(store)
 
-	req, err := http.NewRequest("GET", "/api/v1/follow/request/"+targetID, nil)
+	mock.ExpectExec("DELETE FROM request").
+		WithArgs(s.types.Request.Follow, sourceID, targetID).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	requestBody := fmt.Sprintf(`{"target_id": "%s", "option": "reject"}`, sourceID)
+	req, err := http.NewRequest("POST", "/api/v1/auth/follow/request", strings.NewReader(requestBody))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	token := generateValidToken(t, sourceID)
+	token := generateValidToken(t, targetID)
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+
+	rec := httptest.NewRecorder()
+
+	s.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, rec.Code)
+	}
+
+}
+
+func TestHandleFollowRequest_Accept(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("Error creating mock database: %v", err)
+	}
+	defer db.Close()
+
+	store := sqlstore.New(db)
+	s := newServer(store)
+
+	mock.ExpectQuery("SELECT \\* FROM request").
+		WithArgs(s.types.Privacy.Private, sourceID, targetID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "type_id", "source_id", "target_id", "message", "created_at"}).AddRow(1, s.types.Privacy.Private, sourceID, targetID, "Test Message", time.Now()))
+	mock.ExpectExec("DELETE FROM request").
+		WithArgs(s.types.Request.Follow, sourceID, targetID).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec("INSERT INTO follower").
+		WithArgs(sqlmock.AnyArg(), targetID, sourceID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	requestBody := fmt.Sprintf(`{"target_id": "%s", "option": "accept"}`, sourceID)
+
+	req, err := http.NewRequest("POST", "/api/v1/auth/follow/request", strings.NewReader(requestBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token := generateValidToken(t, targetID)
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	rec := httptest.NewRecorder()
 
 	s.ServeHTTP(rec, req)
 
-	if rec.Code != http.StatusCreated {
-		t.Errorf("TestHandleFollowRequestSucceed: Expected status code %d, got %d", http.StatusCreated, rec.Code)
+	if rec.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, rec.Code)
 	}
 
 }
