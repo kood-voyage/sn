@@ -22,6 +22,8 @@ definitions:
     properties:
       id:
         type: string
+    required:
+    - id
     type: object
   server.Error:
     properties:
@@ -148,6 +150,54 @@ paths:
           schema:
             $ref: '#/definitions/server.Error'
       summary: Create a user with privacy state
+      tags:
+      - users
+  /api/v1/auth/user/followers/{id}:
+    get:
+      parameters:
+      - description: User id to get followers
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Returns a list of user followers
+      tags:
+      - users
+  /api/v1/auth/user/following/{id}:
+    get:
+      parameters:
+      - description: User id to get followers
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Return a list of users who is user following
       tags:
       - users
   /api/v1/auth/user/privacy/{privacy_state}:

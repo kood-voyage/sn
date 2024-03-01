@@ -3,10 +3,10 @@ package model
 import "time"
 
 type Request struct {
-	ID        string    `db:"id" json:"id"`
-	TypeID    int       `db:"type_id" json:"type_id"`
-	SourceID  string    `db:"source_id" json:"source_id"`
-	TargetID  string    `db:"target_id" json:"target_id"`
+	ID        string    `db:"id" json:"id" validate:"required"`
+	TypeID    int       `db:"type_id" json:"type_id" validate:"required"`
+	SourceID  string    `db:"source_id" json:"source_id" validate:"required"`
+	TargetID  string    `db:"target_id" json:"target_id" validate:"required"`
 	Message   string    `db:"message" json:"message"`
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
 }

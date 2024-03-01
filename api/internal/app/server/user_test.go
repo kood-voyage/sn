@@ -103,3 +103,59 @@ func TestUserPrivacyUpdate(t *testing.T) {
 		})
 	}
 }
+
+func TestHandleUser_GetFollowers(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("Error creating mock database: %v", err)
+	}
+	defer db.Close()
+
+	store := sqlstore.New(db)
+	s := newServer(store)
+
+	mock.ExpectQuery("SELECT source_id FROM").
+		WithArgs(targetID).WillReturnRows(sqlmock.NewRows([]string{"source_id"}).AddRow("followerID1").AddRow("followerID2"))
+
+	req, err := http.NewRequest("GET", "/api/v1/auth/user/followers/"+targetID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token := generateValidToken(t, sourceID)
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rec := httptest.NewRecorder()
+	s.ServeHTTP(rec, req)
+	if rec.Code != http.StatusCreated {
+		t.Errorf("Expected status code %d, got %d", http.StatusCreated, rec.Code)
+	}
+}
+
+func TestHandleUser_GetFollowing(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("Error creating mock database: %v", err)
+	}
+	defer db.Close()
+
+	store := sqlstore.New(db)
+	s := newServer(store)
+
+	mock.ExpectQuery("SELECT target_id FROM").
+		WithArgs(sourceID).WillReturnRows(sqlmock.NewRows([]string{"target_id"}).AddRow("followerID1").AddRow("followerID2"))
+
+	req, err := http.NewRequest("GET", "/api/v1/auth/user/following/"+sourceID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token := generateValidToken(t, sourceID)
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rec := httptest.NewRecorder()
+	s.ServeHTTP(rec, req)
+	if rec.Code != http.StatusCreated {
+		t.Errorf("Expected status code %d, got %d", http.StatusCreated, rec.Code)
+	}
+}

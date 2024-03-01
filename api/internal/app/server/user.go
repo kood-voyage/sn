@@ -7,7 +7,7 @@ import (
 	"social-network/internal/model"
 )
 
-// createUser handles the user creation to database. Only userID and privacy state will be stored.
+// createUser Handles the user creation to database. Only userID and privacy state will be stored.
 //
 // @Summary Create a user with privacy state
 // @Tags users
@@ -44,7 +44,7 @@ func (s *Server) createUser() http.HandlerFunc {
 	}
 }
 
-// updatePrivacy will update the user's privacy.
+// updatePrivacy Will update the user's privacy.
 //
 // @Summary Updates user's privacy
 // @Tags users
@@ -77,5 +77,45 @@ func (s *Server) updatePrivacy() http.HandlerFunc {
 		}
 
 		s.respond(w, http.StatusOK, Response{Data: user})
+	}
+}
+
+// handleUserFollowers Handles the retrieval of provided users followers.
+//
+// @Summary Returns a list of user followers
+// @Tags users
+// @Produce json
+// @Param id path string true "User id to get followers"
+// @Success 201 {object} []model.User
+// @Failure 422 {object} Error
+// @Router /api/v1/auth/user/followers/{id} [get]
+func (s *Server) handleUserFollowers() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		followers, err := s.store.User().GetFollowers(r.PathValue("id"))
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		s.respond(w, http.StatusCreated, Response{Data: followers})
+	}
+}
+
+// handleUserFollowing Handles user own following.
+//
+// @Summary Return a list of users who is user following
+// @Tags users
+// @Produce json
+// @Param id path string true "User id to get followers"
+// @Success 201 {object} []model.User
+// @Failure 422 {object} Error
+// @Router /api/v1/auth/user/following/{id} [get]
+func (s *Server) handleUserFollowing() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		followers, err := s.store.User().GetFollowing(r.PathValue("id"))
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		s.respond(w, http.StatusCreated, Response{Data: followers})
 	}
 }

@@ -63,6 +63,9 @@ func configureRouter(s *Server) {
 	))
 	s.router.GET("/api/v1/auth/user/create/{privacy_state}", s.createUser())
 	s.router.GET("/api/v1/auth/user/privacy/{privacy_state}", s.updatePrivacy())
+	s.router.GET("/api/v1/auth/user/followers/{id}", s.handleUserFollowers())
+	s.router.GET("/api/v1/auth/user/following/{id}", s.handleUserFollowing())
+
 	s.router.GET("/api/v1/auth/follow/{id}", s.handleFollow())
 	s.router.GET("/api/v1/auth/unfollow/{id}", s.handleUnfollow())
 	s.router.POST("/api/v1/auth/follow/request", s.handleFollowRequest())

@@ -55,3 +55,43 @@ func (u *UserRepository) CheckPrivacy(userID string) (int, error) {
 
 	return privacy, nil
 }
+
+func (u *UserRepository) GetFollowers(userID string) ([]model.User, error) {
+	query := `SELECT source_id FROM follower WHERE target_id = ?`
+
+	var followers []model.User
+
+	rows, err := u.store.Db.Query(query, userID)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var follower model.User
+		if err = rows.Scan(&follower.ID); err != nil {
+			return nil, err
+		}
+		followers = append(followers, follower)
+	}
+
+	return followers, nil
+}
+
+func (u *UserRepository) GetFollowing(userID string) ([]model.User, error) {
+	query := `SELECT target_id FROM follower WHERE source_id = ?`
+
+	var followers []model.User
+
+	rows, err := u.store.Db.Query(query, userID)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var follower model.User
+		if err = rows.Scan(&follower.ID); err != nil {
+			return nil, err
+		}
+		followers = append(followers, follower)
+	}
+
+	return followers, nil
+}

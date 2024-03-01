@@ -6,6 +6,8 @@ type UserRepository interface {
 	Create(user *model.User, privacy int) error
 	UpdatePrivacy(user *model.User, privacy int) error
 	CheckPrivacy(userID string) (int, error)
+	GetFollowers(userID string) ([]model.User, error)
+	GetFollowing(userID string) ([]model.User, error)
 }
 
 type FollowRepository interface {
