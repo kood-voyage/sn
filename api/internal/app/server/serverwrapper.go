@@ -11,6 +11,16 @@ import (
 	"social-network/internal/store/sqlstore"
 )
 
+// @title social-network API
+// @version 1.0
+// @description API Server for social-network project
+
+// @host localhost:8080
+// @BasePath /api
+
+// @securityDefinitions.apikey Auth
+// @in header
+// @name Authorization
 func Start(config *Config) error {
 	db, err := newDB(config.DatabaseURL, config.Migrations, config.Driver)
 	if err != nil {
@@ -48,8 +58,10 @@ func newDB(databaseURL, migrationSource, driver string) (*sql.DB, error) {
 		return nil, fmt.Errorf("migrations new: %w", err)
 	}
 
-	if err = m.Up(); !errors.Is(err, migrate.ErrNoChange) {
-		return nil, fmt.Errorf("migrations run: %w", err)
+	if err = m.Up(); err != nil {
+		if !errors.Is(err, migrate.ErrNoChange) {
+			return nil, fmt.Errorf("migrations run: %w", err)
+		}
 	}
 
 	if err = db.Ping(); err != nil {

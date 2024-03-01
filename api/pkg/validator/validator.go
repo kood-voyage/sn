@@ -28,6 +28,10 @@ var (
 func Validate(data interface{}) error {
 	val := reflect.ValueOf(data)
 
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+	}
+
 	for i := 0; i < val.NumField(); i++ {
 		tag := val.Type().Field(i).Tag.Get("validate")
 		if tag != "" {

@@ -2,10 +2,16 @@ package server
 
 import (
 	"net/http"
-	models "social-network/internal/model"
+	"social-network/internal/model"
 	"social-network/pkg/validator"
 )
 
+// @Summary Sign up
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Success 201 {string} string "ok"
+// @Router /users/create [get]
 func (s *server) createUser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := &models.User{}

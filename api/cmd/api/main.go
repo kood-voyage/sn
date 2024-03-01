@@ -12,10 +12,6 @@ import (
 // @host localhost:8080
 // @BasePath /
 
-// @securityDefinition.apikey ApiKeyAuth
-// @in header
-// @name Authorization
-
 func main() {
 	config := server.NewConfig()
 	err := config.ReadConfig("config/config.json")
