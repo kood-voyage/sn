@@ -20,7 +20,6 @@ import { zod} from 'sveltekit-superforms/adapters';
 
 export const load: PageServerLoad = async () => {
 	const form = await superValidate(zod(signUpSchema));
-
 	return { form };
 };
 
@@ -29,6 +28,8 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	signup: async (event) => {
 		const form = await superValidate(event, zod(signUpSchema));
+
+
 
 		const {username,email,dateOfBirth,password,repeatPassword,firstName,lastName} = form.data
 
