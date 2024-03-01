@@ -15,8 +15,8 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/auth/follow/request/{id}": {
-            "get": {
+        "/api/v1/auth/follow/request": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -26,19 +26,10 @@ const docTemplate = `{
                 "tags": [
                     "follow"
                 ],
-                "summary": "Request a follow for user",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Target user ID to request follow",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "Resolves a follow request",
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/server.Response"
                         }
@@ -69,7 +60,7 @@ const docTemplate = `{
                 "tags": [
                     "follow"
                 ],
-                "summary": "Follow a user",
+                "summary": "Follow a user or create follow request",
                 "parameters": [
                     {
                         "type": "string",
@@ -86,14 +77,20 @@ const docTemplate = `{
                             "$ref": "#/definitions/server.Response"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/server.Error"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
+                    "422": {
+                        "description": "Unprocessable Entity",
                         "schema": {
                             "$ref": "#/definitions/server.Error"
                         }

@@ -55,32 +55,30 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/server.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.Error'
         "401":
           description: Unauthorized
           schema:
             $ref: '#/definitions/server.Error'
-        "500":
-          description: Internal Server Error
+        "422":
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/server.Error'
-      summary: Follow a user
+      summary: Follow a user or create follow request
       tags:
       - follow
-  /api/v1/auth/follow/request/{id}:
-    get:
+  /api/v1/auth/follow/request:
+    post:
       consumes:
       - application/json
-      parameters:
-      - description: Target user ID to request follow
-        in: path
-        name: id
-        required: true
-        type: string
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
             $ref: '#/definitions/server.Response'
         "401":
@@ -91,7 +89,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/server.Error'
-      summary: Request a follow for user
+      summary: Resolves a follow request
       tags:
       - follow
   /api/v1/auth/unfollow/{id}:

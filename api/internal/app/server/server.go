@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 	_ "social-network/docs"
+	"social-network/internal/model"
 	"social-network/internal/store"
 	"social-network/pkg/router"
-	"social-network/internal/model"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -65,7 +65,7 @@ func configureRouter(s *Server) {
 	s.router.GET("/api/v1/auth/user/privacy/{privacy_state}", s.updatePrivacy())
 	s.router.GET("/api/v1/auth/follow/{id}", s.handleFollow())
 	s.router.GET("/api/v1/auth/unfollow/{id}", s.handleUnfollow())
-	s.router.GET("/api/v1/auth/follow/request/{id}", s.handleFollowRequest())
+	s.router.POST("/api/v1/auth/follow/request", s.handleFollowRequest())
 
 	// s.router.GET("/login", s.login())
 
@@ -95,7 +95,7 @@ func (s *Server) decode(r *http.Request, data interface{}) error {
 // func (s *Server) login() http.HandlerFunc {
 // 	return func(w http.ResponseWriter, r *http.Request) {
 // 		newToken := jwttoken.NewClaims()
-// 		newToken.Set("user_id", "testUSERid")
+// 		newToken.Set("user_id", "testUser2")
 // 		newToken.SetTime("exp", time.Now().Add(time.Hour*100))
 // 		a := jwttoken.HmacSha256(os.Getenv(jwtKey))
 
