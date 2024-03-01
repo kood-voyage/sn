@@ -27,6 +27,7 @@ func (c *Claims) Get(key string) (interface{}, error) {
 	result, ok := c.claimsMap[key]
 	if !ok {
 		return "", fmt.Errorf("claim (%s) doesn't exist", key)
+		fmt.Println("test")
 	}
 
 	return result, nil
