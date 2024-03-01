@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - main
-<<<<<<< HEAD
+
   push:
     branches:
       - main
@@ -16,7 +16,7 @@ jobs:
     steps:
      - name: Super-Linter
        uses: super-linter/super-linter@v6.3.0
-=======
+
 
 jobs:
   build:
@@ -44,4 +44,4 @@ jobs:
           VALIDA_ALL_CODEBASE: false
           VALIDATE_HTML: false
           VALIDATE_SQL: false
->>>>>>> 2c863bfbba5070f0a8c61e704cfa76653a06a755
+
