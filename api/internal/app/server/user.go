@@ -2,12 +2,11 @@ package server
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"social-network/internal/model"
 )
 
-// createUser Handles the user creation to database. Only userID and privacy state will be stored.
+// userCreate Handles the user creation to database. Only userID and privacy state will be stored.
 //
 // @Summary Create a user with privacy state
 // @Tags users
@@ -18,7 +17,7 @@ import (
 // @Failure 401 {object} Error
 // @Failure 422 {object} Error
 // @Router /api/v1/auth/user/create/{privacy_state} [get]
-func (s *Server) createUser() http.HandlerFunc {
+func (s *Server) userCreate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userID, ok := r.Context().Value(ctxUserID).(string)
 		if !ok {
@@ -35,7 +34,6 @@ func (s *Server) createUser() http.HandlerFunc {
 		}
 
 		if err := s.store.User().Create(user, privacy); err != nil {
-			fmt.Println(err)
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
@@ -44,7 +42,7 @@ func (s *Server) createUser() http.HandlerFunc {
 	}
 }
 
-// updatePrivacy Will update the user's privacy.
+// userPrivacy Will update the user's privacy.
 //
 // @Summary Updates user's privacy
 // @Tags users
@@ -55,7 +53,7 @@ func (s *Server) createUser() http.HandlerFunc {
 // @Failure 401 {object} Error
 // @Failure 422 {object} Error
 // @Router /api/v1/auth/user/privacy/{privacy_state} [get]
-func (s *Server) updatePrivacy() http.HandlerFunc {
+func (s *Server) userPrivacy() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userID, ok := r.Context().Value(ctxUserID).(string)
 		if !ok {

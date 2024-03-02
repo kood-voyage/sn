@@ -65,20 +65,25 @@ func configureRouter(s *Server) {
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
 	))
 	//---------USER---------//
-	s.router.GET("/api/v1/auth/user/create/{privacy_state}", s.createUser())
-	s.router.GET("/api/v1/auth/user/privacy/{privacy_state}", s.updatePrivacy())
+	s.router.GET("/api/v1/auth/user/create/{privacy_state}", s.userCreate())
+	s.router.GET("/api/v1/auth/user/privacy/{privacy_state}", s.userPrivacy())
 	s.router.GET("/api/v1/auth/user/followers/{id}", s.userFollowers())
 	s.router.GET("/api/v1/auth/user/following/{id}", s.userFollowing())
 	s.router.GET("/api/v1/auth/user/posts/{id}", s.userPosts())
 	s.router.GET("/api/v1/auth/user/notifications", s.userNotifications())
-
 	//---------NOTIFICATION---------//
-	s.router.POST("/api/v1/auth/notification/create", s.createNotification())
-	s.router.DELETE("/api/v1/auth/notification/delete/{id}", s.deleteNotification())
+	s.router.POST("/api/v1/auth/notification/create", s.notificationCreate())
+	s.router.DELETE("/api/v1/auth/notification/delete/{id}", s.notificationDelete())
 	//---------FOLLOW--------------//
 	s.router.GET("/api/v1/auth/follow/{id}", s.handleFollow())
 	s.router.GET("/api/v1/auth/unfollow/{id}", s.handleUnfollow())
 	s.router.POST("/api/v1/auth/follow/request", s.handleFollowRequest())
+	//---------GROUP--------------//
+	s.router.POST("/api/v1/auth/group/create", s.groupCreate())
+	s.router.PUT("/api/v1/auth/group/update", s.groupUpdate())
+	s.router.DELETE("/api/v1/auth/group/delete/{id}", s.groupDelete())
+
+
 
 	s.router.GET("/login", s.login())
 

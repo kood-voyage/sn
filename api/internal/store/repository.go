@@ -31,3 +31,10 @@ type PostRepository interface {
 	GetUsers(user_id string) ([]model.Post, error)
 	// Update(string) error
 }
+
+type GroupRepository interface {
+	Create(group model.Group) (*model.Group, error)
+	Delete(group_id string) error
+	Update(group model.Group) error
+	Get(group_id string) (*model.Group, error)
+}
