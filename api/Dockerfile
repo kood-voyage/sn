@@ -11,6 +11,8 @@ WORKDIR /app
 
 COPY . .
 
+WORKDIR /app/cmd/api
+
 RUN CGO_ENABLED=1 go build -o sn-go-api .
 
 #Image
@@ -23,7 +25,7 @@ RUN mkdir /app
 
 COPY --from=build /app /app
 
-WORKDIR /app
+WORKDIR /app/cmd/api
 
 EXPOSE 8080:8080
 
