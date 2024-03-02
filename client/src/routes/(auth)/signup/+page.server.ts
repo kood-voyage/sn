@@ -14,7 +14,7 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-	signup: async (event) => {
+	signin: async (event) => {
 		const form = await superValidate(event, zod(signUpSchema));
 
 	const user = new User(form.data)

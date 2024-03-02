@@ -2,6 +2,7 @@ package server
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/sqlite3"
@@ -10,6 +11,16 @@ import (
 	"social-network/internal/store/sqlstore"
 )
 
+// @title social-network API
+// @version 1.0
+// @description API Server for social-network project
+
+// @host localhost:8080
+// @BasePath /api
+
+// @securityDefinitions.apikey Auth
+// @in header
+// @name Authorization
 func Start(config *Config) error {
 	db, err := newDB(config.DatabaseURL, config.Migrations, config.Driver)
 	if err != nil {
@@ -48,7 +59,9 @@ func newDB(databaseURL, migrationSource, driver string) (*sql.DB, error) {
 	}
 
 	if err = m.Up(); err != nil {
-		return nil, fmt.Errorf("migrations run: %w", err)
+		if !errors.Is(err, migrate.ErrNoChange) {
+			return nil, fmt.Errorf("migrations run: %w", err)
+		}
 	}
 
 	if err = db.Ping(); err != nil {
