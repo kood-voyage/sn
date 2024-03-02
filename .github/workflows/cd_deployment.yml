@@ -18,4 +18,4 @@ jobs:
     - name: Deleting old docker container
       run: sudo docker rm -f sn-api-go-container || true
     - name: Running docker container
-      run: sudo docker run -d -p 6940:6940 --name sn-api-go-container mannuk24/sn-api-go
+      run: sudo docker run -d -p 8080:8080 --name sn-api-go-container mannuk24/sn-api-go
