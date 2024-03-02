@@ -120,14 +120,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.Post"
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "422": {
+                        "description": "Unprocessable Entity",
                         "schema": {
                             "$ref": "#/definitions/server.Error"
                         }
                     },
-                    "422": {
-                        "description": "Unprocessable Entity",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/server.Error"
                         }
