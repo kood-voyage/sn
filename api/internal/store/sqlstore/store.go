@@ -6,10 +6,11 @@ import (
 )
 
 type Store struct {
-	Db                     *sql.DB
-	userRepository         *UserRepository
-	followRepository       *FollowRepository
-	requestRepository      *RequestRepository
+	Db                *sql.DB
+	userRepository    *UserRepository
+	followRepository  *FollowRepository
+	requestRepository *RequestRepository
+	postRepository    *PostRepository
 }
 
 func New(db *sql.DB) *Store {
@@ -52,4 +53,16 @@ func (s *Store) Request() store.RequestRepository {
 	}
 
 	return s.requestRepository
+}
+
+func (s *Store) Post() store.PostRepository {
+	if s.postRepository != nil {
+		return s.postRepository
+	}
+
+	s.postRepository = &PostRepository{
+		store: s,
+	}
+
+	return s.postRepository
 }

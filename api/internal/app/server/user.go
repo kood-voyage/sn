@@ -14,7 +14,7 @@ import (
 // @Router /users/create [get]
 func (s *Server) createUser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		user := &models.User{}
+		user := &model.User{}
 
 		if err := s.decode(r, user); err != nil {
 			s.error(w, http.StatusInternalServerError, err)

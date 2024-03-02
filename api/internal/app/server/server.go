@@ -9,14 +9,14 @@ import (
 	"social-network/internal/store"
 	"social-network/pkg/router"
 
-	httpSwagger "github.com/swaggo/http-swagger"
+	"github.com/swaggo/http-swagger"
 )
 
 const (
-	sessionName     = "session"
-	jwtKey          = "JWT_KEY"
-	ctxKeyRequestID ctxKey = iota 
-	ctxUserID 
+	sessionName            = "session"
+	jwtKey                 = "JWT_KEY"
+	ctxKeyRequestID ctxKey = iota
+	ctxUserID
 )
 
 type ctxKey int
@@ -59,6 +59,7 @@ func configureRouter(s *Server) {
 	))
 	s.router.POST("/api/v1/users/create", s.createUser())
 	s.router.GET("/api/v1/follow/{id}", s.handleFollow())
+	s.router.POST("/api/v1/posts/create", s.createPost())
 }
 
 func (s *Server) error(w http.ResponseWriter, code int, err error) {

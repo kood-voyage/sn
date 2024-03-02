@@ -1,16 +1,23 @@
 package store
 
-import models "social-network/internal/model"
+import "social-network/internal/model"
 
 type UserRepository interface {
-	Create(user *models.User) error
+	Create(user *model.User) error
 }
 
 type FollowRepository interface {
-	Create(follower models.Follower) error
-	Delete(follower models.Follower) error
+	Create(follower model.Follower) error
+	Delete(follower model.Follower) error
 }
 
 type RequestRepository interface {
-	Create(request models.Request) error
+	Create(request model.Request) error
+}
+
+type PostRepository interface {
+	Create(post *model.Post) error
+	Delete(id string) error
+	Get(id string) (*model.Post, error)
+	// Update(string) error
 }

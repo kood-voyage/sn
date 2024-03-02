@@ -10,7 +10,7 @@ type UserRepository struct {
 	store *Store
 }
 
-func (u *UserRepository) Create(user *models.User) error {
+func (u *UserRepository) Create(user *model.User) error {
 	query := `INSERT INTO user (
                   id,
                   username,
@@ -49,7 +49,7 @@ func (u *UserRepository) Create(user *models.User) error {
 	return nil
 }
 
-func prepareUser(user *models.User) (*models.User, error) {
+func prepareUser(user *model.User) (*model.User, error) {
 	user.ID = uuid.New().String()
 	user.CreatedAt = time.Now()
 	err := user.BeforeCreate()

@@ -1,5 +1,23 @@
 basePath: /
 definitions:
+  model.Post:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      user_id:
+        type: string
+    required:
+    - content
+    - id
+    - title
+    - user_id
+    type: object
   server.Error:
     properties:
       error: {}
@@ -43,6 +61,28 @@ paths:
       summary: Follow a user
       tags:
       - users
+  /api/v1/posts/create:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Post'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Create post
+      tags:
+      - posts
   /api/v1/unfollow/{id}:
     get:
       consumes:

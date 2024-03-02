@@ -3,7 +3,7 @@ package server
 import (
 	"errors"
 	"net/http"
-	models "social-network/internal/model"
+	"social-network/internal/model"
 )
 
 // handleFollow handles the follow action where one user follows another.
@@ -24,7 +24,7 @@ func (s *Server) handleFollow() http.HandlerFunc {
 			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 			return
 		}
-		follow := models.Follower{
+		follow := model.Follower{
 			SourceID: sourceID,
 			TargetID: r.PathValue("id"),
 		}
@@ -36,7 +36,7 @@ func (s *Server) handleFollow() http.HandlerFunc {
 		}
 
 		//create notification
-		notification := models.Request{
+		notification := model.Request{
 			TypeID:   "notification",
 			SourceID: sourceID,
 			TargetID: r.PathValue("id"),
@@ -69,7 +69,7 @@ func (s *Server) handleUnfollow() http.HandlerFunc {
 		if !ok {
 			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 		}
-		follow := models.Follower{
+		follow := model.Follower{
 			SourceID: sourceID,
 			TargetID: r.PathValue("id"),
 		}
@@ -81,7 +81,7 @@ func (s *Server) handleUnfollow() http.HandlerFunc {
 		}
 
 		//create notification
-		notification := models.Request{
+		notification := model.Request{
 			TypeID:   "notification",
 			SourceID: sourceID,
 			TargetID: r.PathValue("id"),

@@ -4,4 +4,5 @@ type Store interface {
 	User() UserRepository
 	Follow() FollowRepository
 	Request() RequestRepository
+	Post() PostRepository
 }
