@@ -19,5 +19,4 @@ type PostRepository interface {
 	Create(post *model.Post) error
 	Delete(id string) error
 	Get(id string) (*model.Post, error)
-	// Update(string) error
 }
