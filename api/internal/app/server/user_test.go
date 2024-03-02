@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"social-network/internal/store/sqlstore"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 )
@@ -114,7 +115,7 @@ func TestHandleUser_GetFollowers(t *testing.T) {
 	store := sqlstore.New(db)
 	s := newServer(store)
 
-	mock.ExpectQuery("SELECT source_id FROM").
+	mock.ExpectQuery("SELECT source_id FROM follower").
 		WithArgs(targetID).WillReturnRows(sqlmock.NewRows([]string{"source_id"}).AddRow("followerID1").AddRow("followerID2"))
 
 	req, err := http.NewRequest("GET", "/api/v1/auth/user/followers/"+targetID, nil)
@@ -142,10 +143,41 @@ func TestHandleUser_GetFollowing(t *testing.T) {
 	store := sqlstore.New(db)
 	s := newServer(store)
 
-	mock.ExpectQuery("SELECT target_id FROM").
+	mock.ExpectQuery("SELECT target_id FROM follower").
 		WithArgs(sourceID).WillReturnRows(sqlmock.NewRows([]string{"target_id"}).AddRow("followerID1").AddRow("followerID2"))
 
 	req, err := http.NewRequest("GET", "/api/v1/auth/user/following/"+sourceID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token := generateValidToken(t, sourceID)
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rec := httptest.NewRecorder()
+	s.ServeHTTP(rec, req)
+	if rec.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, rec.Code)
+	}
+}
+
+func TestHandleUser_GetNotifications(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("Error creating mock database: %v", err)
+	}
+	defer db.Close()
+
+	store := sqlstore.New(db)
+	s := newServer(store)
+
+	mock.ExpectQuery("SELECT \\* FROM request").
+		WithArgs(sourceID, s.types.Request.Notification).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "type_id", "source_id", "target_id", "message", "created_at"}).
+			AddRow("testID1", s.types.Request.Notification, targetID, sourceID, "test1", time.Now()).
+			AddRow("testID2", s.types.Request.Notification, targetID, sourceID, "test2", time.Now()))
+
+	req, err := http.NewRequest("GET", "/api/v1/auth/user/notifications", nil)
 	if err != nil {
 		t.Fatal(err)
 	}

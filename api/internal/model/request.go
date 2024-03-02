@@ -15,11 +15,6 @@ type Request struct {
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
 }
 
-// type RequestType struct {
-// 	ID          string `db:"id" json:"id"`
-// 	Description string `db:"description" json:"description"`
-// }
-
 func FollowRequest() *Request {
 	id := uuid.New().String()
 	return &Request{

@@ -266,6 +266,28 @@ paths:
       summary: Return a list of users who is user following
       tags:
       - users
+  /api/v1/auth/user/notifications:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Request'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Return a list of notifications to user
+      tags:
+      - users
   /api/v1/auth/user/posts/{id}:
     get:
       parameters:

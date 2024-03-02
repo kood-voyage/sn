@@ -120,7 +120,6 @@ func (s *Server) userFollowing() http.HandlerFunc {
 	}
 }
 
-
 //NEED TO WRITE TEST FOR THAT FUNCTION AFTER FINISHING WITH POST PRIVACY CHECKING
 
 // userPosts Handles getting user profile posts.
@@ -169,5 +168,32 @@ func (s *Server) userPosts() http.HandlerFunc {
 		}
 
 		s.respond(w, http.StatusOK, Response{Data: posts})
+	}
+}
+
+// userNotifications Handles users notifications.
+//
+// @Summary Return a list of notifications to user
+// @Tags users
+// @Produce json
+// @Success 200 {object} []model.Request
+// @Failure 401 {object} Error
+// @Failure 422 {object} Error
+// @Router /api/v1/auth/user/notifications [get]
+func (s *Server) userNotifications() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+			return
+		}
+
+		notifications, err := s.store.User().GetNotifications(userID, s.types.Request.Notification)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, http.StatusOK, Response{Data: notifications})
 	}
 }

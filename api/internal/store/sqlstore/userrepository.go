@@ -111,3 +111,24 @@ func (u *UserRepository) IsFollowing(source_id, target_id string) (bool, error) 
 	}
 	return true, nil
 }
+
+func (u *UserRepository) GetNotifications(user_id string, req_type int) ([]model.Request, error) {
+	query := `SELECT * FROM request WHERE target_id = ? AND type_id = ?`
+
+	var notifications []model.Request
+
+	rows, err := u.store.Db.Query(query, user_id, req_type)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next(){
+		var notification model.Request
+		if err := rows.Scan(&notification.ID, &notification.TypeID, &notification.SourceID, &notification.TargetID, &notification.Message, &notification.CreatedAt); err != nil {
+			return nil, err
+		}
+		notifications = append(notifications, notification)
+	}
+
+	return notifications, nil
+}
