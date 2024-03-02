@@ -22,28 +22,29 @@ try {
 }
 
 export function checkUserExists(login:string, password:string) {
-  try {
-    // const query = `
-      SELECT 
-      `
-    const id = uuidv4()
+  return {login, password}
+  // try {
+  //   const query = `
+  //     SELECT 
+  //     `
+  //   const id = uuidv4()
 
-    const password = 'secret';
+  //   const password = 'secret';
 
-    const salt = bcrypt.genSaltSync(10);
+  //   const salt = bcrypt.genSaltSync(10);
 
-    const hash = bcrypt.hashSync(password, salt);
+  //   const hash = bcrypt.hashSync(password, salt);
 
-    console.log(hash)
+  //   console.log(hash)
     
-    db.prepare(query).get(login)
-  } catch (err) {
-    if (err instanceof Error) {
-      return { ok: false, error: err, message: err.message}
-    } else {
-      return { ok: false, error: err}
-    }
-  }
+  //   db.prepare(query).get(login)
+  // } catch (err) {
+  //   if (err instanceof Error) {
+  //     return { ok: false, error: err, message: err.message}
+  //   } else {
+  //     return { ok: false, error: err}
+  //   }
+  // }
 }
 
 export function createUser(userInfo: User) {
