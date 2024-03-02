@@ -65,17 +65,6 @@ func (s *server) respond(w http.ResponseWriter, r *http.Request, code int, data 
 	}
 }
 
-func (s *server) handleTestResponse(w http.ResponseWriter, r *http.Request) {
-    response := Response{
-        Data: map[string]string{
-            "status":  "success",
-            "message": "Test response received!",
-        },
-    }
-
-    s.respond(w, r, http.StatusOK, response)
-}
-
 func (s *server) decode(r *http.Request, data interface{}) error {
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 		return fmt.Errorf("decode json: %w", err)
