@@ -21,6 +21,10 @@ COPY --from=build /app/cmd/api/sn-go-api /app/
 
 WORKDIR /app
 
+COPY . /app/
+
+WORKDIR /app
+
 # Copy the necessary config files
 COPY config/ config/
 
