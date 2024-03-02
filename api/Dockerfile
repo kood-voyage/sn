@@ -1,7 +1,7 @@
-# Build Stage
+# build Stage
 FROM golang:alpine AS build
 
-# Installing build dependencies if needed
+# installing build dependencies 
 RUN apk add --no-cache gcc musl-dev
 
 WORKDIR /app
@@ -12,7 +12,7 @@ WORKDIR /app/cmd/api
 
 RUN CGO_ENABLED=1 go build -o sn-go-api .
 
-# Final Stage
+# finaal Stage
 FROM alpine:latest
 
 RUN mkdir /app
@@ -25,7 +25,6 @@ COPY . /app/
 
 WORKDIR /app
 
-# Copy the necessary config files
 COPY config/ config/
 
 EXPOSE 8080
