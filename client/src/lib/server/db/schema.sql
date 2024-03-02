@@ -8,5 +8,5 @@ CREATE TABLE
     date_of_birth text NOT NULL,
     first_name text,
     last_name text,
-    gender text,
+    gender text
   );
