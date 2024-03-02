@@ -3,9 +3,9 @@ FROM golang:1.22
 RUN apt-get update && \
     apt-get install -y sqlite3 libsqlite3-dev
 
-WORKDIR /go/src/app/cmd/api  
+WORKDIR /go/src/app/api/cmd/api
 
-COPY ../../../ .  
+COPY . .
 
 RUN go mod download
 
