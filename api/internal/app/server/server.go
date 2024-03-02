@@ -51,6 +51,9 @@ func (s *server) configureRouter() {
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
 	))
 	s.router.POST("/api/v1/users/create", s.createUser())
+	s.router.GET("/api/v1/users/testresponse", s.handleTestResponse)
+
+
 }
 
 func (s *server) error(w http.ResponseWriter, r *http.Request, code int, err error) {
@@ -63,6 +66,17 @@ func (s *server) respond(w http.ResponseWriter, r *http.Request, code int, data 
 	if data != nil {
 		json.NewEncoder(w).Encode(data)
 	}
+}
+
+func (s *server) handleTestResponse(w http.ResponseWriter, r *http.Request) {
+    response := Response{
+        Data: map[string]string{
+            "status":  "success",
+            "message": "Test response received!",
+        },
+    }
+
+    s.respond(w, r, http.StatusOK, response)
 }
 
 func (s *server) decode(r *http.Request, data interface{}) error {
