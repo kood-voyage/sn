@@ -9,7 +9,7 @@ import (
 // handleFollow handles the follow action where one user follows another.
 //
 // @Summary Follow a user
-// @Tags users
+// @Tags follow
 // @Accept json
 // @Produce json
 // @Param id path string true "Target user ID to follow"
@@ -55,7 +55,7 @@ func (s *Server) handleFollow() http.HandlerFunc {
 // handleUnfollow handles the unfollow action where one user unfollows another.
 //
 // @Summary Unfollow a user
-// @Tags users
+// @Tags follow
 // @Accept json
 // @Produce json
 // @Param id path string true "Target user ID to Unfollow"
@@ -74,21 +74,40 @@ func (s *Server) handleUnfollow() http.HandlerFunc {
 			TargetID: r.PathValue("id"),
 		}
 
-		//follow user
-		if err := s.store.Follow().Create(follow); err != nil {
+		//unfollow a user
+		if err := s.store.Follow().Delete(follow); err != nil {
 			s.error(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		//create notification
-		notification := model.Request{
-			TypeID:   "notification",
+		s.respond(w, http.StatusCreated, Response{Data: nil})
+	}
+}
+
+// handleFollowRequest handles the follow action where one user profile is private and creates a request to view their profile. If request is accepted create another request to api/v1/follow/{id} endpoint
+//
+// @Summary Request a follow for user
+// @Tags follow
+// @Accept json
+// @Produce json
+// @Param id path string true "Target user ID to request follow"
+// @Success 201 {object} Response
+// @Failure 401 {object} Error
+// @Failure 500 {object} Error
+// @Router /api/v1/follow/request/{id} [get]
+func (s *Server) handleFollowRequest() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sourceID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+		}
+		request := model.Request{
+			TypeID:   "follow",
 			SourceID: sourceID,
 			TargetID: r.PathValue("id"),
-			Message:  "started following you.",
 		}
 
-		if err := s.store.Request().Create(notification); err != nil {
+		if err := s.store.Request().Create(request); err != nil {
 			s.error(w, http.StatusInternalServerError, err)
 			return
 		}
