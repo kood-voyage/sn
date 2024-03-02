@@ -6,4 +6,5 @@ type Store interface {
 	Request() RequestRepository
 	Post() PostRepository
 	Group() GroupRepository
+	Comment() CommentRepository
 }

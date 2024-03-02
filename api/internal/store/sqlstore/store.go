@@ -11,6 +11,7 @@ type Store struct {
 	followRepository  *FollowRepository
 	requestRepository *RequestRepository
 	postRepository    *PostRepository
+	commentRepository *CommentRepository
 	groupRepository   *GroupRepository
 }
 
@@ -66,6 +67,18 @@ func (s *Store) Post() store.PostRepository {
 	}
 
 	return s.postRepository
+}
+
+func (s *Store) Comment() store.CommentRepository {
+	if s.commentRepository != nil {
+		return s.commentRepository
+	}
+
+	s.commentRepository = &CommentRepository{
+		store: s,
+	}
+
+	return s.commentRepository
 }
 
 func (s *Store) Group() store.GroupRepository {
