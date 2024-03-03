@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"os"
 	_ "social-network/docs"
+	"social-network/internal/model"
 	"social-network/internal/store"
 	"social-network/pkg/jwttoken"
 	"social-network/pkg/router"
 	"time"
-	"social-network/internal/model"
 
 	"github.com/swaggo/http-swagger"
 )
@@ -76,7 +76,7 @@ func configureRouter(s *Server) {
 	s.router.GET("/api/v1/auth/unfollow/{id}", s.handleUnfollow())
 	s.router.GET("/api/v1/auth/follow/request/{id}", s.handleFollowRequest())
 
-	// s.router.GET("/login", s.login())
+	s.router.GET("/login", s.login())
 
 }
 
@@ -101,20 +101,20 @@ func (s *Server) decode(r *http.Request, data interface{}) error {
 
 //FOR DEVELOPMENT PURPOSES TO GENERATE JWT TOKEN
 
-// func (s *Server) login() http.HandlerFunc {
-// 	return func(w http.ResponseWriter, r *http.Request) {
-// 		newToken := jwttoken.NewClaims()
-// 		newToken.Set("user_id", "testUSERid")
-// 		newToken.SetTime("exp", time.Now().Add(time.Hour*100))
-// 		a := jwttoken.HmacSha256(os.Getenv(jwtKey))
+func (s *Server) login() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		newToken := jwttoken.NewClaims()
+		newToken.Set("user_id", "testUSERid")
+		newToken.SetTime("exp", time.Now().Add(time.Hour*100))
+		a := jwttoken.HmacSha256(os.Getenv(jwtKey))
 
-// 		token, err := a.Encode(newToken)
-// 		if err != nil {
-// 			s.error(w, http.StatusBadRequest, err)
-// 			return
-// 		}
-// 		fmt.Println("TEST")
+		token, err := a.Encode(newToken)
+		if err != nil {
+			s.error(w, http.StatusBadRequest, err)
+			return
+		}
+		fmt.Println("TEST")
 
-// 		s.respond(w, http.StatusOK, Response{Data: token})
-// 	}
-// }
+		s.respond(w, http.StatusOK, Response{Data: token})
+	}
+}
