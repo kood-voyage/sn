@@ -32,7 +32,7 @@
 			<div class="m-auto h-32 sm:h-60 max-w-[1096px] p-0 sm:px-2">
 				<img
 					class="h-full w-full object-cover sm:rounded-xl"
-					src="https://www.onceuponapicture.co.uk/wp-content/uploads/2019/02/46456227_2504829799542273_7554593422053474304_o-700x525.jpg"
+					src="https://cdn1.vectorstock.com/i/1000x1000/07/70/floral-abstract-seamless-pattern-spring-vector-29920770.jpg"
 					alt="banner"
 				/>
 			</div>

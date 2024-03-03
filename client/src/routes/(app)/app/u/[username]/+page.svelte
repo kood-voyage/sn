@@ -39,9 +39,9 @@
 
 			<div class="h-8 relative mx-0 sm:mx-4">
 				<img
-					src="https://cdn.create.vista.com/api/media/small/490310088/stock-photo-green-basilisk-or-jesus-christ-lizard-in-the-zoo-terrarium"
+					src="https://api.dicebear.com/7.x/pixel-art/svg?seed={username}"
 					alt="banner"
-					class="absolute bottom-[1px] left-12 h-20 w-20 rounded-full border-4 border-white object-cover dark:border-slate-950"
+					class="absolute bottom-[1px] left-12 h-20 w-20 rounded-full border-4 border-white object-cover dark:border-slate-950 "
 				/>
 
 				<h1 class="absolute bottom-0 sm:bottom-4 left-[140px] text-2xl font-bold">
