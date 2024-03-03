@@ -39,10 +39,11 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@types/bcrypt": "^5.0.2",
 		"@types/better-sqlite3": "^7.6.9",
-    "@types/uuid": "^9.0.8",
-    "better-sqlite3": "^9.4.3",
-    "uuid": "^9.0.1",
+		"@types/uuid": "^9.0.8",
+		"bcrypt": "^5.1.1",
+		"better-sqlite3": "^9.4.3",
 		"bits-ui": "^0.18.2",
 		"clsx": "^2.1.0",
 		"formsnap": "^0.5.1",
@@ -52,6 +53,7 @@
 		"sveltekit-superforms": "^2.6.2",
 		"tailwind-merge": "^2.2.1",
 		"tailwind-variants": "^0.2.0",
+		"uuid": "^9.0.1",
 		"zod": "^3.22.4"
 	}
 }

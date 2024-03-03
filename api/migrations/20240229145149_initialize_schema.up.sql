@@ -1,14 +1,5 @@
 CREATE TABLE user (
-                      id text PRIMARY KEY UNIQUE NOT NULL,
-                      username text UNIQUE NOT NULL,
-                      email text UNIQUE NOT NULL,
-                      password text NOT NULL,
-                      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                      date_of_birth text NOT NULL,
-                      first_name text,
-                      last_name text,
-                      gender text,
-                      description text
+                      id text PRIMARY KEY UNIQUE NOT NULL
 );
 
 CREATE TABLE follower (
@@ -165,11 +156,4 @@ CREATE TABLE image (
 CREATE TABLE image_type (
                             id text PRIMARY KEY UNIQUE NOT NULL,
                             description text NOT NULL
-);
-
-CREATE TABLE session (
-                         id text PRIMARY KEY UNIQUE NOT NULL,
-                         user_id text NOT NULL,
-                         access_token_id text NOT NULL,
-                         expires_at DATETIME NOT NULL
 );

@@ -1,17 +1,13 @@
-# Backend build stage
-FROM golang:1.17 as backend
-WORKDIR /app/backend
+FROM golang:1.22
 
-# Copy placeholder files (adjust as needed)
-COPY placeholder/main.go .
+WORKDIR /go/src/app
 
-# Build Go application
-RUN go build -o my-golang-app
+COPY . .
 
-# Production-ready image
-FROM ubuntu:20.04
-WORKDIR /app
-COPY --from=backend /app/backend/my-golang-app /app/my-golang-app
+RUN go mod download
 
-EXPOSE 8080
-CMD ["./my-golang-app"]
+RUN go build -o sn-api-go ./cmd/api
+
+EXPOSE 6940
+
+CMD ["./sn-api-go"]

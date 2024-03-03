@@ -1,0 +1,23 @@
+basePath: /
+host: localhost:8080
+info:
+  contact: {}
+  description: api server for social network
+  title: Social Network API
+  version: "0.1"
+paths:
+  /users/create:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: ok
+          schema:
+            type: string
+      summary: Sign up
+      tags:
+      - users
+swagger: "2.0"

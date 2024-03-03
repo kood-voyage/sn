@@ -39,5 +39,3 @@ DROP TABLE member_type;
 DROP TABLE image;
 
 DROP TABLE image_type;;
-
-DROP TABLE session;
