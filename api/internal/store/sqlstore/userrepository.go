@@ -1,61 +1,57 @@
 package sqlstore
 
 import (
-	"github.com/google/uuid"
+	"database/sql"
+	"errors"
 	"social-network/internal/model"
-	"time"
 )
 
 type UserRepository struct {
 	store *Store
 }
 
-func (u *UserRepository) Create(user *model.User) error {
-	query := `INSERT INTO user (
-                  id,
-                  username,
-                  email,
-                  password,
-                  created_at,
-                  date_of_birth,
-                  first_name,
-                  last_name,
-                  gender,
-                  description) VALUES  (?,?,?,?,?,?,?,?,?,?)`
+func (u *UserRepository) Create(user *model.User, privacy int) error {
+	query := `INSERT INTO user (id) VALUES (?)`
 
-	user, err := prepareUser(user)
+	_, err := u.store.Db.Exec(query, user.ID)
+
 	if err != nil {
 		return err
 	}
 
-	_, err = u.store.Db.Exec(
-		query,
-		user.ID,
-		user.Username,
-		user.Email,
-		user.Password,
-		user.CreatedAt,
-		user.DateOfBirth,
-		user.FirstName,
-		user.LastName,
-		user.Gender,
-		user.Description)
+	//insert user privacy state to database
+	query = `INSERT INTO privacy (id, type_id) VALUES (?, ?)`
+
+	_, err = u.store.Db.Exec(query, user.ID, privacy)
 	if err != nil {
 		return err
 	}
-
-	user.Sanitize()
 
 	return nil
 }
 
-func prepareUser(user *model.User) (*model.User, error) {
-	user.ID = uuid.New().String()
-	user.CreatedAt = time.Now()
-	err := user.BeforeCreate()
+func (u *UserRepository) UpdatePrivacy(user *model.User, privacy int) error {
+	query := `UPDATE privacy SET type_id = ? WHERE id = ?`
+
+	_, err := u.store.Db.Exec(query, privacy, user.ID)
+
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return user, nil
+	return nil
+}
+
+func (u *UserRepository) CheckPrivacy(userID string) (int, error) {
+	query := `SELECT type_id FROM privacy WHERE id = ?`
+
+	var privacy int
+	if err := u.store.Db.QueryRow(query, userID).Scan(&privacy); err != nil {
+		if err == sql.ErrNoRows {
+			return -1, errors.New("user does not exist")
+		}
+		return -1, err
+	}
+
+	return privacy, nil
 }

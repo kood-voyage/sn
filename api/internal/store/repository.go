@@ -3,7 +3,9 @@ package store
 import "social-network/internal/model"
 
 type UserRepository interface {
-	Create(user *model.User) error
+	Create(user *model.User, privacy int) error
+	UpdatePrivacy(user *model.User, privacy int) error
+	CheckPrivacy(userID string) (int, error)
 }
 
 type FollowRepository interface {
@@ -19,7 +21,6 @@ type PostRepository interface {
 	Create(post *model.Post) error
 	Delete(id string) error
 	Get(id string) (*model.Post, error)
-	// Update(string) error
 }
 
 type CommentRepository interface {

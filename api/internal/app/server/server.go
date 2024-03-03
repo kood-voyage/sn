@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	_ "social-network/docs"
+	"social-network/internal/model"
 	"social-network/internal/store"
 	"social-network/pkg/jwttoken"
 	"social-network/pkg/router"
@@ -36,6 +37,7 @@ type Server struct {
 	router *router.Router
 	logger *log.Logger
 	store  store.Store
+	types  model.Type
 }
 
 func newServer(store store.Store) *Server {
@@ -43,6 +45,7 @@ func newServer(store store.Store) *Server {
 		router: router.New(),
 		logger: log.Default(),
 		store:  store,
+		types:  model.InitializeTypes(),
 	}
 
 	configureRouter(s)
@@ -63,8 +66,12 @@ func configureRouter(s *Server) {
 	))
 	s.router.POST("/api/v1/users/create", s.createUser())
 	s.router.GET("/api/v1/follow/{id}", s.handleFollow())
-	s.router.POST("/api/v1/posts/create", s.createPost())
+	s.router.GET("/api/v1/auth/posts/{id}", s.getPost())
+	s.router.POST("/api/v1/auth/posts/create", s.createPost())
+	s.router.DELETE("/api/v1/auth/posts/delete/{id}", s.deletePost())
 	s.router.POST("/api/v1/auth/users/create", s.createUser())
+	s.router.GET("/api/v1/auth/user/create/{privacy_state}", s.createUser())
+	s.router.GET("/api/v1/auth/user/privacy/{privacy_state}", s.updatePrivacy())
 	s.router.GET("/api/v1/auth/follow/{id}", s.handleFollow())
 	s.router.GET("/api/v1/auth/unfollow/{id}", s.handleUnfollow())
 	s.router.GET("/api/v1/auth/follow/request/{id}", s.handleFollowRequest())
