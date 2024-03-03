@@ -21,3 +21,9 @@ type PostRepository interface {
 	Get(id string) (*model.Post, error)
 	// Update(string) error
 }
+
+type CommentRepository interface {
+	Create(post *model.Comment) error
+	Delete(id string) error
+	Get(id string) (*model.Comment, error)
+}
