@@ -7,6 +7,5 @@ CREATE TABLE
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     date_of_birth text NOT NULL,
     first_name text,
-    last_name text,
-    gender text
+    last_name text
   );

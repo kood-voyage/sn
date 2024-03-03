@@ -22,46 +22,49 @@ try {
 }
 
 export function checkUserExists(login:string, password:string) {
-  return {login, password}
-  // try {
-  //   const query = `
-  //     SELECT 
-  //     `
-  //   const id = uuidv4()
+  
+  try {
+    const query = `
+      SELECT password FROM user WHERE username = ? OR email = ? LIMIT 1;
+      `
 
-  //   const password = 'secret';
+    const row = db.prepare(query).get(login, login);
 
-  //   const salt = bcrypt.genSaltSync(10);
+    if (typeof row === 'object' && row !== null && 'password' in row && typeof row.password === 'string') {
 
-  //   const hash = bcrypt.hashSync(password, salt);
+      const bool = bcrypt.compareSync(password, row.password)
 
-  //   console.log(hash)
-    
-  //   db.prepare(query).get(login)
-  // } catch (err) {
-  //   if (err instanceof Error) {
-  //     return { ok: false, error: err, message: err.message}
-  //   } else {
-  //     return { ok: false, error: err}
-  //   }
-  // }
+      return {ok: true, authorized: bool}
+    } else {
+      throw new Error("User with that username/email not found")
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message}
+    } else {
+      return { ok: false, error: err}
+    }
+  }
 }
 
 export function createUser(userInfo: User) {
   // return userInfo
   try {
-    const query = 'INSERT INTO user (id, username, email, password, date_of_birth, first_name, last_name) VALUES (?, ?, ?, ?, ?, ?, ?);'
+    const query = `
+    INSERT INTO 
+      user 
+      (id, username, email, password, date_of_birth, first_name, last_name) 
+    VALUES
+      (?, ?, ?, ?, ?, ?, ?);`
     const id = uuidv4()
 
-    const password = 'secret';
+
 
     const salt = bcrypt.genSaltSync(10);
-
-    const hash = bcrypt.hashSync(password, salt);
-
-    console.log(hash)
-    userInfo.password = hash
     
+    const hash = bcrypt.hashSync(userInfo.password, salt);
+    
+    userInfo.password = hash
     db.prepare(query).run(id, ...userInfo)
   } catch (err) {
     if (err instanceof Error) {
