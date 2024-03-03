@@ -5,8 +5,6 @@ import { superValidate } from 'sveltekit-superforms';
 import { signUpSchema } from '../schema';
 
 import { zod} from 'sveltekit-superforms/adapters';
-import { User } from '$lib/types/user';
-import { createUser } from '$lib/server/db';
 
 export const load: PageServerLoad = async () => {
 	const form = await superValidate(zod(signUpSchema));
@@ -17,8 +15,6 @@ export const actions: Actions = {
 	signup: async (event) => {
 		const form = await superValidate(event, zod(signUpSchema));
 
-	// const user = new User(form.data)
-	// console.log(createUser(user))
 if (!event.locals.user) redirect(302, "/signup")
 		console.log('HERE');
 		console.log(form.data);
