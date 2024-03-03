@@ -17,8 +17,8 @@ export const actions: Actions = {
 	signup: async (event) => {
 		const form = await superValidate(event, zod(signUpSchema));
 
-	const user = new User(form.data)
-	console.log(createUser(user))
+	// const user = new User(form.data)
+	// console.log(createUser(user))
 if (!event.locals.user) redirect(302, "/signup")
 		console.log('HERE');
 		console.log(form.data);

@@ -18,7 +18,7 @@ export const actions: Actions = {
     const login = "http://localhost:8080/api/v1/auth/login"
 		const form = await superValidate(event, zod(signInSchema));
 
-		console.log(checkUserExists(form.data.login, form.data.password))
+		console.log("DOES THE USER EXIST >>> ", checkUserExists(form.data.login, form.data.password))
 
 		if (!event.locals.user) redirect(302, "/signin")
 		console.log('HERE');
