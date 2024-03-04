@@ -41,7 +41,7 @@
 				<img
 					src="https://api.dicebear.com/7.x/pixel-art/svg?seed={username}"
 					alt="banner"
-					class="absolute bottom-[1px] left-12 h-20 w-20 rounded-full border-4 border-white object-cover dark:border-slate-950 "
+					class="absolute bottom-[1px] left-12 h-20 w-20 rounded-full border-4 border-white object-cover dark:border-slate-950"
 				/>
 
 				<h1 class="absolute bottom-0 sm:bottom-4 left-[140px] text-2xl font-bold">
@@ -93,7 +93,23 @@
 
 		<!-- profile activity / posts -->
 
-		<div></div>
+		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-0 sm:p-4 mt-5 md:mt-0">
+			<div class="bg-pink-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-purple-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-red-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-yellow-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-orange-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-pink-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-purple-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-red-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-yellow-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-orange-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-pink-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-purple-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-red-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-yellow-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-orange-500 h-56 w-full sm:rounded-lg">123</div>
+		</div>
 	</div>
 </main>
 

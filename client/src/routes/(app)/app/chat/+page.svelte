@@ -3,7 +3,7 @@
 </svelte:head>
 
 <!-- chat page -->
-<div class="flex w-screen">
+<div class="flex w-full">
 	<!-- user list -->
 	<div class="overflow-scroll h-screen w-14 sm:w-60 bg-slate-200 dark:bg-slate-900">
 		<!-- search group / friends -->
