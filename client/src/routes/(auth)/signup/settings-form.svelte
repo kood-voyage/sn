@@ -10,8 +10,6 @@
 	import EyeOpen from 'svelte-radix/EyeOpen.svelte';
 	import EyeClosed from 'svelte-radix/EyeClosed.svelte';
 
-	import Icon from '@iconify/svelte';
-
 	let isHide: boolean = true;
 
 	function toogle() {
@@ -51,7 +49,7 @@
 		<Form.Field {form} name="firstName">
 			<Form.Control let:attrs>
 				<Form.Label>First Name <RedStar /></Form.Label>
-				<Input {...attrs} bind:value={$formData.email} placeholder="first name" />
+				<Input {...attrs} bind:value={$formData.firstName} placeholder="first name" />
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
@@ -59,7 +57,7 @@
 		<Form.Field {form} name="lastName">
 			<Form.Control let:attrs>
 				<Form.Label>Last Name <RedStar /></Form.Label>
-				<Input {...attrs} bind:value={$formData.email} placeholder="last name" />
+				<Input {...attrs} bind:value={$formData.lastName} placeholder="last name" />
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
@@ -128,5 +126,5 @@
 
 	<div class="my-8"></div>
 
-	<Form.Button class="w-full">SIGN-UP</Form.Button>
+	<Form.Button class="w-full h-16 dark:bg-green-600 hover:dark:bg-green-500">SIGN-UP</Form.Button>
 </form>

@@ -14,4 +14,6 @@
 	<p class=" w-full py-2 text-center mt-2">
 		already have an account? <a href="/signin"><span class="text-blue-500">sign-in</span></a>
 	</p>
+
+	<p>{data.form.data.firstName}</p>
 </div>
