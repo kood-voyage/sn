@@ -57,14 +57,14 @@ export function createUser(userInfo: User) {
     VALUES
       (?, ?, ?, ?, ?, ?, ?);`
     const id = uuidv4()
-
-
-
     const salt = bcrypt.genSaltSync(10);
-    
+  
     const hash = bcrypt.hashSync(userInfo.password, salt);
-    
+
+
     userInfo.password = hash
+
+    
     db.prepare(query).run(id, ...userInfo)
   } catch (err) {
     if (err instanceof Error) {

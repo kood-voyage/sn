@@ -39,7 +39,7 @@
 
 			<div class="h-8 relative mx-0 sm:mx-4">
 				<img
-					src="https://api.dicebear.com/7.x/pixel-art/svg?seed={username}"
+					src={}
 					alt="banner"
 					class="absolute bottom-[1px] left-12 h-20 w-20 rounded-full border-4 border-white object-cover dark:border-slate-950"
 				/>
