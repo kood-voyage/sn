@@ -47,6 +47,34 @@ export function checkUserExists(login:string, password:string) {
   }
 }
 
+type RowType ={
+  id:string
+}
+
+
+export function getUserId(login:string): string|undefined{
+  
+  try {
+    const query = `
+      SELECT id FROM user WHERE username = ? OR email = ? LIMIT 1;
+      `
+
+    const row = db.prepare(query).get(login, login) as RowType
+
+
+
+
+      return row.id
+    
+
+
+  } catch (err) {
+
+    console.log(err)
+
+  }
+}
+
 export function createUser(userInfo: User) {
   // return userInfo
   try {
