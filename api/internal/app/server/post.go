@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"net/http"
 	"social-network/internal/model"
 	"social-network/pkg/validator"
@@ -19,18 +20,27 @@ import (
 func (s *Server) createPost() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		post := model.NewPost()
+		userID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("unauthorized"))
+			return
+		}
 
 		if err := s.decode(r, post); err != nil {
 			s.error(w, http.StatusInternalServerError, err)
 			return
 		}
+		post.UserID = userID
 
 		if err := validator.Validate(post); err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
 
-		if err := s.store.Post().Create(post); err != nil {
+		if err := s.store.Post().Create(
+			post,
+			s.types.Privacy.Values[post.Privacy],
+		); err != nil {
 			s.error(w, http.StatusInternalServerError, err)
 			return
 		}

@@ -18,7 +18,7 @@ type RequestRepository interface {
 }
 
 type PostRepository interface {
-	Create(post *model.Post) error
+	Create(post *model.Post, privacy int) error
 	Delete(id string) error
 	Get(id string) (*model.Post, error)
 }

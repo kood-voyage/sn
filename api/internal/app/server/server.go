@@ -69,6 +69,8 @@ func configureRouter(s *Server) {
 	s.router.GET("/api/v1/auth/posts/{id}", s.getPost())
 	s.router.POST("/api/v1/auth/posts/create", s.createPost())
 	s.router.DELETE("/api/v1/auth/posts/delete/{id}", s.deletePost())
+	s.router.POST("/api/v1/auth/comment/create", s.createComment())
+	s.router.DELETE("/api/v1/auth/comment/delete/{id}", s.deleteComment())
 	s.router.POST("/api/v1/auth/users/create", s.createUser())
 	s.router.GET("/api/v1/auth/user/create/{privacy_state}", s.createUser())
 	s.router.GET("/api/v1/auth/user/privacy/{privacy_state}", s.updatePrivacy())

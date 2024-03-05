@@ -3,6 +3,7 @@ package sqlstore
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"social-network/internal/model"
 )
 
@@ -14,18 +15,19 @@ func (u *UserRepository) Create(user *model.User, privacy int) error {
 	query := `INSERT INTO user (id) VALUES (?)`
 
 	_, err := u.store.Db.Exec(query, user.ID)
-
+	fmt.Println(user.ID)
+	fmt.Println("error here ", err)
 	if err != nil {
 		return err
 	}
-
-	//insert user privacy state to database
-	query = `INSERT INTO privacy (id, type_id) VALUES (?, ?)`
-
-	_, err = u.store.Db.Exec(query, user.ID, privacy)
-	if err != nil {
-		return err
-	}
+	////insert user privacy state to database
+	//query = `INSERT INTO privacy (id, type_id) VALUES (?, ?)`
+	//
+	//_, err = u.store.Db.Exec(query, user.ID, privacy)
+	//fmt.Println("or error here ", err)
+	//if err != nil {
+	//	return err
+	//}
 
 	return nil
 }

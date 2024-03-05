@@ -1,6 +1,7 @@
 package sqlstore
 
 import (
+	"fmt"
 	"social-network/internal/model"
 )
 
@@ -8,20 +9,24 @@ type PostRepository struct {
 	store *Store
 }
 
-func (p PostRepository) Create(post *model.Post) error {
+func (p PostRepository) Create(post *model.Post, privacy int) error {
 	query := `INSERT INTO post (
                   id,
                   user_id,
                   title,
-                  content,
-                  created_at) VALUES (?,?,?,?,?)`
+                  content) VALUES (?,?,?,?)`
 
 	_, err := p.store.Db.Exec(query,
 		post.ID,
 		post.UserID,
 		post.Title,
-		post.Content,
-		post.CreatedAt)
+		post.Content)
+	if err != nil {
+		return err
+	}
+	query = `INSERT INTO privacy (id, type_id) VALUES (?,?)`
+
+	_, err = p.store.Db.Exec(query, post.ID, privacy)
 	if err != nil {
 		return err
 	}
@@ -32,9 +37,18 @@ func (p PostRepository) Create(post *model.Post) error {
 func (p PostRepository) Delete(id string) error {
 	query := `DELETE FROM post WHERE id = ?`
 
-	_, err := p.store.Db.Exec(query, id)
+	result, err := p.store.Db.Exec(query, id)
 	if err != nil {
 		return err
+	}
+
+	rowCount, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowCount == 0 {
+		return fmt.Errorf("no post with such ID %s", id)
 	}
 
 	return nil
