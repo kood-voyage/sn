@@ -36,3 +36,7 @@ jobs:
       - name: Testing Validator
         working-directory: api/pkg/validator
         run: go test -v ./
+
+      - name: Multitests in app/server
+        working-directory: api/internal/app/server
+        run: go test -v ./
