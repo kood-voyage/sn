@@ -21,57 +21,34 @@ try {
   }
 }
 
+type RowType ={
+  id:string
+  password: string
+}
+
 export function checkUserExists(login:string, password:string) {
   
   try {
     const query = `
-      SELECT password FROM user WHERE username = ? OR email = ? LIMIT 1;
+      SELECT id, password FROM user WHERE username = ? OR email = ? LIMIT 1;
       `
 
-    const row = db.prepare(query).get(login, login);
+    const row = db.prepare(query).get(login, login) as RowType
 
-    if (typeof row === 'object' && row !== null && 'password' in row && typeof row.password === 'string') {
+    if (typeof row === 'object' && row !== null && row.password && row.id) {
 
       const bool = bcrypt.compareSync(password, row.password)
 
-      return {ok: true, authorized: bool}
+      return {ok: true, authorized: bool, id: row.id}
     } else {
       throw new Error("User with that username/email not found")
     }
   } catch (err) {
     if (err instanceof Error) {
-      return { ok: false, error: err, message: err.message}
+      return { ok: false, authorized: false,  error: err, message: err.message}
     } else {
-      return { ok: false, error: err}
+      return { ok: false, authorized:false,  error: err , message:"Misc Error"}
     }
-  }
-}
-
-type RowType ={
-  id:string
-}
-
-
-export function getUserId(login:string): string|undefined{
-  
-  try {
-    const query = `
-      SELECT id FROM user WHERE username = ? OR email = ? LIMIT 1;
-      `
-
-    const row = db.prepare(query).get(login, login) as RowType
-
-
-
-
-      return row.id
-    
-
-
-  } catch (err) {
-
-    console.log(err)
-
   }
 }
 
