@@ -43,7 +43,7 @@
 
 <div class="flex">
 	<!-- nav -->
-	<div class="w-[60px] relative">
+	<div class="w-[60px] relative shadow-md bg-red-500">
 		<div class="h-screen w-[60px]">
 			<div class="h-1/6"></div>
 
@@ -128,6 +128,7 @@
 	</div>
 
 	<div class="w-full">
+		<div class="h-8"></div>
 		<slot />
 	</div>
 </div>
