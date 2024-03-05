@@ -24,7 +24,7 @@
 
 <!-- user profile page -->
 
-<main class="flex">
+<main class="flex overflow-scroll">
 	<div class=" m-auto h-full w-full max-w-[1096px]">
 		<!-- profile info header -->
 		<div class="profile-info relative">
@@ -39,7 +39,7 @@
 
 			<div class="h-8 relative mx-0 sm:mx-4">
 				<img
-					src="https://api.dicebear.com/7.x/pixel-art/svg?seed={username}"
+					src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={username}"
 					alt="banner"
 					class="absolute bottom-[1px] left-12 h-20 w-20 rounded-full border-4 border-white object-cover dark:border-slate-950"
 				/>
@@ -114,22 +114,7 @@
 </main>
 
 <style>
-	/* .profile-info {
-		@apply;
-	} */
-
-	/* .banner {
-		@apply m-auto h-40 max-w-[1096px] p-0 sm:p-4;
-	} */
-
-	/* .banner img {
-		@apply h-full w-full rounded-xl object-cover;
-	} */
-
-	/* absolute */
-
 	aside {
 		@apply h-screen w-[320px] bg-orange-600;
 	}
-	/* absolute */
 </style>

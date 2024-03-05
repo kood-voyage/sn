@@ -26,7 +26,7 @@
 			<ol>
 				<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 active">
 					<img
-						src="https://notes.aimodels.fyi/content/images/2023/06/a_high_detail_shot_of_a_cat_wearing_a_suit_realism_8k_-n_9_.png"
+						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
 						alt="avatar"
 						class="m-auto sm:mx-2"
 					/>
@@ -35,16 +35,16 @@
 
 				<li class="user hover:bg-slate-300 dark:hover:bg-slate-800">
 					<img
-						src="https://notes.aimodels.fyi/content/images/2023/06/a_high_detail_shot_of_a_cat_wearing_a_suit_realism_8k_-n_9_.png"
+						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Markus"
 						alt="avatar"
 						class="m-auto sm:mx-2"
 					/>
-					<p>Marcus</p>
+					<p>Markus</p>
 				</li>
 
 				<li class="user hover:bg-slate-300 dark:hover:bg-slate-800">
 					<img
-						src="https://notes.aimodels.fyi/content/images/2023/06/a_high_detail_shot_of_a_cat_wearing_a_suit_realism_8k_-n_9_.png"
+						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Harri"
 						alt="avatar"
 						class="m-auto sm:mx-2"
 					/>
@@ -61,7 +61,7 @@
 		<div class="h-12 bg-slate-300 dark:bg-slate-800 px-4">
 			<div class="flex p-2 h-full">
 				<img
-					src="https://notes.aimodels.fyi/content/images/2023/06/a_high_detail_shot_of_a_cat_wearing_a_suit_realism_8k_-n_9_.png"
+					src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
 					alt="avatar"
 					class="w-8 rounded-full mr-2"
 				/>

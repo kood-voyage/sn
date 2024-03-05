@@ -1,5 +1,5 @@
 # Frontend build stage
-FROM node:14 as frontend
+FROM node:18 as frontend
 WORKDIR /app/frontend
 
 # Copy placeholder files (adjust as needed)

@@ -5,7 +5,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { signUpSchema } from '../schema';
 
 
-import { User,UserStyle} from '$lib/types/user';
+import { User} from '$lib/types/user';
 
 import { zod} from 'sveltekit-superforms/adapters';
 
@@ -24,31 +24,14 @@ export const actions: Actions = {
 	signup: async (event) => {
 		const form = await superValidate(event, zod(signUpSchema));
 
-		
-
-		const userType: UserStyle = {
-			username: form.data.username,
-			email: form.data.email,
-			dateOfBirth: form.data.dateOfBirth,
-			firstName: form.data.firstName,
-			lastName: form.data.lastName,
-			password: form.data.password,
-			repeatPassword:form.data.repeatPassword
-		}
-
-
-		const user = new User(userType)
+	
+		const user = new User(form.data)
 
 		const result =  createUser(user)
-
 
 		if(result.ok){
 			redirect(300,"/signin")
 		}
-
-
-
-
 
 
 		if (!form.valid) {
@@ -57,10 +40,6 @@ export const actions: Actions = {
 			});
 		}
 
-
-
-
-		redirect(300, "/signin")
 
 
 	}
