@@ -10,7 +10,7 @@ const db = new Database(DB_PATH);
 
 try {
   const sqlSchema = readFileSync(SCHEMA_PATH, { encoding: 'utf8' });
-  
+  console.log(db.pragma('foreign_keys'))
   db.exec(sqlSchema);
 
 } catch (err) {
@@ -27,7 +27,6 @@ type RowType ={
 }
 
 export function checkUserExists(login:string, password:string) {
-  
   try {
     const query = `
       SELECT id, password FROM user WHERE username = ? OR email = ? LIMIT 1;

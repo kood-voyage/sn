@@ -9,3 +9,10 @@ CREATE TABLE
     first_name text,
     last_name text
   );
+
+CREATE TABLE
+  IF NOT EXISTS token (
+    id text PRIMARY KEY UNIQUE NOT NULL,
+    user_id text UNIQUE NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
+  )
