@@ -11,8 +11,9 @@ CREATE TABLE
   );
 
 CREATE TABLE
-  IF NOT EXISTS token (
-    id text PRIMARY KEY UNIQUE NOT NULL,
+  IF NOT EXISTS session (
+    access_id text PRIMARY KEY UNIQUE NOT NULL,
     user_id text UNIQUE NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
   )
