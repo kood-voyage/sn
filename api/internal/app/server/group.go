@@ -172,6 +172,7 @@ func (s *Server) groupGet() http.HandlerFunc {
 
 		group, err := s.store.Group().Get(r.PathValue("id"))
 		if err != nil {
+			fmt.Println(err)
 			s.error(w, http.StatusUnauthorized, err)
 			return
 		}
