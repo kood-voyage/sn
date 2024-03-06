@@ -24,7 +24,7 @@ jobs:
       statuses: write
 
     steps:
-      - name: Checkout code
+      - name: Checkout code.
         uses: actions/checkout@v4
 
       - name: Super-linter
