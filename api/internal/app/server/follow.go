@@ -27,7 +27,7 @@ func (s *Server) handleFollow() http.HandlerFunc {
 			return
 		}
 		//firstly check another user state
-		privacyCode, err := s.store.User().CheckPrivacy(r.PathValue("id"))
+		privacyCode, err := s.store.Privacy().Check(r.PathValue("id"))
 		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return

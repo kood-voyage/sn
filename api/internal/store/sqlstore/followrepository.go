@@ -1,6 +1,7 @@
 package sqlstore
 
 import (
+	"errors"
 	"social-network/internal/model"
 
 	"github.com/google/uuid"
@@ -26,10 +27,19 @@ func (f *FollowRepository) Create(follower model.Follower) error {
 func (f *FollowRepository) Delete(follower model.Follower) error {
 	query := `DELETE FROM follower WHERE source_id = ? AND target_id = ?`
 
-	_, err := f.store.Db.Exec(query, follower.SourceID, follower.TargetID)
+	result, err := f.store.Db.Exec(query, follower.SourceID, follower.TargetID)
 
 	if err != nil {
 		return err
+	}
+
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if affected == 0 {
+		return errors.New("no rows were affected")
 	}
 
 	return nil

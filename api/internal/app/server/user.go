@@ -4,7 +4,12 @@ import (
 	"errors"
 	"net/http"
 	"social-network/internal/model"
+	"social-network/pkg/validator"
 )
+
+type ValidateStruct struct {
+	Privacy string `validate:"lowercase|privacy:public,private"`
+}
 
 // userCreate Handles the user creation to database. Only userID and privacy state will be stored.
 //
@@ -13,7 +18,6 @@ import (
 // @Produce json
 // @Param privacy_state path string true "Only public, private, selected allowed"
 // @Success 201 {object} model.User
-// @Failure 400 {object} Error
 // @Failure 401 {object} Error
 // @Failure 422 {object} Error
 // @Router /api/v1/auth/user/create/{privacy_state} [get]
@@ -29,7 +33,13 @@ func (s *Server) userCreate() http.HandlerFunc {
 		privacy_state := r.PathValue("privacy_state")
 		privacy, ok := s.types.Privacy.Values[privacy_state]
 		if !ok {
-			s.error(w, http.StatusBadRequest, errors.New("public, private, selected states are allowed"))
+			s.error(w, http.StatusUnprocessableEntity, errors.New("public, private, selected states are allowed"))
+			return
+		}
+
+		p := ValidateStruct{Privacy: privacy_state}
+		if err := validator.Validate(p); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
 
@@ -65,11 +75,18 @@ func (s *Server) userPrivacy() http.HandlerFunc {
 		privacy_state := r.PathValue("privacy_state")
 		privacy, ok := s.types.Privacy.Values[privacy_state]
 		if !ok {
-			s.error(w, http.StatusBadRequest, errors.New("public, private, selected states are allowed"))
+			s.error(w, http.StatusBadRequest, errors.New("public, private states are allowed"))
 			return
 		}
 
-		if err := s.store.User().UpdatePrivacy(user, privacy); err != nil {
+		if err := validator.Validate(ValidateStruct{
+			Privacy: privacy_state,
+		}); err != nil {
+			s.error(w, http.StatusBadRequest, err)
+			return
+		}
+
+		if err := s.store.Privacy().Update(user.ID, privacy); err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
@@ -131,35 +148,34 @@ func (s *Server) userFollowing() http.HandlerFunc {
 // @Router /api/v1/auth/user/posts/{id} [get]
 func (s *Server) userPosts() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		//firstly check if the request is done by the user itself or some other user
 		userID_request, ok := r.Context().Value(ctxUserID).(string)
 		if !ok {
 			s.error(w, http.StatusUnauthorized, errors.New("unauthorized user"))
 			return
 		}
 
-		if userID_request != r.PathValue("id") {
-			//check requested user profile privacy
-			privacy, err := s.store.User().CheckPrivacy(r.PathValue("id"))
-			if err != nil {
-				s.error(w, http.StatusUnprocessableEntity, err)
-				return
-			}
-			if privacy == s.types.Privacy.Private {
-				//check if user follows
-				userFollows, err := s.store.User().IsFollowing(userID_request, r.PathValue("id"))
-				if err != nil {
-					s.error(w, http.StatusUnprocessableEntity, err)
-					return
-				}
-				if !userFollows {
-					s.error(w, http.StatusForbidden, errors.New("users profile is private"))
-					return
-				}
-			}
-		}
+		// if userID_request != r.PathValue("id") {
+		// 	//check requested user profile privacy
+		// 	privacy, err := s.store.User().CheckPrivacy(r.PathValue("id"))
+		// 	if err != nil {
+		// 		s.error(w, http.StatusUnprocessableEntity, err)
+		// 		return
+		// 	}
+		// 	if privacy == s.types.Privacy.Private {
+		// 		//check if user follows
+		// 		userFollows, err := s.store.User().IsFollowing(userID_request, r.PathValue("id"))
+		// 		if err != nil {
+		// 			s.error(w, http.StatusUnprocessableEntity, err)
+		// 			return
+		// 		}
+		// 		if !userFollows {
+		// 			s.error(w, http.StatusForbidden, errors.New("users profile is private"))
+		// 			return
+		// 		}
+		// 	}
+		// }
 
-		posts, err := s.store.Post().GetUsers(r.PathValue("id"))
+		posts, err := s.store.Post().GetUsers(userID_request, r.PathValue("id"))
 		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return

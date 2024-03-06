@@ -75,21 +75,22 @@ func configureRouter(s *Server) {
 	s.router.POST("/api/v1/auth/notification/create", s.notificationCreate())
 	s.router.DELETE("/api/v1/auth/notification/delete/{id}", s.notificationDelete())
 	//---------FOLLOW--------------//
-	s.router.GET("/api/v1/follow/{id}", s.handleFollow())
-	s.router.GET("/api/v1/auth/posts/{id}", s.getPost())
-	s.router.POST("/api/v1/auth/posts/create", s.createPost())
-	s.router.DELETE("/api/v1/auth/posts/delete/{id}", s.deletePost())
-	s.router.POST("/api/v1/auth/comment/create", s.createComment())
-	s.router.DELETE("/api/v1/auth/comment/delete/{id}", s.deleteComment())
-	s.router.GET("/api/v1/auth/user/create/{privacy_state}", s.createUser())
-	s.router.GET("/api/v1/auth/user/privacy/{privacy_state}", s.updatePrivacy())
 	s.router.GET("/api/v1/auth/follow/{id}", s.handleFollow())
 	s.router.GET("/api/v1/auth/unfollow/{id}", s.handleUnfollow())
 	s.router.POST("/api/v1/auth/follow/request", s.handleFollowRequest())
+	//---------POST---------------//
+	s.router.GET("/api/v1/auth/posts/{id}", s.getPost())
+	s.router.POST("/api/v1/auth/posts/create", s.createPost())
+	s.router.DELETE("/api/v1/auth/posts/delete/{id}", s.deletePost())
+	//---------COMMENT------------//
+	s.router.POST("/api/v1/auth/comment/create", s.createComment())
+	s.router.DELETE("/api/v1/auth/comment/delete/{id}", s.deleteComment())
 	//---------GROUP--------------//
 	s.router.POST("/api/v1/auth/group/create", s.groupCreate())
 	s.router.PUT("/api/v1/auth/group/update", s.groupUpdate())
 	s.router.DELETE("/api/v1/auth/group/delete/{id}", s.groupDelete())
+	s.router.GET("/api/v1/auth/group/{id}", s.groupGet())
+
 
 
 
@@ -121,7 +122,7 @@ func (s *Server) decode(r *http.Request, data interface{}) error {
 func (s *Server) login() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		newToken := jwttoken.NewClaims()
-		newToken.Set("user_id", "testUSERid")
+		newToken.Set("user_id", "user1")
 		newToken.SetTime("exp", time.Now().Add(time.Hour*100))
 		a := jwttoken.HmacSha256(os.Getenv(jwtKey))
 

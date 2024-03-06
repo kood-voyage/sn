@@ -20,7 +20,7 @@ const (
 	targetID = "target"
 )
 
-func TestHandleFollow_PublicPrivacy(t *testing.T) {
+func TestFollow_Privacy_Public(t *testing.T) {
 	// new sql mock
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -34,7 +34,7 @@ func TestHandleFollow_PublicPrivacy(t *testing.T) {
 	//mock expectation
 	mock.ExpectQuery("SELECT type_id FROM privacy").
 		WithArgs(targetID).
-		WillReturnRows(sqlmock.NewRows([]string{"type_id"}).AddRow(0))
+		WillReturnRows(sqlmock.NewRows([]string{"type_id"}).AddRow(1))
 	mock.ExpectExec("INSERT INTO follower").
 		WithArgs(sqlmock.AnyArg(), sourceID, targetID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
@@ -59,7 +59,7 @@ func TestHandleFollow_PublicPrivacy(t *testing.T) {
 
 }
 
-func TestHandleFollow_PrivatePrivacy(t *testing.T) {
+func TestFollow_Privacy_Private(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("Error creating mock database: %v", err)
@@ -71,7 +71,7 @@ func TestHandleFollow_PrivatePrivacy(t *testing.T) {
 
 	mock.ExpectQuery("SELECT type_id FROM privacy").
 		WithArgs(targetID).
-		WillReturnRows(sqlmock.NewRows([]string{"type_id"}).AddRow(1))
+		WillReturnRows(sqlmock.NewRows([]string{"type_id"}).AddRow(2))
 	mock.ExpectQuery("SELECT \\* FROM request").
 		WithArgs(s.types.Privacy.Private, sourceID, targetID).WillReturnError(sql.ErrNoRows)
 	mock.ExpectExec("INSERT INTO request").
@@ -96,7 +96,7 @@ func TestHandleFollow_PrivatePrivacy(t *testing.T) {
 
 }
 
-func TestHandleFollow_InvalidPrivacy(t *testing.T) {
+func TestFollow_Privacy_Invalid(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("Error creating mock database: %v", err)
@@ -131,7 +131,7 @@ func TestHandleFollow_InvalidPrivacy(t *testing.T) {
 
 }
 
-func TestHandleFollow_Invalid(t *testing.T) {
+func TestFollow_Invalid_Unauthorized_Request(t *testing.T) {
 	db, _, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("Error creating mock database: %v", err)
@@ -153,7 +153,7 @@ func TestHandleFollow_Invalid(t *testing.T) {
 	}
 }
 
-func TestHandleUnfollow(t *testing.T) {
+func TestUnfollow(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("Error creating mock database: %v", err)
@@ -183,7 +183,7 @@ func TestHandleUnfollow(t *testing.T) {
 	}
 }
 
-func TestHandleFollowRequest_Reject(t *testing.T) {
+func TestFollow_Request_Reject(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("Error creating mock database: %v", err)
@@ -217,7 +217,7 @@ func TestHandleFollowRequest_Reject(t *testing.T) {
 
 }
 
-func TestHandleFollowRequest_Accept(t *testing.T) {
+func TestFollow_Request_Accept(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("Error creating mock database: %v", err)

@@ -13,6 +13,7 @@ type Store struct {
 	postRepository    *PostRepository
 	commentRepository *CommentRepository
 	groupRepository   *GroupRepository
+	privacyRepository *PrivacyRepository
 }
 
 func New(db *sql.DB) *Store {
@@ -91,4 +92,16 @@ func (s *Store) Group() store.GroupRepository {
 	}
 
 	return s.groupRepository
+}
+
+func (s *Store) Privacy() store.PrivacyRepository {
+	if s.privacyRepository != nil {
+		return s.privacyRepository
+	}
+
+	s.privacyRepository = &PrivacyRepository{
+		store: s,
+	}
+
+	return s.privacyRepository
 }

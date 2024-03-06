@@ -15,10 +15,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-<<<<<<< HEAD
-        "/api/v1/auth/follow/request": {
-            "post": {
-=======
         "/api/v1/auth/comment/create": {
             "post": {
                 "consumes": [
@@ -75,9 +71,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/auth/follow/request/{id}": {
-            "get": {
->>>>>>> SN-20-comment-endpoints
+        "/api/v1/auth/follow/request": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -245,6 +240,52 @@ const docTemplate = `{
                     "group"
                 ],
                 "summary": "Update group information",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Group"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/group/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "group"
+                ],
+                "summary": "Returns group information",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Group ID to get information",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -493,12 +534,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.User"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/server.Error"
-                        }
-                    },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
@@ -667,7 +702,6 @@ const docTemplate = `{
                     }
                 }
             }
-<<<<<<< HEAD
         },
         "/api/v1/auth/user/{id}/posts": {
             "get": {
@@ -705,56 +739,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/api/v1/posts/create": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "posts"
-                ],
-                "summary": "Create post",
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/model.Post"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/server.Error"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/server.Error"
-                        }
-                    }
-                }
-            }
-        }
-    },
-    "definitions": {
-        "model.Group": {
-            "type": "object",
-            "required": [
-                "creator_id",
-                "description",
-                "id"
-            ],
-            "properties": {
-                "creator_id": {
-                    "type": "string"
-                },
-                "description": {
-=======
         }
     },
     "definitions": {
@@ -771,15 +755,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "created_at": {
->>>>>>> SN-20-comment-endpoints
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-<<<<<<< HEAD
-                "name": {
-=======
                 "parent_id": {
                     "type": "string"
                 },
@@ -787,7 +767,36 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
->>>>>>> SN-20-comment-endpoints
+                    "type": "string"
+                }
+            }
+        },
+        "model.Group": {
+            "type": "object",
+            "required": [
+                "description",
+                "id"
+            ],
+            "properties": {
+                "creator_id": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "members": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "privacy": {
                     "type": "string"
                 }
             }
@@ -808,6 +817,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "privacy": {
                     "type": "string"
                 },
                 "title": {
@@ -855,6 +867,9 @@ const docTemplate = `{
             "properties": {
                 "id": {
                     "type": "string"
+                },
+                "member_type": {
+                    "type": "integer"
                 }
             }
         },

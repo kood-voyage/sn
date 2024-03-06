@@ -1,21 +1,5 @@
 basePath: /
 definitions:
-<<<<<<< HEAD
-  model.Group:
-    properties:
-      creator_id:
-        type: string
-      description:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-    required:
-    - creator_id
-    - description
-    - id
-=======
   model.Comment:
     properties:
       content:
@@ -35,7 +19,26 @@ definitions:
     - id
     - post_id
     - user_id
->>>>>>> SN-20-comment-endpoints
+    type: object
+  model.Group:
+    properties:
+      creator_id:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      members:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+      name:
+        type: string
+      privacy:
+        type: string
+    required:
+    - description
+    - id
     type: object
   model.Post:
     properties:
@@ -44,6 +47,8 @@ definitions:
       created_at:
         type: string
       id:
+        type: string
+      privacy:
         type: string
       title:
         type: string
@@ -79,6 +84,8 @@ definitions:
     properties:
       id:
         type: string
+      member_type:
+        type: integer
     required:
     - id
     type: object
@@ -187,51 +194,53 @@ paths:
       summary: Resolves a follow request
       tags:
       - follow
-<<<<<<< HEAD
-  /api/v1/auth/group/create:
-    post:
-=======
-  /api/v1/auth/posts/{id}:
+  /api/v1/auth/group/{id}:
     get:
+      parameters:
+      - description: Group ID to get information
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Post'
-        "500":
-          description: Internal Server Error
+            $ref: '#/definitions/model.Group'
+        "401":
+          description: Unauthorized
           schema:
             $ref: '#/definitions/server.Error'
-      summary: Get post
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Returns group information
       tags:
-      - posts
-  /api/v1/auth/posts/create:
+      - group
+  /api/v1/auth/group/create:
     post:
-      consumes:
-      - application/json
->>>>>>> SN-20-comment-endpoints
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-<<<<<<< HEAD
             $ref: '#/definitions/model.Group'
         "401":
           description: Unauthorized
           schema:
             $ref: '#/definitions/server.Error'
-=======
-            $ref: '#/definitions/model.Post'
->>>>>>> SN-20-comment-endpoints
         "422":
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/server.Error'
-<<<<<<< HEAD
       summary: Create a group
       tags:
       - group
@@ -335,7 +344,37 @@ paths:
       summary: Delete a notification by ID
       tags:
       - notification
-=======
+  /api/v1/auth/posts/{id}:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Post'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Get post
+      tags:
+      - posts
+  /api/v1/auth/posts/create:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Post'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
         "500":
           description: Internal Server Error
           schema:
@@ -357,7 +396,6 @@ paths:
       summary: Delete post
       tags:
       - posts
->>>>>>> SN-20-comment-endpoints
   /api/v1/auth/unfollow/{id}:
     get:
       consumes:
@@ -425,10 +463,6 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/model.User'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/server.Error'
         "401":
           description: Unauthorized
           schema:

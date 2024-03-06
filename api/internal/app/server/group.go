@@ -2,6 +2,7 @@ package server
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"social-network/internal/model"
 	"social-network/pkg/validator"
@@ -17,14 +18,14 @@ import (
 // @Failure 422 {object} Error
 // @Router /api/v1/auth/group/create [post]
 func (s *Server) groupCreate() http.HandlerFunc {
-	group := model.NewGroup()
 	return func(w http.ResponseWriter, r *http.Request) {
+		group := model.NewGroup()
 		userID, ok := r.Context().Value(ctxUserID).(string)
 		if !ok {
 			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 			return
 		}
-		
+
 		if err := s.decode(r, group); err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
@@ -36,8 +37,8 @@ func (s *Server) groupCreate() http.HandlerFunc {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
-		
-		g, err := s.store.Group().Create(*group)
+
+		g, err := s.store.Group().Create(*group, s.types.Privacy.Values[group.Privacy])
 		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
@@ -65,8 +66,8 @@ func (s *Server) groupUpdate() http.HandlerFunc {
 			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 			return
 		}
-		
-		if err := s.decode(r, group); err != nil {
+
+		if err := s.decode(r, &group); err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
@@ -75,9 +76,10 @@ func (s *Server) groupUpdate() http.HandlerFunc {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
-		
+
 		g, err := s.store.Group().Get(group.ID)
 		if err != nil {
+			fmt.Println(err)
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
@@ -87,7 +89,7 @@ func (s *Server) groupUpdate() http.HandlerFunc {
 			return
 		}
 
-		if err := s.store.Group().Update(group); err != nil {
+		if err := s.store.Group().Update(group, s.types.Privacy.Values[group.Privacy]); err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
@@ -114,7 +116,7 @@ func (s *Server) groupDelete() http.HandlerFunc {
 			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 			return
 		}
-		
+
 		g, err := s.store.Group().Get(r.PathValue("id"))
 		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
@@ -126,12 +128,54 @@ func (s *Server) groupDelete() http.HandlerFunc {
 			return
 		}
 
-		//TO-DO Remove entry from privacy table also
 		if err := s.store.Group().Delete(r.PathValue("id")); err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
-		
+
 		s.respond(w, http.StatusOK, Response{Data: nil})
+	}
+}
+
+// groupGet handles the retrieval of a group and its information.
+//
+// @Summary Returns group information
+// @Tags group
+// @Produce json
+// @Param id path string true "Group ID to get information"
+// @Success 200 {object} model.Group
+// @Failure 401 {object} Error
+// @Failure 403 {object} Error
+// @Failure 422 {object} Error
+// @Router /api/v1/auth/group/{id} [get]
+func (s *Server) groupGet() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sourceID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+			return
+		}
+
+		//check group privacy status
+		privacy, err := s.store.Privacy().Check(r.PathValue("id"))
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		if privacy == s.types.Privacy.Private {
+			if err := s.store.Group().IsMember(r.PathValue("id"), sourceID); err != nil {
+				s.error(w, http.StatusForbidden, err)
+				return
+			}
+		}
+
+		group, err := s.store.Group().Get(r.PathValue("id"))
+		if err != nil {
+			s.error(w, http.StatusUnauthorized, err)
+			return
+		}
+
+		s.respond(w, http.StatusOK, Response{Data: group})
 	}
 }

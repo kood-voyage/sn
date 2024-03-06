@@ -177,7 +177,7 @@ func privacy(val interface{}, param string) error {
 			return nil
 		}
 
-		return fmt.Errorf("privacy type could only be %v", param)
+		return fmt.Errorf("type could only be %v", param)
 	default:
 		return fmt.Errorf("only string allowed")
 	}

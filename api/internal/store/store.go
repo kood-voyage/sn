@@ -7,4 +7,5 @@ type Store interface {
 	Post() PostRepository
 	Group() GroupRepository
 	Comment() CommentRepository
+	Privacy() PrivacyRepository
 }
