@@ -117,7 +117,7 @@ func TestGroup_Update(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	requestBody := fmt.Sprintf(`{
-	"id":%s,
+	"id":"%s",
     "name":"%s",
     "description":"%s",
 	"privacy":"%s"

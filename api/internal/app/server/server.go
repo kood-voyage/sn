@@ -90,6 +90,7 @@ func configureRouter(s *Server) {
 	s.router.PUT("/api/v1/auth/group/update", s.groupUpdate())
 	s.router.DELETE("/api/v1/auth/group/delete/{id}", s.groupDelete())
 	s.router.GET("/api/v1/auth/group/{id}", s.groupGet())
+	s.router.POST("/api/v1/auth/group/invite", s.groupInvite())
 
 
 

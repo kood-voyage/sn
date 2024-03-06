@@ -221,7 +221,7 @@ paths:
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/server.Error'
-      summary: Returns group information
+      summary: Creates a request
       tags:
       - group
   /api/v1/auth/group/create:
@@ -272,6 +272,30 @@ paths:
           schema:
             $ref: '#/definitions/server.Error'
       summary: Delete a group
+      tags:
+      - group
+  /api/v1/auth/group/invite:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Returns group information
       tags:
       - group
   /api/v1/auth/group/update:

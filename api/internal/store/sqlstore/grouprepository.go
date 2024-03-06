@@ -107,11 +107,11 @@ func (g *GroupRepository) Members(group_id string) (*[]model.User, error) {
 
 func (g *GroupRepository) IsMember(group_id, user_id string) error {
 	query := `SELECT user_id FROM member WHERE group_id = ? AND user_id = ?`
-	
+
 	var user model.User
 	if err := g.store.Db.QueryRow(query, group_id, user_id).Scan(&user.ID); err != nil {
 		if err == sql.ErrNoRows {
-			return errors.New("user is not a private group member")
+			return errors.New("user is not a group member")
 		}
 	}
 
