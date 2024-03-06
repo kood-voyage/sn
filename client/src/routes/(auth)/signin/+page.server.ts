@@ -1,16 +1,13 @@
-import type { PageServerLoad, Actions,  } from './$types';
+import type { PageServerLoad, Actions, } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 
 import { signInSchema } from '../schema';
 
-import { zod} from 'sveltekit-superforms/adapters';
-import { checkUserExists } from '$lib/server/db';
+import { zod } from 'sveltekit-superforms/adapters';
+import { checkSessionExists, checkUserExists, deleteSession } from '$lib/server/db';
 
-import jwt from 'jsonwebtoken'
-import { JWT_KEY } from '$env/static/private';
-
-import { v4 as uuidv4 } from 'uuid';
 import { fail } from '@sveltejs/kit';
+import { createTokens } from '$lib/server/jwt-handle';
 
 
 export const load: PageServerLoad = async () => {
@@ -22,42 +19,50 @@ export const load: PageServerLoad = async () => {
 
 export const actions: Actions = {
 	signin: async (event) => {
-    // const login = "http://localhost:8080/api/v1/auth/login"
+		// const login = "http://localhost:8080/api/v1/auth/login"
+		// console.log(event.url)
+		//  await fetch("http://localhost:8080/api/v1/auth/user/create/123", 
+		//  {
+		// 	credentials: "include"
+		//  }
+		// )
+		// console.log(resps)
 
+		const form = await superValidate(event, zod(signInSchema));
 
+		const respUser = checkUserExists(form.data.login, form.data.password)
+		if (!respUser.ok) {
+			console.error(respUser.error)
+			return fail(400, {
+				form,
+				message: "Username/Email or Password not found"
+			})
+		} else if (!respUser.authorized) {
+			console.error(respUser.error)
+			return fail(400, {
+				form,
+				message: "Username/Email or Password incorrect"
+			})
+		}
 
-		const form = await superValidate(event,zod(signInSchema));
+		const user_id = respUser.id as string
+		const resp = checkSessionExists(user_id)
+		if (resp.ok) deleteSession(user_id)
 
-		const resp = checkUserExists(form.data.login, form.data.password)
-		console.log(resp)
-		if(resp.ok && resp.authorized){
-			const user_id  = resp.id
-
-
-			const access_token_id:string = uuidv4()
-
-
-			const access_token = jwt.sign({
-					exp: Math.floor(Date.now() / 1000) + (60 * 15),
-					user_id,
-					id: access_token_id
-			}, JWT_KEY,{ algorithm: 'HS256' })
-
-
-			const refresh_token = jwt.sign({
-					exp: Math.floor(Date.now() / 1000) + (60 * 60 *24 *7),
-					access_token_id: access_token_id
-			}, JWT_KEY,{ algorithm: 'HS256' })
-
-
-			event.cookies.set("at"  ,access_token,{path:"/"})
-			event.cookies.set("rt", refresh_token,{path:"/"})
+		const respToken = createTokens(event, user_id)
+		if (!respToken.ok) {
+			console.error(respToken.error)
+			respToken.error = undefined
+			return fail(400, {
+				form,
+				...respToken
+			})
 		}
 
 
 		if (!form.valid) {
 			return fail(400, {
-				form 
+				form
 			});
 		}
 		return {
