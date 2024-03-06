@@ -3,15 +3,16 @@ package server
 import (
 	"context"
 	"errors"
-	"github.com/google/uuid"
 	"net/http"
 	"os"
 	"social-network/pkg/jwttoken"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-func (s *server) setRequestID(next http.Handler) http.Handler {
+func (s *Server) setRequestID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id := uuid.New().String()
 		w.Header().Set("X-Request-ID", id)
@@ -19,7 +20,7 @@ func (s *server) setRequestID(next http.Handler) http.Handler {
 	})
 }
 
-func (s *server) logRequest(next http.Handler) http.Handler {
+func (s *Server) logRequest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		rw := &responseWriter{w, http.StatusOK}
 		if r.Method == http.MethodOptions {
@@ -36,7 +37,7 @@ func (s *server) logRequest(next http.Handler) http.Handler {
 		start := time.Now()
 		next.ServeHTTP(rw, r)
 		s.logger.Printf("completed in %s with %d %s ----- remote_addr:%s  request_id:%s",
-			time.Now().Sub(start),
+			time.Since(start),
 			rw.code,
 			http.StatusText(rw.code),
 			r.RemoteAddr,
@@ -45,7 +46,7 @@ func (s *server) logRequest(next http.Handler) http.Handler {
 	})
 }
 
-func (s *server) CORSMiddleware(next http.Handler) http.Handler {
+func (s *Server) CORSMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Set CORS headers dynamically based on the request's Origin header
 		origin := r.Header.Get("Origin")
@@ -66,11 +67,11 @@ func (s *server) CORSMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func (s *server) jwtMiddleware(next http.Handler) http.Handler {
+func (s *Server) jwtMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if !strings.HasPrefix(authHeader, "Bearer ") || authHeader == "" {
-			s.error(w, r, http.StatusUnauthorized, errors.New("unauthorized"))
+			s.error(w, http.StatusUnauthorized, errors.New("unauthorized"))
 			return
 		}
 
@@ -78,13 +79,16 @@ func (s *server) jwtMiddleware(next http.Handler) http.Handler {
 		alg := jwttoken.HmacSha256(os.Getenv(jwtKey))
 		claims, err := alg.DecodeAndValidate(token)
 		if err != nil {
-			s.error(w, r, http.StatusUnauthorized, err)
+			s.error(w, http.StatusUnauthorized, err)
 			return
 		}
 
 		id, err := claims.Get("user_id")
+
 		if err != nil {
-			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxUserID, id)))
+			s.error(w, http.StatusUnauthorized, err)
+			return
 		}
+		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxUserID, id)))
 	})
 }
