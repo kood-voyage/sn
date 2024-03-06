@@ -56,7 +56,7 @@ export function refreshTokens(event: RefreshEvent, access_token_id: string) {
     deleteSession(user_id)
     createTokens(event, user_id)
   } else {
-    if (!(event.url.pathname.startsWith('/signin'))) {
+    if (!(event.url.pathname.startsWith('/signin')) || !(event.url.pathname.startsWith('/signup'))) {
       deleteTokens(event)
       console.error("Refresh token access_id wasn't found", resp.error)
       redirect(303, "/signin")

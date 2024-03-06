@@ -47,7 +47,6 @@ export const actions: Actions = {
 
 		const user_id = respUser.id as string
 		const resp = checkSessionExists(user_id)
-		console.log(resp)
 		if (resp.ok) deleteSession(user_id)
 
 		const respToken = createTokens(event, user_id)

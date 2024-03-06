@@ -11,7 +11,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   jwt.verify(refresh_token, JWT_KEY, (err, rdecoded) => {
     if (err != null) {
-      if (!pathname.startsWith("/signin")) {
+      if (!(pathname.startsWith('/signin')) && !(pathname.startsWith('/signup'))) {
         deleteTokens(event)
         redirect(303, "/signin")
       }
