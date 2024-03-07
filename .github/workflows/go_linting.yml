@@ -25,7 +25,7 @@ jobs:
         uses: super-linter/super-linter@v6.3.0  
         env:
           # passing in our repo full access by GH token and ability to pass a check with minor errors.
-          #
+          #currently problem with SHA
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DISABLE_ERRORS: true
           VALIDA_ALL_CODEBASE: false
