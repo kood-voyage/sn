@@ -89,3 +89,47 @@ func (s *Server) getPost() http.HandlerFunc {
 		s.respond(w, http.StatusOK, Response{Data: post})
 	}
 }
+
+func (s *Server) addSelected() http.HandlerFunc {
+	type requestBody struct {
+		UserList []model.User `json:"user_list"`
+		ParentID string       `json:"parent_id"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		reqBody := requestBody{}
+		if err := s.decode(r, reqBody); err != nil {
+			s.error(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		if err := s.store.Post().AddSelected(&reqBody.UserList, reqBody.ParentID); err != nil {
+			s.error(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		s.respond(w, http.StatusCreated, Response{Data: reqBody})
+	}
+}
+
+func (s *Server) removeSelected() http.HandlerFunc {
+	type requestBody struct {
+		UserList []model.User `json:"user_list"`
+		ParentID string       `json:"parent_id"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		reqBody := requestBody{}
+		if err := s.decode(r, reqBody); err != nil {
+			s.error(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		if err := s.store.Post().RemoveSelected(&reqBody.UserList, reqBody.ParentID); err != nil {
+			s.error(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		s.respond(w, http.StatusNoContent, nil)
+	}
+}

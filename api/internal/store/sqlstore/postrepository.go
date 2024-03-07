@@ -3,6 +3,7 @@ package sqlstore
 import (
 	"fmt"
 	"social-network/internal/model"
+	"strings"
 )
 
 type PostRepository struct {
@@ -115,12 +116,29 @@ func (p PostRepository) GetUsers(source_id, target_id string) ([]model.Post, err
 	return posts, nil
 }
 
-func (p PostRepository) AddSelected(userList *[]model.User) error {
+func (p PostRepository) AddSelected(userList *[]model.User, parentID string) error {
+	query := `INSERT INTO selected_users (user_id, post_id) VALUES`
+	var values []interface{}
+	for _, user := range *userList {
+		query += " (?, ?),"
+		values = append(values, user.ID, parentID)
+	}
 
-	return nil
+	query = strings.TrimSuffix(query, ",")
+
+	_, err := p.store.Db.Exec(query, values...)
+	return err
 }
 
-func (p PostRepository) RemoveSelected(userList *[]model.User) error {
+func (p PostRepository) RemoveSelected(userList *[]model.User, parentID string) error {
+	query := `DELETE FROM selected_users WHERE parent_id = ? AND (`
+	values := []interface{}{parentID}
+	for _, user := range *userList {
+		query += " (user_id = ? AND post_id = ?) OR"
+		values = append(values, user.ID, parentID)
+	}
+	query = strings.TrimSuffix(query, "OR") + ")"
 
-	return nil
+	_, err := p.store.Db.Exec(query, values...)
+	return err
 }
