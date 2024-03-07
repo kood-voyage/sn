@@ -147,7 +147,7 @@ func (s *Server) groupDelete() http.HandlerFunc {
 // @Failure 401 {object} Error
 // @Failure 403 {object} Error
 // @Failure 422 {object} Error
-// @Router /api/v1/auth/group/invite [post]
+// @Router /api/v1/auth/group/{id} [get]
 func (s *Server) groupGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sourceID, ok := r.Context().Value(ctxUserID).(string)
@@ -261,7 +261,7 @@ func (s *Server) groupInviteRequest() http.HandlerFunc {
 	type Req struct {
 		TargetID string `json:"target_id" validate:"lowercase|required"`
 		Option   string `json:"option" validate:"lowercase|required"`
-		GroupID string `json:"group_id" validate:"required"`
+		GroupID  string `json:"group_id" validate:"required"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		var request Req
@@ -314,7 +314,6 @@ func (s *Server) groupInviteRequest() http.HandlerFunc {
 				s.error(w, http.StatusUnprocessableEntity, err)
 				return
 			}
-
 
 			s.respond(w, http.StatusOK, Response{Data: "Accepted group invitation"})
 			return
