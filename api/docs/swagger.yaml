@@ -222,7 +222,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/server.Response'
+            $ref: '#/definitions/model.Group'
         "401":
           description: Unauthorized
           schema:
@@ -243,8 +243,8 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "202":
+          description: Accepted
           schema:
             $ref: '#/definitions/model.Group'
         "401":
@@ -269,10 +269,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/server.Response'
+        "202":
+          description: Accepted
         "401":
           description: Unauthorized
           schema:
@@ -339,10 +337,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Group'
+        "202":
+          description: Accepted
         "401":
           description: Unauthorized
           schema:
