@@ -192,8 +192,8 @@ const docTemplate = `{
                 ],
                 "summary": "Create a group",
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "202": {
+                        "description": "Accepted",
                         "schema": {
                             "$ref": "#/definitions/model.Group"
                         }
@@ -232,11 +232,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/server.Response"
-                        }
+                    "202": {
+                        "description": "Accepted"
                     },
                     "401": {
                         "description": "Unauthorized",
@@ -340,11 +337,8 @@ const docTemplate = `{
                 ],
                 "summary": "Update group information",
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Group"
-                        }
+                    "202": {
+                        "description": "Accepted"
                     },
                     "401": {
                         "description": "Unauthorized",
@@ -380,7 +374,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server.Response"
+                            "$ref": "#/definitions/model.Group"
                         }
                     },
                     "401": {
