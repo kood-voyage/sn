@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"social-network/internal/model"
+	"social-network/pkg/validator"
 )
 
 // handleFollow handles the follow action where one user follows another. If another user profile is private, it creates a follow request instead.
@@ -135,6 +136,11 @@ func (s *Server) handleFollowRequest() http.HandlerFunc {
 		}
 
 		if err := s.decode(r, &request); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		if err := validator.Validate(request); err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}

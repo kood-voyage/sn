@@ -43,6 +43,7 @@ type GroupRepository interface {
 	Get(group_id string) (*model.Group, error)
 	Members(group_id string) (*[]model.User, error)
 	IsMember(group_id, user_id string) error
+	AddMember(group_id, user_id string) error
 }
 
 type PrivacyRepository interface {
