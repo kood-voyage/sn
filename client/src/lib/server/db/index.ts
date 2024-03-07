@@ -6,7 +6,7 @@ import type { User } from '$lib/types/user';
 import bcrypt from 'bcrypt'
 
 
-const db = new Database(DB_PATH);
+export const db = new Database(DB_PATH);
 
 try {
   const sqlSchema = readFileSync(SCHEMA_PATH, { encoding: 'utf8' });
@@ -19,8 +19,6 @@ try {
     console.log('An unknown error occurred');
   }
 }
-
-
 
 export function checkSessionExists(access_or_user_id: string) {
   type RowType = {
@@ -38,7 +36,7 @@ export function checkSessionExists(access_or_user_id: string) {
 
       return { ok: true, user_id: row.user_id }
     } else {
-      throw new Error("Session Not Foune")
+      throw new Error("Session Not Found")
     }
   } catch (err) {
     if (err instanceof Error) {
