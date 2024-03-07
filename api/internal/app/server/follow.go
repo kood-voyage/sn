@@ -54,9 +54,14 @@ func (s *Server) handleFollow() http.HandlerFunc {
 				TargetID: r.PathValue("id"),
 			}
 
-			_, err := s.store.Request().Get(request)
+			existing, err := s.store.Request().Get(request)
 			if err != nil && err != sql.ErrNoRows {
 				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+
+			if existing != nil {
+				s.error(w, http.StatusForbidden, errors.New("already request exists"))
 				return
 			}
 

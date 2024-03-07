@@ -1,7 +1,6 @@
 package server
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
@@ -194,8 +193,9 @@ func (s *Server) groupGet() http.HandlerFunc {
 func (s *Server) groupInvite() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type requestBody struct {
-			GroupID  string `validate:"required"`
-			TargetID string `validate:"required"`
+			GroupID  string `json:"group_id" validate:"required"`
+			TargetID string `json:"target_id" validate:"required"`
+			Message  string `json:"message"`
 		}
 		sourceID, ok := r.Context().Value(ctxUserID).(string)
 		if !ok {
@@ -224,10 +224,17 @@ func (s *Server) groupInvite() http.HandlerFunc {
 		request.TargetID = req.TargetID
 		request.SourceID = sourceID
 		request.CreatedAt = time.Now()
+		request.Message = req.Message
 		//check if that request it not already created
-		_, err := s.store.Request().Get(*request)
-		if err != nil && err != sql.ErrNoRows {
+		existing, err := s.store.Request().Get(*request)
+
+		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		if existing != nil {
+			s.error(w, http.StatusForbidden, errors.New("already request exists"))
 			return
 		}
 		//if not create a request

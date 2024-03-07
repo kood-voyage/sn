@@ -81,12 +81,12 @@ func (u *UserRepository) IsFollowing(source_id, target_id string) (bool, error) 
 	return true, nil
 }
 
-func (u *UserRepository) GetNotifications(user_id string, req_type int) ([]model.Request, error) {
-	query := `SELECT * FROM request WHERE target_id = ? AND type_id = ?`
+func (u *UserRepository) GetNotifications(user_id string) ([]model.Request, error) {
+	query := `SELECT * FROM request WHERE target_id = ?`
 
 	var notifications []model.Request
 
-	rows, err := u.store.Db.Query(query, user_id, req_type)
+	rows, err := u.store.Db.Query(query, user_id)
 	if err != nil {
 		return nil, err
 	}

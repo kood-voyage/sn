@@ -36,7 +36,7 @@ func TestFollow_Privacy_Public(t *testing.T) {
 		WithArgs(targetID).
 		WillReturnRows(sqlmock.NewRows([]string{"type_id"}).AddRow(1))
 	mock.ExpectExec("INSERT INTO follower").
-		WithArgs(sqlmock.AnyArg(), sourceID, targetID).
+		WithArgs(sqlmock.AnyArg(), sourceID, targetID, sourceID, targetID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	// Create a new HTTP request
@@ -234,7 +234,7 @@ func TestFollow_Request_Accept(t *testing.T) {
 		WithArgs(s.types.Request.Follow, sourceID, targetID).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec("INSERT INTO follower").
-		WithArgs(sqlmock.AnyArg(), targetID, sourceID).
+		WithArgs(sqlmock.AnyArg(), targetID, sourceID, targetID, sourceID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	requestBody := fmt.Sprintf(`{"target_id": "%s", "option": "accept"}`, sourceID)

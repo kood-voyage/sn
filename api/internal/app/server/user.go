@@ -202,7 +202,7 @@ func (s *Server) userNotifications() http.HandlerFunc {
 			return
 		}
 
-		notifications, err := s.store.User().GetNotifications(userID, s.types.Request.Notification)
+		notifications, err := s.store.User().GetNotifications(userID)
 		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return

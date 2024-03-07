@@ -172,7 +172,7 @@ func TestUser_Notifications(t *testing.T) {
 	s := newServer(store)
 
 	mock.ExpectQuery("SELECT \\* FROM request").
-		WithArgs(sourceID, s.types.Request.Notification).
+		WithArgs(sourceID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "type_id", "source_id", "target_id", "message", "created_at"}).
 			AddRow("testID1", s.types.Request.Notification, targetID, sourceID, "test1", time.Now()).
 			AddRow("testID2", s.types.Request.Notification, targetID, sourceID, "test2", time.Now()))
