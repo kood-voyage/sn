@@ -5,5 +5,7 @@ type Store interface {
 	Follow() FollowRepository
 	Request() RequestRepository
 	Post() PostRepository
+	Group() GroupRepository
 	Comment() CommentRepository
+	Privacy() PrivacyRepository
 }

@@ -142,9 +142,13 @@ func required(val interface{}) error {
 }
 
 func isZero(val interface{}) bool {
-	return reflect.DeepEqual(val, reflect.Zero(reflect.TypeOf(val)).Interface())
+	switch reflect.ValueOf(val).Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return val == 0
+	default:
+		return reflect.DeepEqual(val, reflect.Zero(reflect.TypeOf(val)).Interface())
+	}
 }
-
 func lengthValidation(val interface{}, parameter string, compare func(int, int) bool, validationType string) error {
 	// Convert parameter to int
 	i, err := strconv.Atoi(parameter)
@@ -173,7 +177,7 @@ func privacy(val interface{}, param string) error {
 			return nil
 		}
 
-		return fmt.Errorf("privacy type could only be %v", param)
+		return fmt.Errorf("type could only be %v", param)
 	default:
 		return fmt.Errorf("only string allowed")
 	}

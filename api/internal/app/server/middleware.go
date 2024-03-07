@@ -84,6 +84,7 @@ func (s *Server) jwtMiddleware(next http.Handler) http.Handler {
 		}
 
 		id, err := claims.Get("user_id")
+
 		if err != nil {
 			s.error(w, http.StatusUnauthorized, err)
 			return

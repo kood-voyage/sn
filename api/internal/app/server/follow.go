@@ -1,6 +1,7 @@
 package server
 
 import (
+	"database/sql"
 	"errors"
 	"net/http"
 	"social-network/internal/model"
@@ -8,14 +9,15 @@ import (
 
 // handleFollow handles the follow action where one user follows another. If another user profile is private, it creates a follow request instead.
 //
-// @Summary Follow a user
+// @Summary Follow a user or create follow request
 // @Tags follow
 // @Accept json
 // @Produce json
 // @Param id path string true "Target user ID to follow"
 // @Success 201 {object} Response
+// @Failure 400 {object} Error
 // @Failure 401 {object} Error
-// @Failure 500 {object} Error
+// @Failure 422 {object} Error
 // @Router /api/v1/auth/follow/{id} [get]
 func (s *Server) handleFollow() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -25,9 +27,9 @@ func (s *Server) handleFollow() http.HandlerFunc {
 			return
 		}
 		//firstly check another user state
-		privacyCode, err := s.store.User().CheckPrivacy(r.PathValue("id"))
+		privacyCode, err := s.store.Privacy().Check(r.PathValue("id"))
 		if err != nil {
-			s.error(w, http.StatusBadRequest, err)
+			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
 
@@ -37,16 +39,37 @@ func (s *Server) handleFollow() http.HandlerFunc {
 				SourceID: sourceID,
 				TargetID: r.PathValue("id"),
 			}
-	
+
 			//follow user
 			if err := s.store.Follow().Create(follow); err != nil {
-				s.error(w, http.StatusInternalServerError, err)
+				s.error(w, http.StatusUnprocessableEntity, err)
 				return
 			}
+			s.respond(w, http.StatusCreated, Response{Data: "Successfully followed a user"})
+			return
+		} else if privacyCode == s.types.Privacy.Private {
+			request := model.Request{
+				TypeID:   s.types.Request.Follow,
+				SourceID: sourceID,
+				TargetID: r.PathValue("id"),
+			}
+
+			_, err := s.store.Request().Get(request)
+			if err != nil && err != sql.ErrNoRows {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+
+			if err := s.store.Request().Create(request); err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+			s.respond(w, http.StatusCreated, Response{Data: "Successfully created a follow request"})
+			return
 		}
 
+		s.error(w, http.StatusBadRequest, errors.New("Invalid"))
 
-		s.respond(w, http.StatusCreated, Response{Data: nil})
 	}
 }
 
@@ -66,6 +89,7 @@ func (s *Server) handleUnfollow() http.HandlerFunc {
 		sourceID, ok := r.Context().Value(ctxUserID).(string)
 		if !ok {
 			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+			return
 		}
 		follow := model.Follower{
 			SourceID: sourceID,
@@ -74,42 +98,83 @@ func (s *Server) handleUnfollow() http.HandlerFunc {
 
 		//unfollow a user
 		if err := s.store.Follow().Delete(follow); err != nil {
-			s.error(w, http.StatusInternalServerError, err)
+			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
 
-		s.respond(w, http.StatusCreated, Response{Data: nil})
+		s.respond(w, http.StatusOK, Response{Data: nil})
 	}
 }
 
-// handleFollowRequest handles the follow action where one user profile is private and creates a request to view their profile. If request is accepted create another request to api/v1/follow/{id} endpoint
+// handleFollowRequest Handles the follow request accept / reject
 //
-// @Summary Request a follow for user
+// @Summary Resolves a follow request
 // @Tags follow
 // @Accept json
 // @Produce json
-// @Param id path string true "Target user ID to request follow"
-// @Success 201 {object} Response
+// @Success 200 {object} Response
 // @Failure 401 {object} Error
 // @Failure 500 {object} Error
-// @Router /api/v1/auth/follow/request/{id} [get]
+// @Router /api/v1/auth/follow/request [post]
 func (s *Server) handleFollowRequest() http.HandlerFunc {
+	type Req struct {
+		TargetID string `json:"target_id" validate:"lowercase"`
+		Option   string `json:"option" validate:"lowercase"`
+	}
 	return func(w http.ResponseWriter, r *http.Request) {
+		var request Req
 		sourceID, ok := r.Context().Value(ctxUserID).(string)
 		if !ok {
 			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
-		}
-		request := model.Request{
-			TypeID:   s.types.Request.Follow,
-			SourceID: sourceID,
-			TargetID: r.PathValue("id"),
-		}
-
-		if err := s.store.Request().Create(request); err != nil {
-			s.error(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		s.respond(w, http.StatusCreated, Response{Data: nil})
+		if err := s.decode(r, &request); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		//The targetID is source id because first time the request was created from one user(source user) and now the second user(target user) needs to confirm it hence why (target user) sends the request and on the targetID field needs to be the (target user) - getting the user from jwt middleware its naming is just sourceid
+		req := model.Request{
+			TargetID: sourceID,
+			SourceID: request.TargetID,
+			TypeID:   s.types.Request.Follow,
+		}
+
+		if request.Option == "reject" {
+			if err := s.store.Request().Delete(req); err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+			s.respond(w, http.StatusOK, Response{Data: "Rejected user request"})
+			return
+		} else if request.Option == "accept" {
+			//check if request exists in first place
+			req_exists, err := s.store.Request().Get(req)
+			if err != nil && err != sql.ErrNoRows {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+
+			//delete the request
+			if err := s.store.Request().Delete(*req_exists); err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+			//create a follow link
+			if err := s.store.Follow().Create(model.Follower{
+				SourceID: sourceID,
+				TargetID: request.TargetID,
+			}); err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+			s.respond(w, http.StatusOK, Response{Data: "Accepted user request"})
+			return
+		} else {
+			s.error(w, http.StatusBadRequest,
+				errors.New("invalid option"))
+		}
+
 	}
 }
