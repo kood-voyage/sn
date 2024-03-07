@@ -43,7 +43,7 @@
 
 <div class="flex">
 	<!-- nav -->
-	<div class="w-[60px] relative shadow-md bg-red-500">
+	<div class="w-[60px] relative shadow-md border-r">
 		<div class="h-screen w-[60px]">
 			<div class="h-1/6"></div>
 
@@ -54,7 +54,7 @@
 					</div>
 				</a>
 
-				<a href="/app/u/person">
+				<a href="/app/u">
 					<div class="button">
 						<Person class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
 					</div>
@@ -128,7 +128,6 @@
 	</div>
 
 	<div class="w-full">
-		<div class="h-8"></div>
 		<slot />
 	</div>
 </div>

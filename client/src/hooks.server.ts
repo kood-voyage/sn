@@ -9,6 +9,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   const refresh_token = event.cookies.get("rt") as string
   const pathname = event.url.pathname
 
+
   jwt.verify(refresh_token, JWT_KEY, (err, rdecoded) => {
     if (err != null) {
       if (!(pathname.startsWith('/signin')) && !(pathname.startsWith('/signup'))) {
@@ -32,7 +33,6 @@ export const handle: Handle = async ({ event, resolve }) => {
       })
     }
   })
-
 
   const response = await resolve(event);
   return response;

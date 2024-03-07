@@ -93,7 +93,7 @@
 
 		<!-- profile activity / posts -->
 
-		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-0 sm:p-4 mt-5 md:mt-0">
+		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-1 p-0 sm:p-4 mt-5 md:mt-0">
 			<div class="bg-pink-500 h-56 w-full sm:rounded-lg">123</div>
 			<div class="bg-purple-500 h-56 w-full sm:rounded-lg">123</div>
 			<div class="bg-red-500 h-56 w-full sm:rounded-lg">123</div>
