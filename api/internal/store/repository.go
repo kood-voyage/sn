@@ -27,13 +27,14 @@ type PostRepository interface {
 	Delete(id string) error
 	Get(id string) (*model.Post, error)
 	GetUsers(source_id, target_id string) ([]model.Post, error)
-	AddSelected(userList *[]model.User) error
-	RemoveSelected(userList *[]model.User) error
+	AddSelected(userList *[]model.User, parentID string) error
+	RemoveSelected(userList *[]model.User, parentID string) error
 }
 
 type CommentRepository interface {
 	Create(post *model.Comment) error
 	Delete(postID, userID string) error
+	// Get returns all comments to single post
 	Get(id string) (*[]model.Comment, error)
 	// Update(string) error
 }

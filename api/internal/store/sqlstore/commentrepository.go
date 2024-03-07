@@ -57,7 +57,6 @@ func (c CommentRepository) Delete(commentID, userID string) error {
 	return nil
 }
 
-// Get returns all comments to single post
 func (c CommentRepository) Get(id string) (*[]model.Comment, error) {
 	//query := `SELECT * FROM comment WHERE post_id = ?`
 	q := `WITH RECURSIVE CommentHierarchy AS (
