@@ -1,0 +1,593 @@
+basePath: /
+definitions:
+  model.Comment:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      parent_id:
+        type: string
+      post_id:
+        type: string
+      user_id:
+        type: string
+    required:
+    - content
+    - id
+    - post_id
+    - user_id
+    type: object
+  model.Group:
+    properties:
+      creator_id:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      members:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+      name:
+        type: string
+      privacy:
+        type: string
+    required:
+    - description
+    - id
+    type: object
+  model.Post:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      privacy:
+        type: string
+      title:
+        type: string
+      user_id:
+        type: string
+    required:
+    - content
+    - id
+    - title
+    - user_id
+    type: object
+  model.Request:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      message:
+        type: string
+      source_id:
+        type: string
+      target_id:
+        type: string
+      type_id:
+        type: integer
+    required:
+    - id
+    - source_id
+    - target_id
+    - type_id
+    type: object
+  model.User:
+    properties:
+      id:
+        type: string
+      member_type:
+        type: integer
+    required:
+    - id
+    type: object
+  server.Error:
+    properties:
+      error: {}
+    type: object
+  server.Response:
+    properties:
+      data: {}
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: api server for social network
+  title: Social Network API
+  version: "0.1"
+paths:
+  /api/v1/auth/comment/create:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Comment'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Create comment
+      tags:
+      - comments
+  /api/v1/auth/comment/delete/{id}:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Delete comment
+      tags:
+      - comments
+  /api/v1/auth/follow/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Target user ID to follow
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/server.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Follow a user or create follow request
+      tags:
+      - follow
+  /api/v1/auth/follow/request:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Resolves a follow request
+      tags:
+      - follow
+  /api/v1/auth/group/create:
+    post:
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Group'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Create a group
+      tags:
+      - group
+  /api/v1/auth/group/delete/{id}:
+    delete:
+      parameters:
+      - description: Group ID to delete
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Delete a group
+      tags:
+      - group
+  /api/v1/auth/group/invite:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Group'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Creates a request to invite another user to a group
+      tags:
+      - group
+  /api/v1/auth/group/request:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Resolves a group invitation request
+      tags:
+      - follow
+  /api/v1/auth/group/update:
+    put:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Group'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Update group information
+      tags:
+      - group
+  /api/v1/auth/notification/create:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Request'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Create a notification from source id to target id
+      tags:
+      - notification
+  /api/v1/auth/notification/delete/{id}:
+    delete:
+      parameters:
+      - description: Notification ID to delete
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Delete a notification by ID
+      tags:
+      - notification
+  /api/v1/auth/posts/{id}:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Post'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Get post
+      tags:
+      - posts
+  /api/v1/auth/posts/create:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Post'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Create post
+      tags:
+      - posts
+  /api/v1/auth/posts/delete/{id}:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Delete post
+      tags:
+      - posts
+  /api/v1/auth/unfollow/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Target user ID to Unfollow
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/server.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Unfollow a user
+      tags:
+      - follow
+  /api/v1/auth/user/{id}/posts:
+    get:
+      parameters:
+      - description: User id to get followers
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Returns a list of user followers
+      tags:
+      - users
+  /api/v1/auth/user/create/{privacy_state}:
+    get:
+      parameters:
+      - description: Only public, private, selected allowed
+        in: path
+        name: privacy_state
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.User'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Create a user with privacy state
+      tags:
+      - users
+  /api/v1/auth/user/following/{id}:
+    get:
+      parameters:
+      - description: User id to get followers
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Return a list of users who is user following
+      tags:
+      - users
+  /api/v1/auth/user/notifications:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Request'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Return a list of notifications to user
+      tags:
+      - users
+  /api/v1/auth/user/posts/{id}:
+    get:
+      parameters:
+      - description: User id to get user's posts
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Post'
+            type: array
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Return a list of posts what user has created
+      tags:
+      - users
+  /api/v1/auth/user/privacy/{privacy_state}:
+    get:
+      parameters:
+      - description: Only public, private, selected allowed
+        in: path
+        name: privacy_state
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Updates user's privacy
+      tags:
+      - users
+swagger: "2.0"
