@@ -59,9 +59,40 @@ func (c CommentRepository) Delete(commentID, userID string) error {
 
 // Get returns all comments to single post
 func (c CommentRepository) Get(id string) (*[]model.Comment, error) {
-	query := `SELECT * FROM comment WHERE post_id = ?`
+	//query := `SELECT * FROM comment WHERE post_id = ?`
+	q := `WITH RECURSIVE CommentHierarchy AS (
+        -- Anchor member: Start with the top-level comments for the post
+        SELECT
+            c.id,
+            c.user_id,
+            c.post_id,
+            c.parent_id,
+            c.content,
+            c.timestamp,
+            (SELECT COUNT(*) FROM comment subc WHERE subc.parent_id = c.id) AS subcomment_count
+        FROM
+            comment c
+        WHERE
+            c.post_id = ? AND (c.parent_id IS NULL OR c.parent_id = '')
+    
+        UNION ALL
 
-	rows, err := c.store.Db.Query(query, id)
+        -- Recursive member: Join with sub-comments
+        SELECT
+            c.id,
+            c.user_id,
+            c.post_id,
+            c.parent_id,
+            c.content,
+            c.timestamp,
+            (SELECT COUNT(*) FROM comment subc WHERE subc.parent_id = c.id) AS subcomment_count
+        FROM
+            comment c
+        JOIN
+            CommentHierarchy ch ON c.parent_id = ch.id
+    )
+    SELECT * FROM CommentHierarchy;`
+	rows, err := c.store.Db.Query(q, id)
 	if err != nil {
 		return nil, err
 	}
