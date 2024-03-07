@@ -15,7 +15,7 @@ import (
 // @Summary Create a group
 // @Tags group
 // @Produce json
-// @Success 201 {object} model.Group
+// @Success 202 {object} model.Group
 // @Failure 401 {object} Error
 // @Failure 422 {object} Error
 // @Router /api/v1/auth/group/create [post]
@@ -50,12 +50,12 @@ func (s *Server) groupCreate() http.HandlerFunc {
 	}
 }
 
-// groupUpdate handles the group inforomation update.
+// groupUpdate handles the group information update.
 //
 // @Summary Update group information
 // @Tags group
 // @Produce json
-// @Success 200 {object} model.Group
+// @Success 202
 // @Failure 401 {object} Error
 // @Failure 403 {object} Error
 // @Failure 422 {object} Error
@@ -95,7 +95,7 @@ func (s *Server) groupUpdate() http.HandlerFunc {
 			return
 		}
 
-		s.respond(w, http.StatusOK, Response{Data: nil})
+		s.respond(w, http.StatusAccepted, nil)
 	}
 }
 
@@ -105,7 +105,7 @@ func (s *Server) groupUpdate() http.HandlerFunc {
 // @Tags group
 // @Produce json
 // @Param id path string true "Group ID to delete"
-// @Success 200 {object} Response
+// @Success 202
 // @Failure 401 {object} Error
 // @Failure 403 {object} Error
 // @Failure 422 {object} Error
@@ -134,7 +134,7 @@ func (s *Server) groupDelete() http.HandlerFunc {
 			return
 		}
 
-		s.respond(w, http.StatusOK, Response{Data: nil})
+		s.respond(w, http.StatusAccepted, nil)
 	}
 }
 
@@ -143,7 +143,7 @@ func (s *Server) groupDelete() http.HandlerFunc {
 // @Summary Returns group information
 // @Tags group
 // @Produce json
-// @Success 200 {object} Response
+// @Success 200 {object} model.Group
 // @Failure 401 {object} Error
 // @Failure 403 {object} Error
 // @Failure 422 {object} Error
