@@ -18,6 +18,7 @@ type Comment struct {
 func NewComment() *Comment {
 	id := uuid.New().String()
 	return &Comment{
-		ID: id,
+		ID:        id,
+		CreatedAt: time.Now(),
 	}
 }

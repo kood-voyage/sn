@@ -37,10 +37,10 @@ func getParentID(comment *model.Comment) interface{} {
 	return comment.ParentID
 }
 
-func (c CommentRepository) Delete(id string) error {
-	query := `DELETE FROM comment WHERE id = ?`
+func (c CommentRepository) Delete(commentID, userID string) error {
+	query := `DELETE FROM comment WHERE id = ? AND user_id = ?`
 
-	result, err := c.store.Db.Exec(query, id)
+	result, err := c.store.Db.Exec(query, commentID, userID)
 	if err != nil {
 		return err
 	}
@@ -51,14 +51,40 @@ func (c CommentRepository) Delete(id string) error {
 	}
 
 	if rowCount == 0 {
-		return fmt.Errorf("no comment with such ID %s", id)
+		return fmt.Errorf("no comment with such ID %s", commentID)
 	}
 
 	return nil
 }
 
 // Get returns all comments to single post
-func (c CommentRepository) Get(id string) (*model.Comment, error) {
+func (c CommentRepository) Get(id string) (*[]model.Comment, error) {
+	query := `SELECT * FROM comment WHERE post_id = ?`
 
-	return nil, nil
+	rows, err := c.store.Db.Query(query, id)
+	if err != nil {
+		return nil, err
+	}
+
+	var comments []model.Comment
+	for rows.Next() {
+		var comment model.Comment
+		if err = rows.Scan(
+			&comment.ID,
+			&comment.UserID,
+			&comment.PostID,
+			&comment.ParentID,
+			&comment.Content,
+			&comment.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		comments = append(comments, comment)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return &comments, nil
 }

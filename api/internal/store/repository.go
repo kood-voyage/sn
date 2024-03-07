@@ -25,6 +25,6 @@ type PostRepository interface {
 
 type CommentRepository interface {
 	Create(post *model.Comment) error
-	Delete(id string) error
-	Get(id string) (*model.Comment, error)
+	Delete(postID, userID string) error
+	Get(id string) (*[]model.Comment, error)
 }

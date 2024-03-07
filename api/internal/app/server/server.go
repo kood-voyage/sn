@@ -17,7 +17,6 @@ import (
 )
 
 const (
-	sessionName            = "session"
 	jwtKey                 = "JWT_KEY"
 	ctxKeyRequestID ctxKey = iota
 	ctxUserID
@@ -71,6 +70,7 @@ func configureRouter(s *Server) {
 	s.router.DELETE("/api/v1/auth/posts/delete/{id}", s.deletePost())
 	s.router.POST("/api/v1/auth/comment/create", s.createComment())
 	s.router.DELETE("/api/v1/auth/comment/delete/{id}", s.deleteComment())
+	s.router.GET("/api/v1/auth/comment/{id}", s.getComments())
 	s.router.POST("/api/v1/auth/users/create", s.createUser())
 	s.router.GET("/api/v1/auth/user/create/{privacy_state}", s.createUser())
 	s.router.GET("/api/v1/auth/user/privacy/{privacy_state}", s.updatePrivacy())
