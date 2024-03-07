@@ -7,7 +7,7 @@ type UserRepository interface {
 	GetFollowers(userID string) ([]model.User, error)
 	GetFollowing(userID string) ([]model.User, error)
 	IsFollowing(source_id, target_id string) (bool, error)
-	GetNotifications(user_id string, req_type int) ([]model.Request, error)
+	GetNotifications(user_id string) ([]model.Request, error)
 }
 
 type FollowRepository interface {
@@ -45,6 +45,7 @@ type GroupRepository interface {
 	Get(group_id string) (*model.Group, error)
 	Members(group_id string) (*[]model.User, error)
 	IsMember(group_id, user_id string) error
+	AddMember(group_id, user_id string) error
 }
 
 type PrivacyRepository interface {

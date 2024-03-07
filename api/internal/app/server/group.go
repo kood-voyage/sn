@@ -194,8 +194,9 @@ func (s *Server) groupGet() http.HandlerFunc {
 func (s *Server) groupInvite() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type requestBody struct {
-			GroupID  string `validate:"required"`
-			TargetID string `validate:"required"`
+			GroupID  string `json:"group_id" validate:"required"`
+			TargetID string `json:"target_id" validate:"required"`
+			Message  string `json:"message"`
 		}
 		sourceID, ok := r.Context().Value(ctxUserID).(string)
 		if !ok {
@@ -224,10 +225,16 @@ func (s *Server) groupInvite() http.HandlerFunc {
 		request.TargetID = req.TargetID
 		request.SourceID = sourceID
 		request.CreatedAt = time.Now()
+		request.Message = req.Message
 		//check if that request it not already created
-		_, err := s.store.Request().Get(*request)
-		if err != nil && err != sql.ErrNoRows {
+		existing, err := s.store.Request().Get(*request)
+		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		if existing != nil {
+			s.error(w, http.StatusForbidden, errors.New("already request exists"))
 			return
 		}
 		//if not create a request
@@ -237,5 +244,84 @@ func (s *Server) groupInvite() http.HandlerFunc {
 		}
 
 		s.respond(w, http.StatusOK, Response{Data: nil})
+	}
+}
+
+// groupInviteRequest Handles the group invitation request accept / reject
+//
+// @Summary Resolves a group invitation request
+// @Tags follow
+// @Accept json
+// @Produce json
+// @Success 200 {object} Response
+// @Failure 401 {object} Error
+// @Failure 500 {object} Error
+// @Router /api/v1/auth/group/request [post]
+func (s *Server) groupInviteRequest() http.HandlerFunc {
+	type Req struct {
+		TargetID string `json:"target_id" validate:"lowercase|required"`
+		Option   string `json:"option" validate:"lowercase|required"`
+		GroupID string `json:"group_id" validate:"required"`
+	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		var request Req
+		sourceID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+			return
+		}
+
+		if err := s.decode(r, &request); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		if err := validator.Validate(request); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		//The targetID is source id because first time the request was created from one user(source user) and now the second user(target user) needs to confirm it hence why (target user) sends the request and on the targetID field needs to be the (target user) - getting the user from jwt middleware its naming is just sourceid
+		req := model.Request{
+			TargetID: sourceID,
+			SourceID: request.TargetID,
+			TypeID:   s.types.Request.Invite,
+		}
+
+		if request.Option == "reject" {
+			if err := s.store.Request().Delete(req); err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+			s.respond(w, http.StatusOK, Response{Data: "Rejected invitation to a group"})
+			return
+		} else if request.Option == "accept" {
+			//check if request exists in first place
+			req_exists, err := s.store.Request().Get(req)
+			if err != nil && err != sql.ErrNoRows {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+
+			//delete the request
+			if err := s.store.Request().Delete(*req_exists); err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+			//add member to a group
+
+			if err := s.store.Group().AddMember(request.GroupID, sourceID); err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+
+
+			s.respond(w, http.StatusOK, Response{Data: "Accepted group invitation"})
+			return
+		} else {
+			s.error(w, http.StatusBadRequest,
+				errors.New("invalid option"))
+		}
+
 	}
 }
