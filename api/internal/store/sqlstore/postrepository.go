@@ -25,7 +25,7 @@ func (p PostRepository) Create(post *model.Post, privacy int) error {
 		return err
 	}
 
-	if err := p.store.Privacy().Set(post.ID, privacy); err != nil {
+	if err = p.store.Privacy().Set(post.ID, privacy); err != nil {
 		return err
 	}
 
@@ -69,7 +69,7 @@ func (p PostRepository) Get(id string) (*model.Post, error) {
 	return post, nil
 }
 
-func (p *PostRepository) GetUsers(source_id, target_id string) ([]model.Post, error) {
+func (p PostRepository) GetUsers(source_id, target_id string) ([]model.Post, error) {
 	query := `SELECT post.id, post.title, post.content, post.user_id, post.created_at
 		FROM post
 		JOIN user ON post.user_id = user.id
@@ -105,7 +105,7 @@ func (p *PostRepository) GetUsers(source_id, target_id string) ([]model.Post, er
 
 	for rows.Next() {
 		var post model.Post
-		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.UserID, &post.CreatedAt); err != nil {
+		if err = rows.Scan(&post.ID, &post.Title, &post.Content, &post.UserID, &post.CreatedAt); err != nil {
 			return nil, err
 		}
 
@@ -113,4 +113,14 @@ func (p *PostRepository) GetUsers(source_id, target_id string) ([]model.Post, er
 	}
 
 	return posts, nil
+}
+
+func (p PostRepository) AddSelected(userList *[]model.User) error {
+
+	return nil
+}
+
+func (p PostRepository) RemoveSelected(userList *[]model.User) error {
+
+	return nil
 }

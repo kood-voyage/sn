@@ -4,6 +4,8 @@ definitions:
     properties:
       content:
         type: string
+      count:
+        type: string
       created_at:
         type: string
       id:
@@ -212,36 +214,6 @@ paths:
       summary: Resolves a follow request
       tags:
       - follow
-  /api/v1/auth/group/{id}:
-    get:
-      parameters:
-      - description: Group ID to get information
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Group'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/server.Error'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/server.Error'
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/server.Error'
-      summary: Creates a request
-      tags:
-      - group
   /api/v1/auth/group/create:
     post:
       produces:
@@ -300,7 +272,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/server.Response'
+            $ref: '#/definitions/model.Group'
         "401":
           description: Unauthorized
           schema:
@@ -313,7 +285,7 @@ paths:
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/server.Error'
-      summary: Returns group information
+      summary: Creates a request to invite another user to a group
       tags:
       - group
   /api/v1/auth/group/update:

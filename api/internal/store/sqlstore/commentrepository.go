@@ -66,10 +66,10 @@ func (c CommentRepository) Get(id string) (*[]model.Comment, error) {
             c.id,
             c.user_id,
             c.post_id,
-            c.parent_id,
+            COALESCE(c.parent_id, '') AS parent_id,
             c.content,
-            c.timestamp,
-            (SELECT COUNT(*) FROM comment subc WHERE subc.parent_id = c.id) AS subcomment_count
+            c.created_at,
+            (SELECT COUNT(*) FROM comment subc WHERE subc.parent_id = c.id) AS count
         FROM
             comment c
         WHERE
@@ -82,10 +82,10 @@ func (c CommentRepository) Get(id string) (*[]model.Comment, error) {
             c.id,
             c.user_id,
             c.post_id,
-            c.parent_id,
+           	COALESCE(c.parent_id, '') AS parent_id,
             c.content,
-            c.timestamp,
-            (SELECT COUNT(*) FROM comment subc WHERE subc.parent_id = c.id) AS subcomment_count
+            c.created_at,
+            (SELECT COUNT(*) FROM comment subc WHERE subc.parent_id = c.id) AS count
         FROM
             comment c
         JOIN
@@ -107,6 +107,7 @@ func (c CommentRepository) Get(id string) (*[]model.Comment, error) {
 			&comment.ParentID,
 			&comment.Content,
 			&comment.CreatedAt,
+			&comment.Count,
 		); err != nil {
 			return nil, err
 		}

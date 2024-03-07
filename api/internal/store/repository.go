@@ -27,6 +27,8 @@ type PostRepository interface {
 	Delete(id string) error
 	Get(id string) (*model.Post, error)
 	GetUsers(source_id, target_id string) ([]model.Post, error)
+	AddSelected(userList *[]model.User) error
+	RemoveSelected(userList *[]model.User) error
 }
 
 type CommentRepository interface {

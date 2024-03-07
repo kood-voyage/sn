@@ -99,8 +99,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/auth/follow/request/{id}": {
-            "get": {
+        "/api/v1/auth/follow/request": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -110,19 +110,10 @@ const docTemplate = `{
                 "tags": [
                     "follow"
                 ],
-                "summary": "Request a follow for user",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Target user ID to request follow",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "Resolves a follow request",
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/server.Response"
                         }
@@ -153,7 +144,7 @@ const docTemplate = `{
                 "tags": [
                     "follow"
                 ],
-                "summary": "Follow a user",
+                "summary": "Follow a user or create follow request",
                 "parameters": [
                     {
                         "type": "string",
@@ -170,14 +161,242 @@ const docTemplate = `{
                             "$ref": "#/definitions/server.Response"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/server.Error"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/group/create": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "group"
+                ],
+                "summary": "Create a group",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Group"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/group/delete/{id}": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "group"
+                ],
+                "summary": "Delete a group",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Group ID to delete",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/server.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/group/invite": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "group"
+                ],
+                "summary": "Creates a request to invite another user to a group",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Group"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/group/update": {
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "group"
+                ],
+                "summary": "Update group information",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Group"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/notification/create": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Create a notification from source id to target id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Request"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/notification/delete/{id}": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Delete a notification by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notification ID to delete",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/server.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
                         "schema": {
                             "$ref": "#/definitions/server.Error"
                         }
@@ -334,16 +553,118 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.User"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/user/following/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Return a list of users who is user following",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User id to get followers",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.User"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/user/notifications": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Return a list of notifications to user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Request"
+                            }
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/user/posts/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Return a list of posts what user has created",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User id to get user's posts",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Post"
+                            }
                         }
                     },
                     "422": {
@@ -400,6 +721,43 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/auth/user/{id}/posts": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Returns a list of user followers",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User id to get followers",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.User"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -415,6 +773,9 @@ const docTemplate = `{
                 "content": {
                     "type": "string"
                 },
+                "count": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -428,6 +789,36 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Group": {
+            "type": "object",
+            "required": [
+                "description",
+                "id"
+            ],
+            "properties": {
+                "creator_id": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "members": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "privacy": {
                     "type": "string"
                 }
             }
@@ -461,11 +852,46 @@ const docTemplate = `{
                 }
             }
         },
+        "model.Request": {
+            "type": "object",
+            "required": [
+                "id",
+                "source_id",
+                "target_id",
+                "type_id"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "source_id": {
+                    "type": "string"
+                },
+                "target_id": {
+                    "type": "string"
+                },
+                "type_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "model.User": {
             "type": "object",
+            "required": [
+                "id"
+            ],
             "properties": {
                 "id": {
                     "type": "string"
+                },
+                "member_type": {
+                    "type": "integer"
                 }
             }
         },

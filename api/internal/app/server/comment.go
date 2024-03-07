@@ -20,12 +20,18 @@ import (
 func (s *Server) createComment() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		comment := model.NewComment()
+		userID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("unauthorized"))
+			return
+		}
 
 		if err := s.decode(r, comment); err != nil {
 			s.error(w, http.StatusInternalServerError, err)
 			return
 		}
 
+		comment.UserID = userID
 		if err := validator.Validate(comment); err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return

@@ -1,8 +1,12 @@
-all: clean test build run
+all: clean test swag build run
 
 test:
 	@echo "Running tests..."
 	@go test -v ./...
+
+swag:
+	@echo "Building swagger docs..."
+	@swag init -g cmd/api/main.go
 
 build:
 	@echo "Building binary..."
@@ -16,4 +20,4 @@ run: build
 	@echo "Running API..."
 	@./build/api/api
 
-.PHONY: all test build clean run
+.PHONY: all test swag build clean run

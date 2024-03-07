@@ -12,6 +12,7 @@ type Comment struct {
 	ParentID  string    `db:"parent_id" json:"parent_id"`
 	Content   string    `db:"content" json:"content" validate:"required"`
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
+	Count     string    `json:"count"`
 }
 
 // NewComment creates a pointer to Comment struct with new uuid

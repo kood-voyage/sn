@@ -15,7 +15,7 @@ import (
 
 func main() {
 	cfg := config.NewConfig()
-	err := cfg.ReadConfig("cfg/cfg.json")
+	err := cfg.ReadConfig("config/config.json")
 	if err != nil {
 		log.Fatalf("Error reading cfg file: %s\n", err)
 	}

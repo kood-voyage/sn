@@ -11,7 +11,7 @@ type Post struct {
 	Title     string    `db:"title" json:"title" validate:"required"`
 	Content   string    `db:"content" json:"content" validate:"required"`
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
-	Privacy   string    `json:"privacy" validate:"required|privacy:private,public"`
+	Privacy   string    `json:"privacy" validate:"required|privacy:private,public,selected"`
 }
 
 // NewPost creates a pointer to Post struct with new uuid
