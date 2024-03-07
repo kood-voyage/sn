@@ -93,7 +93,7 @@ func configureRouter(s *Server) {
 	s.router.POST("/api/v1/auth/group/invite", s.groupInvite())
 	s.router.POST("/api/v1/auth/group/request", s.groupInviteRequest())
 
-
+//
 
 
 	s.router.GET("/login", s.login())
