@@ -14,11 +14,11 @@ import (
 // @BasePath /
 
 func main() {
-	config := config.NewConfig()
-	err := config.ReadConfig("config/config.json")
+	cfg := config.NewConfig()
+	err := cfg.ReadConfig("cfg/cfg.json")
 	if err != nil {
-		log.Fatalf("Error reading config file: %s\n", err)
+		log.Fatalf("Error reading cfg file: %s\n", err)
 	}
 
-	log.Fatal(server.Start(config))
+	log.Fatal(server.Start(cfg))
 }
