@@ -4,12 +4,6 @@ on:
   pull_request:
     branches:
       - main
-
-  push:
-    branches:
-      - main
-
-
 jobs:
   build:
     name: Lint
@@ -30,7 +24,8 @@ jobs:
       - name: Super-linter
         uses: super-linter/super-linter@v6.3.0  
         env:
-          # passing in our repo full access by GH token and ability to pass check with minor errors.
+          # passing in our repo full access by GH token and ability to pass a check with minor errors.
+          #
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DISABLE_ERRORS: true
           VALIDA_ALL_CODEBASE: false
