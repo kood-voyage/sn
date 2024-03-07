@@ -88,6 +88,8 @@ func runValidationFunction(function, parameter string, val interface{}) error {
 		return hasLowerCase(val)
 	case "uppercase":
 		return hasUpperCase(val)
+	case "privacy":
+		return privacy(val, parameter)
 	default:
 		return errors.New("unkown validation function: " + function)
 	}
@@ -165,4 +167,18 @@ func lengthValidation(val interface{}, parameter string, compare func(int, int) 
 	}
 
 	return nil
+}
+
+func privacy(val interface{}, param string) error {
+	switch reflect.TypeOf(val).Kind() {
+	case reflect.String:
+		value := val.(string)
+		if strings.Contains(param, value) {
+			return nil
+		}
+
+		return fmt.Errorf("type could only be %v", param)
+	default:
+		return fmt.Errorf("only string allowed")
+	}
 }

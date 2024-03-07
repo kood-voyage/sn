@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"social-network/internal/app/config"
 	"social-network/internal/app/server"
 )
 
@@ -13,11 +14,11 @@ import (
 // @BasePath /
 
 func main() {
-	config := server.NewConfig()
-	err := config.ReadConfig("config/config.json")
+	cfg := config.NewConfig()
+	err := cfg.ReadConfig("config/config.json")
 	if err != nil {
-		log.Fatalf("Error reading config file: %s\n", err)
+		log.Fatalf("Error reading cfg file: %s\n", err)
 	}
 
-	log.Fatal(server.Start(config))
+	log.Fatal(server.Start(cfg))
 }

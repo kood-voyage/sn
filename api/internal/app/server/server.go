@@ -13,11 +13,10 @@ import (
 	"social-network/pkg/router"
 	"time"
 
-	httpSwagger "github.com/swaggo/http-swagger"
+	"github.com/swaggo/http-swagger"
 )
 
 const (
-	sessionName            = "session"
 	jwtKey                 = "JWT_KEY"
 	ctxKeyRequestID ctxKey = iota
 	ctxUserID
@@ -65,22 +64,36 @@ func configureRouter(s *Server) {
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
 	))
 	//---------USER---------//
-	s.router.GET("/api/v1/auth/user/create/{privacy_state}", s.createUser())
-	s.router.GET("/api/v1/auth/user/privacy/{privacy_state}", s.updatePrivacy())
+	s.router.GET("/api/v1/auth/user/create/{privacy_state}", s.userCreate())
+	s.router.GET("/api/v1/auth/user/privacy/{privacy_state}", s.userPrivacy())
 	s.router.GET("/api/v1/auth/user/followers/{id}", s.userFollowers())
 	s.router.GET("/api/v1/auth/user/following/{id}", s.userFollowing())
 	s.router.GET("/api/v1/auth/user/posts/{id}", s.userPosts())
 	s.router.GET("/api/v1/auth/user/notifications", s.userNotifications())
-
 	//---------NOTIFICATION---------//
-	s.router.POST("/api/v1/auth/notification/create", s.createNotification())
-	s.router.DELETE("/api/v1/auth/notification/delete/{id}", s.deleteNotification())
+	s.router.POST("/api/v1/auth/notification/create", s.notificationCreate())
+	s.router.DELETE("/api/v1/auth/notification/delete/{id}", s.notificationDelete())
 	//---------FOLLOW--------------//
 	s.router.GET("/api/v1/auth/follow/{id}", s.handleFollow())
 	s.router.GET("/api/v1/auth/unfollow/{id}", s.handleUnfollow())
 	s.router.POST("/api/v1/auth/follow/request", s.handleFollowRequest())
+	//---------POST---------------//
+	s.router.GET("/api/v1/auth/posts/{id}", s.getPost())
+	s.router.POST("/api/v1/auth/posts/create", s.createPost())
+	s.router.DELETE("/api/v1/auth/posts/delete/{id}", s.deletePost())
+	//---------COMMENT------------//
+	s.router.POST("/api/v1/auth/comment/create", s.createComment())
+	s.router.DELETE("/api/v1/auth/comment/delete/{id}", s.deleteComment())
+	s.router.GET("/api/v1/auth/comment/{id}", s.getComments())
+	//---------GROUP--------------//
+	s.router.POST("/api/v1/auth/group/create", s.groupCreate())
+	s.router.PUT("/api/v1/auth/group/update", s.groupUpdate())
+	s.router.DELETE("/api/v1/auth/group/delete/{id}", s.groupDelete())
+	s.router.GET("/api/v1/auth/group/{id}", s.groupGet())
+	s.router.POST("/api/v1/auth/group/invite", s.groupInvite())
+	s.router.POST("/api/v1/auth/group/request", s.groupInviteRequest())
 
-	s.router.GET("/login", s.login())
+	s.router.GET("/login/{id}", s.login())
 
 }
 
@@ -108,7 +121,7 @@ func (s *Server) decode(r *http.Request, data interface{}) error {
 func (s *Server) login() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		newToken := jwttoken.NewClaims()
-		newToken.Set("user_id", "testUSERid")
+		newToken.Set("user_id", r.PathValue("id"))
 		newToken.SetTime("exp", time.Now().Add(time.Hour*100))
 		a := jwttoken.HmacSha256(os.Getenv(jwtKey))
 
@@ -117,7 +130,6 @@ func (s *Server) login() http.HandlerFunc {
 			s.error(w, http.StatusBadRequest, err)
 			return
 		}
-		fmt.Println("TEST")
 
 		s.respond(w, http.StatusOK, Response{Data: token})
 	}

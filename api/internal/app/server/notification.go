@@ -8,7 +8,7 @@ import (
 	"social-network/pkg/validator"
 )
 
-// createNotification handles the creation of notification.
+// notificationCreate handles the creation of notification.
 //
 // @Summary Create a notification from source id to target id
 // @Tags notification
@@ -18,7 +18,7 @@ import (
 // @Failure 406 {object} Error
 // @Failure 422 {object} Error
 // @Router /api/v1/auth/notification/create [post]
-func (s *Server) createNotification() http.HandlerFunc {
+func (s *Server) notificationCreate() http.HandlerFunc {
 	Notification := model.NotificationRequest()
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := s.decode(r, Notification); err != nil {
@@ -53,7 +53,7 @@ func (s *Server) createNotification() http.HandlerFunc {
 	}
 }
 
-// deleteNotification handles the deletion of notification.
+// notificationDelete handles the deletion of notification.
 //
 // @Summary Delete a notification by ID
 // @Tags notification
@@ -62,7 +62,7 @@ func (s *Server) createNotification() http.HandlerFunc {
 // @Success 200 {object} Response
 // @Failure 422 {object} Error
 // @Router /api/v1/auth/notification/delete/{id} [delete]
-func (s *Server) deleteNotification() http.HandlerFunc {
+func (s *Server) notificationDelete() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		if err := s.store.Request().DeleteByID(r.PathValue("id")); err != nil {

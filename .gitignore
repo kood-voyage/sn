@@ -6,6 +6,8 @@ infra/.terraform/
 *.dll
 *.so
 *.dylib
+#build folder
+api/build
 
 
 
@@ -25,3 +27,4 @@ infra/.terraform/
 # Go workspace file
 go.work
 /api/internal/db/database.db
+/api/build/
