@@ -162,6 +162,7 @@ CREATE TABLE request (
                          type_id INT NOT NULL,
                          source_id text NOT NULL,
                          target_id text NOT NULL,
+                         parent_id text DEFAULT '',
                          message text NOT NULL,
                          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                          FOREIGN KEY (type_id) REFERENCES request_type (id) ,

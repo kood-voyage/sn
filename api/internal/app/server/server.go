@@ -93,10 +93,8 @@ func configureRouter(s *Server) {
 	s.router.POST("/api/v1/auth/group/invite", s.groupInvite())
 	s.router.POST("/api/v1/auth/group/request", s.groupInviteRequest())
 
-//
 
-
-	s.router.GET("/login", s.login())
+	s.router.GET("/login/{id}", s.login())
 
 }
 
@@ -124,7 +122,7 @@ func (s *Server) decode(r *http.Request, data interface{}) error {
 func (s *Server) login() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		newToken := jwttoken.NewClaims()
-		newToken.Set("user_id", "user1")
+		newToken.Set("user_id", r.PathValue("id"))
 		newToken.SetTime("exp", time.Now().Add(time.Hour*100))
 		a := jwttoken.HmacSha256(os.Getenv(jwtKey))
 

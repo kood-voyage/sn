@@ -13,9 +13,9 @@ type RequestRepository struct {
 
 func (r *RequestRepository) Create(request model.Request) error {
 	request.ID = uuid.New().String()
-	query := `INSERT INTO request (id, type_id, source_id, target_id, message) VALUES (?, ?, ?, ?, ?)`
+	query := `INSERT INTO request (id, type_id, source_id, target_id, parent_id, message) VALUES (?, ?, ?, ?, ?, ?)`
 
-	_, err := r.store.Db.Exec(query, request.ID, request.TypeID, request.SourceID, request.TargetID, request.Message)
+	_, err := r.store.Db.Exec(query, request.ID, request.TypeID, request.SourceID, request.TargetID, request.ParentID, request.Message)
 	if err != nil {
 		return err
 	}
@@ -58,7 +58,7 @@ func (r *RequestRepository) Get(request model.Request) (*model.Request, error) {
 	query := `SELECT * FROM request WHERE type_id = ? AND source_id = ? AND target_id = ?`
 
 	var req model.Request
-	if err := r.store.Db.QueryRow(query, request.TypeID, request.SourceID, request.TargetID).Scan(&req.ID, &req.TypeID, &req.SourceID, &req.TargetID, &req.Message, &req.CreatedAt); err != nil {
+	if err := r.store.Db.QueryRow(query, request.TypeID, request.SourceID, request.TargetID).Scan(&req.ID, &req.TypeID, &req.SourceID, &req.TargetID, &req.ParentID, &req.Message, &req.CreatedAt); err != nil {
 		return nil, err
 	}
 

@@ -365,6 +365,10 @@ func TestGroup_Get_Private(t *testing.T) {
 		WithArgs(groupId).
 		WillReturnRows(sqlmock.NewRows([]string{"type_id"}).AddRow(2))
 
+	mock.ExpectQuery("SELECT user_id FROM member").
+		WithArgs(groupId, sourceID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow("user1"))
+
 	mock.ExpectQuery("SELECT \\* FROM community").
 		WithArgs(groupId).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "creator_id", "name", "description"}).AddRow(groupId, sourceID, groupName, groupDescription))
