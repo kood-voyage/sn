@@ -1,1 +1,31 @@
+name: Svelte Docker Image CD 
 
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Logging in to dockerhub
+      working-directory: client
+      env:
+        DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+      run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+    - name: Building the docker image
+      working-directory: client
+      run: docker build -t mannuk24/sn-svelte-fe .
+
+
+
+    - name: Pushing the image to dockerhub
+      working-directory: client
+      run: docker push mannuk24/sn-svelte-fe:latest
