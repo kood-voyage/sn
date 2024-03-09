@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: self-hosted[svelte-runner]
+    runs-on: svelte-runner
 
     steps:
 
