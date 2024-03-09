@@ -1,1 +1,2 @@
 log1: Svelte container was already running, need to reset
+log2. Restarted svelte runner from scratch configuration 
