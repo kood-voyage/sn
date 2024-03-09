@@ -6,7 +6,7 @@ import type { User } from '$lib/types/user';
 import bcrypt from 'bcrypt'
 
 
-const db = new Database(DB_PATH);
+const db = new Database(process.env.DB_PATH || DB_PATH);
 
 try {
   const sqlSchema = readFileSync(SCHEMA_PATH, { encoding: 'utf8' });
