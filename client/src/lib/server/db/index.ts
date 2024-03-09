@@ -140,4 +140,3 @@ export function createUser(userInfo: User) {
 
   return { ok: true }
 }
-

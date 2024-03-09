@@ -5,7 +5,7 @@
 <!-- chat page -->
 <div class="flex w-full">
 	<!-- user list -->
-	<div class="overflow-scroll h-screen w-14 sm:w-60 bg-slate-200 dark:bg-slate-900">
+	<div class="overflow-scroll h-screen w-14 sm:w-60 bg-slate-50 dark:bg-slate-900">
 		<!-- search group / friends -->
 		<div class="border-b-2 border-slate-300 dark:border-slate-950 h-12 hidden sm:block">
 			<div class="p-2">
@@ -58,7 +58,7 @@
 
 	<div class="w-full">
 		<!-- user chat header -->
-		<div class="h-12 bg-slate-300 dark:bg-slate-800 px-4">
+		<div class="h-12 bg-slate-50 dark:bg-slate-800 px-4">
 			<div class="flex p-2 h-full">
 				<img
 					src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"

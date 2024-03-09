@@ -4,6 +4,6 @@
 	const hello = () => {};
 </script>
 
-<div class="w-screen">
+<div class="">
 	<slot />
 </div>

@@ -23,24 +23,15 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	signup: async (event) => {
 		const form = await superValidate(event, zod(signUpSchema));
-
-	
 		const user = new User(form.data)
-
 		const result =  createUser(user)
-
 		if(result.ok){
 			redirect(300,"/signin")
 		}
-
-
 		if (!form.valid) {
 			return fail(400, {
 				
 			});
 		}
-
-
-
 	}
 };
