@@ -64,3 +64,27 @@ export function refreshTokens(event: RefreshEvent, access_token_id: string) {
   }
 }
 
+export function getUserIdFromCookie(event: CreateEvent | RefreshEvent | RequestEvent) {
+  interface Payload {
+    exp: number;
+    user_id: string;
+    access_token_id: string;
+    iat: number;
+  }
+
+  const access_token = event.cookies.get("at") as string
+  // const pathname = event.url.pathname
+  try {
+    const adecoded = jwt.verify(access_token, JWT_KEY) as Payload
+    const payload = adecoded as Payload
+    return { ok: true, user_id: payload.user_id }
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error(err)
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
+

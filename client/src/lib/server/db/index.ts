@@ -1,7 +1,6 @@
 import Database from 'better-sqlite3';
 import { readFileSync } from 'fs';
 import { DB_PATH, SCHEMA_PATH } from '$env/static/private';
-import { v4 as uuidv4 } from 'uuid';
 import type { User } from '$lib/types/user';
 import bcrypt from 'bcrypt'
 
@@ -19,6 +18,7 @@ try {
     console.log('An unknown error occurred');
   }
 }
+
 
 export function checkSessionExists(access_or_user_id: string) {
   type RowType = {
@@ -42,7 +42,7 @@ export function checkSessionExists(access_or_user_id: string) {
     if (err instanceof Error) {
       return { ok: false, error: err, message: err.message }
     } else {
-      return { ok: false, error: err, message: "Misc Error" }
+      return { ok: false, error: err, message: "Unknown Error" }
     }
   }
 }
@@ -72,7 +72,7 @@ export function checkUserExists(login: string, password: string) {
     if (err instanceof Error) {
       return { ok: false, authorized: false, error: err, message: err.message }
     } else {
-      return { ok: false, authorized: false, error: err, message: "Misc Error" }
+      return { ok: false, authorized: false, error: err, message: "Unknown Error" }
     }
   }
 }
@@ -86,7 +86,7 @@ export function deleteSession(user_id: string) {
     if (err instanceof Error) {
       return { ok: false, error: err, message: err.message }
     } else {
-      return { ok: false, error: err }
+      return { ok: false, error: err, message: "Unknown Error" }
     }
   }
 
@@ -101,13 +101,12 @@ export function createSession(access_id: string, user_id: string) {
     if (err instanceof Error) {
       return { ok: false, error: err, message: err.message }
     } else {
-      return { ok: false, error: err }
+      return { ok: false, error: err, message: "Unknown Error" }
     }
   }
 
   return { ok: true }
 }
-
 
 export function createUser(userInfo: User) {
   // return userInfo
@@ -118,24 +117,21 @@ export function createUser(userInfo: User) {
       (id, username, email, password, date_of_birth, first_name, last_name) 
     VALUES
       (?, ?, ?, ?, ?, ?, ?);`
-    const id = uuidv4()
-    const salt = bcrypt.genSaltSync(10);
-
-    const hash = bcrypt.hashSync(userInfo.password, salt);
 
 
-    userInfo.password = hash
 
 
-    db.prepare(query).run(id, ...userInfo)
+    const res = db.prepare(query).run(...userInfo)
+
+
+    return { ok: true, result: res }
   } catch (err) {
     if (err instanceof Error) {
       return { ok: false, error: err, message: err.message }
     } else {
-      return { ok: false, error: err }
+      return { ok: false, error: err, message: "Unknown Error" }
     }
   }
 
-  return { ok: true }
 }
 
