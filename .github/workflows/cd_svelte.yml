@@ -23,6 +23,8 @@ jobs:
     - name: Building the docker image
       working-directory: client
       run: docker build -t mannuk24/sn-svelte-fe .
+      env:
+          DB_PATH: ${{ secrets.DB_PATH }}
 
 
 
