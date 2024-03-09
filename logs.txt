@@ -1,2 +1,3 @@
 log1: Svelte container was already running, need to reset
-log2. Restarted svelte runner from scratch configuration 
+log2: Restarted svelte runner from scratch configuration 
+log3: Svelte build finished in 10min 46sec
