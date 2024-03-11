@@ -1,13 +1,12 @@
 import Database from 'better-sqlite3';
 import { readFileSync } from 'fs';
 import { DB_PATH, SCHEMA_PATH } from '$env/static/private';
-import { DB_PATH, SCHEMA_PATH } from '$env/static/private';
 import { v4 as uuidv4 } from 'uuid';
 import type { User } from '$lib/types/user';
 import bcrypt from 'bcrypt'
 
 
-const db = new Database(process.env.DB_PATH || DB_PATH);
+export const db = new Database(process.env.DB_PATH || DB_PATH);
 
 try {
   const sqlSchema = readFileSync(process.env.SCHEMA_PATH || SCHEMA_PATH, { encoding: 'utf8' });
@@ -39,7 +38,7 @@ export function checkSessionExists(access_or_user_id: string) {
 
       return { ok: true, user_id: row.user_id }
     } else {
-      throw new Error("Session Not Foune")
+      throw new Error("Session Not Found")
     }
   } catch (err) {
     if (err instanceof Error) {
@@ -143,14 +142,14 @@ export function createUser(userInfo: User) {
 }
 
 
-export function getProfile(username: string){
+export function getProfile(username: string) {
 
 
 
   try {
     const query = `SELECT (id, username, date_of_birth,first_name,last_name) FROM  WHERE username = ?`
 
-    const row = db.prepare(query).get(username) 
+    const row = db.prepare(query).get(username)
 
     console.log(row)
     return row
