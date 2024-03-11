@@ -142,21 +142,19 @@ export function createUser(userInfo: User) {
 }
 
 
-export function getProfile(username: string) {
+export function getProfile(username: string) :any {
 
 
 
   try {
-    const query = `SELECT (id, username, date_of_birth,first_name,last_name) FROM  WHERE username = ?`
+    const query = `SELECT id, username, email, date_of_birth, first_name, last_name FROM user WHERE username = ?`
 
     const row = db.prepare(query).get(username)
 
-    console.log(row)
     return row
 
-
-
   } catch (err) {
+
 
     return "404"
 

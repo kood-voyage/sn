@@ -4,7 +4,7 @@
 	export let data;
 	const userList = data.data as RowType[];
 
-	console.log('NEW DATA CONSOLE >>>', data);
+	// console.log('NEW DATA CONSOLE >>>', data);
 
 	// The array now contains 100 names
 </script>
@@ -14,7 +14,7 @@
 </svelte:head>
 
 <div class="p-12">
-	<p class="text-md">Suggested for you</p>
+	<p class="text-md">User list</p>
 	{#each userList as user}
 		<div class="flex m-auto w-[420px] p-2 hover:bg-slate-200 dark:hover:bg-slate-900 rounded-md">
 			<a href="/app/u/{user.username}" class="flex">
@@ -25,7 +25,7 @@
 				/>
 				<div>
 					<p class="font-bold">{user.username}</p>
-					<p class="text-sm text-slate-500">Full Name or description</p>
+					<p class="text-sm text-slate-500">{user.first_name} {user.last_name}</p>
 				</div>
 			</a>
 			<!-- <div class="flex">
