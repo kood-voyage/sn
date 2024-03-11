@@ -5,21 +5,15 @@
 
 	const { name } = data;
 
-	type Data = {
-		post: number;
-		followers: number;
-		following: number;
-	};
-
-	const profileData: Data = {
-		post: 0,
-		followers: 1,
-		following: 0
-	};
+	// type Data = {
+	// 	post: number;
+	// 	followers: number;
+	// 	following: number;
+	// };
 </script>
 
 <svelte:head>
-	<title>u/{name}</title>
+	<title>g/{name}</title>
 </svelte:head>
 
 <!-- user profile page -->
@@ -60,8 +54,8 @@
 		<!-- group activity / posts -->
 
 		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-0 sm:p-4 mt-5 md:mt-0">
-			<div class="bg-pink-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-purple-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-pink-500 h-56 w-full sm:rounded-lg">group</div>
+			<div class="bg-purple-500 h-56 w-full sm:rounded-lg">group</div>
 			<div class="bg-red-500 h-56 w-full sm:rounded-lg">123</div>
 			<div class="bg-yellow-500 h-56 w-full sm:rounded-lg">123</div>
 			<div class="bg-orange-500 h-56 w-full sm:rounded-lg">123</div>
@@ -70,8 +64,5 @@
 </main>
 
 <style>
-	aside {
-		@apply h-screen w-[320px] bg-orange-600;
-	}
 	/* absolute */
 </style>

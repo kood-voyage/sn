@@ -114,7 +114,4 @@
 </main>
 
 <style>
-	aside {
-		@apply h-screen w-[320px] bg-orange-600;
-	}
 </style>

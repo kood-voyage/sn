@@ -1,22 +1,12 @@
-
-// import type { PageLoad } from './$types'
-
+import type { PageServerLoad } from "./$types"
 
 
 
 
-export const load:PageLoad = ({params}) => {
-
-
-    // try{
-
-    //     params.username 
 
 
 
-    // }catch(err){
-
-    // }
+export const load:PageServerLoad = ({params}) => {
 
 
 

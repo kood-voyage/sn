@@ -1,15 +1,16 @@
 import Database from 'better-sqlite3';
 import { readFileSync } from 'fs';
 import { DB_PATH, SCHEMA_PATH } from '$env/static/private';
+import { DB_PATH, SCHEMA_PATH } from '$env/static/private';
 import { v4 as uuidv4 } from 'uuid';
 import type { User } from '$lib/types/user';
 import bcrypt from 'bcrypt'
 
 
-const db = new Database(DB_PATH);
+const db = new Database(process.env.DB_PATH || DB_PATH);
 
 try {
-  const sqlSchema = readFileSync(SCHEMA_PATH, { encoding: 'utf8' });
+  const sqlSchema = readFileSync(process.env.SCHEMA_PATH || SCHEMA_PATH, { encoding: 'utf8' });
   db.exec(sqlSchema);
 
 } catch (err) {

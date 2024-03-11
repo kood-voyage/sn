@@ -1,7 +1,7 @@
 import { redirect, type Handle } from '@sveltejs/kit';
-import { JWT_KEY } from '$env/static/private';
 import jwt from 'jsonwebtoken'
 import { deleteTokens, refreshTokens } from '$lib/server/jwt-handle';
+import { JWT_KEY } from '$env/static/private';
 
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -10,14 +10,14 @@ export const handle: Handle = async ({ event, resolve }) => {
   const pathname = event.url.pathname
 
 
-  jwt.verify(refresh_token, JWT_KEY, (err, rdecoded) => {
+  jwt.verify(refresh_token, process.env.JWT_KEY || JWT_KEY, (err, rdecoded) => {
     if (err != null) {
       if (!(pathname.startsWith('/signin')) && !(pathname.startsWith('/signup'))) {
         deleteTokens(event)
         redirect(303, "/signin")
       }
     } else {
-      jwt.verify(access_token, JWT_KEY, (err) => {
+      jwt.verify(access_token, process.env.JWT_KEY || JWT_KEY, (err) => {
         if (err != null) {
 
           if (rdecoded && typeof rdecoded == "object") {

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import * as Resizable from '$lib/components/ui/resizable';
 	import { ModeWatcher } from 'mode-watcher';
 
 	///
@@ -18,25 +17,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 
-	export let defaultCollapsed = false;
 
-	// import Icon from '@iconify/svelte';
 
-	let isCollapsed = defaultCollapsed;
 
-	function onLayoutChange(sizes: number[]) {
-		document.cookie = `PaneForge:layout=${JSON.stringify(sizes)}`;
-	}
-
-	function onCollapse() {
-		isCollapsed = true;
-		document.cookie = `PaneForge:collapsed=${true}`;
-	}
-
-	function onExpand() {
-		isCollapsed = false;
-		document.cookie = `PaneForge:collapsed=${false}`;
-	}
 </script>
 
 <ModeWatcher />
@@ -60,7 +43,7 @@
 					</div>
 				</a>
 
-				<a href="/app/g/group">
+				<a href="/app/g">
 					<div class="button">
 						<Globe class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
 					</div>
@@ -137,7 +120,4 @@
 		@apply flex h-[60px] w-[60px] cursor-pointer rounded transition-all duration-300  hover:bg-slate-300 hover:dark:bg-slate-800;
 	}
 
-	.icon {
-		@apply h-8 w-8;
-	}
 </style>
