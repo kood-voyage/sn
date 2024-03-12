@@ -1,25 +1,23 @@
-
-// import type { PageLoad } from './$types'
-
-
+import { getProfile } from "$lib/server/db"
+import type { PageServerLoad } from './$types';
 
 
 
-export const load:PageLoad = ({params}) => {
-
-
-    // try{
-
-    //     params.username 
 
 
 
-    // }catch(err){
-
-    // }
 
 
+export const load: PageServerLoad = async ({params}) => {
 
-    return params
+
+
+
+    const data = getProfile(params.username)
+
+
+
+
+  return data
 
 }

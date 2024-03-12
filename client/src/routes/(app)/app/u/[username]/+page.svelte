@@ -3,7 +3,7 @@
 
 	export let data: PageData;
 
-	const { username } = data;
+	const { username, id, email, first_name, last_name, date_of_birth } = data;
 
 	type Data = {
 		post: number;
@@ -44,10 +44,17 @@
 					class="absolute bottom-[1px] left-12 h-20 w-20 rounded-full border-4 border-white object-cover dark:border-slate-950"
 				/>
 
-				<h1 class="absolute bottom-0 sm:bottom-4 left-[140px] text-2xl font-bold">
-					{username}
-					<button class="text-sm px-1 rounded-md bg-sky-200 dark:bg-sky-950"> follow </button>
-				</h1>
+				<div
+					class="absolute bottom-1 sm:bottom-3 left-[140px] bg-white dark:bg-slate-950 rounded-2xl flex"
+				>
+					<p class=" md:text-2xl font-bold mr-2">{username}</p>
+					<!-- <p class="text-xs">
+						<span class="bg-slate-500 px-1 rounded-sm">AKA</span>
+						{first_name}
+						{last_name}
+					</p> -->
+					<button class="text-sm px-5 rounded-md bg-sky-500"> follow </button>
+				</div>
 
 				<div class="hidden md:block">
 					<div class="flex dark:bg-slate-900 w-72 rounded-sm absolute right-1 bottom-4">
@@ -94,27 +101,24 @@
 		<!-- profile activity / posts -->
 
 		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-1 p-0 sm:p-4 mt-5 md:mt-0">
-			<div class="bg-pink-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-purple-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-red-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-yellow-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-orange-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-pink-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-purple-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-red-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-yellow-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-orange-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-pink-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-purple-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-red-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-yellow-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-orange-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-pink-500 h-96 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<div class="bg-purple-500 h-96 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<div class="bg-red-500 h-96 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<div class="bg-yellow-500 h-56 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<div class="bg-orange-500 h-56 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<div class="bg-pink-500 h-56 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<div class="bg-purple-500 h-56 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<div class="bg-red-500 h-56 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<div class="bg-yellow-500 h-56 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<div class="bg-orange-500 h-56 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<div class="bg-pink-500 h-56 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<div class="bg-purple-500 h-56 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<div class="bg-red-500 h-56 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<div class="bg-yellow-500 h-56 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<div class="bg-orange-500 h-56 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
 		</div>
 	</div>
 </main>
 
 <style>
-	aside {
-		@apply h-screen w-[320px] bg-orange-600;
-	}
 </style>

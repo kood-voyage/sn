@@ -6,10 +6,12 @@ import type { User } from '$lib/types/user';
 import bcrypt from 'bcrypt'
 
 
-const db = new Database(process.env.DB_PATH);
+
+export const db = new Database(process.env.DB_PATH || DB_PATH);
 
 try {
-  const sqlSchema = readFileSync(process.env.SCHEMA_PATH, { encoding: 'utf8' });
+  const sqlSchema = readFileSync(process.env.SCHEMA_PATH || SCHEMA_PATH, { encoding: 'utf8' });
+
   db.exec(sqlSchema);
 
 } catch (err) {
@@ -38,7 +40,7 @@ export function checkSessionExists(access_or_user_id: string) {
 
       return { ok: true, user_id: row.user_id }
     } else {
-      throw new Error("Session Not Foune")
+      throw new Error("Session Not Found")
     }
   } catch (err) {
     if (err instanceof Error) {
@@ -140,3 +142,28 @@ export function createUser(userInfo: User) {
 
   return { ok: true }
 }
+
+
+
+export function getProfile(username: string) :any {
+
+
+
+  try {
+    const query = `SELECT id, username, email, date_of_birth, first_name, last_name FROM user WHERE username = ?`
+
+    const row = db.prepare(query).get(username)
+
+    return row
+
+  } catch (err) {
+
+
+    return "404"
+
+
+  }
+
+}
+
+

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import * as Resizable from '$lib/components/ui/resizable';
 	import { ModeWatcher } from 'mode-watcher';
 
 	///
@@ -17,37 +16,17 @@
 	import { setMode, resetMode } from 'mode-watcher';
 	import { Button } from '$lib/components/ui/button';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-
-	export let defaultCollapsed = false;
-
-	// import Icon from '@iconify/svelte';
-
-	let isCollapsed = defaultCollapsed;
-
-	function onLayoutChange(sizes: number[]) {
-		document.cookie = `PaneForge:layout=${JSON.stringify(sizes)}`;
-	}
-
-	function onCollapse() {
-		isCollapsed = true;
-		document.cookie = `PaneForge:collapsed=${true}`;
-	}
-
-	function onExpand() {
-		isCollapsed = false;
-		document.cookie = `PaneForge:collapsed=${false}`;
-	}
 </script>
 
 <ModeWatcher />
 
-<div class="flex">
-	<!-- nav -->
-	<div class="w-[60px] relative shadow-md border-r">
-		<div class="h-screen w-[60px]">
+<div class=" h-screen sm:h-auto sm:flex">
+	<!-- nav Vertical-->
+	<div class="hidden sm:block sm:w-[60px] relative shadow-md border-r">
+		<div class="h-screen sm:w-[60px]">
 			<div class="h-1/6"></div>
 
-			<div class="flex flex-col h-4/6 items-center w-[60px]">
+			<div class="flex flex-col h-4/6 items-center sm:w-[60px]">
 				<a href="/app">
 					<div class="button">
 						<Home class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
@@ -60,7 +39,7 @@
 					</div>
 				</a>
 
-				<a href="/app/g/group">
+				<a href="/app/g">
 					<div class="button">
 						<Globe class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
 					</div>
@@ -127,17 +106,26 @@
 		</div>
 	</div>
 
+	<!--nav Mobile-->
+
 	<div class="w-full">
 		<slot />
+	</div>
+
+	<!-- <div class="sm:hidden">
+		<div class="w-screen h-20 "></div>
+	</div> -->
+
+	<div class="sm:hidden">
+		<!-- Mobile navigation button -->
+		<div
+			class="block px-2 py-1 text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 h-20"
+		></div>
 	</div>
 </div>
 
 <style>
 	.button {
 		@apply flex h-[60px] w-[60px] cursor-pointer rounded transition-all duration-300  hover:bg-slate-300 hover:dark:bg-slate-800;
-	}
-
-	.icon {
-		@apply h-8 w-8;
 	}
 </style>
