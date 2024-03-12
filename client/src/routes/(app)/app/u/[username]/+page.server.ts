@@ -1,4 +1,4 @@
-import { getProfile } from "$lib/server/db"
+import { getProfile } from "$lib/server/db/profile"
 import type { PageServerLoad } from './$types';
 
 
@@ -8,16 +8,20 @@ import type { PageServerLoad } from './$types';
 
 
 
-export const load: PageServerLoad = async ({params}) => {
+export const load: PageServerLoad = async (event) => {
 
 
 
 
-    const data = getProfile(params.username)
+  const data = (await getProfile(event, event.params.username))
+  if (data.error) {
+    return {}
+  }
+  console.log(data)
 
 
 
 
-  return data
+  return data.user
 
 }

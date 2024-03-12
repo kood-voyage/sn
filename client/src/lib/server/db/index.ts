@@ -1,7 +1,6 @@
 import Database from 'better-sqlite3';
 import { readFileSync } from 'fs';
 import { DB_PATH, SCHEMA_PATH } from '$env/static/private';
-import { v4 as uuidv4 } from 'uuid';
 import type { User } from '$lib/types/user';
 import bcrypt from 'bcrypt'
 
@@ -122,16 +121,10 @@ export function createUser(userInfo: User) {
       (id, username, email, password, date_of_birth, first_name, last_name) 
     VALUES
       (?, ?, ?, ?, ?, ?, ?);`
-    const id = uuidv4()
-    const salt = bcrypt.genSaltSync(10);
-
-    const hash = bcrypt.hashSync(userInfo.password, salt);
 
 
-    userInfo.password = hash
 
-
-    db.prepare(query).run(id, ...userInfo)
+    db.prepare(query).run(...userInfo)
   } catch (err) {
     if (err instanceof Error) {
       return { ok: false, error: err, message: err.message }
@@ -142,28 +135,3 @@ export function createUser(userInfo: User) {
 
   return { ok: true }
 }
-
-
-
-export function getProfile(username: string) :any {
-
-
-
-  try {
-    const query = `SELECT id, username, email, date_of_birth, first_name, last_name FROM user WHERE username = ?`
-
-    const row = db.prepare(query).get(username)
-
-    return row
-
-  } catch (err) {
-
-
-    return "404"
-
-
-  }
-
-}
-
-
