@@ -46,6 +46,17 @@ func (s *Server) createComment() http.HandlerFunc {
 	}
 }
 
+// updateComment handles the post creation
+//
+// @Summary Updates content of the comment
+// @Tags comments
+// @Accept json
+// @Produce json
+// @Success 202
+// @Failure 401 {object} Error
+// @Failure 403 {object} Error
+// @Failure 422 {object} Error
+// @Router /api/v1/auth/comment/update [put]
 func (s *Server) updateComment() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var comment model.Comment
