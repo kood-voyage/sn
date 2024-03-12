@@ -3,8 +3,6 @@
 
 	export let data: PageData;
 
-	const { username, id, email, first_name, last_name, date_of_birth } = data;
-
 	type Data = {
 		post: number;
 		followers: number;
@@ -19,7 +17,7 @@
 </script>
 
 <svelte:head>
-	<title>u/{username}</title>
+	<title>u/{data.username}</title>
 </svelte:head>
 
 <!-- user profile page -->
@@ -39,7 +37,7 @@
 
 			<div class="h-8 relative mx-0 sm:mx-4">
 				<img
-					src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={username}"
+					src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={data.username}"
 					alt="banner"
 					class="absolute bottom-[1px] left-12 h-20 w-20 rounded-full border-4 border-white object-cover dark:border-slate-950"
 				/>
@@ -47,7 +45,7 @@
 				<div
 					class="absolute bottom-1 sm:bottom-3 left-[140px] bg-white dark:bg-slate-950 rounded-2xl flex"
 				>
-					<p class=" md:text-2xl font-bold mr-2">{username}</p>
+					<p class=" md:text-2xl font-bold mr-2">{data.username}</p>
 					<!-- <p class="text-xs">
 						<span class="bg-slate-500 px-1 rounded-sm">AKA</span>
 						{first_name}
