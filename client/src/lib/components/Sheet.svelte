@@ -8,14 +8,11 @@
 	let previewBanner = '';
 
 	function PreviewAvatar() {
-		var preview = document.getElementById('previewAvatar');
 		var fileInput = document.getElementById('fileInputAvatar');
-		console.log();
 
 		var file = fileInput.files[0];
 		var reader = new FileReader();
 
-		console.log(preview);
 
 		reader.onloadend = function () {
 			previewAvatar = reader.result;
@@ -29,14 +26,10 @@
 	}
 
 	function PreviewBanner() {
-		var preview = document.getElementById('previewBanner');
 		var fileInput = document.getElementById('fileInputBanner');
-		console.log();
 
 		var file = fileInput.files[0];
 		var reader = new FileReader();
-
-		console.log(preview);
 
 		reader.onloadend = function () {
 			previewBanner = reader.result;

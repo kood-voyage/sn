@@ -17,7 +17,6 @@ export const load: PageServerLoad = async (event) => {
   if (data.error) {
     return {}
   }
-  console.log(data)
 
 
 

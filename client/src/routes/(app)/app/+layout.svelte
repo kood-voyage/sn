@@ -2,12 +2,15 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import Sheet from '$lib/components/Sheet.svelte';
 
+	export let data;
+
+	const { username, email, date_of_birth, first_name, last_name } = data;
+
 	///
 	import Sun from 'svelte-radix/Sun.svelte';
 	import Moon from 'svelte-radix/Moon.svelte';
 	import Home from 'svelte-radix/Home.svelte';
 	import Person from 'svelte-radix/Person.svelte';
-	import Gear from 'svelte-radix/Gear.svelte';
 	import Bell from 'svelte-radix/Bell.svelte';
 	import Calendar from 'svelte-radix/Calendar.svelte';
 	import ChatBubble from 'svelte-radix/ChatBubble.svelte';
@@ -104,28 +107,42 @@
 			<!-- profile info end  -->
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger asChild let:builder>
-					<Button builders={[builder]} variant="ghost" class="w-[60px] h-[60px]">
-						<div class="flex flex-col h-1/6 items-center justify-center">
+					<Button builders={[builder]} variant="ghost" class="w-[59px] h-[59px]">
+						<div class="flex flex-col items-center justify-center">
 							<img
-								src="https://cc-prod.scene7.com/is/image/CCProdAuthor/portrait-photography_P6a_379x392?$pjpeg$&jpegSize=100&wid=379"
+								src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={username}"
 								alt="avatar"
-								class="w-8 h-8 rounded-full object-cover transition-all duration-300 hover:rounded-[10px]"
+								class="h-[1.2rem] w-[1.2rem] rounded-full object-cover transition-all duration-300 hover:rounded-[10px]"
 							/>
 						</div></Button
 					>
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content class="w-56">
 					<DropdownMenu.Label>My Account</DropdownMenu.Label>
+					<DropdownMenu.Item class="text-blue-500">{username}</DropdownMenu.Item>
+
 					<DropdownMenu.Separator />
 					<DropdownMenu.Group>
 						<DropdownMenu.Item>
-							Profile
-							<!-- <DropdownMenu.Shortcut>⇧⌘P</DropdownMenu.Shortcut> -->
+							<a href="/app/u/{username}"> Profile</a>
 						</DropdownMenu.Item>
 
 						<DropdownMenu.Item>
-							<a href="/app/settings">Settings</a>
+							<a href="/app/settings"> Settings</a>
 						</DropdownMenu.Item>
+					</DropdownMenu.Group>
+
+					<DropdownMenu.Separator />
+
+					<DropdownMenu.Group>
+						<DropdownMenu.Sub>
+							<DropdownMenu.SubTrigger>About</DropdownMenu.SubTrigger>
+							<DropdownMenu.SubContent>
+								<DropdownMenu.Item>{first_name}</DropdownMenu.Item>
+								<DropdownMenu.Item>{last_name}</DropdownMenu.Item>
+								<DropdownMenu.Item>{email}</DropdownMenu.Item>
+							</DropdownMenu.SubContent>
+						</DropdownMenu.Sub>
 					</DropdownMenu.Group>
 
 					<DropdownMenu.Separator />

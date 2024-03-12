@@ -4,9 +4,6 @@
 	export let data;
 	const userList = data.data as RowType[];
 
-	// console.log('NEW DATA CONSOLE >>>', data);
-
-	// The array now contains 100 names
 </script>
 
 <svelte:head>
@@ -34,9 +31,6 @@
 					<p class="text-sm text-slate-500">{user.first_name} {user.last_name}</p>
 				</div>
 			</a>
-			<!-- <div class="flex">
-				<button class="text-sm p-1 bg-blue-500">follow</button>
-			</div> -->
 		</div>
 	{/each}
 </div>

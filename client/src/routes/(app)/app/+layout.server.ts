@@ -2,6 +2,8 @@
 
 import { getUser } from "$lib/server/db/profile"
 import { getUserIdFromCookie } from "$lib/server/jwt-handle"
+import type { RequestEvent } from "@sveltejs/kit"
+import type { RouteParams } from "../../(auth)/signin/$types"
 import type { LayoutServerLoad } from "./$types"
 
 
@@ -12,7 +14,7 @@ import type { LayoutServerLoad } from "./$types"
 
 
 
-export const load: LayoutServerLoad = async (event) => {
+export const load: LayoutServerLoad = async (event: RequestEvent<RouteParams, "/(auth)/signin"> | RequestEvent<Partial<Record<string, string>>, string | null>) => {
   const idResp = getUserIdFromCookie(event)
   if (!idResp.ok) {
     return
@@ -24,7 +26,7 @@ export const load: LayoutServerLoad = async (event) => {
   if (data.error) {
     return {}
   }
-  console.log("LAYOUT DATA >>>", data)
+  return data?.data
 
 
 
