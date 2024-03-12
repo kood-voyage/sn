@@ -37,6 +37,16 @@ func getParentID(comment *model.Comment) interface{} {
 	return comment.ParentID
 }
 
+func (c CommentRepository) Update(comment *model.Comment) error {
+	query := `UPDATE comment SET content = ? WHERE id = ?`
+
+	_, err := c.store.Db.Exec(query, comment.Content, comment.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c CommentRepository) Delete(commentID, userID string) error {
 	query := `DELETE FROM comment WHERE id = ? AND user_id = ?`
 
@@ -57,7 +67,7 @@ func (c CommentRepository) Delete(commentID, userID string) error {
 	return nil
 }
 
-func (c CommentRepository) Get(id string) (*[]model.Comment, error) {
+func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
 	//query := `SELECT * FROM comment WHERE post_id = ?`
 	q := `WITH RECURSIVE CommentHierarchy AS (
         -- Anchor member: Start with the top-level comments for the post
@@ -118,4 +128,15 @@ func (c CommentRepository) Get(id string) (*[]model.Comment, error) {
 	}
 
 	return &comments, nil
+}
+
+func (c CommentRepository) IsAuthor(comment *model.Comment, userId string) bool {
+	query := `SELECT * FROM comment WHERE id`
+
+	err := c.store.Db.QueryRow(query, comment.ID, userId)
+	if err != nil {
+		return false
+	}
+
+	return true
 }

@@ -133,8 +133,8 @@ func TestGroup_Update(t *testing.T) {
 
 	rec := httptest.NewRecorder()
 	s.ServeHTTP(rec, req)
-	if rec.Code != http.StatusOK {
-		t.Errorf("Expected status code %d, got %d", http.StatusOK, rec.Code)
+	if rec.Code != http.StatusAccepted {
+		t.Errorf("Expected status code %d, got %d", http.StatusAccepted, rec.Code)
 	}
 }
 
@@ -309,8 +309,8 @@ func TestGroup_Delete(t *testing.T) {
 
 	rec := httptest.NewRecorder()
 	s.ServeHTTP(rec, req)
-	if rec.Code != http.StatusOK {
-		t.Errorf("Expected status code %d, got %d", http.StatusOK, rec.Code)
+	if rec.Code != http.StatusAccepted {
+		t.Errorf("Expected status code %d, got %d", http.StatusAccepted, rec.Code)
 	}
 }
 

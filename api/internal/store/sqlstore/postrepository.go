@@ -2,6 +2,7 @@ package sqlstore
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"social-network/internal/model"
 	"strings"
 )
@@ -33,6 +34,21 @@ func (p PostRepository) Create(post *model.Post, privacy int) error {
 	return nil
 }
 
+func (p PostRepository) Update(post *model.Post, privacy int) error {
+	query := `UPDATE post SET title = ?, content = ? WHERE id = ?`
+
+	_, err := p.store.Db.Exec(query, post.Title, post.Content, post.ID)
+	if err != nil {
+		return err
+	}
+
+	if err = p.store.Privacy().Update(post.ID, privacy); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (p PostRepository) Delete(id string) error {
 	query := `DELETE FROM post WHERE id = ?`
 
@@ -55,14 +71,25 @@ func (p PostRepository) Delete(id string) error {
 
 func (p PostRepository) Get(id string) (*model.Post, error) {
 	post := &model.Post{}
-	query := `SELECT * FROM post WHERE id = ?`
+	query := `SELECT 
+    	 c.id,
+         c.title,
+         c.content,
+         c.user_id,
+         COALESCE(c.community_id, '') AS community_id,
+         c.created_at
+         FROM 
+             post c 
+         WHERE id = ?`
 
 	err := p.store.Db.QueryRow(query, id).Scan(
 		&post.ID,
-		&post.UserID,
 		&post.Title,
 		&post.Content,
+		&post.UserID,
+		&post.CommunityID,
 		&post.CreatedAt)
+
 	if err != nil {
 		return nil, err
 	}
@@ -117,11 +144,12 @@ func (p PostRepository) GetUsers(source_id, target_id string) ([]model.Post, err
 }
 
 func (p PostRepository) AddSelected(userList *[]model.User, parentID string) error {
-	query := `INSERT INTO selected_users (user_id, post_id) VALUES`
+	query := `INSERT INTO selected_users (id, user_id, parent_id) VALUES`
 	var values []interface{}
 	for _, user := range *userList {
-		query += " (?, ?),"
-		values = append(values, user.ID, parentID)
+		query += " (? ,? ,?),"
+		id := uuid.New().String()
+		values = append(values, id, user.ID, parentID)
 	}
 
 	query = strings.TrimSuffix(query, ",")
@@ -133,12 +161,13 @@ func (p PostRepository) AddSelected(userList *[]model.User, parentID string) err
 func (p PostRepository) RemoveSelected(userList *[]model.User, parentID string) error {
 	query := `DELETE FROM selected_users WHERE parent_id = ? AND (`
 	values := []interface{}{parentID}
+	fmt.Println(userList)
 	for _, user := range *userList {
-		query += " (user_id = ? AND post_id = ?) OR"
+		query += " (user_id = ? AND parent_id = ?) OR"
 		values = append(values, user.ID, parentID)
 	}
 	query = strings.TrimSuffix(query, "OR") + ")"
-
+	fmt.Println(query)
 	_, err := p.store.Db.Exec(query, values...)
 	return err
 }

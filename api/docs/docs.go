@@ -469,6 +469,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/auth/post/update": {
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Update post",
+                "responses": {
+                    "202": {
+                        "description": "Accepted"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/auth/posts/create": {
             "post": {
                 "consumes": [
@@ -525,6 +559,56 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/auth/posts/selected/add": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "GetAll post",
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/posts/selected/delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "GetAll post",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/auth/posts/{id}": {
             "get": {
                 "produces": [
@@ -533,7 +617,7 @@ const docTemplate = `{
                 "tags": [
                     "posts"
                 ],
-                "summary": "Get post",
+                "summary": "GetAll post",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -893,10 +977,12 @@ const docTemplate = `{
             "required": [
                 "content",
                 "id",
-                "title",
-                "user_id"
+                "title"
             ],
             "properties": {
+                "community_id": {
+                    "type": "string"
+                },
                 "content": {
                     "type": "string"
                 },

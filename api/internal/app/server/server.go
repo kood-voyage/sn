@@ -80,11 +80,13 @@ func configureRouter(s *Server) {
 	//---------POST---------------//
 	s.router.GET("/api/v1/auth/posts/{id}", s.getPost())
 	s.router.POST("/api/v1/auth/posts/create", s.createPost())
+	s.router.PUT("/api/v1/auth/posts/update", s.updatePost())
 	s.router.DELETE("/api/v1/auth/posts/delete/{id}", s.deletePost())
 	s.router.POST("/api/v1/auth/posts/selected/add", s.addSelected())
-	s.router.POST("/api/v1/auth/posts/selected/delete", s.removeSelected())
+	s.router.POST("/api/v1/auth/posts/selected/delete", s.deleteSelected())
 	//---------COMMENT------------//
 	s.router.POST("/api/v1/auth/comment/create", s.createComment())
+	s.router.PUT("/api/v1/auth/comment/update", s.updateComment())
 	s.router.DELETE("/api/v1/auth/comment/delete/{id}", s.deleteComment())
 	s.router.GET("/api/v1/auth/comment/{id}", s.getComments())
 	//---------GROUP--------------//

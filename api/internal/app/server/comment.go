@@ -46,6 +46,34 @@ func (s *Server) createComment() http.HandlerFunc {
 	}
 }
 
+func (s *Server) updateComment() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var comment model.Comment
+		userID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("unauthorized"))
+			return
+		}
+
+		if err := s.decode(r, &comment); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		if !s.store.Comment().IsAuthor(&comment, userID) {
+			s.error(w, http.StatusForbidden, errors.New("not allowed to change content"))
+			return
+		}
+
+		if err := s.store.Comment().Update(&comment); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, http.StatusAccepted, nil)
+	}
+}
+
 // deletePost deletes comment
 //
 // @Summary Delete comment
@@ -84,7 +112,7 @@ func (s *Server) getComments() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		postID := r.PathValue("id")
 
-		comments, err := s.store.Comment().Get(postID)
+		comments, err := s.store.Comment().GetAll(postID)
 		if err != nil {
 			s.error(w, http.StatusInternalServerError, err)
 			return
