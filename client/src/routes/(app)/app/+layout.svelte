@@ -184,14 +184,12 @@
 
 							<Label for="fileInputAvatar" class="text-right">Avatar Upload</Label>
 
-							{#if !previewAvatar}
-								<Input
-									id="fileInputAvatar"
-									type="file"
-									class="col-span-3 text-red-500"
-									on:change={PreviewAvatar}
-								/>
-							{/if}
+							<Input
+								id="fileInputAvatar"
+								type="file"
+								class="col-span-3 text-red-500"
+								on:change={PreviewAvatar}
+							/>
 						</div>
 
 						<!-- BANNER -->
@@ -207,14 +205,12 @@
 
 							<Label for="fileInputBanner" class="text-right">Banner Upload</Label>
 
-							{#if !previewBanner}
-								<Input
-									id="fileInputBanner"
-									type="file"
-									class="col-span-3 text-red-500"
-									on:change={PreviewBanner}
-								/>
-							{/if}
+							<Input
+								id="fileInputBanner"
+								type="file"
+								class="col-span-3 text-red-500"
+								on:change={PreviewBanner}
+							/>
 						</div>
 
 						<div class="grid w-full gap-1.5">
