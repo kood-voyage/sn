@@ -13,8 +13,14 @@
 	<title>users</title>
 </svelte:head>
 
-<div class="p-12">
-	<p class="text-md">User list</p>
+<div class="p-4">
+	<input
+		type="text"
+		class="flex mx-auto my-2 w-[420px] p-2 rounded-md border dark:bg-slate-900"
+		placeholder="Search..."
+	/>
+	<hr class="w-[440px] m-auto" />
+
 	{#each userList as user}
 		<div class="flex m-auto w-[420px] p-2 hover:bg-slate-200 dark:hover:bg-slate-900 rounded-md">
 			<a href="/app/u/{user.username}" class="flex">

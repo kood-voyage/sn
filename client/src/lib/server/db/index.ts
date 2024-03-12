@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 import { readFileSync } from 'fs';
-//import { DB_PATH, SCHEMA_PATH } from '$env/static/private';
+import { DB_PATH, SCHEMA_PATH } from '$env/static/private';
 import { v4 as uuidv4 } from 'uuid';
 import type { User } from '$lib/types/user';
 import bcrypt from 'bcrypt'
