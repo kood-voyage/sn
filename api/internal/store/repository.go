@@ -26,6 +26,7 @@ type PostRepository interface {
 	Create(post *model.Post, privacy int) error
 	Delete(id string) error
 	Get(id string) (*model.Post, error)
+	Update(post *model.Post, privacy int) error
 	GetUsers(source_id, target_id string) ([]model.Post, error)
 	AddSelected(userList *[]model.User, parentID string) error
 	RemoveSelected(userList *[]model.User, parentID string) error
@@ -34,9 +35,10 @@ type PostRepository interface {
 type CommentRepository interface {
 	Create(post *model.Comment) error
 	Delete(postID, userID string) error
-	// Get returns all comments to single post
-	Get(id string) (*[]model.Comment, error)
-	// Update(string) error
+	// GetAll returns all comments to single post
+	GetAll(id string) (*[]model.Comment, error)
+	IsAuthor(comment *model.Comment, userId string) bool
+	Update(comment *model.Comment) error
 }
 
 type GroupRepository interface {
