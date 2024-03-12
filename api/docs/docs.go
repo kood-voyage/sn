@@ -71,6 +71,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/auth/comment/update": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comments"
+                ],
+                "summary": "Updates content of the comment",
+                "responses": {
+                    "202": {
+                        "description": "Accepted"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/auth/comment/{id}": {
             "get": {
                 "produces": [
@@ -570,7 +607,7 @@ const docTemplate = `{
                 "tags": [
                     "posts"
                 ],
-                "summary": "GetAll post",
+                "summary": "Add selected user to list",
                 "responses": {
                     "201": {
                         "description": "Created"
@@ -595,7 +632,7 @@ const docTemplate = `{
                 "tags": [
                     "posts"
                 ],
-                "summary": "GetAll post",
+                "summary": "Removes selected user from list",
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -617,7 +654,7 @@ const docTemplate = `{
                 "tags": [
                     "posts"
                 ],
-                "summary": "GetAll post",
+                "summary": "Get post",
                 "responses": {
                     "200": {
                         "description": "OK",

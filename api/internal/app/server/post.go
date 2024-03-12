@@ -50,7 +50,7 @@ func (s *Server) createPost() http.HandlerFunc {
 	}
 }
 
-// updatePost deletes post
+// updatePost update post
 //
 // @Summary Update post
 // @Tags posts
@@ -119,9 +119,9 @@ func (s *Server) deletePost() http.HandlerFunc {
 	}
 }
 
-// getPost deletes post
+// getPost Get post
 //
-// @Summary GetAll post
+// @Summary Get post
 // @Tags posts
 // @Produce json
 // @Success 200 {object} model.Post
@@ -142,7 +142,7 @@ func (s *Server) getPost() http.HandlerFunc {
 
 // addSelected
 //
-// @Summary GetAll post
+// @Summary Add selected user to list
 // @Tags posts
 // @Accept json
 // @Produce json
@@ -173,7 +173,7 @@ func (s *Server) addSelected() http.HandlerFunc {
 
 // deleteSelected
 //
-// @Summary GetAll post
+// @Summary Removes selected user from list
 // @Tags posts
 // @Accept json
 // @Produce json
