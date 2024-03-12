@@ -27,11 +27,14 @@ export function createTokens(event: CreateEvent | RefreshEvent, user_id: string)
   }, process.env.JWT_KEY || JWT_KEY, { algorithm: 'HS256' })
 
 
+
   const access_token = jwt.sign({
     exp: Math.floor(Date.now() / 1000) + min15,
     user_id,
     access_token_id
+
   }, process.env.JWT_KEY || JWT_KEY, { algorithm: 'HS256' })
+
 
   function timeConvert(time: number) {
     return new Date((new Date()).getTime() + time * 1000);

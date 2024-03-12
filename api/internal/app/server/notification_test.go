@@ -11,7 +11,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 )
 
-func TestHandleCreateNotification_Success(t *testing.T) {
+func TestNotification_Create(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("Error creating mock database: %v", err)
@@ -45,7 +45,7 @@ func TestHandleCreateNotification_Success(t *testing.T) {
 
 }
 
-func TestHandleCreateNotification_FromAnotherAccount(t *testing.T) {
+func TestNotification_Create_Invalid_User(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("Error creating mock database: %v", err)
@@ -79,7 +79,7 @@ func TestHandleCreateNotification_FromAnotherAccount(t *testing.T) {
 
 }
 
-func TestHandleCreateNotification_InvalidInput(t *testing.T) {
+func TestNotification_Create_Invalid_Input(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("Error creating mock database: %v", err)
@@ -113,7 +113,7 @@ func TestHandleCreateNotification_InvalidInput(t *testing.T) {
 
 }
 
-func TestHandleDeleteNotification_Success(t *testing.T) {
+func TestNotification_Delete(t *testing.T) {
 	requestid := "somerequestid"
 	db, mock, err := sqlmock.New()
 	if err != nil {

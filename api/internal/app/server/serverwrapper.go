@@ -8,6 +8,7 @@ import (
 	"github.com/golang-migrate/migrate/v4/database/sqlite3"
 	"github.com/golang-migrate/migrate/v4/source/file"
 	"net/http"
+	"social-network/internal/app/config"
 	"social-network/internal/store/sqlstore"
 )
 
@@ -21,7 +22,7 @@ import (
 // @securityDefinitions.apikey Auth
 // @in header
 // @name Authorization
-func Start(config *Config) error {
+func Start(config *config.Config) error {
 	db, err := newDB(config.DatabaseURL, config.Migrations, config.Driver)
 	if err != nil {
 		return err

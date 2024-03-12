@@ -1,5 +1,47 @@
 basePath: /
 definitions:
+  model.Comment:
+    properties:
+      content:
+        type: string
+      count:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      parent_id:
+        type: string
+      post_id:
+        type: string
+      user_id:
+        type: string
+    required:
+    - content
+    - id
+    - post_id
+    - user_id
+    type: object
+  model.Group:
+    properties:
+      creator_id:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      members:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+      name:
+        type: string
+      privacy:
+        type: string
+    required:
+    - description
+    - id
+    type: object
   model.Post:
     properties:
       content:
@@ -7,6 +49,8 @@ definitions:
       created_at:
         type: string
       id:
+        type: string
+      privacy:
         type: string
       title:
         type: string
@@ -42,6 +86,8 @@ definitions:
     properties:
       id:
         type: string
+      member_type:
+        type: integer
     required:
     - id
     type: object
@@ -60,6 +106,60 @@ info:
   title: Social Network API
   version: "0.1"
 paths:
+  /api/v1/auth/comment/{id}:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Comment'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Retrieves comments for a single post
+      tags:
+      - comments
+  /api/v1/auth/comment/create:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Comment'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Create comment
+      tags:
+      - comments
+  /api/v1/auth/comment/delete/{id}:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Delete comment
+      tags:
+      - comments
   /api/v1/auth/follow/{id}:
     get:
       consumes:
@@ -114,6 +214,146 @@ paths:
       summary: Resolves a follow request
       tags:
       - follow
+  /api/v1/auth/group/{id}:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Group'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Returns group information
+      tags:
+      - group
+  /api/v1/auth/group/create:
+    post:
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/model.Group'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Create a group
+      tags:
+      - group
+  /api/v1/auth/group/delete/{id}:
+    delete:
+      parameters:
+      - description: Group ID to delete
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Delete a group
+      tags:
+      - group
+  /api/v1/auth/group/invite:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Group'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Creates a request to invite another user to a group
+      tags:
+      - group
+  /api/v1/auth/group/request:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Resolves a group invitation request
+      tags:
+      - follow
+  /api/v1/auth/group/update:
+    put:
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Update group information
+      tags:
+      - group
   /api/v1/auth/notification/create:
     post:
       produces:
@@ -160,6 +400,58 @@ paths:
       summary: Delete a notification by ID
       tags:
       - notification
+  /api/v1/auth/posts/{id}:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Post'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Get post
+      tags:
+      - posts
+  /api/v1/auth/posts/create:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Post'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Create post
+      tags:
+      - posts
+  /api/v1/auth/posts/delete/{id}:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Delete post
+      tags:
+      - posts
   /api/v1/auth/unfollow/{id}:
     get:
       consumes:
@@ -227,10 +519,6 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/model.User'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/server.Error'
         "401":
           description: Unauthorized
           schema:
@@ -342,26 +630,4 @@ paths:
       summary: Updates user's privacy
       tags:
       - users
-  /api/v1/posts/create:
-    post:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.Post'
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/server.Error'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/server.Error'
-      summary: Create post
-      tags:
-      - posts
 swagger: "2.0"

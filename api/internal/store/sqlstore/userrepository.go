@@ -2,7 +2,6 @@ package sqlstore
 
 import (
 	"database/sql"
-	"errors"
 	"social-network/internal/model"
 )
 
@@ -14,46 +13,16 @@ func (u *UserRepository) Create(user *model.User, privacy int) error {
 	query := `INSERT INTO user (id) VALUES (?)`
 
 	_, err := u.store.Db.Exec(query, user.ID)
-
 	if err != nil {
 		return err
 	}
 
 	//insert user privacy state to database
-	query = `INSERT INTO privacy (id, type_id) VALUES (?, ?)`
-
-	_, err = u.store.Db.Exec(query, user.ID, privacy)
-	if err != nil {
+	if err := u.store.Privacy().Set(user.ID, privacy); err != nil {
 		return err
 	}
 
 	return nil
-}
-
-func (u *UserRepository) UpdatePrivacy(user *model.User, privacy int) error {
-	query := `UPDATE privacy SET type_id = ? WHERE id = ?`
-
-	_, err := u.store.Db.Exec(query, privacy, user.ID)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (u *UserRepository) CheckPrivacy(userID string) (int, error) {
-	query := `SELECT type_id FROM privacy WHERE id = ?`
-
-	var privacy int
-	if err := u.store.Db.QueryRow(query, userID).Scan(&privacy); err != nil {
-		if err == sql.ErrNoRows {
-			return -1, errors.New("user does not exist")
-		}
-		return -1, err
-	}
-
-	return privacy, nil
 }
 
 func (u *UserRepository) GetFollowers(userID string) ([]model.User, error) {
@@ -103,26 +72,26 @@ func (u *UserRepository) GetFollowing(userID string) ([]model.User, error) {
 func (u *UserRepository) IsFollowing(source_id, target_id string) (bool, error) {
 	query := `SELECT id FROM follower WHERE source_id = ? AND target_id = ?`
 	var target string
-	if err := u.store.Db.QueryRow(query, source_id, target_id).Scan(&target);err != nil{
-		if err == sql.ErrNoRows{
+	if err := u.store.Db.QueryRow(query, source_id, target_id).Scan(&target); err != nil {
+		if err == sql.ErrNoRows {
 			return false, nil
-		} 
+		}
 		return false, err
 	}
 	return true, nil
 }
 
-func (u *UserRepository) GetNotifications(user_id string, req_type int) ([]model.Request, error) {
-	query := `SELECT * FROM request WHERE target_id = ? AND type_id = ?`
+func (u *UserRepository) GetNotifications(user_id string) ([]model.Request, error) {
+	query := `SELECT * FROM request WHERE target_id = ?`
 
 	var notifications []model.Request
 
-	rows, err := u.store.Db.Query(query, user_id, req_type)
+	rows, err := u.store.Db.Query(query, user_id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	for rows.Next(){
+	for rows.Next() {
 		var notification model.Request
 		if err := rows.Scan(&notification.ID, &notification.TypeID, &notification.SourceID, &notification.TargetID, &notification.Message, &notification.CreatedAt); err != nil {
 			return nil, err

@@ -1,11 +1,15 @@
-# Frontend build stage
-FROM node:18 as frontend
-WORKDIR /app/frontend
+FROM node:18-alpine
 
-# Copy placeholder files (adjust as needed)
-COPY placeholder/package.json .
-COPY placeholder/public public
+WORKDIR /app
 
-# Production-ready image
-FROM nginx:alpine
-COPY --from=frontend /app/frontend/public /usr/share/nginx/html
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+EXPOSE 5000
+
+CMD ["npm", "run", "start"]

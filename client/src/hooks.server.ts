@@ -10,14 +10,18 @@ export const handle: Handle = async ({ event, resolve }) => {
   const pathname = event.url.pathname
 
 
+
   jwt.verify(refresh_token, process.env.JWT_KEY || JWT_KEY, (err, rdecoded) => {
+
     if (err != null) {
       if (!(pathname.startsWith('/signin')) && !(pathname.startsWith('/signup'))) {
         deleteTokens(event)
         redirect(303, "/signin")
       }
     } else {
+
       jwt.verify(access_token, process.env.JWT_KEY || JWT_KEY, (err) => {
+
         if (err != null) {
 
           if (rdecoded && typeof rdecoded == "object") {

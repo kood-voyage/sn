@@ -5,19 +5,20 @@ import (
 	"time"
 )
 
-type Post struct {
+type Comment struct {
 	ID        string    `db:"id" json:"id" validate:"required"`
 	UserID    string    `db:"user_id" json:"user_id" validate:"required"`
-	Title     string    `db:"title" json:"title" validate:"required"`
+	PostID    string    `db:"post_id" json:"post_id" validate:"required"`
+	ParentID  string    `db:"parent_id" json:"parent_id"`
 	Content   string    `db:"content" json:"content" validate:"required"`
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
-	Privacy   string    `json:"privacy" validate:"required|privacy:private,public,selected"`
+	Count     string    `json:"count"`
 }
 
-// NewPost creates a pointer to Post struct with new uuid
-func NewPost() *Post {
+// NewComment creates a pointer to Comment struct with new uuid
+func NewComment() *Comment {
 	id := uuid.New().String()
-	return &Post{
+	return &Comment{
 		ID:        id,
 		CreatedAt: time.Now(),
 	}

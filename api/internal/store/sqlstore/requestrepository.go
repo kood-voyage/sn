@@ -1,6 +1,7 @@
 package sqlstore
 
 import (
+	"errors"
 	"social-network/internal/model"
 
 	"github.com/google/uuid"
@@ -25,9 +26,18 @@ func (r *RequestRepository) Create(request model.Request) error {
 func (r *RequestRepository) Delete(request model.Request) error {
 	query := `DELETE FROM request WHERE type_id = ? AND source_id = ? AND target_id = ?`
 
-	_, err := r.store.Db.Exec(query, request.TypeID, request.SourceID, request.TargetID)
+	result, err := r.store.Db.Exec(query, request.TypeID, request.SourceID, request.TargetID)
 	if err != nil {
 		return err
+	}
+
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if affected == 0 {
+		return errors.New("no rows were affected")
 	}
 
 	return nil
