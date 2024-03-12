@@ -4,7 +4,7 @@
 
 	export let data;
 
-	const { username, email, date_of_birth, first_name, last_name } = data;
+	const { username, email, first_name, last_name } = data;
 
 	///
 	import Sun from 'svelte-radix/Sun.svelte';
@@ -12,6 +12,7 @@
 	import Home from 'svelte-radix/Home.svelte';
 	import Person from 'svelte-radix/Person.svelte';
 	import Bell from 'svelte-radix/Bell.svelte';
+	import Gear from 'svelte-radix/Gear.svelte';
 	import Calendar from 'svelte-radix/Calendar.svelte';
 	import ChatBubble from 'svelte-radix/ChatBubble.svelte';
 	import Globe from 'svelte-radix/Globe.svelte';
@@ -74,84 +75,86 @@
 						<Gear class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
 					</div>
 				</a> -->
-
-				<DropdownMenu.Root>
-					<DropdownMenu.Trigger asChild let:builder>
-						<Button
-							builders={[builder]}
-							variant="ghost"
-							size="icon"
-							class="w-[58px] h-[58px] rounded shadow-none  transition-all duration-300  hover:bg-slate-100 hover:dark:bg-slate-900  border-none"
-						>
-							<Sun
-								class="h-[1.2rem] w-[1.2rem]  rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
-							/>
-
-							<Moon
-								class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
-							/>
-
-							<span class="sr-only">Toggle theme</span>
-						</Button>
-					</DropdownMenu.Trigger>
-					<DropdownMenu.Content align="end">
-						<DropdownMenu.Item on:click={() => setMode('light')}>Light</DropdownMenu.Item>
-						<DropdownMenu.Item on:click={() => setMode('dark')}>Dark</DropdownMenu.Item>
-						<DropdownMenu.Item on:click={() => resetMode()}>System</DropdownMenu.Item>
-					</DropdownMenu.Content>
-				</DropdownMenu.Root>
 			</div>
 
 			<!-- // profile info -->
 
 			<!-- profile info end  -->
-			<DropdownMenu.Root>
-				<DropdownMenu.Trigger asChild let:builder>
-					<Button builders={[builder]} variant="ghost" class="w-[59px] h-[59px]">
-						<div class="flex flex-col items-center justify-center">
-							<img
-								src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={username}"
-								alt="avatar"
-								class="h-[1.2rem] w-[1.2rem] rounded-full object-cover transition-all duration-300 hover:rounded-[10px]"
-							/>
-						</div></Button
-					>
-				</DropdownMenu.Trigger>
-				<DropdownMenu.Content class="w-56">
-					<DropdownMenu.Label>My Account</DropdownMenu.Label>
-					<DropdownMenu.Item class="text-blue-500">{username}</DropdownMenu.Item>
 
-					<DropdownMenu.Separator />
-					<DropdownMenu.Group>
-						<DropdownMenu.Item>
-							<a href="/app/u/{username}"> Profile</a>
-						</DropdownMenu.Item>
+			<div class="h-1/6">
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger asChild let:builder>
+						<Button builders={[builder]} variant="ghost" class="w-[58px] h-[58px] p-0">
+							<div class="flex flex-col items-center justify-center h-[32px] w-[32px] p-0">
+								<img
+									src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={username}"
+									alt="avatar"
+									class="rounded-full object-cover hover:rounded-[10px]"
+								/>
+							</div></Button
+						>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content class="w-56">
+						<DropdownMenu.Label>My Account</DropdownMenu.Label>
+						<DropdownMenu.Item class="text-blue-500">{username}</DropdownMenu.Item>
 
-						<DropdownMenu.Item>
-							<a href="/app/settings"> Settings</a>
-						</DropdownMenu.Item>
-					</DropdownMenu.Group>
+						<DropdownMenu.Separator />
+						<DropdownMenu.Group>
+							<DropdownMenu.Item>
+								<a href="/app/u/{username}" class="w-full"> Profile</a>
+							</DropdownMenu.Item>
 
-					<DropdownMenu.Separator />
+							<DropdownMenu.Item>
+								<a href="/app/settings" class="flex">
+									<span class="mr-1 m-auto">
+										<Gear class="h-[1rem] w-[1rem]" />
+									</span>
 
-					<DropdownMenu.Group>
+									<span>Settings</span>
+								</a>
+							</DropdownMenu.Item>
+						</DropdownMenu.Group>
+
 						<DropdownMenu.Sub>
-							<DropdownMenu.SubTrigger>About</DropdownMenu.SubTrigger>
+							<DropdownMenu.SubTrigger>
+								<div class="flex">
+									<span class="flex mr-1 m-auto">
+										<Sun class="h-[1rem] w-[1rem] block dark:hidden " />
+
+										<Moon class="h-[1rem] w-[1rem] hidden dark:block" />
+									</span>
+
+									<span>Theme</span>
+								</div>
+							</DropdownMenu.SubTrigger>
 							<DropdownMenu.SubContent>
-								<DropdownMenu.Item>{first_name}</DropdownMenu.Item>
-								<DropdownMenu.Item>{last_name}</DropdownMenu.Item>
-								<DropdownMenu.Item>{email}</DropdownMenu.Item>
+								<DropdownMenu.Item on:click={() => setMode('light')}>Light</DropdownMenu.Item>
+								<DropdownMenu.Item on:click={() => setMode('dark')}>Dark</DropdownMenu.Item>
+								<DropdownMenu.Item on:click={() => resetMode()}>System</DropdownMenu.Item>
 							</DropdownMenu.SubContent>
 						</DropdownMenu.Sub>
-					</DropdownMenu.Group>
 
-					<DropdownMenu.Separator />
-					<DropdownMenu.Item>
-						Log out
-						<!-- <DropdownMenu.Shortcut>⇧⌘Q</DropdownMenu.Shortcut> -->
-					</DropdownMenu.Item>
-				</DropdownMenu.Content>
-			</DropdownMenu.Root>
+						<DropdownMenu.Separator />
+
+						<DropdownMenu.Group>
+							<DropdownMenu.Sub>
+								<DropdownMenu.SubTrigger>About</DropdownMenu.SubTrigger>
+								<DropdownMenu.SubContent>
+									<DropdownMenu.Item>{first_name}</DropdownMenu.Item>
+									<DropdownMenu.Item>{last_name}</DropdownMenu.Item>
+									<DropdownMenu.Item>{email}</DropdownMenu.Item>
+								</DropdownMenu.SubContent>
+							</DropdownMenu.Sub>
+						</DropdownMenu.Group>
+
+						<DropdownMenu.Separator />
+						<DropdownMenu.Item>
+							Log out
+							<!-- <DropdownMenu.Shortcut>⇧⌘Q</DropdownMenu.Shortcut> -->
+						</DropdownMenu.Item>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+			</div>
 		</div>
 	</div>
 
