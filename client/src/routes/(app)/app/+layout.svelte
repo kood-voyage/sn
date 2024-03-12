@@ -17,6 +17,8 @@
 	import ChatBubble from 'svelte-radix/ChatBubble.svelte';
 	import Globe from 'svelte-radix/Globe.svelte';
 
+	import Avatar from 'svelte-radix/Avatar.svelte';
+
 	import { Button } from '$lib/components/ui/button/index.js';
 
 	import { setMode, resetMode } from 'mode-watcher';
@@ -101,12 +103,18 @@
 						<DropdownMenu.Separator />
 						<DropdownMenu.Group>
 							<DropdownMenu.Item>
-								<a href="/app/u/{username}" class="w-full"> Profile</a>
+								<a href="/app/u/{username}" class="flex">
+									<span class="mr-2 m-auto">
+										<Avatar class="h-[1rem] w-[1rem]" />
+									</span>
+
+									<span>Profile</span>
+								</a>
 							</DropdownMenu.Item>
 
 							<DropdownMenu.Item>
 								<a href="/app/settings" class="flex">
-									<span class="mr-1 m-auto">
+									<span class="mr-2 m-auto">
 										<Gear class="h-[1rem] w-[1rem]" />
 									</span>
 
@@ -118,7 +126,7 @@
 						<DropdownMenu.Sub>
 							<DropdownMenu.SubTrigger>
 								<div class="flex">
-									<span class="flex mr-1 m-auto">
+									<span class="flex mr-2 m-auto">
 										<Sun class="h-[1rem] w-[1rem] block dark:hidden " />
 
 										<Moon class="h-[1rem] w-[1rem] hidden dark:block" />
