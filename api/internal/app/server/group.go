@@ -3,7 +3,6 @@ package server
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"net/http"
 	"social-network/internal/model"
 	"social-network/pkg/validator"
@@ -159,14 +158,12 @@ func (s *Server) groupGet() http.HandlerFunc {
 		//check group privacy status
 		privacy, err := s.store.Privacy().Check(r.PathValue("id"))
 		if err != nil {
-			fmt.Println(err)
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
 
 		if privacy == s.types.Privacy.Private {
 			if err := s.store.Group().IsMember(r.PathValue("id"), sourceID); err != nil {
-				fmt.Println(err)
 				s.error(w, http.StatusForbidden, err)
 				return
 			}
@@ -174,7 +171,6 @@ func (s *Server) groupGet() http.HandlerFunc {
 
 		group, err := s.store.Group().Get(r.PathValue("id"))
 		if err != nil {
-			fmt.Println(err)
 			s.error(w, http.StatusUnauthorized, err)
 			return
 		}
