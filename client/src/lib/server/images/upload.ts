@@ -1,8 +1,10 @@
-import { ListBucketsCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { ListBucketsCommand, PutObjectCommand, S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, PROFILE_MEDIA_BUCKET } from '$env/static/private';
+import { Readable } from 'stream';
+
 
 const client = new S3Client({
-  region: "us-west-2",
+  region: "us-east-1",
   credentials: {
     accessKeyId: AWS_ACCESS_KEY_ID,
     secretAccessKey: AWS_SECRET_ACCESS_KEY
@@ -20,12 +22,11 @@ const command = new ListBucketsCommand(params)
 
 export async function saveToS3(path: string, data: object) {
   // TODO add some sort of abuse prevention
-  const key = `s3://ImageBucket/profile/${path}/banner`
+  const key = `profile/${path}/banner.json`
   const uploadCommand = new PutObjectCommand({
     Bucket: PROFILE_MEDIA_BUCKET,
     Key: key,
     Body: JSON.stringify(data),
-    ACL: "public-read",
   });
   try {
     const response = await client.send(uploadCommand);
@@ -35,6 +36,34 @@ export async function saveToS3(path: string, data: object) {
   }
 };
 
+
+function streamToString(stream: Readable): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    stream.on('data', (chunk: Buffer) => chunks.push(chunk));
+    stream.once('end', () => resolve(Buffer.concat(chunks).toString('utf-8')));
+    stream.on('error', reject);
+  });
+}
+
+export async function getFromS3(path: string) {
+  const key = `/profile/${path}/banner.json`;
+  const getCommand = new GetObjectCommand({
+    Bucket: PROFILE_MEDIA_BUCKET,
+    Key: key,
+  });
+
+  try {
+    const response = (await client.send(getCommand));
+    const Body = response.Body as Readable
+    const bodyContents = await streamToString(Body);
+    console.log("S3 get success", bodyContents);
+    return JSON.parse(bodyContents); // Assuming the stored data is JSON
+  } catch (error) {
+    console.error("S3 get error", error);
+    return null;
+  }
+}
 
 export async function mainUpload() {
   try {
