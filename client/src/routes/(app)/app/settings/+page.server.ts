@@ -9,17 +9,9 @@ export const actions: Actions = {
     const banner = data.get("fileInputBanner") as File
     const description = data.get("description")
 
-
-
-
-
     console.log(avatar)
     console.log(banner)
     console.log(description)
-
-
-
-
 
   }
 }
