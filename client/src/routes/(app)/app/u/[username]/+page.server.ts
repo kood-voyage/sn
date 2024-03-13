@@ -1,5 +1,4 @@
 import { getProfile } from "$lib/server/db/profile"
-import { mainUpload, saveToS3 } from "$lib/server/images/upload";
 import type { PageServerLoad } from './$types';
 
 
