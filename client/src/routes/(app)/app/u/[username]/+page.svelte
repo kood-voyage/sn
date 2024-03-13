@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Post from '$lib/components/Post.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -100,8 +101,9 @@
 		<!-- profile activity / posts -->
 
 		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-1 p-0 sm:p-4 mt-5 md:mt-0">
-			<div class="bg-pink-500 h-96 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
-			<div class="bg-purple-500 h-96 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
+			<Post />
+			<Post />
+
 			<div class="bg-red-500 h-96 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
 			<div class="bg-yellow-500 h-56 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
 			<div class="bg-orange-500 h-56 w-full sm:rounded-lg mb-1 sm:mb-0">123</div>
