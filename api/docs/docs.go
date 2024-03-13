@@ -229,8 +229,8 @@ const docTemplate = `{
                 ],
                 "summary": "Create a group",
                 "responses": {
-                    "202": {
-                        "description": "Accepted",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/model.Group"
                         }
@@ -730,6 +730,15 @@ const docTemplate = `{
                         "name": "privacy_state",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Comment object to be updated",
+                        "name": "comment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/server.ValidateStruct"
+                        }
                     }
                 ],
                 "responses": {
@@ -1058,6 +1067,9 @@ const docTemplate = `{
                 "message": {
                     "type": "string"
                 },
+                "parent_id": {
+                    "type": "string"
+                },
                 "source_id": {
                     "type": "string"
                 },
@@ -1093,6 +1105,14 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {}
+            }
+        },
+        "server.ValidateStruct": {
+            "type": "object",
+            "properties": {
+                "privacy": {
+                    "type": "string"
+                }
             }
         }
     }

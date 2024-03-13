@@ -88,8 +88,8 @@ func runValidationFunction(function, parameter string, val interface{}) error {
 		return hasLowerCase(val)
 	case "uppercase":
 		return hasUpperCase(val)
-	case "privacy":
-		return privacy(val, parameter)
+	case "contains":
+		return contains(val, parameter)
 	default:
 		return errors.New("unkown validation function: " + function)
 	}
@@ -107,7 +107,7 @@ func ValidateString(val interface{}, regex *regexp.Regexp, errorMsg string) erro
 }
 
 func email(val interface{}) error {
-	return ValidateString(val, rxEmail, "invalid email")
+	return ValidateString(val, rxEmail, "invalid format")
 }
 
 func alpha(val interface{}) error {
@@ -169,15 +169,21 @@ func lengthValidation(val interface{}, parameter string, compare func(int, int) 
 	return nil
 }
 
-func privacy(val interface{}, param string) error {
+func contains(val interface{}, param string) error {
 	switch reflect.TypeOf(val).Kind() {
 	case reflect.String:
-		value := val.(string)
-		if strings.Contains(param, value) {
-			return nil
+		value := strings.ToLower(val.(string))
+		stringValues := strings.Split(strings.ToLower(param), ",")
+
+		allowedValues := make(map[string]struct{})
+		for _, word := range stringValues {
+			allowedValues[word] = struct{}{}
 		}
 
-		return fmt.Errorf("type could only be %v", param)
+		if _, ok := allowedValues[value]; ok {
+			return nil
+		}
+		return fmt.Errorf("%s must be one of %v", value, param)
 	default:
 		return fmt.Errorf("only string allowed")
 	}

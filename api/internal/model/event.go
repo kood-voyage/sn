@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
 type Event struct {
 	ID          string    `db:"id" json:"id"`
@@ -14,12 +17,7 @@ type Event struct {
 
 func NewEvent() *Event {
 	return &Event{
-		ID:          "",
-		UserID:      "",
-		GroupID:     "",
-		Name:        "",
-		Description: "",
-		CreatedAt:   time.Time{},
-		Date:        time.Time{},
+		ID:        uuid.New().String(),
+		CreatedAt: time.Now(),
 	}
 }

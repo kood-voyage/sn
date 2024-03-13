@@ -1,7 +1,6 @@
 package sqlstore
 
 import (
-	"database/sql"
 	"errors"
 	"social-network/internal/model"
 
@@ -112,16 +111,14 @@ func (g *GroupRepository) IsMember(group_id, user_id string) error {
 
 	var user model.User
 	if err := g.store.Db.QueryRow(query, group_id, user_id).Scan(&user.ID); err != nil {
-		if err == sql.ErrNoRows {
-			return errors.New("user is not a group member")
-		}
+		return err
 	}
 
 	return nil
 }
 
 func (g *GroupRepository) AddMember(group_id, user_id string) error {
-	query := `INSERT INTO member id, user_id, group_id, type_id VALUES (?, ?, ?, ?)`
+	query := `INSERT INTO member (id, user_id, group_id, type_id) VALUES (?, ?, ?, ?)`
 
 	_, err := g.store.Db.Exec(query, uuid.New().String(), user_id, group_id, 1)
 	if err != nil {

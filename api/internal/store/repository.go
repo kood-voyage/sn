@@ -57,3 +57,11 @@ type PrivacyRepository interface {
 	Delete(parent_id string) error
 	Check(parent_id string) (int, error)
 }
+
+type EventRepository interface {
+	Create(event *model.Event) (*model.Event, error)
+	Update(event *model.Event) error
+	Delete(eventId string) error
+	Get(eventId string) error
+	Register(eventId, opt string) error
+}

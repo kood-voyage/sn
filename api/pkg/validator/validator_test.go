@@ -32,7 +32,7 @@ func TestValidate(t *testing.T) {
 		//Test email
 		{
 			Email: "SampleGmail@dsadasdas",
-			want:  errors.New("Email invalid email"),
+			want:  errors.New("Email invalid format"),
 		},
 		//test min len for string
 		{

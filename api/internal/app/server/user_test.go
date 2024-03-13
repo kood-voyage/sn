@@ -192,7 +192,6 @@ func TestUser_Notifications(t *testing.T) {
 	}
 }
 
-
 func TestUser_Posts(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -223,5 +222,3 @@ func TestUser_Posts(t *testing.T) {
 		t.Errorf("Expected status code %d, got %d", http.StatusOK, rec.Code)
 	}
 }
-
-

@@ -124,7 +124,7 @@ func (s *Server) handleUnfollow() http.HandlerFunc {
 // @Router /api/v1/auth/follow/request [post]
 func (s *Server) handleFollowRequest() http.HandlerFunc {
 	type Req struct {
-		TargetID string `json:"target_id" validate:"lowercase"`
+		TargetID string `json:"target_id"`
 		Option   string `json:"option" validate:"lowercase"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -162,7 +162,17 @@ func (s *Server) handleFollowRequest() http.HandlerFunc {
 		} else if request.Option == "accept" {
 			//check if request exists in first place
 			req_exists, err := s.store.Request().Get(req)
-			if err != nil && err != sql.ErrNoRows {
+			if err != nil {
+				if err == sql.ErrNoRows {
+					//create a follow link
+					if err := s.store.Follow().Create(model.Follower{
+						SourceID: request.TargetID,
+						TargetID: sourceID,
+					}); err != nil {
+						s.error(w, http.StatusUnprocessableEntity, err)
+						return
+					}
+				}
 				s.error(w, http.StatusUnprocessableEntity, err)
 				return
 			}
@@ -172,14 +182,7 @@ func (s *Server) handleFollowRequest() http.HandlerFunc {
 				s.error(w, http.StatusUnprocessableEntity, err)
 				return
 			}
-			//create a follow link
-			if err := s.store.Follow().Create(model.Follower{
-				SourceID: sourceID,
-				TargetID: request.TargetID,
-			}); err != nil {
-				s.error(w, http.StatusUnprocessableEntity, err)
-				return
-			}
+
 			s.respond(w, http.StatusOK, Response{Data: "Accepted user request"})
 			return
 		} else {

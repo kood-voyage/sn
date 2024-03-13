@@ -166,6 +166,7 @@ CREATE TABLE request (
                          type_id INT NOT NULL,
                          source_id text NOT NULL,
                          target_id text NOT NULL,
+                         parent_id text DEFAULT '',
                          message text NOT NULL,
                          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                          FOREIGN KEY (type_id) REFERENCES request_type (id) ,
@@ -258,25 +259,6 @@ INSERT INTO member (id, user_id, group_id, type_id) VALUES
                                                         ('member8', 'user8', 'group4', 2), -- User
                                                         ('member9', 'user9', 'group5', 1), -- Admin
                                                         ('member10', 'user10', 'group5', 2); -- User
-
-
-CREATE TABLE image_type (
-                            id INT PRIMARY KEY UNIQUE NOT NULL,
-                            description text NOT NULL
-);
-CREATE TABLE image (
-                       id text PRIMARY KEY UNIQUE NOT NULL,
-                       parent_id text NOT NULL,
-                       type_id INT NOT NULL,
-                       path text NOT NULL,
-                       FOREIGN KEY (type_id) REFERENCES image_type (id)
-);
-
-
-INSERT INTO image_type (id, description) VALUES (1, 'banner');
-INSERT INTO image_type (id, description) VALUES (2, 'avatar');
-INSERT INTO image_type (id, description) VALUES (3, 'profile');
-INSERT INTO image_type (id, description) VALUES (4, 'header');
 
 CREATE TABLE selected_users (
                                 id text NOT NULL UNIQUE,

@@ -8,4 +8,5 @@ type Store interface {
 	Group() GroupRepository
 	Comment() CommentRepository
 	Privacy() PrivacyRepository
+	Event() EventRepository
 }

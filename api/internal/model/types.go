@@ -4,7 +4,6 @@ type Type struct {
 	Privacy PrivacyType
 	Request RequestType
 	Member  MemberType
-	Image   ImageType
 }
 
 type PrivacyType struct {
@@ -25,14 +24,6 @@ type MemberType struct {
 	Admin  int
 	User   int
 	Values map[string]int
-}
-
-type ImageType struct {
-	Banner  int
-	Avatar  int
-	Profile int
-	Header  int
-	Values  map[string]int
 }
 
 func InitializeTypes() Type {
@@ -63,18 +54,6 @@ func InitializeTypes() Type {
 			Values: map[string]int{
 				"admin": 1,
 				"user":  2,
-			},
-		},
-		Image: ImageType{
-			Banner:  1,
-			Avatar:  2,
-			Profile: 3,
-			Header:  4,
-			Values: map[string]int{
-				"banner":  1,
-				"avatar":  2,
-				"profile": 3,
-				"header":  4,
 			},
 		},
 	}
