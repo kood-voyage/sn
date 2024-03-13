@@ -19,29 +19,32 @@
 		});
 	}
 
-	export let article: any;
+	// export let article: any;
+	export let imgURL: string;
+	export let title: string;
+	export let body: string;
 </script>
 
 <Dialog.Root>
 	<Dialog.Trigger class="h-96 w-full sm:rounded-lg mb-1 sm:mb-0 ">
 		<div class="p-1">
-			<img src={article.imgURL} alt="image1" />
-			<p class="text-lg text-ellipsis w-full text-left">{article.title}</p>
-			<p class="lines3 text-sm text-left text-slate-400">{article.body}</p>
+			<img src={imgURL} alt="image1" />
+			<p class="text-lg text-ellipsis w-full text-left">{title}</p>
+			<p class="lines3 text-sm text-left text-slate-400">{body}</p>
 		</div>
 	</Dialog.Trigger>
 
 	<Dialog.Content>
 		<Dialog.Header class="">
-			<Dialog.Title>{article.title}</Dialog.Title>
+			<Dialog.Title>{title}</Dialog.Title>
 
 			<Dialog.Description>
-				{article.body}
+				{body}
 			</Dialog.Description>
 
 			<Carousel.Root bind:api>
 				<Carousel.Content>
-					<Carousel.Item><img src={article.imgURL} alt="image1" /></Carousel.Item>
+					<Carousel.Item><img src={imgURL} alt="image1" /></Carousel.Item>
 					<Carousel.Item
 						><img
 							src="https://d1k8pxxip4mxx2.cloudfront.net/pub/media/bl/20201102-10090/large.jpg?qySIduQjDI9fuqUQexe97w=="
