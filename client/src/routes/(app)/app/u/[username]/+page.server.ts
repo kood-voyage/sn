@@ -1,4 +1,5 @@
 import { getProfile } from "$lib/server/db/profile"
+import { mainUpload, saveToS3 } from "$lib/server/images/upload";
 import type { PageServerLoad } from './$types';
 
 
@@ -10,14 +11,18 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 
-
-
+  // saveToS3("user1", { test: "worked" })
+  // mainUpload()
 
   const data = (await getProfile(event, event.params.username))
   if (data.error) {
-    return {}
+    console.error(data)
+    return {
+      username: "Undefined"
+    }
   }
 
+  // console.log(data)
 
 
   return data.user

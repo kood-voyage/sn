@@ -1,4 +1,4 @@
-import { LOCAL_PATH } from "$env/static/private"
+import { LOCAL_PATH, WEBSITE_PATH } from "$env/static/private"
 import type { RequestEvent } from "@sveltejs/kit"
 
 export async function apiCreateUser(privacy_state: string, event: RequestEvent) {
@@ -33,7 +33,7 @@ export async function getUserFollowing(event: RequestEvent, user_id: string) {
   // }
 
   try {
-    const fetchResp = await fetch(`${LOCAL_PATH}/api/v1/auth/user/following/${user_id}`, {
+    const fetchResp = await fetch(`${WEBSITE_PATH}/api/v1/auth/user/following/${user_id}`, {
       headers: {
         "Authorization": `Bearer ${event.cookies.get('at')?.valueOf()}`
       }
@@ -60,7 +60,7 @@ export async function getUserFollowers(event: RequestEvent, user_id: string) {
   // }
 
   try {
-    const fetchResp = await fetch(`${LOCAL_PATH}/api/v1/auth/user/followers/${user_id}`, {
+    const fetchResp = await fetch(`${WEBSITE_PATH}/api/v1/auth/user/followers/${user_id}`, {
       headers: {
         "Authorization": `Bearer ${event.cookies.get('at')?.valueOf()}`
       }

@@ -23,9 +23,9 @@ export async function getProfile(event: RequestEvent, username: string) {
   const userResp = getUser(username) as Response
   if (!userResp.ok) {
     console.error("'profile.ts' >>>", userResp.message)
-
     return { ok: userResp.ok, error: userResp.error, message: userResp.message }
   }
+  // console.log(userResp)
 
   const user = userResp.data as User
   // console.log(user)

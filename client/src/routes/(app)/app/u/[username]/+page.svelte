@@ -3,6 +3,7 @@
 
 	export let data: PageData;
 
+	// console.log(data);
 	type Data = {
 		post: number;
 		followers: number;
