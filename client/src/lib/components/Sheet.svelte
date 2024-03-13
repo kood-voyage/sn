@@ -13,7 +13,6 @@
 		var file = fileInput.files[0];
 		var reader = new FileReader();
 
-
 		reader.onloadend = function () {
 			previewAvatar = reader.result;
 		};
@@ -43,71 +42,58 @@
 	}
 </script>
 
-<Sheet.Root>
-	<Sheet.Trigger asChild let:builder>
-		<Button builders={[builder]} variant="ghost">Settings</Button>
-	</Sheet.Trigger>
+<p>Edit profile</p>
 
-	<Sheet.Content side="left">
-		<Sheet.Header>
-			<Sheet.Title>Edit profile</Sheet.Title>
-			<Sheet.Description>
-				Make changes to your profile here. Click save when you're done.
-			</Sheet.Description>
-		</Sheet.Header>
-		<div class="grid gap-4 py-4">
-			<!-- AVATAR -->
-			<div class="m-auto">
-				{#if previewAvatar}
-					<img
-						id="previewAvatar"
-						src={previewAvatar}
-						alt="previewAvatar"
-						class="rounded-full m-auto w-24 h-24"
-					/>
-				{/if}
+<p>Make changes to your profile here. Click save when you're done.</p>
 
-				<Label for="fileInputAvatar" class="text-right">Avatar Upload</Label>
-
-				<Input
-					id="fileInputAvatar"
-					type="file"
-					class="col-span-3 text-red-500"
-					on:change={PreviewAvatar}
+<form action="?/profile" >
+		<!-- AVATAR -->
+		<div class="m-auto">
+			{#if previewAvatar}
+				<img
+					id="previewAvatar"
+					src={previewAvatar}
+					alt="previewAvatar"
+					class="rounded-full m-auto w-24 h-24"
 				/>
-			</div>
+			{/if}
 
-			<!-- BANNER -->
-			<div class="m-auto w-full">
-				{#if previewBanner}
-					<img
-						id="previewBanner"
-						src={previewBanner}
-						alt="previewBanner"
-						class="w-full h-16 object-cover"
-					/>
-				{/if}
+			<label for="fileInputAvatar" class="text-right">Avatar Upload</label>
 
-				<Label for="fileInputBanner" class="text-right">Banner Upload</Label>
-
-				<Input
-					id="fileInputBanner"
-					type="file"
-					class="col-span-3 text-red-500"
-					on:change={PreviewBanner}
-				/>
-			</div>
-
-			<div class="grid w-full gap-1.5">
-				<Label for="description">Your bio</Label>
-				<Textarea placeholder="Type your message here." id="description" class="max-h-48" />
-			</div>
+			<input
+				id="fileInputAvatar"
+				type="file"
+				class="col-span-3 text-red-500"
+				on:change={PreviewAvatar}
+			/>
 		</div>
 
-		<Sheet.Footer>
-			<Sheet.Close asChild let:builder>
-				<Button builders={[builder]} type="submit">Save changes</Button>
-			</Sheet.Close>
-		</Sheet.Footer>
-	</Sheet.Content>
-</Sheet.Root>
+		<!-- BANNER -->
+		<div class="m-auto w-full">
+			{#if previewBanner}
+				<img
+					id="previewBanner"
+					src={previewBanner}
+					alt="previewBanner"
+					class="w-full h-16 object-cover"
+				/>
+			{/if}
+
+			<label for="fileInputBanner" class="text-right">Banner Upload</label>
+
+			<input
+				id="fileInputBanner"
+				type="file"
+				class="col-span-3 text-red-500"
+				on:change={PreviewBanner}
+			/>
+		</div>
+
+		<div class="grid w-full gap-1.5">
+			<label for="description">Your bio</label>
+			<textarea placeholder="Type your message here." id="description" class="max-h-48" />
+		</div>
+
+		<button type="submit">submit</button>
+
+</form>
