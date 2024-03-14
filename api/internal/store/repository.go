@@ -59,9 +59,9 @@ type PrivacyRepository interface {
 }
 
 type EventRepository interface {
-	Create(event *model.Event) (*model.Event, error)
+	Create(event *model.Event) error
 	Update(event *model.Event) error
 	Delete(eventId string) error
-	Get(eventId string) error
+	Get(eventId string) (*model.Event, error)
 	Register(eventId, opt string) error
 }

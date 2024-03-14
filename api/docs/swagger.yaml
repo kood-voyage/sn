@@ -102,11 +102,6 @@ definitions:
     properties:
       data: {}
     type: object
-  server.ValidateStruct:
-    properties:
-      privacy:
-        type: string
-    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -598,12 +593,6 @@ paths:
         name: privacy_state
         required: true
         type: string
-      - description: Comment object to be updated
-        in: body
-        name: comment
-        required: true
-        schema:
-          $ref: '#/definitions/server.ValidateStruct'
       produces:
       - application/json
       responses:

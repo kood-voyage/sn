@@ -730,15 +730,6 @@ const docTemplate = `{
                         "name": "privacy_state",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "description": "Comment object to be updated",
-                        "name": "comment",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/server.ValidateStruct"
-                        }
                     }
                 ],
                 "responses": {
@@ -1105,14 +1096,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {}
-            }
-        },
-        "server.ValidateStruct": {
-            "type": "object",
-            "properties": {
-                "privacy": {
-                    "type": "string"
-                }
             }
         }
     }

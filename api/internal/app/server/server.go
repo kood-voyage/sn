@@ -99,7 +99,7 @@ func configureRouter(s *Server) {
 	//---------EVENT--------------//
 	s.router.POST("/api/v1/auth/group/event/create", s.createEvent())
 	s.router.PUT("/api/v1/auth/group/event/update", s.updateEvent())
-	s.router.DELETE("/api/v1/auth/group/event/delete", s.deleteEvent())
+	s.router.DELETE("/api/v1/auth/group/event/delete/{id}", s.deleteEvent())
 	s.router.GET("/api/v1/auth/group/event/{id}", s.getEvent())
 	s.router.GET("/api/v1/auth/group/event/{id}/register/{opt}", s.registerEvent())
 

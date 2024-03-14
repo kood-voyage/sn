@@ -112,7 +112,9 @@ func (s *Store) Event() store.EventRepository {
 		return s.eventRepository
 	}
 
-	s.eventRepository = &EventRepository{store: s}
+	s.eventRepository = &EventRepository{
+		store: s,
+	}
 
 	return s.eventRepository
 }
