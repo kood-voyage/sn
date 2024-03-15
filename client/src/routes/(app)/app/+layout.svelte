@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { ModeWatcher } from 'mode-watcher';
-	import Sheet from '$lib/components/Sheet.svelte';
 
 	export let data;
 
-	const { username, email, first_name, last_name,avatar } = data;
+	const { username, email, first_name, last_name, avatar } = data;
 
 	///
 	import Sun from 'svelte-radix/Sun.svelte';
@@ -112,15 +111,15 @@
 								</a>
 							</DropdownMenu.Item>
 
-							<DropdownMenu.Item>
-								<a href="/app/settings" class="flex">
+							<a href="/app/settings" class="flex">
+								<DropdownMenu.Item>
 									<span class="mr-2 m-auto">
 										<Gear class="h-[1rem] w-[1rem]" />
 									</span>
 
 									<span>Settings</span>
-								</a>
-							</DropdownMenu.Item>
+								</DropdownMenu.Item>
+							</a>
 						</DropdownMenu.Group>
 
 						<DropdownMenu.Sub>
@@ -155,9 +154,9 @@
 							</DropdownMenu.Sub>
 						</DropdownMenu.Group>
 
-						<DropdownMenu.Separator />
 						<DropdownMenu.Item>
-							Log out
+							<a href="/logout"> Log out </a>
+
 							<!-- <DropdownMenu.Shortcut>⇧⌘Q</DropdownMenu.Shortcut> -->
 						</DropdownMenu.Item>
 					</DropdownMenu.Content>
