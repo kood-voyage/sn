@@ -5,6 +5,20 @@ import { getUserIdFromCookie } from '../jwt-handle';
 import type { RequestEvent } from '@sveltejs/kit';
 
 
+
+type UserId = {
+    ok: boolean;
+    user_id: string;
+    error?: undefined;
+    message?: undefined;
+} | {
+    ok: boolean;
+    error: unknown;
+    message: string;
+    user_id?: undefined;
+}
+
+
 const client = new S3Client({
   region: "us-east-1",
   credentials: {
@@ -22,31 +36,31 @@ const command = new ListBucketsCommand(params)
 
 // const getKey = (path: string) => `profile/${path}.json`;
 
-export async function saveUserAvatarToS3(event: RequestEvent, file: File) {
-  const userResp = getUserIdFromCookie(event)
+export async function saveUserAvatarToS3(userResp: UserId, file: File) {
   if (!userResp.ok) {
     return { ok: userResp.ok, error: userResp.error, message: userResp.message }
   }
 
   const user_id = userResp.user_id as string
 
-  saveToS3("avatar", user_id, file)
+  return {ok: true, resp:  await saveToS3("avatar", user_id, file)}
 }
 
-export async function saveUserBannerToS3(event: RequestEvent, file: File) {
+export async function saveUserCoverToS3(userResp: UserId, file: File) {
   // TODO add some sort of abuse prevention
-  const userResp = getUserIdFromCookie(event)
   if (!userResp.ok) {
     return { ok: userResp.ok, error: userResp.error, message: userResp.message }
   }
 
   const user_id = userResp.user_id as string
 
-  saveToS3("banner", user_id, file)
-
+  return {ok: true, resp:  await saveToS3("cover", user_id, file)}
 };
 
-async function saveToS3(type: string, userId: string, file: File): Promise<void> {
+
+
+
+async function saveToS3(type: string, userId: string, file: File): Promise<string| undefined > {
   const extension = file.name.slice(file.name.lastIndexOf('.'));
   const key = `profile/${userId}/${type}${extension}`;
 
@@ -63,8 +77,10 @@ async function saveToS3(type: string, userId: string, file: File): Promise<void>
   try {
     const response = await client.send(uploadCommand);
     console.log("S3 upload success", response);
+    return key
   } catch (error) {
     console.error("S3 upload error", error);
+    return
   }
 }
 
