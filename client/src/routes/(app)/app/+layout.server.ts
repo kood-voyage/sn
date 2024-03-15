@@ -1,5 +1,3 @@
-
-
 import { getUser } from "$lib/server/db/profile"
 import { getUserIdFromCookie } from "$lib/server/jwt-handle"
 import type { RequestEvent } from "@sveltejs/kit"

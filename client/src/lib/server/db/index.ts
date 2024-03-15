@@ -118,9 +118,9 @@ export function createUser(userInfo: User) {
     const query = `
     INSERT INTO 
       user 
-      (id, username, email, password, date_of_birth, first_name, last_name) 
+      (id, username, email, password, date_of_birth, first_name, last_name, avatar, cover, description) 
     VALUES
-      (?, ?, ?, ?, ?, ?, ?);`
+      (?, ?, ?, ?, ?, ?, ?,?,?,?);`
 
 
 

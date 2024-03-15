@@ -56,15 +56,15 @@
 			<div class="m-auto h-24 sm:h-40 max-w-[1096px] p-0 sm:p-4">
 				<img
 					class="h-full w-full rounded-none sm:rounded-xl object-cover"
-					src="https://upload.wikimedia.org/wikipedia/commons/2/28/Iskandar_Investment_Esports_Carnival_2019.jpg"
-					alt="banner"
+					src={data.cover}
+					alt="cover"
 				/>
 			</div>
 
 			<div class="h-8 relative mx-0 sm:mx-4">
 				<img
-					src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={data.username}"
-					alt="banner"
+					src={data.avatar}
+					alt="avatar"
 					class="absolute bottom-[1px] left-12 h-20 w-20 rounded-full border-4 border-white object-cover dark:border-slate-950"
 				/>
 
@@ -85,7 +85,7 @@
 						<div
 							class="text-xs w-1/3 border-r text-center hover:bg-slate-200 dark:hover:bg-slate-800 p-1"
 						>
-							<span class="font-bold">{profileData.post}</span> posts
+							<span class="font-bold">{demoData.length}</span> posts
 						</div>
 						<div
 							class="text-xs w-1/3 border-r text-center hover:bg-slate-200 dark:hover:bg-slate-800 p-1"

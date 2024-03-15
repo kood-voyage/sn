@@ -2,6 +2,10 @@
 	let previewAvatar = '';
 	let previewBanner = '';
 
+
+
+
+	
 	function PreviewAvatar() {
 		var fileInput = document.getElementById('fileInputAvatar');
 

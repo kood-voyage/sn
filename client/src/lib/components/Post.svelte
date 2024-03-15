@@ -47,7 +47,7 @@
 					<Carousel.Item><img src={imgURL} alt="image1" /></Carousel.Item>
 					<Carousel.Item
 						><img
-							src="https://d1k8pxxip4mxx2.cloudfront.net/pub/media/bl/20201102-10090/large.jpg?qySIduQjDI9fuqUQexe97w=="
+							src="https://profilemediabucket-voyage.s3.amazonaws.com/profile/{username}/*"
 							alt="image1"
 						/></Carousel.Item
 					>

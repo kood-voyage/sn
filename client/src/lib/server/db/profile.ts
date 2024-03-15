@@ -13,10 +13,12 @@ type User = {
   id: string,
   username: string,
   email: string,
-  // timestamp: string,
   date_of_birth: string,
   first_name: string,
-  last_name: string
+  last_name: string,
+  avatar: string,
+  cover: string,
+  description: string
 }
 
 export async function getProfile(event: RequestEvent, username: string) {
@@ -28,7 +30,7 @@ export async function getProfile(event: RequestEvent, username: string) {
   // console.log(userResp)
 
   const user = userResp.data as User
-  // console.log(user)
+  console.log(user)
 
   const followingResp = await getUserFollowing(event, user.id)
   if (!followingResp.ok) {
@@ -59,7 +61,11 @@ export function getUser(unique_credentials: string) {
     email,
     date_of_birth,
     first_name,
-    last_name FROM user WHERE username = ? OR id = ?`
+    last_name,
+    avatar,
+    cover,
+    description
+    FROM user WHERE username = ? OR id = ?`
 
   try {
     const user = db.prepare(query).get(unique_credentials, unique_credentials) as User

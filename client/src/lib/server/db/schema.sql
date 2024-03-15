@@ -8,7 +8,9 @@ CREATE TABLE
     date_of_birth text NOT NULL,
     first_name text NOT NULL,
     last_name text NOT NULL,
-    description text
+    description text,
+    avatar text,
+    cover text
   );
 
 CREATE TABLE
