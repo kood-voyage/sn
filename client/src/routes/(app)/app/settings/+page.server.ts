@@ -1,4 +1,11 @@
-import type { Actions } from "./$types";
+import { saveUserAvatarToS3 } from "$lib/server/images/upload";
+import type { Actions, PageServerLoad } from "./$types";
+
+export const load: PageServerLoad = async (event) => {
+
+  // return { img: (await getUserBannerFromS3(event))?.valueOf() }
+
+}
 
 
 export const actions: Actions = {
@@ -9,9 +16,13 @@ export const actions: Actions = {
     const banner = data.get("fileInputBanner") as File
     const description = data.get("description")
 
-    console.log(avatar)
-    console.log(banner)
-    console.log(description)
+    // const str = (await getUserBannerFromS3(event))
+
+    saveUserAvatarToS3(event, avatar)
+
+    // console.log(avatar)
+    // console.log(banner)
+    // console.log(description)
 
 
     
