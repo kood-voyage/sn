@@ -4,7 +4,7 @@
 
 	export let data;
 
-	const { username, email, first_name, last_name } = data;
+	const { username, email, first_name, last_name,avatar } = data;
 
 	///
 	import Sun from 'svelte-radix/Sun.svelte';
@@ -89,7 +89,7 @@
 						<Button builders={[builder]} variant="ghost" class="w-[58px] h-[58px] p-0">
 							<div class="flex flex-col items-center justify-center h-[32px] w-[32px] p-0">
 								<img
-									src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={username}"
+									src={avatar}
 									alt="avatar"
 									class="rounded-full object-cover hover:rounded-[10px]"
 								/>

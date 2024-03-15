@@ -1,6 +1,12 @@
 <script lang="ts">
-	let previewAvatar = '';
-	let previewBanner = '';
+	import { Avatar } from 'bits-ui';
+
+	export let data;
+
+	const { username, email, first_name, last_name, avatar, cover, description } = data;
+
+	let previewAvatar = avatar;
+	let previewCover = cover;
 
 	let fileInputAvatar: HTMLInputElement;
 	function PreviewAvatar() {
@@ -18,19 +24,19 @@
 		}
 	}
 
-	let fileInputBanner: HTMLInputElement;
-	function PreviewBanner() {
-		let file = fileInputBanner.files[0];
+	let fileInputCover: HTMLInputElement;
+	function PreviewCover() {
+		let file = fileInputCover.files[0];
 		let reader = new FileReader();
 
 		reader.onloadend = function () {
-			previewBanner = reader.result;
+			previewCover = reader.result;
 		};
 
 		if (file) {
 			reader.readAsDataURL(file);
 		} else {
-			previewBanner = '';
+			previewCover = '';
 		}
 	}
 </script>
@@ -64,32 +70,28 @@
 				on:change={PreviewAvatar}
 				accept="image/png, image/jpeg"
 			/>
-			<img
-				alt="description"
-				src="https://profilemediabucket-voyage.s3.amazonaws.com/profile/user1/avatar.png"
-			/>
 		</div>
 
 		<!-- BANNER -->
 		<div class="m-auto w-full">
-			{#if previewBanner}
+			{#if previewCover}
 				<img
-					id="previewBanner"
-					src={previewBanner}
-					alt="previewBanner"
+					id="previewCover"
+					src={previewCover}
+					alt="previewCover"
 					class="w-full h-16 object-cover"
 				/>
 			{/if}
 
-			<label for="fileInputBanner" class="text-right">Banner</label>
+			<label for="fileInputCover" class="text-right">Banner</label>
 
 			<input
-				id="fileInputBanner"
-				name="fileInputBanner"
+				id="fileInputCover"
+				name="fileInputCover"
 				type="file"
 				class="col-span-3 text-red-500"
-				bind:this={fileInputBanner}
-				on:change={PreviewBanner}
+				bind:this={fileInputCover}
+				on:change={PreviewCover}
 				accept="image/png, image/jpeg"
 			/>
 		</div>
@@ -97,7 +99,8 @@
 		<div class="grid w-full gap-1.5">
 			<label for="description">Your bio</label>
 			<textarea
-				placeholder="Type your message here."
+				placeholder={description}
+				value={description}
 				id="description"
 				name="description"
 				class="max-h-48 min-h-20"

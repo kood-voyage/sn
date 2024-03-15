@@ -86,3 +86,66 @@ export function getUser(unique_credentials: string) {
   }
 
 }
+
+
+
+export function setAvatar(link: string, user_id: string){
+
+
+  const path = "https://profilemediabucket-voyage.s3.amazonaws.com/" + link
+  
+  const query = `UPDATE user SET avatar = ? WHERE id = ?`
+    try {
+    db.prepare(query).run(path,user_id)
+
+    return { ok: true}
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Misc Error" }
+    }
+  }
+
+}
+
+
+export function setCover(link: string, user_id: string){
+
+  const path = "https://profilemediabucket-voyage.s3.amazonaws.com/" + link
+
+  const query = `UPDATE user SET cover = ? WHERE id = ?`
+    try {
+    db.prepare(query).run(path,user_id)
+
+    return { ok: true}
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Misc Error" }
+    }
+  }
+
+}
+
+
+export function setDescription(link: string, user_id: string){
+
+  const query = `UPDATE user SET description = ? WHERE id = ?`
+    try {
+    db.prepare(query).run(link,user_id)
+
+    return { ok: true}
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Misc Error" }
+    }
+  }
+
+}
