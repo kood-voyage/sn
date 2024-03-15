@@ -1,6 +1,8 @@
-import { ListBucketsCommand, PutObjectCommand, S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
+import { ListBucketsCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, PROFILE_MEDIA_BUCKET } from '$env/static/private';
-import { Readable } from 'stream';
+
+import { getUserIdFromCookie } from '../jwt-handle';
+import type { RequestEvent } from '@sveltejs/kit';
 
 
 const client = new S3Client({
@@ -20,50 +22,55 @@ const command = new ListBucketsCommand(params)
 
 // const getKey = (path: string) => `profile/${path}.json`;
 
-export async function saveToS3(path: string, data: object) {
-  // TODO add some sort of abuse prevention
-  const key = `profile/${path}/banner.json`
-  const uploadCommand = new PutObjectCommand({
-    Bucket: PROFILE_MEDIA_BUCKET,
-    Key: key,
-    Body: JSON.stringify(data),
-  });
-  try {
-    const response = await client.send(uploadCommand);
-    console.log("S3 upload success ", response);
-  } catch (error) {
-    console.error("S3 upload error ", error);
+export async function saveUserAvatarToS3(event: RequestEvent, file: File) {
+  const userResp = getUserIdFromCookie(event)
+  if (!userResp.ok) {
+    return { ok: userResp.ok, error: userResp.error, message: userResp.message }
   }
+
+  const user_id = userResp.user_id as string
+
+  saveToS3("avatar", user_id, file)
+}
+
+export async function saveUserBannerToS3(event: RequestEvent, file: File) {
+  // TODO add some sort of abuse prevention
+  const userResp = getUserIdFromCookie(event)
+  if (!userResp.ok) {
+    return { ok: userResp.ok, error: userResp.error, message: userResp.message }
+  }
+
+  const user_id = userResp.user_id as string
+
+  saveToS3("banner", user_id, file)
+
 };
 
+async function saveToS3(type: string, userId: string, file: File): Promise<void> {
+  const extension = file.name.slice(file.name.lastIndexOf('.'));
+  const key = `profile/${userId}/${type}${extension}`;
 
-function streamToString(stream: Readable): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const chunks: Buffer[] = [];
-    stream.on('data', (chunk: Buffer) => chunks.push(chunk));
-    stream.once('end', () => resolve(Buffer.concat(chunks).toString('utf-8')));
-    stream.on('error', reject);
-  });
-}
+  // Convert File to ArrayBuffer then to Buffer
+  const arrayBuffer = await file.arrayBuffer();
+  const body = Buffer.from(arrayBuffer);
 
-export async function getFromS3(path: string) {
-  const key = `/profile/${path}/banner.json`;
-  const getCommand = new GetObjectCommand({
-    Bucket: PROFILE_MEDIA_BUCKET,
+  const uploadCommand = new PutObjectCommand({
+    Bucket: PROFILE_MEDIA_BUCKET, // Replace with your bucket name
     Key: key,
+    Body: body,
   });
 
   try {
-    const response = (await client.send(getCommand));
-    const Body = response.Body as Readable
-    const bodyContents = await streamToString(Body);
-    console.log("S3 get success", bodyContents);
-    return JSON.parse(bodyContents); // Assuming the stored data is JSON
+    const response = await client.send(uploadCommand);
+    console.log("S3 upload success", response);
   } catch (error) {
-    console.error("S3 get error", error);
-    return null;
+    console.error("S3 upload error", error);
   }
 }
+
+
+
+
 
 export async function mainUpload() {
   try {

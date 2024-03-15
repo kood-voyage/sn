@@ -2,11 +2,10 @@
 	let previewAvatar = '';
 	let previewBanner = '';
 
+	let fileInputAvatar: HTMLInputElement;
 	function PreviewAvatar() {
-		var fileInput = document.getElementById('fileInputAvatar');
-
-		var file = fileInput.files[0];
-		var reader = new FileReader();
+		let file = fileInputAvatar.files[0];
+		let reader = new FileReader();
 
 		reader.onloadend = function () {
 			previewAvatar = reader.result;
@@ -19,11 +18,10 @@
 		}
 	}
 
+	let fileInputBanner: HTMLInputElement;
 	function PreviewBanner() {
-		var fileInput = document.getElementById('fileInputBanner');
-
-		var file = fileInput.files[0];
-		var reader = new FileReader();
+		let file = fileInputBanner.files[0];
+		let reader = new FileReader();
 
 		reader.onloadend = function () {
 			previewBanner = reader.result;
@@ -62,8 +60,13 @@
 				name="fileInputAvatar"
 				type="file"
 				class="col-span-3 text-red-500"
+				bind:this={fileInputAvatar}
 				on:change={PreviewAvatar}
 				accept="image/png, image/jpeg"
+			/>
+			<img
+				alt="description"
+				src="https://profilemediabucket-voyage.s3.amazonaws.com/profile/user1/avatar.png"
 			/>
 		</div>
 
@@ -85,6 +88,7 @@
 				name="fileInputBanner"
 				type="file"
 				class="col-span-3 text-red-500"
+				bind:this={fileInputBanner}
 				on:change={PreviewBanner}
 				accept="image/png, image/jpeg"
 			/>
