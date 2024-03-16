@@ -47,7 +47,7 @@ type GroupRepository interface {
 	Update(group model.Group, privacy int) error
 	Get(group_id string) (*model.Group, error)
 	Members(group_id string) (*[]model.User, error)
-	IsMember(group_id, user_id string) error
+	IsMember(group_id, user_id string) (bool, error)
 	AddMember(group_id, user_id string) error
 }
 

@@ -163,7 +163,8 @@ func (s *Server) groupGet() http.HandlerFunc {
 		}
 
 		if privacy == s.types.Privacy.Private {
-			if err := s.store.Group().IsMember(r.PathValue("id"), sourceID); err != nil {
+			_, err := s.store.Group().IsMember(r.PathValue("id"), sourceID) 
+			if err != nil {
 				s.error(w, http.StatusForbidden, err)
 				return
 			}
@@ -214,24 +215,25 @@ func (s *Server) groupInvite() http.HandlerFunc {
 		}
 
 		//check source id
-		if err := s.store.Group().IsMember(req.GroupID, sourceID); err != nil {
-			if err == sql.ErrNoRows {
-				s.error(w, http.StatusUnprocessableEntity, errors.New("user is not a group member"))
-			} else {
-				s.error(w, http.StatusUnprocessableEntity, err)
-			}
+		t, err := s.store.Group().IsMember(req.GroupID, sourceID)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		if !t {
+			s.error(w, http.StatusUnprocessableEntity, errors.New("user is not a group member"))
 			return
 		}
 
 		//check target_id
-		if err := s.store.Group().IsMember(req.GroupID, req.TargetID); err != nil {
-			if err != sql.ErrNoRows {
-				s.error(w, http.StatusUnprocessableEntity, errors.New("user is already in grop"))
-				return
-			} else {
-				s.error(w, http.StatusUnprocessableEntity, err)
-				return
-			}
+		t, err = s.store.Group().IsMember(req.GroupID, req.TargetID)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		if t {
+			s.error(w, http.StatusUnprocessableEntity, errors.New("user is already in a group"))
+			return
 		}
 
 		//create a request
@@ -275,7 +277,7 @@ func (s *Server) groupInvite() http.HandlerFunc {
 func (s *Server) groupInviteRequest() http.HandlerFunc {
 	type Req struct {
 		TargetID string `json:"target_id" validate:"required"`
-		Option   string `json:"option" validate:"lowercase|required"`
+		Option   string `json:"option" validate:"lowercase|required|contains:accept,reject"`
 		GroupID  string `json:"group_id" validate:"required"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -313,13 +315,14 @@ func (s *Server) groupInviteRequest() http.HandlerFunc {
 		} else if request.Option == "accept" {
 			//check if request exists in first place
 			req_exists, err := s.store.Request().Get(req)
+
 			if err != nil {
-				if err == sql.ErrNoRows {
-					if err := s.store.Group().AddMember(request.GroupID, sourceID); err != nil {
-						s.error(w, http.StatusUnprocessableEntity, err)
-						return
-					}
-				}
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+
+			//add member to a group
+			if err := s.store.Group().AddMember(request.GroupID, sourceID); err != nil {
 				s.error(w, http.StatusUnprocessableEntity, err)
 				return
 			}

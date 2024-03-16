@@ -1,6 +1,7 @@
 package sqlstore
 
 import (
+	"database/sql"
 	"errors"
 	"social-network/internal/model"
 
@@ -106,15 +107,18 @@ func (g *GroupRepository) Members(group_id string) (*[]model.User, error) {
 	return &users, nil
 }
 
-func (g *GroupRepository) IsMember(group_id, user_id string) error {
+func (g *GroupRepository) IsMember(group_id, user_id string) (bool, error) {
 	query := `SELECT user_id FROM member WHERE group_id = ? AND user_id = ?`
 
 	var user model.User
 	if err := g.store.Db.QueryRow(query, group_id, user_id).Scan(&user.ID); err != nil {
-		return err
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, err
 	}
 
-	return nil
+	return true, nil
 }
 
 func (g *GroupRepository) AddMember(group_id, user_id string) error {
