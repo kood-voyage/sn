@@ -1,21 +1,19 @@
 import { ListBucketsCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, PROFILE_MEDIA_BUCKET } from '$env/static/private';
 
-import { getUserIdFromCookie } from '../jwt-handle';
-import type { RequestEvent } from '@sveltejs/kit';
 
 
 
-type UserId = {
-    ok: boolean;
-    user_id: string;
-    error?: undefined;
-    message?: undefined;
+type UserResp = {
+  ok: boolean;
+  user_id: string;
+  error?: undefined;
+  message?: undefined;
 } | {
-    ok: boolean;
-    error: unknown;
-    message: string;
-    user_id?: undefined;
+  ok: boolean;
+  error: unknown;
+  message: string;
+  user_id?: undefined;
 }
 
 
@@ -36,17 +34,17 @@ const command = new ListBucketsCommand(params)
 
 // const getKey = (path: string) => `profile/${path}.json`;
 
-export async function saveUserAvatarToS3(userResp: UserId, file: File) {
+export async function saveUserAvatarToS3(userResp: UserResp, file: File) {
   if (!userResp.ok) {
     return { ok: userResp.ok, error: userResp.error, message: userResp.message }
   }
 
   const user_id = userResp.user_id as string
 
-  return {ok: true, resp:  await saveToS3("avatar", user_id, file)}
+  return { ok: true, resp: await saveToS3("avatar", user_id, file) }
 }
 
-export async function saveUserCoverToS3(userResp: UserId, file: File) {
+export async function saveUserCoverToS3(userResp: UserResp, file: File) {
   // TODO add some sort of abuse prevention
   if (!userResp.ok) {
     return { ok: userResp.ok, error: userResp.error, message: userResp.message }
@@ -54,13 +52,13 @@ export async function saveUserCoverToS3(userResp: UserId, file: File) {
 
   const user_id = userResp.user_id as string
 
-  return {ok: true, resp:  await saveToS3("cover", user_id, file)}
+  return { ok: true, resp: await saveToS3("cover", user_id, file) }
 };
 
 
 
 
-async function saveToS3(type: string, userId: string, file: File): Promise<string| undefined > {
+async function saveToS3(type: string, userId: string, file: File): Promise<string | undefined> {
   const extension = file.name.slice(file.name.lastIndexOf('.'));
   const key = `profile/${userId}/${type}${extension}`;
 

@@ -8,6 +8,9 @@
 	let previewAvatar = avatar;
 	let previewCover = cover;
 
+	$: console.log(previewAvatar);
+	$: console.log(previewCover);
+
 	let fileInputAvatar: HTMLInputElement;
 	function PreviewAvatar() {
 		let file = fileInputAvatar.files[0];
