@@ -1,19 +1,30 @@
 <script lang="ts">
 	import { Avatar } from 'bits-ui';
+	import { handleImageCopression, handleSubmit } from './page.js';
+	import { enhance } from '$app/forms';
 
 	export let data;
 
 	const { username, email, first_name, last_name, avatar, cover, description } = data;
 
-	let previewAvatar = avatar;
-	let previewCover = cover;
+	$: previewAvatar = avatar;
+	$: previewCover = cover;
 
-	$: console.log(previewAvatar);
-	$: console.log(previewCover);
+	// $: console.log(previewAvatar);
+	// $: console.log(previewCover);
+
+	// console.log(event);
 
 	let fileInputAvatar: HTMLInputElement;
-	function PreviewAvatar() {
+	async function PreviewAvatar() {
 		let file = fileInputAvatar.files[0];
+
+		const imageResp = await handleImageCopression(file);
+		if (imageResp.ok && imageResp.file) {
+			file = imageResp.file;
+		}
+		console.log(file);
+
 		let reader = new FileReader();
 
 		reader.onloadend = function () {
@@ -28,8 +39,15 @@
 	}
 
 	let fileInputCover: HTMLInputElement;
-	function PreviewCover() {
+	async function PreviewCover() {
 		let file = fileInputCover.files[0];
+		// console.log(file);
+		const imageResp = await handleImageCopression(file);
+		if (imageResp.ok && imageResp.file) {
+			file = imageResp.file;
+		}
+		// console.log(file);
+
 		let reader = new FileReader();
 
 		reader.onloadend = function () {
@@ -50,7 +68,7 @@
 	<p class="text-sky-500 text-sm">
 		Make changes to your profile here. Click save when you're done.
 	</p>
-	<form action="?/profile" method="POST" enctype="multipart/form-data" class="p-2">
+	<form id="imageForm" enctype="multipart/form-data" class="p-2">
 		<!-- AVATAR -->
 		<div class="m-auto">
 			{#if previewAvatar}
@@ -65,6 +83,7 @@
 			<label for="fileInputAvatar" class="text-right">Avatar</label>
 
 			<input
+				src={previewAvatar}
 				id="fileInputAvatar"
 				name="fileInputAvatar"
 				type="file"
@@ -89,6 +108,7 @@
 			<label for="fileInputCover" class="text-right">Banner</label>
 
 			<input
+				src={previewCover}
 				id="fileInputCover"
 				name="fileInputCover"
 				type="file"
@@ -111,6 +131,11 @@
 			/>
 		</div>
 
-		<input type="submit" value="save" class="w-20 bg-slate-600 p-2 rounded-xl" />
+		<input
+			type="button"
+			value="save"
+			on:click={handleSubmit}
+			class="w-20 bg-slate-600 p-2 rounded-xl"
+		/>
 	</form>
 </div>
