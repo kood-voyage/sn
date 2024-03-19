@@ -23,7 +23,8 @@ jobs:
     - name: Building the docker image
       working-directory: api
       run: docker build -t mannuk24/sn-api-go .
-
+      env:
+          JWT_KEY: ${{ secrets.JWT_KEY }}
 
 
     - name: Pushing the image to dockerhub
