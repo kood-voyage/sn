@@ -45,11 +45,7 @@
 			<Carousel.Root bind:api>
 				<Carousel.Content>
 					<Carousel.Item><img src={imgURL} alt="image1" /></Carousel.Item>
-					<Carousel.Item
-						><img
-							src="https://profilemediabucket-voyage.s3.amazonaws.com/profile/{username}/*"
-							alt="image1"
-						/></Carousel.Item
+
 					>
 					<Carousel.Item
 						><img

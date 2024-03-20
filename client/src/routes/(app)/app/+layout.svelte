@@ -1,9 +1,14 @@
 <script lang="ts">
 	import { ModeWatcher } from 'mode-watcher';
 
-	export let data;
+	export let data
+
+
 
 	const { username, email, first_name, last_name, avatar } = data;
+
+	
+
 
 	///
 	import Sun from 'svelte-radix/Sun.svelte';
@@ -90,7 +95,7 @@
 								<img
 									src={avatar}
 									alt="avatar"
-									class="rounded-full object-cover hover:rounded-[10px]"
+									class="rounded-full object-cover hover:rounded-[10px] h-[32px] w-[32px]"
 								/>
 							</div></Button
 						>

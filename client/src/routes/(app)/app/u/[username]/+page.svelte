@@ -4,7 +4,6 @@
 
 	export let data: PageData;
 
-	// console.log(data);
 	type Data = {
 		post: number;
 		followers: number;
@@ -48,7 +47,7 @@
 
 <!-- user profile page -->
 
-<main class="flex overflow-scroll">
+<main class=" overflow-scroll ">
 	<div class=" m-auto h-full w-full max-w-[1096px]">
 		<!-- profile info header -->
 		<div class="profile-info relative">
@@ -74,8 +73,8 @@
 					<p class=" md:text-2xl font-bold mr-2">{data.username}</p>
 					<!-- <p class="text-xs">
 						<span class="bg-slate-500 px-1 rounded-sm">AKA</span>
-						{first_name}
-						{last_name}
+						{data.first_name}
+						{data.last_name}
 					</p> -->
 					<button class="text-sm px-5 rounded-md bg-sky-500"> follow </button>
 				</div>

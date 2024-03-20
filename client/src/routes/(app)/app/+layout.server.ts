@@ -1,16 +1,8 @@
 import { getUser } from "$lib/server/db/profile"
-import { getUserIdFromCookie,deleteTokens } from "$lib/server/jwt-handle"
+import { getUserIdFromCookie } from "$lib/server/jwt-handle"
 import type { RequestEvent } from "@sveltejs/kit"
 import type { RouteParams } from "../../(auth)/signin/$types"
 import type { LayoutServerLoad } from "./$types"
-
-
-
-
-
-
-
-
 
 
 export const load: LayoutServerLoad = async (event: RequestEvent<RouteParams, "/(auth)/signin"> | RequestEvent<Partial<Record<string, string>>, string | null>) => {
@@ -26,7 +18,6 @@ export const load: LayoutServerLoad = async (event: RequestEvent<RouteParams, "/
     return {}
   }
   return data?.data
-
-
+  
 }
 
