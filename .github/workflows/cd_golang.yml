@@ -21,9 +21,9 @@ jobs:
       run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
 
-      - name: Set JWT_KEY environment variable
-        run: |
-          echo "export JWT_KEY=${{ secrets.JWT_KEY }}" >> $GITHUB_ENV
+    - name: Set JWT_KEY environment variable
+      run: |
+        echo "export JWT_KEY=${{ secrets.JWT_KEY }}" >> $GITHUB_ENV
 
 
     - name: Building the docker image
