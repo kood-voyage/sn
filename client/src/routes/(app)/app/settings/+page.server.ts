@@ -2,9 +2,8 @@ import { getUser, setAvatar, setCover, setDescription } from "$lib/server/db/pro
 import { saveUserAvatarToS3, saveUserCoverToS3 } from "$lib/server/images/upload";
 import { getUserIdFromCookie } from "$lib/server/jwt-handle";
 import type { Actions, PageServerLoad } from "./$types";
-import Jimp from 'jimp';
 
-console.log(Jimp)
+
 
 export const load: PageServerLoad = async (event) => {
   const idResp = getUserIdFromCookie(event)
@@ -29,7 +28,7 @@ export const load: PageServerLoad = async (event) => {
 
 
 export const actions: Actions = {
-  profile: async (event) => {
+  default: async (event) => {
     const data = await event.request.formData()
 
 
@@ -39,10 +38,12 @@ export const actions: Actions = {
     const id = user_resp.user_id as string
 
 
-
     const avatar = data.get("fileInputAvatar") as File
+    console.log(avatar)
+
 
     const cover = data.get("fileInputCover") as File
+    console.log(cover)
 
 
 
@@ -97,3 +98,6 @@ export const actions: Actions = {
 
   }
 }
+
+
+// Function to reduce the image size
