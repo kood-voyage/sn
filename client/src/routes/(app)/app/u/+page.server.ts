@@ -1,11 +1,5 @@
 import { mainGetAllUsers } from "$lib/server/db/user"
 
-
-
-
-
-
-
 export const load = async () => {
 
   const data = mainGetAllUsers()
@@ -15,7 +9,4 @@ export const load = async () => {
   } else {
     //
   }
-
-
-
 }

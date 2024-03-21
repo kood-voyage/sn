@@ -5,6 +5,10 @@ export type RowType = {
   username: string,
   first_name: string,
   last_name: string,
+  avatar:string,
+  cover:string,
+  description:string
+
 }
 
 export function mainGetAllUsers() {
@@ -13,12 +17,15 @@ export function mainGetAllUsers() {
     username: string,
     first_name: string,
     last_name: string,
+    avatar:string,
+  cover:string,
+  description:string
   }
 
   const query = `SELECT id,
     username,
     first_name,
-    last_name FROM user`
+    last_name,avatar,cover,description FROM user`
   try {
     const prep = db.prepare(query)
 

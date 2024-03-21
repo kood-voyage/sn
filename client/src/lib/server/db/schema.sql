@@ -6,8 +6,11 @@ CREATE TABLE
     password text NOT NULL,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     date_of_birth text NOT NULL,
-    first_name text,
-    last_name text
+    first_name text NOT NULL,
+    last_name text NOT NULL,
+    description text,
+    avatar text,
+    cover text
   );
 
 CREATE TABLE
