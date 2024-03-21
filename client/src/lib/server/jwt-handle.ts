@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid';
+import { JWT_KEY } from '$env/static/private';
 import { redirect, type RequestEvent } from '@sveltejs/kit';
 import type { RouteParams } from '../../routes/(auth)/signin/$types';
 import { checkSessionExists, createSession, deleteSession } from './db';
-import { JWT_KEY } from '$env/static/private';
 
 type CreateEvent = RequestEvent<RouteParams, "/(auth)/signin">
 type RefreshEvent = RequestEvent<Partial<Record<string, string>>, string | null>
@@ -24,17 +24,14 @@ export function createTokens(event: CreateEvent | RefreshEvent, user_id: string)
   const refresh_token = jwt.sign({
     exp: Math.floor(Date.now() / 1000) + week,
     access_token_id
-  }, process.env.JWT_KEY || JWT_KEY, { algorithm: 'HS256' })
-
+  }, JWT_KEY, { algorithm: 'HS256' })
 
 
   const access_token = jwt.sign({
     exp: Math.floor(Date.now() / 1000) + min15,
     user_id,
     access_token_id
-
-  }, process.env.JWT_KEY || JWT_KEY, { algorithm: 'HS256' })
-
+  }, JWT_KEY, { algorithm: 'HS256' })
 
   function timeConvert(time: number) {
     return new Date((new Date()).getTime() + time * 1000);
@@ -67,3 +64,26 @@ export function refreshTokens(event: RefreshEvent, access_token_id: string) {
   }
 }
 
+export function getUserIdFromCookie(event: CreateEvent | RefreshEvent | RequestEvent) {
+  interface Payload {
+    exp: number;
+    user_id: string;
+    access_token_id: string;
+    iat: number;
+  }
+
+  const access_token = event.cookies.get("at") as string
+  // const pathname = event.url.pathname
+  try {
+    const adecoded = jwt.verify(access_token, JWT_KEY) as Payload
+    const payload = adecoded as Payload
+    return { ok: true, user_id: payload.user_id }
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error(err)
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}

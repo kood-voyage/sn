@@ -83,7 +83,7 @@
 						placeholder="********"
 					/>
 
-					<div class="absolute right-0 bottom-[6px] mr-4">
+					<div class="absolute right-0 bottom-[6px] mr-4 opacity-50">
 						{#if isHide}
 							<EyeClosed on:click={toogle} />
 						{:else}
@@ -108,7 +108,7 @@
 							placeholder="********"
 						/>
 
-						<div class="absolute right-0 bottom-[6px] mr-4">
+						<div class="absolute right-0 bottom-[6px] mr-4 opacity-50">
 							{#if isHide}
 								<EyeClosed on:click={toogle} />
 							{:else}
