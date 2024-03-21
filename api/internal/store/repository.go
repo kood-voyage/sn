@@ -63,5 +63,5 @@ type EventRepository interface {
 	Update(event *model.Event) error
 	Delete(eventId string) error
 	Get(eventId string) (*model.Event, error)
-	Register(eventId, opt string) error
+	Register(userid, eventId string, opt int) error
 }

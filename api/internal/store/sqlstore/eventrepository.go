@@ -3,6 +3,8 @@ package sqlstore
 import (
 	"fmt"
 	"social-network/internal/model"
+
+	"github.com/google/uuid"
 )
 
 type EventRepository struct {
@@ -81,7 +83,19 @@ func (e EventRepository) Get(eventId string) (*model.Event, error) {
 	return event, nil
 }
 
-func (e EventRepository) Register(eventId, opt string) error {
-	//TODO implement me
-	panic("implement me")
+func (e EventRepository) Register(userId, eventId string, opt int) error {
+    query := `
+        INSERT INTO event_registered_users (id, type_id, user_id, event_id)
+        SELECT ?, ?, ?, ?
+        WHERE NOT EXISTS (
+            SELECT 1 FROM event_registered_users WHERE user_id = ? AND event_id = ?
+        )
+    `
+
+	_, err := e.store.Db.Exec(query, uuid.New().String(), opt, userId, eventId, userId, eventId)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
