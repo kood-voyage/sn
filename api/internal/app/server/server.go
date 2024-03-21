@@ -96,9 +96,14 @@ func configureRouter(s *Server) {
 	s.router.GET("/api/v1/auth/group/{id}", s.groupGet())
 	s.router.POST("/api/v1/auth/group/invite", s.groupInvite())
 	s.router.POST("/api/v1/auth/group/request", s.groupInviteRequest())
+	//---------EVENT--------------//
+	s.router.POST("/api/v1/auth/group/event/create", s.createEvent())
+	s.router.PUT("/api/v1/auth/group/event/update", s.updateEvent())
+	s.router.DELETE("/api/v1/auth/group/event/delete/{id}", s.deleteEvent())
+	s.router.GET("/api/v1/auth/group/event/{id}", s.getEvent())
+	s.router.GET("/api/v1/auth/group/event/{id}/register/{opt}", s.registerEvent())
 
 	s.router.GET("/login/{id}", s.login())
-
 }
 
 func (s *Server) error(w http.ResponseWriter, code int, err error) {

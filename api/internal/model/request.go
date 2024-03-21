@@ -11,6 +11,7 @@ type Request struct {
 	TypeID    int       `db:"type_id" json:"type_id" validate:"required"`
 	SourceID  string    `db:"source_id" json:"source_id" validate:"required"`
 	TargetID  string    `db:"target_id" json:"target_id" validate:"required"`
+	ParentID  string    `db:"parent_id" json:"parent_id"`
 	Message   string    `db:"message" json:"message"`
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
 }
@@ -18,7 +19,7 @@ type Request struct {
 func FollowRequest() *Request {
 	id := uuid.New().String()
 	return &Request{
-		ID: id,
+		ID:     id,
 		TypeID: InitializeTypes().Request.Follow,
 	}
 }
@@ -26,7 +27,7 @@ func FollowRequest() *Request {
 func NotificationRequest() *Request {
 	id := uuid.New().String()
 	return &Request{
-		ID: id,
+		ID:     id,
 		TypeID: InitializeTypes().Request.Notification,
 	}
 }
@@ -34,8 +35,7 @@ func NotificationRequest() *Request {
 func InviteRequest() *Request {
 	id := uuid.New().String()
 	return &Request{
-		ID: id,
+		ID:     id,
 		TypeID: InitializeTypes().Request.Invite,
 	}
 }
-

@@ -93,7 +93,7 @@ func (u *UserRepository) GetNotifications(user_id string) ([]model.Request, erro
 	defer rows.Close()
 	for rows.Next() {
 		var notification model.Request
-		if err := rows.Scan(&notification.ID, &notification.TypeID, &notification.SourceID, &notification.TargetID, &notification.Message, &notification.CreatedAt); err != nil {
+		if err := rows.Scan(&notification.ID, &notification.TypeID, &notification.SourceID, &notification.TargetID, &notification.ParentID, &notification.Message, &notification.CreatedAt); err != nil {
 			return nil, err
 		}
 		notifications = append(notifications, notification)

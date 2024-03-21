@@ -2,7 +2,7 @@ all: clean test swag build run
 
 test:
 	@echo "Running tests..."
-	@go test -v ./...
+	@go test -v ./... -count=1
 
 swag:
 	@echo "Building swagger docs..."

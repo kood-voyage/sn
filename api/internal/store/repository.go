@@ -47,7 +47,7 @@ type GroupRepository interface {
 	Update(group model.Group, privacy int) error
 	Get(group_id string) (*model.Group, error)
 	Members(group_id string) (*[]model.User, error)
-	IsMember(group_id, user_id string) error
+	IsMember(group_id, user_id string) (bool, error)
 	AddMember(group_id, user_id string) error
 }
 
@@ -56,4 +56,12 @@ type PrivacyRepository interface {
 	Update(parent_id string, privacy int) error
 	Delete(parent_id string) error
 	Check(parent_id string) (int, error)
+}
+
+type EventRepository interface {
+	Create(event *model.Event) error
+	Update(event *model.Event) error
+	Delete(eventId string) error
+	Get(eventId string) (*model.Event, error)
+	Register(userid, eventId string, opt int) error
 }

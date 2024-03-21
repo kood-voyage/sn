@@ -22,7 +22,7 @@ func TestNotification_Create(t *testing.T) {
 	s := newServer(store)
 
 	mock.ExpectExec("INSERT INTO request").
-		WithArgs(sqlmock.AnyArg(), s.types.Request.Notification, sourceID, targetID, sqlmock.AnyArg()).
+		WithArgs(sqlmock.AnyArg(), s.types.Request.Notification, sourceID, targetID, sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	requestBody := fmt.Sprintf(`{"source_id": "%s", "target_id": "%s", "message": "%s"}`, sourceID, targetID, "TestMessage")

@@ -73,9 +73,10 @@ func TestFollow_Privacy_Private(t *testing.T) {
 		WithArgs(targetID).
 		WillReturnRows(sqlmock.NewRows([]string{"type_id"}).AddRow(2))
 	mock.ExpectQuery("SELECT \\* FROM request").
-		WithArgs(s.types.Privacy.Private, sourceID, targetID).WillReturnError(sql.ErrNoRows)
+		WithArgs(s.types.Privacy.Private, sourceID, targetID).
+		WillReturnError(sql.ErrNoRows)
 	mock.ExpectExec("INSERT INTO request").
-		WithArgs(sqlmock.AnyArg(), s.types.Request.Follow, sourceID, targetID, sqlmock.AnyArg()).
+		WithArgs(sqlmock.AnyArg(), s.types.Request.Follow, sourceID, targetID, sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	req, err := http.NewRequest("GET", "/api/v1/auth/follow/"+targetID, nil)
@@ -110,7 +111,7 @@ func TestFollow_Privacy_Invalid(t *testing.T) {
 		WithArgs(targetID).
 		WillReturnRows(sqlmock.NewRows([]string{"type_id"}).AddRow(5))
 	mock.ExpectExec("INSERT INTO request").
-		WithArgs(sqlmock.AnyArg(), s.types.Request.Follow, sourceID, targetID, sqlmock.AnyArg()).
+		WithArgs(sqlmock.AnyArg(), s.types.Request.Follow, sourceID, targetID, sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	req, err := http.NewRequest("GET", "/api/v1/auth/follow/"+targetID, nil)
@@ -229,12 +230,12 @@ func TestFollow_Request_Accept(t *testing.T) {
 
 	mock.ExpectQuery("SELECT \\* FROM request").
 		WithArgs(s.types.Privacy.Private, sourceID, targetID).
-		WillReturnRows(sqlmock.NewRows([]string{"id", "type_id", "source_id", "target_id", "message", "created_at"}).AddRow(1, s.types.Privacy.Private, sourceID, targetID, "Test Message", time.Now()))
+		WillReturnRows(sqlmock.NewRows([]string{"id", "type_id", "source_id", "target_id", "parent_id", "message", "created_at"}).AddRow(1, s.types.Privacy.Private, sourceID, targetID, "", "Test Message", time.Now()))
 	mock.ExpectExec("DELETE FROM request").
 		WithArgs(s.types.Request.Follow, sourceID, targetID).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec("INSERT INTO follower").
-		WithArgs(sqlmock.AnyArg(), targetID, sourceID, targetID, sourceID).
+		WithArgs(sqlmock.AnyArg(), sourceID, targetID, sourceID, targetID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	requestBody := fmt.Sprintf(`{"target_id": "%s", "option": "accept"}`, sourceID)

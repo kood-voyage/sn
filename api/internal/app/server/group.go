@@ -3,7 +3,6 @@ package server
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"net/http"
 	"social-network/internal/model"
 	"social-network/pkg/validator"
@@ -15,7 +14,7 @@ import (
 // @Summary Create a group
 // @Tags group
 // @Produce json
-// @Success 202 {object} model.Group
+// @Success 201 {object} model.Group
 // @Failure 401 {object} Error
 // @Failure 422 {object} Error
 // @Router /api/v1/auth/group/create [post]
@@ -164,7 +163,8 @@ func (s *Server) groupGet() http.HandlerFunc {
 		}
 
 		if privacy == s.types.Privacy.Private {
-			if err := s.store.Group().IsMember(r.PathValue("id"), sourceID); err != nil {
+			_, err := s.store.Group().IsMember(r.PathValue("id"), sourceID) 
+			if err != nil {
 				s.error(w, http.StatusForbidden, err)
 				return
 			}
@@ -172,7 +172,6 @@ func (s *Server) groupGet() http.HandlerFunc {
 
 		group, err := s.store.Group().Get(r.PathValue("id"))
 		if err != nil {
-			fmt.Println(err)
 			s.error(w, http.StatusUnauthorized, err)
 			return
 		}
@@ -196,7 +195,7 @@ func (s *Server) groupInvite() http.HandlerFunc {
 		type requestBody struct {
 			GroupID  string `json:"group_id" validate:"required"`
 			TargetID string `json:"target_id" validate:"required"`
-			Message  string `json:"message"`
+			Message  string `json:"message" validate:"required"`
 		}
 		sourceID, ok := r.Context().Value(ctxUserID).(string)
 		if !ok {
@@ -215,8 +214,25 @@ func (s *Server) groupInvite() http.HandlerFunc {
 			return
 		}
 
-		if err := s.store.Group().IsMember(req.GroupID, sourceID); err != nil {
+		//check source id
+		t, err := s.store.Group().IsMember(req.GroupID, sourceID)
+		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		if !t {
+			s.error(w, http.StatusUnprocessableEntity, errors.New("user is not a group member"))
+			return
+		}
+
+		//check target_id
+		t, err = s.store.Group().IsMember(req.GroupID, req.TargetID)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		if t {
+			s.error(w, http.StatusUnprocessableEntity, errors.New("user is already in a group"))
 			return
 		}
 
@@ -226,9 +242,10 @@ func (s *Server) groupInvite() http.HandlerFunc {
 		request.SourceID = sourceID
 		request.CreatedAt = time.Now()
 		request.Message = req.Message
+		request.ParentID = req.GroupID
 		//check if that request it not already created
 		existing, err := s.store.Request().Get(*request)
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
@@ -259,8 +276,8 @@ func (s *Server) groupInvite() http.HandlerFunc {
 // @Router /api/v1/auth/group/request [post]
 func (s *Server) groupInviteRequest() http.HandlerFunc {
 	type Req struct {
-		TargetID string `json:"target_id" validate:"lowercase|required"`
-		Option   string `json:"option" validate:"lowercase|required"`
+		TargetID string `json:"target_id" validate:"required"`
+		Option   string `json:"option" validate:"lowercase|required|contains:accept,reject"`
 		GroupID  string `json:"group_id" validate:"required"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -298,19 +315,20 @@ func (s *Server) groupInviteRequest() http.HandlerFunc {
 		} else if request.Option == "accept" {
 			//check if request exists in first place
 			req_exists, err := s.store.Request().Get(req)
-			if err != nil && err != sql.ErrNoRows {
+
+			if err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+
+			//add member to a group
+			if err := s.store.Group().AddMember(request.GroupID, sourceID); err != nil {
 				s.error(w, http.StatusUnprocessableEntity, err)
 				return
 			}
 
 			//delete the request
 			if err := s.store.Request().Delete(*req_exists); err != nil {
-				s.error(w, http.StatusUnprocessableEntity, err)
-				return
-			}
-			//add member to a group
-
-			if err := s.store.Group().AddMember(request.GroupID, sourceID); err != nil {
 				s.error(w, http.StatusUnprocessableEntity, err)
 				return
 			}

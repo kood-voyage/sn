@@ -8,7 +8,7 @@ import (
 )
 
 type ValidateStruct struct {
-	Privacy string `validate:"lowercase|privacy:public,private"`
+	Privacy string `validate:"lowercase|contains:public,private"`
 }
 
 // userCreate Handles the user creation to database. Only userID and privacy state will be stored.

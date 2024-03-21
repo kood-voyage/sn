@@ -173,9 +173,10 @@ func TestUser_Notifications(t *testing.T) {
 
 	mock.ExpectQuery("SELECT \\* FROM request").
 		WithArgs(sourceID).
-		WillReturnRows(sqlmock.NewRows([]string{"id", "type_id", "source_id", "target_id", "message", "created_at"}).
-			AddRow("testID1", s.types.Request.Notification, targetID, sourceID, "test1", time.Now()).
-			AddRow("testID2", s.types.Request.Notification, targetID, sourceID, "test2", time.Now()))
+		WillReturnRows(sqlmock.NewRows([]string{"id", "type_id", "source_id", "target_id", "parent_id", "message", "created_at"}).
+			AddRow("testID1", s.types.Request.Notification, targetID, sourceID, "parent_id", "test1", time.Now()).
+			AddRow("testID2", s.types.Request.Notification, targetID, sourceID,
+			"parent_id", "test2", time.Now()))
 
 	req, err := http.NewRequest("GET", "/api/v1/auth/user/notifications", nil)
 	if err != nil {
@@ -191,7 +192,6 @@ func TestUser_Notifications(t *testing.T) {
 		t.Errorf("Expected status code %d, got %d", http.StatusOK, rec.Code)
 	}
 }
-
 
 func TestUser_Posts(t *testing.T) {
 	db, mock, err := sqlmock.New()
@@ -223,5 +223,3 @@ func TestUser_Posts(t *testing.T) {
 		t.Errorf("Expected status code %d, got %d", http.StatusOK, rec.Code)
 	}
 }
-
-

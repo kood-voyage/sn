@@ -107,21 +107,22 @@ func (g *GroupRepository) Members(group_id string) (*[]model.User, error) {
 	return &users, nil
 }
 
-func (g *GroupRepository) IsMember(group_id, user_id string) error {
+func (g *GroupRepository) IsMember(group_id, user_id string) (bool, error) {
 	query := `SELECT user_id FROM member WHERE group_id = ? AND user_id = ?`
 
 	var user model.User
 	if err := g.store.Db.QueryRow(query, group_id, user_id).Scan(&user.ID); err != nil {
 		if err == sql.ErrNoRows {
-			return errors.New("user is not a group member")
+			return false, nil
 		}
+		return false, err
 	}
 
-	return nil
+	return true, nil
 }
 
 func (g *GroupRepository) AddMember(group_id, user_id string) error {
-	query := `INSERT INTO member id, user_id, group_id, type_id VALUES (?, ?, ?, ?)`
+	query := `INSERT INTO member (id, user_id, group_id, type_id) VALUES (?, ?, ?, ?)`
 
 	_, err := g.store.Db.Exec(query, uuid.New().String(), user_id, group_id, 1)
 	if err != nil {

@@ -22,6 +22,27 @@ definitions:
     - post_id
     - user_id
     type: object
+  model.Event:
+    properties:
+      created_at:
+        type: string
+      date:
+        type: string
+      description:
+        type: string
+      group_id:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      user_id:
+        type: string
+    required:
+    - group_id
+    - id
+    - user_id
+    type: object
   model.Group:
     properties:
       creator_id:
@@ -70,6 +91,8 @@ definitions:
       id:
         type: string
       message:
+        type: string
+      parent_id:
         type: string
       source_id:
         type: string
@@ -268,8 +291,8 @@ paths:
       produces:
       - application/json
       responses:
-        "202":
-          description: Accepted
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/model.Group'
         "401":
@@ -311,6 +334,127 @@ paths:
       summary: Delete a group
       tags:
       - group
+  /api/v1/auth/group/event/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: event id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: option
+        in: path
+        name: opt
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Register to an event
+      tags:
+      - events
+  /api/v1/auth/group/event/create:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Event'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Create a group event
+      tags:
+      - events
+  /api/v1/auth/group/event/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: event id to delete
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Delete an event
+      tags:
+      - events
+  /api/v1/auth/group/event/update:
+    put:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Event'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/server.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Update a group event
+      tags:
+      - events
   /api/v1/auth/group/invite:
     post:
       produces:
