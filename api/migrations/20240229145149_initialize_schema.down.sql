@@ -1,6 +1,5 @@
-DROP TABLE selected_users;
-DROP TABLE image_type;
 DROP TABLE image;
+DROP TABLE selected_users;
 DROP TABLE member;
 DROP TABLE member_type;
 DROP TABLE reaction_join;
