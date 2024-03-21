@@ -37,6 +37,7 @@ func (s *Server) createPost() http.HandlerFunc {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
+		fmt.Printf("post: %+v\n", post)
 
 		if err := s.store.Post().Create(
 			post,

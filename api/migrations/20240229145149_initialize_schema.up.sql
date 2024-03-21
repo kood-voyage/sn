@@ -279,11 +279,6 @@ VALUES
 
 CREATE TABLE image (
     id text NOT NULL UNIQUE,
-    parent_table text NOT NULL,
     parent_id text NOT NULL,
-    path text NOT NULL,
-    FOREIGN KEY (parent_id, parent_table) REFERENCES comment (id, 'comment') ON DELETE CASCADE,
-    FOREIGN KEY (parent_id, parent_table) REFERENCES post (id, 'post') ON DELETE CASCADE,
-    FOREIGN KEY (parent_id, parent_table) REFERENCES user (id, 'user') ON DELETE CASCADE,
-    FOREIGN KEY (parent_id, parent_table) REFERENCES community (id, 'community') ON DELETE CASCADE
+    path text NOT NULL
 )
