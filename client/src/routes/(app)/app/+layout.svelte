@@ -3,13 +3,21 @@
 
 	export let data;
 
-	import { currentUserStore } from '$lib/store/user-store.js';
+	import { currentUserFollowers, currentUserFollowing, currentUserStore } from '$lib/store/user-store.js';
 
-	currentUserStore.set(data)
+	currentUserStore.set(data.data);
+
+	currentUserFollowers.set(data.followers);
+	currentUserFollowing.set(data.following);
 
 
-	const { username, email, first_name, last_name, avatar } = data;
 
+	console.log('HERE-------');
+	console.log($currentUserStore);
+
+	console.log('HERE-------');
+
+	const { username, email, first_name, last_name, avatar } = data.data
 	///
 	import Sun from 'svelte-radix/Sun.svelte';
 	import Moon from 'svelte-radix/Moon.svelte';

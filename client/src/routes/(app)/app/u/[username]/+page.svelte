@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Post from '$lib/components/Post.svelte';
 	import type { PageData } from './$types';
-	import { currentUserStore } from '$lib/store/user-store';
+	import { currentUserFollowing, currentUserStore } from '$lib/store/user-store';
 	export let data: PageData;
 
 	const demoData = [
@@ -28,11 +28,24 @@
 		}
 	];
 
-	console.log($currentUserStore);
-	console.log(data.following);
+	console.log(data);
+
+	let isCurrentUserFollowing = false;
+
+	// console.log($currentUserFollowing)
+
+	if ($currentUserFollowing.data !== null) {
+		for (const following of $currentUserFollowing.data) {
+			if (following.id === data.user.id) {
+				isCurrentUserFollowing = true;
+			}
+		}
+	}
 
 	const followersCount = data.followers ? data.followers.length : 0;
 	const followingCount = data.following ? data.following.length : 0;
+
+	// console.log(isFolowed);
 </script>
 
 <svelte:head>
@@ -73,13 +86,19 @@
 					</p> -->
 
 					{#if $currentUserStore.id !== data.user.id}
-						<!-- if current user not follows this id then follow button -->
+						{#if isCurrentUserFollowing}
+							<form action="?/unfollow" method="post">
+								<input type="text" hidden name="target_id" value={data.user.id} />
 
-						<form action="?/follow" method="post">
-							<input type="text" hidden name="target_id" value={data.user.id} />
+								<button class="text-sm px-5 rounded-md bg-red-500" type="submit"> unfollow </button>
+							</form>
+						{:else}
+							<form action="?/follow" method="post">
+								<input type="text" hidden name="target_id" value={data.user.id} />
 
-							<button class="text-sm px-5 rounded-md bg-sky-500" type="submit"> follow </button>
-						</form>
+								<button class="text-sm px-5 rounded-md bg-sky-500" type="submit"> follow </button>
+							</form>
+						{/if}
 
 						<!-- 
 					or unfollow button -->

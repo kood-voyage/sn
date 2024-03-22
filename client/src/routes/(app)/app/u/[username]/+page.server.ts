@@ -1,18 +1,8 @@
-
-// import { getFromS3, mainUpload, saveToS3 } from "$lib/server/images/upload";
 import { LOCAL_PATH } from '$env/static/private';
 import type { Actions } from './$types';
 
-
-
 import { getProfile } from "$lib/server/db/profile"
-// import { getFromS3, mainUpload, saveToS3 } from "$lib/server/images/upload";
 import type { PageServerLoad } from './$types';
-
-
-
-
-
 
 
 export const load: PageServerLoad = async (event) => {
@@ -25,11 +15,12 @@ export const load: PageServerLoad = async (event) => {
     }
   }
 
+
+
+
   return data
 
 }
-
-
 
 
 export const actions: Actions = {
@@ -51,11 +42,29 @@ export const actions: Actions = {
     }
   }
 
+  },
+
+
+
+  unfollow: async (event) => {
+  const data = await event.request.formData()
+  const target_id = data.get("target_id")
+
+    try {
+    await fetch(`${LOCAL_PATH}/api/v1/auth/unfollow/${target_id}`, {
+      headers: {
+        "Authorization": `Bearer ${event.cookies.get('at')}`
+      }
+    })
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+
   }
 
 }
 
-
-
-
-// /api/v1/auth/user/following/{id}
