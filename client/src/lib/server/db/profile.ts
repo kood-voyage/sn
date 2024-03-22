@@ -1,6 +1,6 @@
 import { db } from "."
 import type { RequestEvent } from "@sveltejs/kit"
-import { getUserFollowers, getUserFollowing } from "../api/user-requests";
+import { getUserFollowers, getUserFollowing, getUserPosts } from "../api/user-requests";
 
 interface Response {
   ok: boolean;
@@ -30,17 +30,18 @@ export async function getProfile(event: RequestEvent, username: string) {
   // console.log(userResp)
 
   const user = userResp.data as User
-  console.log(user)
+  // console.log(user)
 
   const followingResp = await getUserFollowing(event, user.id)
-  if (!followingResp.ok) {
-    return { ok: followingResp.ok, error: followingResp.error, message: followingResp.message }
-  }
+
+  // console.log("sdfasdfasdf", followingResp)
 
   const followersResp = await getUserFollowers(event, user.id)
-  if (!followersResp.ok) {
-    return { ok: followersResp.ok, error: followersResp.error, message: followersResp.message }
-  }
+
+  // console.log(followersResp)
+
+  const postsResp = await getUserPosts(event, user.username)
+  console.log(postsResp)
 
   // GET THE POSTS
   // GET PROFILE IF THEY HAVE 
@@ -56,7 +57,8 @@ export async function getProfile(event: RequestEvent, username: string) {
 export function getUser(unique_credentials: string) {
 
 
-  const query = `SELECT id,
+  const query = `SELECT 
+    id,
     username,
     email,
     date_of_birth,
@@ -89,16 +91,16 @@ export function getUser(unique_credentials: string) {
 
 
 
-export function setAvatar(link: string, user_id: string){
+export function setAvatar(link: string, user_id: string) {
 
 
   const path = "https://profilemediabucket-voyage.s3.amazonaws.com/" + link
-  
-  const query = `UPDATE user SET avatar = ? WHERE id = ?`
-    try {
-    db.prepare(query).run(path,user_id)
 
-    return { ok: true}
+  const query = `UPDATE user SET avatar = ? WHERE id = ?`
+  try {
+    db.prepare(query).run(path, user_id)
+
+    return { ok: true }
 
   } catch (err) {
     if (err instanceof Error) {
@@ -111,15 +113,15 @@ export function setAvatar(link: string, user_id: string){
 }
 
 
-export function setCover(link: string, user_id: string){
+export function setCover(link: string, user_id: string) {
 
   const path = "https://profilemediabucket-voyage.s3.amazonaws.com/" + link
 
   const query = `UPDATE user SET cover = ? WHERE id = ?`
-    try {
-    db.prepare(query).run(path,user_id)
+  try {
+    db.prepare(query).run(path, user_id)
 
-    return { ok: true}
+    return { ok: true }
 
   } catch (err) {
     if (err instanceof Error) {
@@ -132,13 +134,13 @@ export function setCover(link: string, user_id: string){
 }
 
 
-export function setDescription(link: string, user_id: string){
+export function setDescription(link: string, user_id: string) {
 
   const query = `UPDATE user SET description = ? WHERE id = ?`
-    try {
-    db.prepare(query).run(link,user_id)
+  try {
+    db.prepare(query).run(link, user_id)
 
-    return { ok: true}
+    return { ok: true }
 
   } catch (err) {
     if (err instanceof Error) {

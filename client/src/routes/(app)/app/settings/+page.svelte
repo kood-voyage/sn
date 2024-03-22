@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Avatar } from 'bits-ui';
-	import { handleImageCopression, handleSubmit } from './page.js';
+	import { handleSubmit } from './logic.js';
 	import { enhance } from '$app/forms';
+	import { handleImageCopression } from '$lib/client/image-compression.js';
 
 	export let data;
 

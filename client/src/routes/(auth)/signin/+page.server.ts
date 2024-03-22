@@ -8,6 +8,7 @@ import { checkSessionExists, checkUserExists, deleteSession } from '$lib/server/
 
 import { fail } from '@sveltejs/kit';
 import { createTokens } from '$lib/server/jwt-handle';
+import { apiCreateUser } from '$lib/server/api/user-requests';
 
 
 export const load: PageServerLoad = async () => {
@@ -45,6 +46,7 @@ export const actions: Actions = {
 			})
 		}
 
+
 		const user_id = respUser.id as string
 		const resp = checkSessionExists(user_id)
 		if (resp.ok) deleteSession(user_id)
@@ -59,6 +61,7 @@ export const actions: Actions = {
 			})
 		}
 
+		apiCreateUser("public", event)
 
 		if (!form.valid) {
 			return fail(400, {
