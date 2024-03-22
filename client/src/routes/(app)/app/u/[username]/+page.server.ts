@@ -1,3 +1,10 @@
+
+// import { getFromS3, mainUpload, saveToS3 } from "$lib/server/images/upload";
+import { LOCAL_PATH } from '$env/static/private';
+import type { Actions } from './$types';
+
+
+
 import { getProfile } from "$lib/server/db/profile"
 // import { getFromS3, mainUpload, saveToS3 } from "$lib/server/images/upload";
 import type { PageServerLoad } from './$types';
@@ -10,10 +17,6 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 
-  // getFromS3("user1")
-  // saveToS3("user1", { test: "worked" })
-  // mainUpload()
-
   const data = (await getProfile(event, event.params.username))
   if (data.error) {
     console.error(data)
@@ -22,9 +25,37 @@ export const load: PageServerLoad = async (event) => {
     }
   }
 
-  // console.log(data)
-
-
-  return data.user
+  return data
 
 }
+
+
+
+
+export const actions: Actions = {
+	follow: async (event) => {
+  const data = await event.request.formData()
+  const target_id = data.get("target_id")
+
+    try {
+    await fetch(`${LOCAL_PATH}/api/v1/auth/follow/${target_id}`, {
+      headers: {
+        "Authorization": `Bearer ${event.cookies.get('at')}`
+      }
+    })
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+
+  }
+
+}
+
+
+
+
+// /api/v1/auth/user/following/{id}

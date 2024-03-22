@@ -27,15 +27,18 @@ export async function getProfile(event: RequestEvent, username: string) {
     console.error("'profile.ts' >>>", userResp.message)
     return { ok: userResp.ok, error: userResp.error, message: userResp.message }
   }
-  // console.log(userResp)
 
   const user = userResp.data as User
   console.log(user)
 
   const followingResp = await getUserFollowing(event, user.id)
+
+
   if (!followingResp.ok) {
     return { ok: followingResp.ok, error: followingResp.error, message: followingResp.message }
   }
+
+
 
   const followersResp = await getUserFollowers(event, user.id)
   if (!followersResp.ok) {
@@ -45,6 +48,7 @@ export async function getProfile(event: RequestEvent, username: string) {
   // GET THE POSTS
   // GET PROFILE IF THEY HAVE 
   // GET BANNER IMAGE 
+
 
   return {
     user: user,
