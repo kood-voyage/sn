@@ -65,3 +65,10 @@ type EventRepository interface {
 	Get(eventId string) (*model.Event, error)
 	Register(userid, eventId string, opt int) error
 }
+
+type ImageRepository interface {
+	Add(parentId string, paths []string) error
+	Delete(id string) error
+	DeleteAll(parentId string) error
+	Update(parentId string, paths []string) error
+}

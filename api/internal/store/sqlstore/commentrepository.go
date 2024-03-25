@@ -1,6 +1,7 @@
 package sqlstore
 
 import (
+	"database/sql"
 	"fmt"
 	"social-network/internal/model"
 )
@@ -24,6 +25,10 @@ func (c CommentRepository) Create(comment *model.Comment) error {
 		getParentID(comment),
 		comment.Content)
 	if err != nil {
+		return err
+	}
+
+	if err = c.store.Image().Add(comment.ID, comment.ImagePaths); err != nil {
 		return err
 	}
 
@@ -54,12 +59,16 @@ func (c CommentRepository) Delete(commentID, userID string) error {
 		return fmt.Errorf("no comment with such ID %s", commentID)
 	}
 
+	if err = c.store.Image().DeleteAll(commentID); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
-	//query := `SELECT * FROM comment WHERE post_id = ?`
-	q := `WITH RECURSIVE CommentHierarchy AS (
+	q := `
+    WITH RECURSIVE CommentHierarchy AS (
         -- Anchor member: Start with the top-level comments for the post
         SELECT
             c.id,
@@ -81,7 +90,7 @@ func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
             c.id,
             c.user_id,
             c.post_id,
-           	COALESCE(c.parent_id, '') AS parent_id,
+            COALESCE(c.parent_id, '') AS parent_id,
             c.content,
             c.created_at,
             (SELECT COUNT(*) FROM comment subc WHERE subc.parent_id = c.id) AS count
@@ -90,7 +99,15 @@ func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
         JOIN
             CommentHierarchy ch ON c.parent_id = ch.id
     )
-    SELECT * FROM CommentHierarchy;`
+    SELECT
+        ch.*,
+        i.path AS image_path
+    FROM
+        CommentHierarchy ch
+    LEFT JOIN
+        image i ON ch.id = i.parent_id;
+    `
+
 	rows, err := c.store.Db.Query(q, id)
 	if err != nil {
 		return nil, err
@@ -99,6 +116,7 @@ func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
 	var comments []model.Comment
 	for rows.Next() {
 		var comment model.Comment
+		var imagePath sql.NullString
 		if err = rows.Scan(
 			&comment.ID,
 			&comment.UserID,
@@ -107,8 +125,12 @@ func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
 			&comment.Content,
 			&comment.CreatedAt,
 			&comment.Count,
+			&imagePath,
 		); err != nil {
 			return nil, err
+		}
+		if imagePath.Valid {
+			comment.ImagePaths = append(comment.ImagePaths, imagePath.String)
 		}
 		comments = append(comments, comment)
 	}
@@ -125,6 +147,10 @@ func (c CommentRepository) Update(comment *model.Comment) error {
 
 	_, err := c.store.Db.Exec(query, comment.Content, comment.ID)
 	if err != nil {
+		return err
+	}
+
+	if err = c.store.Image().Update(comment.ID, comment.ImagePaths); err != nil {
 		return err
 	}
 	return nil
