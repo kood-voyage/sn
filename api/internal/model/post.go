@@ -1,7 +1,6 @@
 package model
 
 import (
-	"github.com/google/uuid"
 	"time"
 )
 
@@ -18,9 +17,7 @@ type Post struct {
 
 // NewPost creates a pointer to Post struct with new uuid
 func NewPost() *Post {
-	id := uuid.New().String()
 	return &Post{
-		ID:        id,
 		CreatedAt: time.Now(),
 	}
 }
