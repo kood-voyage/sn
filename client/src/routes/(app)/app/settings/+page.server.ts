@@ -4,7 +4,6 @@ import { getUserIdFromCookie } from "$lib/server/jwt-handle";
 import type { Actions, PageServerLoad } from "./$types";
 
 
-
 export const load: PageServerLoad = async (event) => {
   const idResp = getUserIdFromCookie(event)
   if (!idResp.ok) {
@@ -18,32 +17,21 @@ export const load: PageServerLoad = async (event) => {
     return {}
   }
   return data?.data
-
-
-
-
-
-
 }
 
 
 export const actions: Actions = {
   default: async (event) => {
     const data = await event.request.formData()
-
-
-
     const user_resp = getUserIdFromCookie(event)
-
     const id = user_resp.user_id as string
 
-
     const avatar = data.get("fileInputAvatar") as File
-    console.log(avatar)
+    // console.log(avatar)
 
 
     const cover = data.get("fileInputCover") as File
-    console.log(cover)
+    // console.log(cover)
 
 
 
@@ -73,25 +61,17 @@ export const actions: Actions = {
 
       const coverResp = await saveUserCoverToS3(user_resp, cover)
 
-
       if (!coverResp.ok) {
         return coverResp.error
       }
 
       const coverUrl = coverResp.resp
 
-
-
-
       if (coverUrl) setCover(coverUrl, id)
 
     } else {
       console.log("The selected file is not an image.");
     }
-
-
-
-
 
     const description = data.get("description") as string
     if (description) setDescription(description, id)

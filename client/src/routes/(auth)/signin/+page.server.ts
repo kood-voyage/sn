@@ -1,6 +1,9 @@
 import type { PageServerLoad, Actions, } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 
+
+import { apiCreateUser } from '$lib/server/api/user-requests';
+
 import { signInSchema } from '../schema';
 
 import { zod } from 'sveltekit-superforms/adapters';
@@ -19,15 +22,6 @@ export const load: PageServerLoad = async () => {
 
 export const actions: Actions = {
 	signin: async (event) => {
-		// const login = "http://localhost:8080/api/v1/auth/login"
-		// console.log(event.url)
-		//  await fetch("http://localhost:8080/api/v1/auth/user/create/123", 
-		//  {
-		// 	credentials: "include"
-		//  }
-		// )
-		// console.log(resps)
-
 		const form = await superValidate(event, zod(signInSchema));
 
 		const respUser = checkUserExists(form.data.login, form.data.password)
@@ -50,6 +44,10 @@ export const actions: Actions = {
 		if (resp.ok) deleteSession(user_id)
 
 		const respToken = createTokens(event, user_id)
+
+
+
+
 		if (!respToken.ok) {
 			console.error(respToken.error)
 			respToken.error = undefined
@@ -58,7 +56,6 @@ export const actions: Actions = {
 				...respToken
 			})
 		}
-
 
 		if (!form.valid) {
 			return fail(400, {

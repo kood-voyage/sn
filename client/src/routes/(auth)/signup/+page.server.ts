@@ -4,6 +4,16 @@ import { superValidate } from 'sveltekit-superforms';
 
 import { signUpSchema } from '../schema';
 
+import { v4 as uuidv4 } from 'uuid';
+
+
+import jwt from 'jsonwebtoken'
+
+
+import { JWT_KEY, LOCAL_PATH, WEBSITE_PATH } from '$env/static/private';
+
+const access_token_id: string = uuidv4()
+
 
 import { User} from '$lib/types/user';
 
@@ -26,6 +36,25 @@ export const actions: Actions = {
 		const user = new User(form.data)
 		const result =  createUser(user)
 		if(result.ok){
+
+
+		
+		const access_token = jwt.sign({
+			exp: Math.floor(Date.now() / 1000) + (60 * 15), 
+			user_id : user.id,
+			access_token_id
+		}, JWT_KEY, { algorithm: 'HS256' })
+
+
+
+			await fetch(`${LOCAL_PATH}/api/v1/auth/user/create/public`, {
+		headers: {
+			"Authorization": `Bearer ${access_token}`
+		}
+
+		})
+
+
 			redirect(300,"/signin")
 		}
 		if (!form.valid) {
@@ -35,3 +64,7 @@ export const actions: Actions = {
 		}
 	}
 };
+function uuidv4(): string {
+	throw new Error('Function not implemented.');
+}
+
