@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken'
 
 
-import { JWT_KEY, LOCAL_PATH } from '$env/static/private';
+import { JWT_KEY, LOCAL_PATH, WEBSITE_PATH } from '$env/static/private';
 
 const access_token_id: string = uuidv4()
 

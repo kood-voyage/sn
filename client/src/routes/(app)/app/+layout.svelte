@@ -3,21 +3,18 @@
 
 	export let data;
 
-	import { currentUserFollowers, currentUserFollowing, currentUserStore } from '$lib/store/user-store.js';
+	import {
+		currentUserFollowers,
+		currentUserFollowing,
+		currentUserStore
+	} from '$lib/store/user-store.js';
 
 	currentUserStore.set(data.data);
 
 	currentUserFollowers.set(data.followers);
 	currentUserFollowing.set(data.following);
 
-
-
-	console.log('HERE-------');
-	console.log($currentUserStore);
-
-	console.log('HERE-------');
-
-	const { username, email, first_name, last_name, avatar } = data.data
+	const { username, email, first_name, last_name, avatar } = data.data;
 	///
 	import Sun from 'svelte-radix/Sun.svelte';
 	import Moon from 'svelte-radix/Moon.svelte';
@@ -115,8 +112,8 @@
 						<DropdownMenu.Separator />
 						<DropdownMenu.Group>
 							<DropdownMenu.Item>
-								<a href="/app/u/{username}" class="flex">
-									<span class="mr-2 m-auto">
+								<a href="/app/u/{username}" class="flex w-full">
+									<span class="mr-2">
 										<Avatar class="h-[1rem] w-[1rem]" />
 									</span>
 
@@ -124,15 +121,15 @@
 								</a>
 							</DropdownMenu.Item>
 
-							<a href="/app/settings" class="flex">
-								<DropdownMenu.Item>
-									<span class="mr-2 m-auto">
+							<DropdownMenu.Item>
+								<a href="/app/settings" class="flex w-full">
+									<span class="mr-2">
 										<Gear class="h-[1rem] w-[1rem]" />
 									</span>
 
 									<span>Settings</span>
-								</DropdownMenu.Item>
-							</a>
+								</a>
+							</DropdownMenu.Item>
 						</DropdownMenu.Group>
 
 						<DropdownMenu.Sub>

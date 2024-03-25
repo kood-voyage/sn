@@ -27,11 +27,11 @@ export const actions: Actions = {
     const id = user_resp.user_id as string
 
     const avatar = data.get("fileInputAvatar") as File
-    console.log(avatar)
+    // console.log(avatar)
 
 
     const cover = data.get("fileInputCover") as File
-    console.log(cover)
+    // console.log(cover)
 
 
 

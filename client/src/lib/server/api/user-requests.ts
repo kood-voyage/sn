@@ -43,6 +43,7 @@ export async function getUserFollowing(event: RequestEvent, user_id: string) {
     const json = (await fetchResp.json()).data
 
 
+
     return { ok: true, data: json }
 
   } catch (err) {
@@ -69,6 +70,9 @@ export async function getUserFollowers(event: RequestEvent, user_id: string) {
 
     })
     const json = (await fetchResp.json()).data
+
+
+    console.log(json)
 
     return { ok: true, data: json }
 

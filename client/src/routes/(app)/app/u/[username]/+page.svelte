@@ -32,9 +32,9 @@
 
 	let isCurrentUserFollowing = false;
 
-	// console.log($currentUserFollowing)
+	console.log($currentUserFollowing);
 
-	if ($currentUserFollowing.data !== null) {
+	if ($currentUserFollowing.data !== null && $currentUserFollowing.data !== undefined) {
 		for (const following of $currentUserFollowing.data) {
 			if (following.id === data.user.id) {
 				isCurrentUserFollowing = true;

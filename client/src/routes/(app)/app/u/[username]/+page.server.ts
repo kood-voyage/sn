@@ -34,6 +34,7 @@ export const actions: Actions = {
         "Authorization": `Bearer ${event.cookies.get('at')}`
       }
     })
+
   } catch (err) {
     if (err instanceof Error) {
       return { ok: false, error: err, message: err.message }

@@ -6,7 +6,6 @@ import type { LayoutServerLoad } from "./$types"
 import { getUserFollowers,getUserFollowing } from "$lib/server/api/user-requests"
 
 
-import { currentUserFollowers,currentUserFollowing, currentUserStore } from "$lib/store/user-store"
 
 
 export const load: LayoutServerLoad = async (event: RequestEvent<RouteParams, "/(auth)/signin"> | RequestEvent<Partial<Record<string, string>>, string | null>) => {
