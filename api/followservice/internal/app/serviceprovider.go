@@ -24,11 +24,11 @@ type ServiceProvider struct {
 func newServiceProvider() *ServiceProvider {
 	confGRPC := config.NewGRPCConfig()
 	if err := confGRPC.ReadConfig("followservice/config/grpcconfig.json"); err != nil {
-		log.Fatal(err)
+		log.Fatalf("failed to parse grpc config: %v", err)
 	}
 	confHTTP := config.NewHttpConfig()
 	if err := confHTTP.ReadConfig("followservice/config/httpconfig.json"); err != nil {
-		log.Fatal(err)
+		log.Fatalf("failed to parse http config: %v", err)
 	}
 
 	return &ServiceProvider{

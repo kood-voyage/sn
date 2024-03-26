@@ -1,12 +1,22 @@
 syntax = "proto3";
 
 import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
 
 option go_package = "github.com/sn/social-network/pkg/followservice;followservice";
 
 service Follow {
-    rpc Follow(FollowRequest) returns (google.protobuf.Empty);
-    rpc UnFollow(FollowRequest) returns (google.protobuf.Empty);
+    rpc Follow(FollowRequest) returns (google.protobuf.Empty) {
+        option(google.api.http) = {
+            post: "/api/v1/follow"
+            body: "*"
+        };
+    }
+    rpc UnFollow(FollowRequest) returns (google.protobuf.Empty) {
+        option(google.api.http) = {
+            delete: "/api/v1/unfollow"
+        };
+    }
 }
 
 message FollowRequest {

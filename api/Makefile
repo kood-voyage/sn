@@ -35,14 +35,14 @@ get-deps:
 	go get -u google.golang.org/protobuf/cmd/protoc-gen-go
 	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	go get -u google.golang.org/grpc
-	go get -u github.com/grpc-ecosystem/grpc-gateway
+	go get -u github.com/grpc-ecosystem/grpc-gateway/v2
 
 generate:
 	make generate-service-follow
 
 generate-service-follow:
 	mkdir -p followservice/pkg/followservice
-	sudo protoc --proto_path followservice/followerservice \
+	sudo protoc --proto_path followservice/followerservice --proto_path vendor.protogen \
 	--go_out=followservice/pkg/followservice --go_opt=paths=source_relative \
 	--plugin=protoc-gen-go=bin/protoc-gen-go \
 	--go-grpc_out=followservice/pkg/followservice --go-grpc_opt=paths=source_relative \
@@ -56,5 +56,13 @@ run-service-follow:
 	go build -o ./build/service/follow ./followservice/cmd
 	@echo "Running follow service..."
 	./build/service/follow
+
+vendor-proto:
+		@if [ ! -d vendor.protogen/google ]; then \
+			git clone https://github.com/googleapis/googleapis vendor.protogen/googleapis &&\
+			mkdir -p  vendor.protogen/google/ &&\
+			mv vendor.protogen/googleapis/google/api vendor.protogen/google &&\
+			rm -rf vendor.protogen/googleapis ;\
+		fi
 
 .PHONY: all test swag buildapi buildchat chat clean run
