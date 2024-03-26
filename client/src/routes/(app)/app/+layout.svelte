@@ -14,7 +14,7 @@
 	currentUserFollowers.set(data.followers);
 	currentUserFollowing.set(data.following);
 
-	const { username, email, first_name, last_name, avatar } = data.data;
+	const { username, email, first_name, last_name, avatar } = $currentUserStore;
 	///
 	import Sun from 'svelte-radix/Sun.svelte';
 	import Moon from 'svelte-radix/Moon.svelte';

@@ -10,6 +10,7 @@
 	import * as Carousel from '$lib/components/ui/carousel/index.js';
 
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
+	import { createPostImagesStore } from '$lib/store/create-post-store';
 
 	export let data: SuperValidated<Infer<PostSchema>>;
 
@@ -24,6 +25,8 @@
 	function limitFiles(files, maxFiles) {
 		images = Array.from(files);
 
+		console.log("hello")
+
 		if (images.length > maxFiles) {
 			alert('You can only select up to 3 images.');
 			images = images.slice(0, maxFiles); // Limit the images array to the first 3 images
@@ -33,14 +36,19 @@
 	}
 
 	function displayImagePreviews() {
+		const updatedImages = [];
+
 		images.forEach((image) => {
 			const reader = new FileReader();
 			reader.onload = (e) => {
-				image.preview = e.target.result;
+				updatedImages.push(e.target.result);
 			};
 			reader.readAsDataURL(image);
 		});
+
+		createPostImagesStore.set(updatedImages);
 	}
+
 </script>
 
 <form
@@ -76,7 +84,7 @@
 	</Form.Field>
 	<Form.Field {form} name="content">
 		<Form.Control let:attrs>
-			<Form.Label>Password</Form.Label>
+			<Form.Label>Body</Form.Label>
 
 			<Textarea {...attrs} bind:value={$formData.content} placeholder="body" />
 		</Form.Control>
@@ -85,17 +93,12 @@
 
 	<!-- Img Preview -->
 
-	{#if images.length > 0}
-		<Carousel.Root class="w-full max-w-xs">
+	{#if $createPostImagesStore.length > 0}
+		<Carousel.Root class="w-full max-w-xs m-auto">
 			<Carousel.Content>
-				{#each images as image}
-
-					{console.log(image)}
+				{#each $createPostImagesStore as $image}
 					<Carousel.Item>
-						<p>{image.name}</p>
-
-
-						<img src={image.preview}  alt="preview" on:load={displayImagePreviews}/>
+						<img src={$image} alt="preview" />
 					</Carousel.Item>
 				{/each}
 			</Carousel.Content>
