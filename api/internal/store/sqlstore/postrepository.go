@@ -188,7 +188,7 @@ func (p PostRepository) GetUsers(source_id, target_id string) ([]model.Post, err
 		}
 
 		if path.Valid {
-			post.ImagePaths = []string{path.String}
+			post.ImagePaths = append(post.ImagePaths, path.String)
 		}
 
 		posts = append(posts, post)
