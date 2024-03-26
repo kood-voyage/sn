@@ -3,9 +3,10 @@ package sqlstore
 import (
 	"database/sql"
 	"fmt"
-	"github.com/google/uuid"
 	"social-network/internal/model"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 type PostRepository struct {
@@ -188,12 +189,17 @@ func (p PostRepository) GetUsers(source_id, target_id string) ([]model.Post, err
 		}
 
 		if path.Valid {
-			post.ImagePaths = append(post.ImagePaths, path.String)
+			paths, err := p.store.Image().Get(post.ID)
+			if err != nil {
+				return nil, err
+			}
+			fmt.Println("fsdfgsdfsdf", paths)
+			post.ImagePaths = paths
 		}
 
 		posts = append(posts, post)
 	}
-
+	fmt.Println(posts)
 	return posts, nil
 }
 

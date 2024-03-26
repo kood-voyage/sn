@@ -71,4 +71,5 @@ type ImageRepository interface {
 	Delete(id string) error
 	DeleteAll(parentId string) error
 	Update(parentId string, paths []string) error
+	Get(parentId string) ([]string, error)
 }
