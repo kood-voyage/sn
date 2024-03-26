@@ -4,12 +4,13 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/sqlite3"
-	"github.com/golang-migrate/migrate/v4/source/file"
 	"net/http"
 	"social-network/internal/app/config"
 	"social-network/internal/store/sqlstore"
+
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/sqlite3"
+	"github.com/golang-migrate/migrate/v4/source/file"
 )
 
 // @title social-network API
@@ -31,11 +32,18 @@ func Start(config *config.Config) error {
 	defer db.Close()
 
 	store := sqlstore.New(db)
-	srv := newServer(store)
+
+	srv := newServer(store, WithConfig(config))
 
 	srv.logger.Printf("The server is running on the port %v", config.Port)
 
 	return http.ListenAndServe(config.Port, srv)
+}
+
+func WithConfig(cfg *config.Config) Option {
+	return func(c *config.Config) {
+		*c = *cfg
+	}
 }
 
 func newDB(databaseURL, migrationSource, driver string) (*sql.DB, error) {

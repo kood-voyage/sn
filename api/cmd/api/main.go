@@ -19,6 +19,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error reading cfg file: %s\n", err)
 	}
-	
+
 	log.Fatal(server.Start(cfg))
 }
