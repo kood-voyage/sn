@@ -85,29 +85,29 @@ async function saveToS3(type: string, userId: string, file: File): Promise<strin
 
 
 
-async function savePostImagesToS3(type: string, userId: string, file: File): Promise<string | undefined> {
-  const extension = file.name.slice(file.name.lastIndexOf('.'));
-  const key = `profile/${userId}/${type}${extension}`;
+// async function savePostImagesToS3(type: string, userId: string, file: File): Promise<string | undefined> {
+//   const extension = file.name.slice(file.name.lastIndexOf('.'));
+//   const key = `profile/${userId}/${type}${extension}`;
 
-  // Convert File to ArrayBuffer then to Buffer
-  const arrayBuffer = await file.arrayBuffer();
-  const body = Buffer.from(arrayBuffer);
+//   // Convert File to ArrayBuffer then to Buffer
+//   const arrayBuffer = await file.arrayBuffer();
+//   const body = Buffer.from(arrayBuffer);
 
-  const uploadCommand = new PutObjectCommand({
-    Bucket: PROFILE_MEDIA_BUCKET, // Replace with your bucket name
-    Key: key,
-    Body: body,
-  });
+//   const uploadCommand = new PutObjectCommand({
+//     Bucket: PROFILE_MEDIA_BUCKET, // Replace with your bucket name
+//     Key: key,
+//     Body: body,
+//   });
 
-  try {
-    const response = await client.send(uploadCommand);
-    console.log("S3 upload success", response);
-    return key
-  } catch (error) {
-    console.error("S3 upload error", error);
-    return
-  }
-}
+//   try {
+//     const response = await client.send(uploadCommand);
+//     console.log("S3 upload success", response);
+//     return key
+//   } catch (error) {
+//     console.error("S3 upload error", error);
+//     return
+//   }
+// }
 
 
 

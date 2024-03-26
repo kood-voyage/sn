@@ -38,7 +38,6 @@ export const actions: Actions = {
 		if(result.ok){
 
 
-		
 		const access_token = jwt.sign({
 			exp: Math.floor(Date.now() / 1000) + (60 * 15), 
 			user_id : user.id,
@@ -46,15 +45,12 @@ export const actions: Actions = {
 		}, JWT_KEY, { algorithm: 'HS256' })
 
 
-
-			await fetch(`${LOCAL_PATH}/api/v1/auth/user/create/public`, {
+		await fetch(`${LOCAL_PATH}/api/v1/auth/user/create/public`, {
 		headers: {
 			"Authorization": `Bearer ${access_token}`
 		}
-
+		
 		})
-
-
 			redirect(300,"/signin")
 		}
 		if (!form.valid) {

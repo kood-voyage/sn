@@ -78,6 +78,7 @@ func (s *Server) jwtMiddleware(next http.Handler) http.Handler {
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 		alg := jwttoken.HmacSha256(os.Getenv(jwtKey))
 		claims, err := alg.DecodeAndValidate(token)
+
 		if err != nil {
 			s.error(w, http.StatusUnauthorized, err)
 			return

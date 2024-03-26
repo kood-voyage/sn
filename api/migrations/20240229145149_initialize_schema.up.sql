@@ -276,3 +276,9 @@ VALUES
     ('selected_user6', 'user2', 'post2'),
     ('selected_user7', 'user3', 'post5'),
     ('selected_user8', 'user4', 'post5');
+
+CREATE TABLE image (
+    id text NOT NULL UNIQUE,
+    parent_id text NOT NULL,
+    path text NOT NULL
+)

@@ -59,12 +59,12 @@ export const actions: Actions = {
         const images = formData.getAll('images') as File[];
 
 
-		for(const image of images){
-			
+		// for(const image of images){
+
 
 			
 
-		}
+		// }
 
 
 

@@ -6,13 +6,14 @@ import (
 )
 
 type Comment struct {
-	ID        string    `db:"id" json:"id" validate:"required"`
-	UserID    string    `db:"user_id" json:"user_id" validate:"required"`
-	PostID    string    `db:"post_id" json:"post_id" validate:"required"`
-	ParentID  string    `db:"parent_id" json:"parent_id"`
-	Content   string    `db:"content" json:"content" validate:"required"`
-	CreatedAt time.Time `db:"created_at" json:"created_at"`
-	Count     string    `json:"count"`
+	ID         string    `db:"id" json:"id" validate:"required"`
+	UserID     string    `db:"user_id" json:"user_id" validate:"required"`
+	PostID     string    `db:"post_id" json:"post_id" validate:"required"`
+	ParentID   string    `db:"parent_id" json:"parent_id"`
+	Content    string    `db:"content" json:"content" validate:"required"`
+	ImagePaths []string  `db:"path" json:"image_path"`
+	CreatedAt  time.Time `db:"created_at" json:"created_at"`
+	Count      string    `json:"count"`
 }
 
 // NewComment creates a pointer to Comment struct with new uuid

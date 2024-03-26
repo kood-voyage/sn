@@ -15,6 +15,8 @@ RUN CGO_ENABLED=1 go build -o sn-go-api .
 # finaal Stage
 FROM alpine:latest
 
+ENV JWT_KEY 09aa18a89dee21de8382b9ef169dc5d39130d7036e8b61f20a350ffb0da330cf
+
 RUN mkdir /app
 
 COPY --from=build /app/cmd/api/sn-go-api /app/
