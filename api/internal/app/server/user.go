@@ -154,26 +154,26 @@ func (s *Server) userPosts() http.HandlerFunc {
 			return
 		}
 
-		// if userID_request != r.PathValue("id") {
-		// 	//check requested user profile privacy
-		// 	privacy, err := s.store.User().CheckPrivacy(r.PathValue("id"))
-		// 	if err != nil {
-		// 		s.error(w, http.StatusUnprocessableEntity, err)
-		// 		return
-		// 	}
-		// 	if privacy == s.types.Privacy.Private {
-		// 		//check if user follows
-		// 		userFollows, err := s.store.User().IsFollowing(userID_request, r.PathValue("id"))
-		// 		if err != nil {
-		// 			s.error(w, http.StatusUnprocessableEntity, err)
-		// 			return
-		// 		}
-		// 		if !userFollows {
-		// 			s.error(w, http.StatusForbidden, errors.New("users profile is private"))
-		// 			return
-		// 		}
-		// 	}
-		// }
+		//if userID_request != r.PathValue("id") {
+		//	//check requested user profile privacy
+		//	privacy, err := s.store.User().CheckPrivacy(r.PathValue("id"))
+		//	if err != nil {
+		//		s.error(w, http.StatusUnprocessableEntity, err)
+		//		return
+		//	}
+		//	if privacy == s.types.Privacy.Private {
+		//		//check if user follows
+		//		userFollows, err := s.store.User().IsFollowing(userID_request, r.PathValue("id"))
+		//		if err != nil {
+		//			s.error(w, http.StatusUnprocessableEntity, err)
+		//			return
+		//		}
+		//		if !userFollows {
+		//			s.error(w, http.StatusForbidden, errors.New("users profile is private"))
+		//			return
+		//		}
+		//	}
+		//}
 
 		posts, err := s.store.Post().GetUsers(userID_request, r.PathValue("id"))
 		if err != nil {

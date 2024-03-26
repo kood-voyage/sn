@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -52,8 +51,8 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 	a.grpcServer = grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
 
 	reflection.Register(a.grpcServer)
+
 	followservice.RegisterFollowServer(a.grpcServer, a.serviceProvider.FollowImpl(ctx))
-	fmt.Printf("%+v", a)
 	return nil
 }
 
@@ -79,11 +78,10 @@ func (a *App) Run() error {
 
 func (a *App) runGRPCServer() error {
 	list, err := net.Listen("tcp", a.serviceProvider.grpcConfig.Address())
-
-
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("GRPC follow service server is running on %s", a.serviceProvider.grpcConfig.Address())
 	if err := a.grpcServer.Serve(list); err != nil {
 		log.Fatal(err)
 	}

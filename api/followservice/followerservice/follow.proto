@@ -5,8 +5,8 @@ import "google/protobuf/empty.proto";
 option go_package = "github.com/sn/social-network/pkg/followservice;followservice";
 
 service Follow {
-    rpc Create(FollowRequest) returns (google.protobuf.Empty); 
-    rpc Delete(FollowRequest) returns (google.protobuf.Empty);
+    rpc Follow(FollowRequest) returns (google.protobuf.Empty);
+    rpc UnFollow(FollowRequest) returns (google.protobuf.Empty);
 }
 
 message FollowRequest {
