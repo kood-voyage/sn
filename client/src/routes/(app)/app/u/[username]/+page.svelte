@@ -103,7 +103,7 @@
 						<!-- 
 					or unfollow button -->
 					{:else}
-						<button class="text-sm px-5 rounded-md border"> Create Post</button>
+						<a href="/app/create-post"><button class="text-sm px-5 rounded-md border"> Create Post</button></a>
 						<a href="/app/settings">
 							<button class="text-sm px-5 rounded-md border"> Settings</button></a
 						>

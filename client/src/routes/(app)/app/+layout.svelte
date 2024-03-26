@@ -25,6 +25,7 @@
 	import Calendar from 'svelte-radix/Calendar.svelte';
 	import ChatBubble from 'svelte-radix/ChatBubble.svelte';
 	import Globe from 'svelte-radix/Globe.svelte';
+	import Plus from 'svelte-radix/Plus.svelte';
 
 	import Avatar from 'svelte-radix/Avatar.svelte';
 
@@ -107,6 +108,18 @@
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content class="w-56">
 						<DropdownMenu.Label>My Account</DropdownMenu.Label>
+
+						<DropdownMenu.Item>
+							<a href="/app/create-post" class="flex w-full">
+								<span class="mr-2">
+									<Plus class="h-[1rem] w-[1rem]" />
+								</span>
+
+								<span>Create post</span>
+							</a>
+						</DropdownMenu.Item>
+
+						<DropdownMenu.Separator />
 						<DropdownMenu.Item class="text-blue-500">{username}</DropdownMenu.Item>
 
 						<DropdownMenu.Separator />
