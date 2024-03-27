@@ -71,7 +71,7 @@ func (a *App) initHTTPServer(ctx context.Context) error {
 	if err := followservice.RegisterFollowHandlerFromEndpoint(
 		ctx,
 		mux,
-		a.serviceProvider.httpConfig.Address(),
+		a.serviceProvider.grpcConfig.Address(),
 		opts,
 	); err != nil {
 		return err
