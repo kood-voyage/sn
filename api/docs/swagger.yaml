@@ -10,6 +10,10 @@ definitions:
         type: string
       id:
         type: string
+      image_path:
+        items:
+          type: string
+        type: array
       parent_id:
         type: string
       post_id:
@@ -73,6 +77,10 @@ definitions:
         type: string
       id:
         type: string
+      image_path:
+        items:
+          type: string
+        type: array
       privacy:
         type: string
       title:
