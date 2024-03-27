@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/sn/social-network/pkg/followservice;followservice";
+
+service Privacy {
+    rpc Create(PrivacyRequest) returns (google.protobuf.Empty) {
+        option(google.api.http) = {
+            post: "/api/v1/privacy"
+            body: "*"
+        };
+    }
+    rpc Update(PrivacyRequest) returns (google.protobuf.Empty) {
+        option(google.api.http) = {
+            update: "/api/v1/privacy"
+            body: "*"
+        };
+    }
+    rpc Delete(PrivacyId) returns (google.protobuf.Empty) {
+        option(google.api.http) = {
+            delete: "/api/v1/privacy"
+        };
+    }
+    rpc Get(PrivacyId) returns (int32, google.protobuf.Empty) {
+        option(google.api.http) = {
+            get: "/api/v1/privacy"
+        };
+    }
+}
+
+message PrivacyRequest {
+    string parent_id = 1;
+    int32 privacy = 2;
+}
+
+message PrivacyId {
+    string parent_id = 1;
+}

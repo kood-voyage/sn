@@ -2,13 +2,13 @@ package app
 
 import (
 	"context"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"log"
 	"net"
 	"net/http"
 	"social-network/followservice/pkg/followservice"
 	"sync"
 
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rs/cors"
 
 	"google.golang.org/grpc"
@@ -128,5 +128,7 @@ func (a *App) runGRPCServer() error {
 
 func (a *App) runHTTPServer() error {
 	log.Printf("HTTP follow service server is running on %s", a.serviceProvider.httpConfig.Address())
+
+	// fmt.Printf("%+v\n", a.httpServer)
 	return a.httpServer.ListenAndServe()
 }

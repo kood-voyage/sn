@@ -51,6 +51,17 @@ generate-service-follow:
 	--plugin=protoc-gen-grpc-gateway=bin/protoc-gen-grpc-gateway \
 	followservice/followerservice/follow.proto
 
+generate-service-privacy:
+	mkdir -p privacyservice/pkg/privacyservice
+	sudo protoc --proto_path privacyservice/privacyservice --proto_path vendor.protogen \
+	--go_out=privacyservice/pkg/privacyservice --go_opt=paths=source_relative \
+	--plugin=protoc-gen-go=bin/protoc-gen-go \
+	--go-grpc_out=privacyservice/pkg/privacyservice --go-grpc_opt=paths=source_relative \
+	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
+	--grpc-gateway_out=privacyservice/pkg/privacyservice --grpc-gateway_opt=paths=source_relative \
+	--plugin=protoc-gen-grpc-gateway=bin/protoc-gen-grpc-gateway \
+	privacyservice/privacyservice/privacy.proto
+
 run-service-follow:
 	@echo "Building follow service..."
 	go build -o ./build/service/follow ./followservice/cmd
@@ -58,11 +69,11 @@ run-service-follow:
 	./build/service/follow
 
 vendor-proto:
-		@if [ ! -d vendor.protogen/google ]; then \
-			git clone https://github.com/googleapis/googleapis vendor.protogen/googleapis &&\
-			mkdir -p  vendor.protogen/google/ &&\
-			mv vendor.protogen/googleapis/google/api vendor.protogen/google &&\
-			rm -rf vendor.protogen/googleapis ;\
-		fi
+	@if [ ! -d vendor.protogen/google ]; then \
+		git clone https://github.com/googleapis/googleapis vendor.protogen/googleapis &&\
+		mkdir -p  vendor.protogen/google/ &&\
+		mv vendor.protogen/googleapis/google/api vendor.protogen/google &&\
+		rm -rf vendor.protogen/googleapis ;\
+	fi
 
 .PHONY: all test swag buildapi buildchat chat clean run
