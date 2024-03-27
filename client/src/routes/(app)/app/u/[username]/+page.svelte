@@ -28,11 +28,11 @@
 		}
 	];
 
-	console.log(data);
+	// console.log(data);
 
 	let isCurrentUserFollowing = false;
 
-	console.log($currentUserFollowing);
+	// console.log($currentUserFollowing);
 
 	if ($currentUserFollowing.data !== null && $currentUserFollowing.data !== undefined) {
 		for (const following of $currentUserFollowing.data) {
@@ -103,7 +103,9 @@
 						<!-- 
 					or unfollow button -->
 					{:else}
-						<a href="/app/create-post"><button class="text-sm px-5 rounded-md border"> Create Post</button></a>
+						<a href="/app/create-post"
+							><button class="text-sm px-5 rounded-md border"> Create Post</button></a
+						>
 						<a href="/app/settings">
 							<button class="text-sm px-5 rounded-md border"> Settings</button></a
 						>

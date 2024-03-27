@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Plus from 'svelte-radix/Plus.svelte';
+
 	const groups = [
 		{ name: 'Team Valor', members: 5, description: 'Fearless warriors fighting for victory.' },
 		{
@@ -61,9 +63,21 @@
 	<hr class="w-[440px] m-auto" />
 
 	<div class="overflow-scroll h">
+		<div
+			class="flex m-auto w-[420px] p-2 mt-1 hover:bg-slate-200 dark:hover:bg-slate-900 rounded-md overflow-hidden"
+		>
+			<a href="/app/create-group" class="flex w-full">
+				<Plus alt="user-avatar" class="w-16 mr-2" />
+				<div class="">
+					<p class="font-bold h-full content-center justify-center align-middle">Create Group</p>
+				</div>
+			</a>
+		</div>
 		{#each groups as name}
-			<div class="flex m-auto w-[420px] p-2 hover:bg-slate-200 dark:hover:bg-slate-900 rounded-md">
-				<a href="/app/g/{name.name}" class="flex">
+			<div
+				class="flex m-auto w-[420px] p-2 hover:bg-slate-200 dark:hover:bg-slate-900 rounded-md overflow-hidden"
+			>
+				<a href="/app/g/{name.name}" class="flex w-full">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={name.name}"
 						alt="user-avatar"

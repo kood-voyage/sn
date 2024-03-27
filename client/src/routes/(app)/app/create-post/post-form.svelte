@@ -89,13 +89,11 @@
 		<Carousel.Root class="w-full max-w-xs">
 			<Carousel.Content>
 				{#each images as image}
-
 					{console.log(image)}
 					<Carousel.Item>
 						<p>{image.name}</p>
 
-
-						<img src={image.preview}  alt="preview" on:load={displayImagePreviews}/>
+						<img src={image.preview} alt="preview" on:load={displayImagePreviews} />
 					</Carousel.Item>
 				{/each}
 			</Carousel.Content>

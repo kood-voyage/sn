@@ -26,15 +26,15 @@
 			<div class="m-auto h-32 sm:h-60 max-w-[1096px] p-0 sm:px-2">
 				<img
 					class="h-full w-full object-cover sm:rounded-xl"
-					src="https://cdn1.vectorstock.com/i/1000x1000/07/70/floral-abstract-seamless-pattern-spring-vector-29920770.jpg"
+					src="https://img.freepik.com/free-photo/medium-shot-people-playing-videogames_23-2149349983.jpg?w=1380&t=st=1711452015~exp=1711452615~hmac=237235f4cc8a6c674e128226da66ef57c63dd3781576eb517cda160326943474"
 					alt="banner"
 				/>
 			</div>
 
 			<div class="max-w-[1096px] sm:px-2 h-16">
-				<div class="w-full bg-slate-200 h-full flex items-center">
+				<div class="w-full bg-slate-200/30 p-1 mt-1 h-full flex items-center sm:rounded-xl">
 					<div class="h-full align-middle self-center">
-						<p class="h-full w-20 align-middle self-center">{name}</p>
+						<p class="h-full w-fit align-middle self-center">{name}</p>
 					</div>
 				</div>
 			</div>

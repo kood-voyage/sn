@@ -8,6 +8,7 @@ import { checkSessionExists, checkUserExists, deleteSession } from '$lib/server/
 
 import { fail } from '@sveltejs/kit';
 import { createTokens } from '$lib/server/jwt-handle';
+import { apiCreateUser } from '$lib/server/api/user-requests';
 
 
 export const load: PageServerLoad = async () => {

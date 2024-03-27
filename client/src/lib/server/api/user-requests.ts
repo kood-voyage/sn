@@ -5,7 +5,7 @@ import type { RequestEvent } from "@sveltejs/kit"
 
 
 
-export async function apiCreateUser(privacy_state: string , event: RequestEvent) {
+export async function apiCreateUser(privacy_state: string, event: RequestEvent) {
   // console.log(event.cookies.get('at')?.valueOf())
   try {
     const resp = await fetch(`${LOCAL_PATH}/api/v1/auth/user/create/${privacy_state}`, {
@@ -14,7 +14,7 @@ export async function apiCreateUser(privacy_state: string , event: RequestEvent)
       }
 
     })
-    console.log(resp.statusText)
+    // console.log(resp.statusText)
     if (resp.ok) {
       return { ok: resp.ok, status: resp.statusText }
     } else {
@@ -72,7 +72,7 @@ export async function getUserFollowers(event: RequestEvent, user_id: string) {
     const json = (await fetchResp.json()).data
 
 
-    console.log(json)
+    // console.log(json)
 
     return { ok: true, data: json }
 
