@@ -77,25 +77,18 @@ func (i *ImageRepository) Update(id string, paths []string) error {
 
 func (i *ImageRepository) Get(id string) ([]string, error) {
 	query := `SELECT path FROM image WHERE parent_id = ?`
-
 	rows, err := i.store.Db.Query(query, id)
-
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-
+	var path string
 	var paths []string
 	for rows.Next() {
-		var path string
-		if err := rows.Scan(&path); err != nil {
+		err = rows.Scan(&path)
+		if err != nil {
 			return nil, err
 		}
 		paths = append(paths, path)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
 	}
 
 	return paths, nil

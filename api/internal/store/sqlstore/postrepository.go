@@ -13,7 +13,7 @@ type PostRepository struct {
 	store *Store
 }
 
-func (p PostRepository) Create(post *model.Post, privacy int) error {
+func (p *PostRepository) Create(post *model.Post, privacy int) error {
 	query := `INSERT INTO post (
                   id,
                   user_id,
@@ -40,7 +40,7 @@ func (p PostRepository) Create(post *model.Post, privacy int) error {
 	return nil
 }
 
-func (p PostRepository) Update(post *model.Post, privacy int) error {
+func (p *PostRepository) Update(post *model.Post, privacy int) error {
 	query := `UPDATE post SET title = ?, content = ? WHERE id = ?`
 
 	_, err := p.store.Db.Exec(query, post.Title, post.Content, post.ID)
@@ -59,7 +59,7 @@ func (p PostRepository) Update(post *model.Post, privacy int) error {
 	return nil
 }
 
-func (p PostRepository) Delete(id string) error {
+func (p *PostRepository) Delete(id string) error {
 	query := `DELETE FROM post WHERE id = ?`
 
 	result, err := p.store.Db.Exec(query, id)
@@ -83,7 +83,7 @@ func (p PostRepository) Delete(id string) error {
 	return nil
 }
 
-func (p PostRepository) Get(id string) (*model.Post, error) {
+func (p *PostRepository) Get(id string) (*model.Post, error) {
 	post := &model.Post{}
 	query := `SELECT 
                  p.id,
@@ -136,43 +136,45 @@ func (p PostRepository) Get(id string) (*model.Post, error) {
 	return post, nil
 }
 
-func (p PostRepository) GetUsers(source_id, target_id string) ([]model.Post, error) {
+func (p *PostRepository) GetUsers(source_id, target_id string) ([]model.Post, error) {
 	query := `SELECT 
-                 post.id,
-                 post.title,
-                 post.content,
-                 post.user_id,
-                 post.created_at,
-                 image.path
-             FROM 
-                 post
-             JOIN 
-                 user ON post.user_id = user.id
-             JOIN 
-                 privacy AS post_privacy ON post.id = post_privacy.id
-             LEFT JOIN 
-                 image ON post.id = image.parent_id
-             WHERE
-                 user.id = ? AND (
-                     ? = ? 
-                     OR post_privacy.type_id = 1 -- Public
-                     OR (
-                         post_privacy.type_id = 2 -- Private
-                         AND ? IN (
-                             SELECT source_id
-                             FROM follower
-                             WHERE target_id = ?
-                         )
-                     )
-                     OR (
-                         post_privacy.type_id = 3 -- Selected
-                         AND ? IN (
-                             SELECT user_id
-                             FROM selected_users
-                             WHERE parent_id = post.id
-                         )
-                     )
-                 )`
+    post.id,
+    post.title,
+    post.content,
+    post.user_id,
+    post.created_at,
+    image.path
+FROM 
+    post
+JOIN 
+    user ON post.user_id = user.id
+JOIN 
+    privacy AS post_privacy ON post.id = post_privacy.id
+LEFT JOIN 
+    image ON post.id = image.parent_id
+WHERE
+    user.id = ? AND (
+        ? = ? 
+        OR post_privacy.type_id = 1 -- Public
+        OR (
+            post_privacy.type_id = 2 -- Private
+            AND ? IN (
+                SELECT source_id
+                FROM follower
+                WHERE target_id = ?
+            )
+        )
+        OR (
+            post_privacy.type_id = 3 -- Selected
+            AND ? IN (
+                SELECT user_id
+                FROM selected_users
+                WHERE parent_id = post.id
+            )
+        )
+    )
+GROUP BY
+    post.id`
 
 	var posts []model.Post
 	rows, err := p.store.Db.Query(query, target_id, source_id, target_id, source_id, target_id, source_id)
@@ -189,12 +191,10 @@ func (p PostRepository) GetUsers(source_id, target_id string) ([]model.Post, err
 		}
 
 		if path.Valid {
-			paths, err := p.store.Image().Get(post.ID)
+			post.ImagePaths, err = p.store.Image().Get(post.ID)
 			if err != nil {
 				return nil, err
 			}
-			fmt.Println("fsdfgsdfsdf", paths)
-			post.ImagePaths = paths
 		}
 
 		posts = append(posts, post)
@@ -203,7 +203,7 @@ func (p PostRepository) GetUsers(source_id, target_id string) ([]model.Post, err
 	return posts, nil
 }
 
-func (p PostRepository) AddSelected(userList *[]model.User, parentID string) error {
+func (p *PostRepository) AddSelected(userList *[]model.User, parentID string) error {
 	query := `INSERT INTO selected_users (id, user_id, parent_id) VALUES`
 	var values []interface{}
 	for _, user := range *userList {
@@ -218,7 +218,7 @@ func (p PostRepository) AddSelected(userList *[]model.User, parentID string) err
 	return err
 }
 
-func (p PostRepository) RemoveSelected(userList *[]model.User, parentID string) error {
+func (p *PostRepository) RemoveSelected(userList *[]model.User, parentID string) error {
 	query := `DELETE FROM selected_users WHERE parent_id = ? AND (`
 	values := []interface{}{parentID}
 	for _, user := range *userList {
