@@ -4,7 +4,7 @@
 // - protoc             v3.12.4
 // source: privacy.proto
 
-package followservice
+package privacyservice
 
 import (
 	context "context"
@@ -21,13 +21,19 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	Privacy_Create_FullMethodName = "/Privacy/Create"
+	Privacy_Update_FullMethodName = "/Privacy/Update"
+	Privacy_Delete_FullMethodName = "/Privacy/Delete"
+	Privacy_Get_FullMethodName    = "/Privacy/Get"
 )
 
 // PrivacyClient is the client API for Privacy service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PrivacyClient interface {
-	Create(ctx context.Context, in *FollowRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	Create(ctx context.Context, in *PrivacyReq, opts ...grpc.CallOption) (*PrivacyReq, error)
+	Update(ctx context.Context, in *PrivacyReq, opts ...grpc.CallOption) (*PrivacyReq, error)
+	Delete(ctx context.Context, in *PrivacyId, opts ...grpc.CallOption) (*empty.Empty, error)
+	Get(ctx context.Context, in *PrivacyId, opts ...grpc.CallOption) (*PrivacyReq, error)
 }
 
 type privacyClient struct {
@@ -38,9 +44,36 @@ func NewPrivacyClient(cc grpc.ClientConnInterface) PrivacyClient {
 	return &privacyClient{cc}
 }
 
-func (c *privacyClient) Create(ctx context.Context, in *FollowRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *privacyClient) Create(ctx context.Context, in *PrivacyReq, opts ...grpc.CallOption) (*PrivacyReq, error) {
+	out := new(PrivacyReq)
 	err := c.cc.Invoke(ctx, Privacy_Create_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *privacyClient) Update(ctx context.Context, in *PrivacyReq, opts ...grpc.CallOption) (*PrivacyReq, error) {
+	out := new(PrivacyReq)
+	err := c.cc.Invoke(ctx, Privacy_Update_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *privacyClient) Delete(ctx context.Context, in *PrivacyId, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, Privacy_Delete_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *privacyClient) Get(ctx context.Context, in *PrivacyId, opts ...grpc.CallOption) (*PrivacyReq, error) {
+	out := new(PrivacyReq)
+	err := c.cc.Invoke(ctx, Privacy_Get_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +84,10 @@ func (c *privacyClient) Create(ctx context.Context, in *FollowRequest, opts ...g
 // All implementations must embed UnimplementedPrivacyServer
 // for forward compatibility
 type PrivacyServer interface {
-	Create(context.Context, *FollowRequest) (*empty.Empty, error)
+	Create(context.Context, *PrivacyReq) (*PrivacyReq, error)
+	Update(context.Context, *PrivacyReq) (*PrivacyReq, error)
+	Delete(context.Context, *PrivacyId) (*empty.Empty, error)
+	Get(context.Context, *PrivacyId) (*PrivacyReq, error)
 	mustEmbedUnimplementedPrivacyServer()
 }
 
@@ -59,8 +95,17 @@ type PrivacyServer interface {
 type UnimplementedPrivacyServer struct {
 }
 
-func (UnimplementedPrivacyServer) Create(context.Context, *FollowRequest) (*empty.Empty, error) {
+func (UnimplementedPrivacyServer) Create(context.Context, *PrivacyReq) (*PrivacyReq, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedPrivacyServer) Update(context.Context, *PrivacyReq) (*PrivacyReq, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedPrivacyServer) Delete(context.Context, *PrivacyId) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedPrivacyServer) Get(context.Context, *PrivacyId) (*PrivacyReq, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 func (UnimplementedPrivacyServer) mustEmbedUnimplementedPrivacyServer() {}
 
@@ -76,7 +121,7 @@ func RegisterPrivacyServer(s grpc.ServiceRegistrar, srv PrivacyServer) {
 }
 
 func _Privacy_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FollowRequest)
+	in := new(PrivacyReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -88,7 +133,61 @@ func _Privacy_Create_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: Privacy_Create_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PrivacyServer).Create(ctx, req.(*FollowRequest))
+		return srv.(PrivacyServer).Create(ctx, req.(*PrivacyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Privacy_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PrivacyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PrivacyServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Privacy_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PrivacyServer).Update(ctx, req.(*PrivacyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Privacy_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PrivacyId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PrivacyServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Privacy_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PrivacyServer).Delete(ctx, req.(*PrivacyId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Privacy_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PrivacyId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PrivacyServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Privacy_Get_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PrivacyServer).Get(ctx, req.(*PrivacyId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -103,6 +202,18 @@ var Privacy_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Create",
 			Handler:    _Privacy_Create_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _Privacy_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _Privacy_Delete_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _Privacy_Get_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

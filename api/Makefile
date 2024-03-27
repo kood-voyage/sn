@@ -68,6 +68,12 @@ run-service-follow:
 	@echo "Running follow service..."
 	./build/service/follow
 
+run-service-privacy:
+	@echo "Building privacy service..."
+	go build -o ./build/service/privacy ./privacyservice/cmd
+	@echo "Running privacy service..."
+	./build/service/privacy
+
 vendor-proto:
 	@if [ ! -d vendor.protogen/google ]; then \
 		git clone https://github.com/googleapis/googleapis vendor.protogen/googleapis &&\
