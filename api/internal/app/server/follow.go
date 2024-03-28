@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
+	"social-network/followservice/pkg/followservice"
 	"social-network/internal/model"
 	"social-network/pkg/validator"
 )
@@ -27,54 +28,47 @@ func (s *Server) handleFollow() http.HandlerFunc {
 			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 			return
 		}
-		//firstly check another user state
-		privacyCode, err := s.store.Privacy().Check(r.PathValue("id"))
+
+		followClient, err := s.FollowClient.Follow(r.Context(), &followservice.FollowRequest{
+			SourceId: sourceID,
+			TargetId: r.PathValue("id"),
+		})
 		if err != nil {
-			s.error(w, http.StatusUnprocessableEntity, err)
+			s.error(w, http.StatusBadRequest, err)
 			return
 		}
 
-		//if privacy is public create follow, else create request
-		if privacyCode == s.types.Privacy.Public {
-			follow := model.Follower{
-				SourceID: sourceID,
-				TargetID: r.PathValue("id"),
-			}
+		s.respond(w, http.StatusCreated, followClient)
+		//WHOLE LOGIC UP
 
-			//follow user
-			if err := s.store.Follow().Create(follow); err != nil {
-				s.error(w, http.StatusUnprocessableEntity, err)
-				return
-			}
-			s.respond(w, http.StatusCreated, Response{Data: "Successfully followed a user"})
-			return
-		} else if privacyCode == s.types.Privacy.Private {
-			request := model.Request{
-				TypeID:   s.types.Request.Follow,
-				SourceID: sourceID,
-				TargetID: r.PathValue("id"),
-			}
+		//this still needs implementing on follow service side
+		// if privacyCode == s.types.Privacy.Private {
+		// 	request := model.Request{
+		// 		TypeID:   s.types.Request.Follow,
+		// 		SourceID: sourceID,
+		// 		TargetID: r.PathValue("id"),
+		// 	}
 
-			existing, err := s.store.Request().Get(request)
-			if err != nil && err != sql.ErrNoRows {
-				s.error(w, http.StatusUnprocessableEntity, err)
-				return
-			}
+		// 	existing, err := s.store.Request().Get(request)
+		// 	if err != nil && err != sql.ErrNoRows {
+		// 		s.error(w, http.StatusUnprocessableEntity, err)
+		// 		return
+		// 	}
 
-			if existing != nil {
-				s.error(w, http.StatusForbidden, errors.New("already request exists"))
-				return
-			}
+		// 	if existing != nil {
+		// 		s.error(w, http.StatusForbidden, errors.New("already request exists"))
+		// 		return
+		// 	}
 
-			if err := s.store.Request().Create(request); err != nil {
-				s.error(w, http.StatusUnprocessableEntity, err)
-				return
-			}
-			s.respond(w, http.StatusCreated, Response{Data: "Successfully created a follow request"})
-			return
-		}
+		// 	if err := s.store.Request().Create(request); err != nil {
+		// 		s.error(w, http.StatusUnprocessableEntity, err)
+		// 		return
+		// 	}
+		// 	s.respond(w, http.StatusCreated, Response{Data: "Successfully created a follow request"})
+		// 	return
+		// }
 
-		s.error(w, http.StatusBadRequest, errors.New("Invalid"))
+		// s.error(w, http.StatusBadRequest, errors.New("Invalid"))
 
 	}
 }
@@ -97,18 +91,17 @@ func (s *Server) handleUnfollow() http.HandlerFunc {
 			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 			return
 		}
-		follow := model.Follower{
-			SourceID: sourceID,
-			TargetID: r.PathValue("id"),
-		}
 
-		//unfollow a user
-		if err := s.store.Follow().Delete(follow); err != nil {
+		_, err := s.FollowClient.UnFollow(r.Context(), &followservice.FollowRequest{
+			SourceId: sourceID,
+			TargetId: r.PathValue("id"),
+		})
+		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
 
-		s.respond(w, http.StatusOK, Response{Data: nil})
+		s.respond(w, http.StatusOK, Response{Data: err})
 	}
 }
 

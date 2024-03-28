@@ -3,5 +3,9 @@
   "database_driver": "sqlite3",
   "database_url": "./internal/db/database.db?_foreign_keys=on",
   "database_migrations": "./migrations",
-  "chatservice_url": "ws://localhost:30000/ws"
+  "chatservice_url": "ws://localhost:30000/ws",
+  "followservice_grpc": "localhost:9002",
+  "followservice_http": "localhost:9001",
+  "privacyservice_grpc": "localhost:9003",
+  "privacyservice_http": "localhost:9004"
 }

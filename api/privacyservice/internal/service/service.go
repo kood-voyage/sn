@@ -25,26 +25,26 @@ func NewService(rep repository.PrivacyRepository) PrivacyService {
 }
 
 func (p *privacyService) Create(ctx context.Context, parent_id string, privacy int32) (*model.PrivacyReq, error) {
-	_, err := p.repository.Create(ctx, parent_id, privacy)
+	pr, err := p.repository.Create(ctx, parent_id, privacy)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("Setting privacy for id", parent_id, privacy)
+	fmt.Println("Creating privacy", parent_id, privacy)
 	return &model.PrivacyReq{
-		ParentId: parent_id,
-		Privacy:  privacy,
+		ParentId: pr.ParentId,
+		Privacy:  pr.Privacy,
 	}, nil
 }
 
 func (p *privacyService) Update(ctx context.Context, parent_id string, privacy int32) (*model.PrivacyReq, error) {
-	_, err := p.repository.Update(ctx, parent_id, privacy)
+	pr, err := p.repository.Update(ctx, parent_id, privacy)
 	if err != nil {
 		return nil, err
 	}
 	fmt.Println("Updatng id privacy", parent_id, privacy)
 	return &model.PrivacyReq{
-		ParentId: parent_id,
-		Privacy:  privacy,
+		ParentId: pr.ParentId,
+		Privacy:  pr.Privacy,
 	}, nil
 }
 
@@ -58,12 +58,13 @@ func (p *privacyService) Delete(ctx context.Context, parent_id string) error {
 }
 
 func (p *privacyService) Get(ctx context.Context, parent_id string) (*model.PrivacyReq, error) {
-	_, err := p.repository.Get(ctx, parent_id)
+	pr, err := p.repository.Get(ctx, parent_id)
 	if err != nil {
 		return nil, err
 	}
 	fmt.Println("Retrieving privacy info for that id ", parent_id)
 	return &model.PrivacyReq{
-		ParentId: parent_id,
+		ParentId: pr.ParentId,
+		Privacy:  pr.Privacy,
 	}, nil
 }

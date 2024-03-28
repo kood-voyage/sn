@@ -5,7 +5,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"social-network/followservice/pkg/followservice"
 	"social-network/privacyservice/pkg/privacyservice"
 	"sync"
 
@@ -36,6 +35,7 @@ func NewApp(ctx context.Context) (*App, error) {
 func (a *App) initDeps(ctx context.Context) error {
 	inits := []func(context.Context) error{
 		a.initServiceProvider,
+		a.initDB,
 		a.initGRPCServer,
 		a.initHTTPServer,
 	}
@@ -53,12 +53,19 @@ func (a *App) initServiceProvider(ctx context.Context) error {
 	return nil
 }
 
+func (a *App) initDB(ctx context.Context) error {
+	//start db
+	a.serviceProvider.dbClient = InitializeDB(a.serviceProvider.config)
+	return nil
+}
+
 func (a *App) initGRPCServer(ctx context.Context) error {
 	a.grpcServer = grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
 
 	reflection.Register(a.grpcServer)
 
 	privacyservice.RegisterPrivacyServer(a.grpcServer, a.serviceProvider.PrivacyImpl(ctx))
+
 	return nil
 }
 
@@ -69,7 +76,7 @@ func (a *App) initHTTPServer(ctx context.Context) error {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
 
-	if err := followservice.RegisterFollowHandlerFromEndpoint(
+	if err := privacyservice.RegisterPrivacyHandlerFromEndpoint(
 		ctx,
 		mux,
 		a.serviceProvider.grpcConfig.Address(),
@@ -95,6 +102,7 @@ func (a *App) initHTTPServer(ctx context.Context) error {
 func (a *App) Run() error {
 	wg := sync.WaitGroup{}
 	wg.Add(2)
+	defer a.serviceProvider.dbClient.Close()
 
 	go func() {
 		defer wg.Done()

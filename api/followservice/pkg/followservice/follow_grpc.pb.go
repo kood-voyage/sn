@@ -28,7 +28,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FollowClient interface {
-	Follow(ctx context.Context, in *FollowRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	Follow(ctx context.Context, in *FollowRequest, opts ...grpc.CallOption) (*FollowRequest, error)
 	UnFollow(ctx context.Context, in *FollowRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
@@ -40,8 +40,8 @@ func NewFollowClient(cc grpc.ClientConnInterface) FollowClient {
 	return &followClient{cc}
 }
 
-func (c *followClient) Follow(ctx context.Context, in *FollowRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *followClient) Follow(ctx context.Context, in *FollowRequest, opts ...grpc.CallOption) (*FollowRequest, error) {
+	out := new(FollowRequest)
 	err := c.cc.Invoke(ctx, Follow_Follow_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func (c *followClient) UnFollow(ctx context.Context, in *FollowRequest, opts ...
 // All implementations must embed UnimplementedFollowServer
 // for forward compatibility
 type FollowServer interface {
-	Follow(context.Context, *FollowRequest) (*empty.Empty, error)
+	Follow(context.Context, *FollowRequest) (*FollowRequest, error)
 	UnFollow(context.Context, *FollowRequest) (*empty.Empty, error)
 	mustEmbedUnimplementedFollowServer()
 }
@@ -71,7 +71,7 @@ type FollowServer interface {
 type UnimplementedFollowServer struct {
 }
 
-func (UnimplementedFollowServer) Follow(context.Context, *FollowRequest) (*empty.Empty, error) {
+func (UnimplementedFollowServer) Follow(context.Context, *FollowRequest) (*FollowRequest, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Follow not implemented")
 }
 func (UnimplementedFollowServer) UnFollow(context.Context, *FollowRequest) (*empty.Empty, error) {

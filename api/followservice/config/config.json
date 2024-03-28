@@ -1,0 +1,7 @@
+{  
+    "database_driver": "sqlite3",
+    "database_url": "./followservice/internal/db/database.db?_foreign_keys=on",
+    "database_migrations": "./followservice/migrations",
+    "privacyservice_grpc": "localhost:9003",
+    "privacyservice_http": "localhost:9004"
+}

@@ -1,0 +1,5 @@
+{  
+    "database_driver": "sqlite3",
+    "database_url": "./requestservice/internal/db/database.db?_foreign_keys=on",
+    "database_migrations": "./requestservice/migrations"
+}

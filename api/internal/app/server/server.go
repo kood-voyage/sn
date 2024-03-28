@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -8,6 +9,7 @@ import (
 	"os"
 	_ "social-network/docs"
 	"social-network/internal/app/config"
+	"social-network/internal/clients"
 	"social-network/internal/model"
 	"social-network/internal/store"
 	"social-network/pkg/client"
@@ -35,11 +37,13 @@ type Error struct {
 }
 
 type Server struct {
-	router   *router.Router
-	logger   *log.Logger
-	store    store.Store
-	types    model.Type
-	wsClient client.ChatClient
+	router        *router.Router
+	logger        *log.Logger
+	store         store.Store
+	types         model.Type
+	FollowClient  clients.FollowClient
+	PrivacyClient clients.PrivacyClient
+	wsClient      client.ChatClient
 }
 
 type Option func(*config.Config)
@@ -53,12 +57,23 @@ func newServer(store store.Store, opts ...Option) *Server {
 		opt(config)
 	}
 
+	followClient, err := clients.NewFollowClient(context.Background(), config.FollowServiceGRPC)
+	if err != nil {
+		fmt.Println("Can not connect to follow service --- ", err)
+	}
+	privacyClient, err := clients.NewPrivacyClient(context.Background(), config.PrivacyServiceGRPC)
+	if err != nil {
+		fmt.Println("Can not connect to privacy service --- ", err)
+	}
+
 	s := &Server{
-		router:   router.New(),
-		logger:   log.Default(),
-		store:    store,
-		types:    model.InitializeTypes(),
-		wsClient: client.NewClient(config.ChatServiceURL),
+		router:        router.New(),
+		logger:        log.Default(),
+		store:         store,
+		types:         model.InitializeTypes(),
+		FollowClient:  *followClient,
+		PrivacyClient: *privacyClient,
+		wsClient:      client.NewClient(config.ChatServiceURL),
 	}
 
 	configureRouter(s)

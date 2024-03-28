@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/sn/social-network/pkg/requestservice;requestservice";
+
+service Request {
+    rpc Create(RequestReq) returns (RequestReq) {
+        option(google.api.http) = {
+            post: "/api/v1/request"
+            body: "*"
+        };
+    }
+    rpc Delete(RequestReq) returns (google.protobuf.Empty) {
+        option(google.api.http) = {
+            delete: "/api/v1/request"
+        };
+    }
+    rpc Get(RequestReq) returns (RequestReq) {
+        option(google.api.http) = {
+            post: "/api/v1/request/get"
+            body: "*"
+        };
+    }
+    rpc GetNotifications(RequestUserId) returns (RequestReqs) {
+        option(google.api.http) = {
+            get: "/api/v1/request/notification"
+        };
+    }
+    rpc GetInvitations(RequestUserId) returns (RequestReqs) {
+        option(google.api.http) = {
+            get: "/api/v1/request/invitation"
+        };
+    }
+    rpc GetFollowrequests(RequestUserId) returns (RequestReqs) {
+        option(google.api.http) = {
+            get: "/api/v1/request/followrequests"
+        };
+    }
+}
+
+message RequestReq {
+    string id = 1;
+    int32 type_id = 2;
+    string source_id = 3;
+    string target_id = 4;
+    string parent_id = 5;
+    string message = 6;
+    google.protobuf.Timestamp created_at = 7;
+}
+
+message RequestReqs {
+    repeated RequestReq requests = 1;
+}
+
+message RequestUserId {
+    string id = 1;
+}

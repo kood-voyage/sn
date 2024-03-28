@@ -62,6 +62,17 @@ generate-service-privacy:
 	--plugin=protoc-gen-grpc-gateway=bin/protoc-gen-grpc-gateway \
 	privacyservice/privacyservice/privacy.proto
 
+generate-service-request:
+	mkdir -p requestservice/pkg/requestservice
+	sudo protoc --proto_path requestservice/requestservice --proto_path vendor.protogen \
+	--go_out=requestservice/pkg/requestservice --go_opt=paths=source_relative \
+	--plugin=protoc-gen-go=bin/protoc-gen-go \
+	--go-grpc_out=requestservice/pkg/requestservice --go-grpc_opt=paths=source_relative \
+	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
+	--grpc-gateway_out=requestservice/pkg/requestservice --grpc-gateway_opt=paths=source_relative \
+	--plugin=protoc-gen-grpc-gateway=bin/protoc-gen-grpc-gateway \
+	requestservice/requestservice/request.proto
+
 run-service-follow:
 	@echo "Building follow service..."
 	go build -o ./build/service/follow ./followservice/cmd
@@ -73,6 +84,12 @@ run-service-privacy:
 	go build -o ./build/service/privacy ./privacyservice/cmd
 	@echo "Running privacy service..."
 	./build/service/privacy
+
+run-service-request:
+	@echo "Building request service..."
+	go build -o ./build/service/request ./requestservice/cmd
+	@echo "Running follow service..."
+	./build/service/request
 
 vendor-proto:
 	@if [ ! -d vendor.protogen/google ]; then \
