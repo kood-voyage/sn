@@ -163,9 +163,14 @@ func (s *Server) groupGet() http.HandlerFunc {
 		}
 
 		if privacy == s.types.Privacy.Private {
-			_, err := s.store.Group().IsMember(r.PathValue("id"), sourceID) 
+			t, err := s.store.Group().IsMember(r.PathValue("id"), sourceID)
 			if err != nil {
 				s.error(w, http.StatusForbidden, err)
+				return
+			}
+
+			if !t {
+				s.error(w, http.StatusForbidden, errors.New("you don't have access to this group"))
 				return
 			}
 		}
