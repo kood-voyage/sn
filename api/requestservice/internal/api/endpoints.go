@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"social-network/requestservice/model"
+	models "social-network/requestservice/model"
 	"social-network/requestservice/pkg/requestservice"
 
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -10,7 +10,7 @@ import (
 )
 
 func (i *Implementation) Create(ctx context.Context, req *requestservice.RequestReq) (*requestservice.RequestReq, error) {
-	r, err := i.requestService.Create(ctx, model.RequestReq{
+	r, err := i.requestService.Create(ctx, models.RequestReq{
 		Id:        req.GetId(),
 		TypeId:    req.GetTypeId(),
 		SourceId:  req.GetSourceId(),
@@ -37,7 +37,7 @@ func (i *Implementation) Create(ctx context.Context, req *requestservice.Request
 }
 
 func (i *Implementation) Delete(ctx context.Context, req *requestservice.RequestReq) (*emptypb.Empty, error) {
-	if err := i.requestService.Delete(ctx, model.RequestReq{
+	if err := i.requestService.Delete(ctx, models.RequestReq{
 		Id:        req.GetId(),
 		TypeId:    req.GetTypeId(),
 		SourceId:  req.GetSourceId(),
@@ -53,7 +53,7 @@ func (i *Implementation) Delete(ctx context.Context, req *requestservice.Request
 }
 
 func (i *Implementation) Get(ctx context.Context, req *requestservice.RequestReq) (*requestservice.RequestReq, error) {
-	r, err := i.requestService.Get(ctx, model.RequestReq{
+	r, err := i.requestService.Get(ctx, models.RequestReq{
 		Id:        req.GetId(),
 		TypeId:    req.GetTypeId(),
 		SourceId:  req.GetSourceId(),
@@ -64,6 +64,10 @@ func (i *Implementation) Get(ctx context.Context, req *requestservice.RequestReq
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	if r == nil {
+		return nil, nil
 	}
 
 	//convert timestamp
@@ -80,7 +84,7 @@ func (i *Implementation) Get(ctx context.Context, req *requestservice.RequestReq
 }
 
 func (i *Implementation) GetNotifications(ctx context.Context, req *requestservice.RequestUserId) (*requestservice.RequestReqs, error) {
-	r, err := i.requestService.GetNotifications(ctx, model.RequestUserId{Id: req.GetId()})
+	r, err := i.requestService.GetNotifications(ctx, models.RequestUserId{Id: req.GetId()})
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +106,7 @@ func (i *Implementation) GetNotifications(ctx context.Context, req *requestservi
 }
 
 func (i *Implementation) GetInvitations(ctx context.Context, req *requestservice.RequestUserId) (*requestservice.RequestReqs, error) {
-	r, err := i.requestService.GetInvitations(ctx, model.RequestUserId{Id: req.GetId()})
+	r, err := i.requestService.GetInvitations(ctx, models.RequestUserId{Id: req.GetId()})
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +128,7 @@ func (i *Implementation) GetInvitations(ctx context.Context, req *requestservice
 }
 
 func (i *Implementation) GetFollowrequests(ctx context.Context, req *requestservice.RequestUserId) (*requestservice.RequestReqs, error) {
-	r, err := i.requestService.GetFollowrequests(ctx, model.RequestUserId{Id: req.GetId()})
+	r, err := i.requestService.GetFollowrequests(ctx, models.RequestUserId{Id: req.GetId()})
 	if err != nil {
 		return nil, err
 	}

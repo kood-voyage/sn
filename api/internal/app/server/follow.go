@@ -39,37 +39,6 @@ func (s *Server) handleFollow() http.HandlerFunc {
 		}
 
 		s.respond(w, http.StatusCreated, followClient)
-		//WHOLE LOGIC UP
-
-		//this still needs implementing on follow service side
-		// if privacyCode == s.types.Privacy.Private {
-		// 	request := model.Request{
-		// 		TypeID:   s.types.Request.Follow,
-		// 		SourceID: sourceID,
-		// 		TargetID: r.PathValue("id"),
-		// 	}
-
-		// 	existing, err := s.store.Request().Get(request)
-		// 	if err != nil && err != sql.ErrNoRows {
-		// 		s.error(w, http.StatusUnprocessableEntity, err)
-		// 		return
-		// 	}
-
-		// 	if existing != nil {
-		// 		s.error(w, http.StatusForbidden, errors.New("already request exists"))
-		// 		return
-		// 	}
-
-		// 	if err := s.store.Request().Create(request); err != nil {
-		// 		s.error(w, http.StatusUnprocessableEntity, err)
-		// 		return
-		// 	}
-		// 	s.respond(w, http.StatusCreated, Response{Data: "Successfully created a follow request"})
-		// 	return
-		// }
-
-		// s.error(w, http.StatusBadRequest, errors.New("Invalid"))
-
 	}
 }
 

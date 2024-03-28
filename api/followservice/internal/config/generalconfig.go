@@ -11,6 +11,8 @@ type GeneralConfig struct {
 	Migrations        string `json:"database_migrations"`
 	PrivacyClientGRPC string `json:"privacyservice_grpc"`
 	PrivacyClientHTTP string `json:"privacyservice_http"`
+	RequestClientGRPC string `json:"requestservice_grpc"`
+	RequestClientHTTP string `json:"requestservice_http"`
 }
 
 func NewConfig() *GeneralConfig {

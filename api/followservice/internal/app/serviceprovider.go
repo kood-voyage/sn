@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"log"
 	"social-network/followservice/internal/api"
+	"social-network/followservice/internal/clients"
 	"social-network/followservice/internal/config"
 	"social-network/followservice/internal/repository"
 	"social-network/followservice/internal/service"
-	"social-network/internal/clients"
 
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/sqlite3"
@@ -55,9 +55,6 @@ func InitializeDB(conf config.GeneralConfig) *sql.DB {
 	if err != nil {
 		log.Fatal("Couldnt connect with database", err)
 	}
-
-	//NEED TO THINK OF A SOLUTION LATER
-	// defer db.Close()
 
 	return db
 }
@@ -105,15 +102,19 @@ func (s *ServiceProvider) FollowRepository(ctx context.Context) repository.Follo
 }
 
 func (s *ServiceProvider) FollowService(ctx context.Context) service.FollowService {
-	privacyClient, err := clients.NewPrivacyClient(context.Background(), s.config.PrivacyClientGRPC)
+	privacyClient, err := clients.NewPrivacyClient(ctx, s.config.PrivacyClientGRPC)
 	if err != nil {
-		log.Fatal("Can not connect to privacy service --- ", err)
+		fmt.Println("Can not connect to privacy service --- ", err)
 	}
-	
+	requestClient, err := clients.NewRequestClient(ctx, s.config.RequestClientGRPC)
+	if err != nil {
+		fmt.Println("Can not connect to request service --- ", err)
+	}
+
 	if s.followService == nil {
-		s.followService = service.NewService(s.FollowRepository(ctx), privacyClient)
+		s.followService = service.NewService(s.FollowRepository(ctx), privacyClient, requestClient)
 	}
-	
+
 	return s.followService
 }
 
