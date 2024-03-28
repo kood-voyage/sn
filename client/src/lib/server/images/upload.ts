@@ -41,7 +41,7 @@ export async function saveUserAvatarToS3(userResp: UserResp, file: File) {
 
   const user_id = userResp.user_id as string
 
-  return { ok: true, resp: await saveToS3("avatar", user_id, file) }
+  return { ok: true, resp: await saveToS3("avatar", user_id, file,"profile") }
 }
 
 export async function saveUserCoverToS3(userResp: UserResp, file: File) {
@@ -52,15 +52,19 @@ export async function saveUserCoverToS3(userResp: UserResp, file: File) {
 
   const user_id = userResp.user_id as string
 
-  return { ok: true, resp: await saveToS3("cover", user_id, file) }
+  return { ok: true, resp: await saveToS3("cover", user_id, file, "profile") }
 };
 
 
 
 
-async function saveToS3(type: string, userId: string, file: File): Promise<string | undefined> {
+type Topic = 'profile' | 'post' | 'group' | 'comment' | 'chat';
+
+
+export async function saveToS3(type: string, Id: string, file: File, topic: Topic): Promise<string | undefined> {
+
   const extension = file.name.slice(file.name.lastIndexOf('.'));
-  const key = `profile/${userId}/${type}${extension}`;
+  const key = `${topic}/${Id}/${type}${extension}`;
 
   // Convert File to ArrayBuffer then to Buffer
   const arrayBuffer = await file.arrayBuffer();
@@ -81,35 +85,6 @@ async function saveToS3(type: string, userId: string, file: File): Promise<strin
     return
   }
 }
-
-
-
-
-// async function savePostImagesToS3(type: string, userId: string, file: File): Promise<string | undefined> {
-//   const extension = file.name.slice(file.name.lastIndexOf('.'));
-//   const key = `profile/${userId}/${type}${extension}`;
-
-//   // Convert File to ArrayBuffer then to Buffer
-//   const arrayBuffer = await file.arrayBuffer();
-//   const body = Buffer.from(arrayBuffer);
-
-//   const uploadCommand = new PutObjectCommand({
-//     Bucket: PROFILE_MEDIA_BUCKET, // Replace with your bucket name
-//     Key: key,
-//     Body: body,
-//   });
-
-//   try {
-//     const response = await client.send(uploadCommand);
-//     console.log("S3 upload success", response);
-//     return key
-//   } catch (error) {
-//     console.error("S3 upload error", error);
-//     return
-//   }
-// }
-
-
 
 
 

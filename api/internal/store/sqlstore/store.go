@@ -68,6 +68,9 @@ func (s *Store) Post() store.PostRepository {
 	s.postRepository = &PostRepository{
 		store: s,
 	}
+	s.imageRepository = &ImageRepository{
+		store: s,
+	}
 
 	return s.postRepository
 }

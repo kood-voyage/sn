@@ -1,4 +1,4 @@
-import { LOCAL_PATH, WEBSITE_PATH } from "$env/static/private"
+import { LOCAL_PATH } from "$env/static/private"
 import type { RequestEvent } from "@sveltejs/kit"
 
 

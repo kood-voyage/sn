@@ -1,6 +1,7 @@
 import { db } from "."
 import type { RequestEvent } from "@sveltejs/kit"
 import { getUserFollowers, getUserFollowing } from "../api/user-requests";
+import { getUserPosts } from "../api/post-requests";
 
 interface Response {
   ok: boolean;
@@ -28,10 +29,21 @@ export async function getProfile(event: RequestEvent, username: string) {
     return { ok: userResp.ok, error: userResp.error, message: userResp.message }
   }
 
-  const user = userResp.data as User
-  console.log(user)
+  const user = await userResp.data as User
+
 
   const followingResp = await getUserFollowing(event, user.id)
+
+  const posts = await getUserPosts(event, user.id)
+
+
+
+
+    if (!posts.ok) {
+    return { ok: posts.ok, error: posts.error, message: posts.message }
+  }
+
+
 
 
   if (!followingResp.ok) {
@@ -53,7 +65,8 @@ export async function getProfile(event: RequestEvent, username: string) {
   return {
     user: user,
     following: followingResp.data,
-    followers: followersResp.data
+    followers: followersResp.data,
+    posts: posts.data
   }
 }
 
