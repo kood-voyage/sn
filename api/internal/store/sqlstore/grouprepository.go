@@ -24,13 +24,17 @@ func (g *GroupRepository) Create(group model.Group, privacy int) (*model.Group, 
 		return nil, err
 	}
 
+	if err = g.store.Image().Add(group.ID, group.ImagePaths); err != nil {
+		return nil, err
+	}
+
 	return &group, nil
 }
 
-func (g *GroupRepository) Delete(group_id string) error {
+func (g *GroupRepository) Delete(groupId string) error {
 	query := `DELETE FROM community WHERE id = ?`
 
-	result, err := g.store.Db.Exec(query, group_id)
+	result, err := g.store.Db.Exec(query, groupId)
 	if err != nil {
 		return err
 	}
@@ -45,7 +49,11 @@ func (g *GroupRepository) Delete(group_id string) error {
 	}
 
 	//remove from privacy table
-	if err := g.store.Privacy().Delete(group_id); err != nil {
+	if err = g.store.Privacy().Delete(groupId); err != nil {
+		return err
+	}
+
+	if err = g.store.Image().DeleteAll(groupId); err != nil {
 		return err
 	}
 
@@ -60,38 +68,51 @@ func (g *GroupRepository) Update(group model.Group, privacy int) error {
 		return err
 	}
 
-	if err := g.store.Privacy().Update(group.ID, privacy); err != nil {
+	if err = g.store.Privacy().Update(group.ID, privacy); err != nil {
+		return err
+	}
+
+	if err = g.store.Image().Update(group.ID, group.ImagePaths); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (g *GroupRepository) Get(group_id string) (*model.Group, error) {
+func (g *GroupRepository) Get(groupId string) (*model.Group, error) {
 	query := `SELECT * FROM community WHERE id = ?`
-
 	var group model.Group
-	if err := g.store.Db.QueryRow(query, group_id).Scan(&group.ID, &group.CreatorID, &group.Name, &group.Description); err != nil {
+	if err := g.store.Db.QueryRow(query, groupId).Scan(
+		&group.ID,
+		&group.CreatorID,
+		&group.Name,
+		&group.Description,
+	); err != nil {
 		return nil, err
 	}
 
-	g_members, err := g.Members(group_id)
+	gMembers, err := g.Members(groupId)
 	if err != nil {
 		return nil, err
 	}
-	group.Members = *g_members
+	group.Members = *gMembers
+	paths, err := g.store.Image().Get(groupId)
+	if err != nil {
+		return nil, err
+	}
+	group.ImagePaths = paths
 
 	return &group, nil
 }
 
-func (g *GroupRepository) Members(group_id string) (*[]model.User, error) {
+func (g *GroupRepository) Members(groupId string) (*[]model.User, error) {
 	query := `SELECT member.user_id, member.type_id 
 	FROM member
 	JOIN member_type on  member.type_id = member_type.id
 	WHERE group_id = ?`
 
 	var users []model.User
-	rows, err := g.store.Db.Query(query, group_id)
+	rows, err := g.store.Db.Query(query, groupId)
 	if err != nil {
 		return nil, err
 	}
@@ -107,11 +128,11 @@ func (g *GroupRepository) Members(group_id string) (*[]model.User, error) {
 	return &users, nil
 }
 
-func (g *GroupRepository) IsMember(group_id, user_id string) (bool, error) {
+func (g *GroupRepository) IsMember(groupId, userId string) (bool, error) {
 	query := `SELECT user_id FROM member WHERE group_id = ? AND user_id = ?`
 
 	var user model.User
-	if err := g.store.Db.QueryRow(query, group_id, user_id).Scan(&user.ID); err != nil {
+	if err := g.store.Db.QueryRow(query, groupId, userId).Scan(&user.ID); err != nil {
 		if err == sql.ErrNoRows {
 			return false, nil
 		}
@@ -121,10 +142,10 @@ func (g *GroupRepository) IsMember(group_id, user_id string) (bool, error) {
 	return true, nil
 }
 
-func (g *GroupRepository) AddMember(group_id, user_id string) error {
+func (g *GroupRepository) AddMember(groupId, userId string) error {
 	query := `INSERT INTO member (id, user_id, group_id, type_id) VALUES (?, ?, ?, ?)`
 
-	_, err := g.store.Db.Exec(query, uuid.New().String(), user_id, group_id, 1)
+	_, err := g.store.Db.Exec(query, uuid.New().String(), userId, groupId, 1)
 	if err != nil {
 		return err
 	}

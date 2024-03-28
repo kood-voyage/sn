@@ -64,8 +64,22 @@ func (i *ImageRepository) DeleteAll(parentId string) error {
 
 func (i *ImageRepository) Update(id string, paths []string) error {
 	query := `UPDATE image SET path = ? WHERE id = ?`
+	var affected int64
 	for _, path := range paths {
-		_, err := i.store.Db.Exec(query, path, id)
+		result, err := i.store.Db.Exec(query, path, id)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+
+		affected, err = result.RowsAffected()
+		if err != nil {
+			return err
+		}
+	}
+
+	if affected == 0 {
+		err := i.Add(id, paths)
 		if err != nil {
 			return err
 		}
