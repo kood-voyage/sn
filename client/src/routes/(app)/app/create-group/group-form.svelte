@@ -13,28 +13,28 @@
 	import { Table } from 'svelte-radix';
 	import { handleImageCopression } from '$lib/client/image-compression';
 	import { handleSubmit } from './logic';
+	import { applyAction, deserialize } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import type { ActionResult } from '@sveltejs/kit';
 
-	export let data: SuperValidated<Infer<GroupSchema>>;
+	export let data: SuperValidated<Infer<GroupSchema>, any>;
 	$: test = '';
 	$: console.log(test);
 
 	$: image = '';
 
 	const form = superForm(data, {
-		validators: zodClient(groupSchema)
+		validators: zodClient(groupSchema),
+		onSubmit: (input) => {
+			handleSubmit(input.formData);
+			input.cancel();
+		}
 	});
 
 	const { form: formData, enhance } = form;
 
 	async function displayImagePreviews(file: File) {
 		console.log(file instanceof File);
-		const resp = await handleImageCopression(file);
-		if (resp.ok && resp.file) {
-			console.log(`originalFile size ${file.size / 1024 / 1024} MB`);
-			$formData.image = new File([resp.file], file.name);
-		} else {
-			$formData.image = file;
-		}
 		const reader = new FileReader();
 		reader.onloadend = (e) => (image = reader.result as string);
 		reader.readAsDataURL(file);
@@ -44,22 +44,13 @@
 		const target = event.target as HTMLInputElement;
 		if (target && target.files && target.files.length > 0) {
 			displayImagePreviews(target.files[0]);
+		} else {
+			image = '';
 		}
 	}
 </script>
 
-<form
-	id="groupForm"
-	on:submit|preventDefault={handleSubmit}
-	enctype="multipart/form-data"
-	class="w-full mt-10"
->
-	<!-- Img Preview -->
-
-	{#if image != ''}
-		<img id="previewCover" src={image} alt="previewCover" class="w-full h-16 object-cover" />
-	{/if}
-
+<form method="POST" id="groupForm" use:enhance enctype="multipart/form-data" class="w-full mt-5">
 	<!-- Input field for uploading multiple images -->
 
 	<Form.Field {form} name="image">
@@ -74,6 +65,16 @@
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
+	<!-- Img Preview -->
+
+	{#if image != ''}
+		<img
+			id="previewCover"
+			src={image}
+			alt="previewCover"
+			class="w-full my-2 h-16 object-cover rounded"
+		/>
+	{/if}
 	<Form.Field {form} name="title">
 		<Form.Control let:attrs>
 			<Form.Label>Name</Form.Label>

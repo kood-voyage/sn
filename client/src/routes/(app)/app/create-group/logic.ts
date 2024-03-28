@@ -1,8 +1,6 @@
 import { handleImageCopression, uploadImages } from "$lib/client/image-compression";
 
-export async function handleSubmit() {
-  const form = document.getElementById('groupForm') as HTMLFormElement
-  const formData = new FormData(form);
+export async function handleSubmit(formData: FormData) {
 
   const image1 = formData.get('image') as File
 

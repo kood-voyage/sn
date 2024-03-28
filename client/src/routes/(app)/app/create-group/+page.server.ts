@@ -40,14 +40,17 @@ export const actions: Actions = {
 		// Process formData as necessary...
 
 		// Assuming 'form' is a representation of your form data or state you wish to return
+		console.log([...formData.entries()])
 
 		// console.log(formData)
 		const group = {
 			name: formData.get("title"),
 			description: formData.get("content"),
-			privacy: "public",
+			privacy: formData.get("privacy"),
 		}
 		console.log(group)
+
+
 		// const file = formData.get("image") as File
 		// console.log(`Sent File size ${file.size / 1024 / 1024} MB`)
 
