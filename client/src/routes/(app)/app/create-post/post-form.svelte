@@ -25,7 +25,7 @@
 	function limitFiles(files, maxFiles) {
 		images = Array.from(files);
 
-		console.log("hello")
+		console.log('hello');
 
 		if (images.length > maxFiles) {
 			alert('You can only select up to 3 images.');
@@ -48,8 +48,23 @@
 
 		createPostImagesStore.set(updatedImages);
 	}
-
 </script>
+
+{#if $createPostImagesStore.length > 0}
+	<Carousel.Root class="w-full max-w-xs m-auto">
+		<Carousel.Content>
+			{#each $createPostImagesStore as $image}
+				<Carousel.Item>
+					<img src={$image} alt="preview" />
+				</Carousel.Item>
+			{/each}
+		</Carousel.Content>
+		<Carousel.Previous />
+		<Carousel.Next />
+	</Carousel.Root>
+{/if}
+
+
 
 <form
 	method="POST"
@@ -93,20 +108,6 @@
 
 	<!-- Img Preview -->
 
-	{#if $createPostImagesStore.length > 0}
-		<Carousel.Root class="w-full max-w-xs m-auto">
-			<Carousel.Content>
-				{#each $createPostImagesStore as $image}
-					<Carousel.Item>
-						<img src={$image} alt="preview" />
-					</Carousel.Item>
-				{/each}
-			</Carousel.Content>
-			<Carousel.Previous />
-			<Carousel.Next />
-		</Carousel.Root>
-	{/if}
-
 	<!-- Input field for uploading multiple images -->
 
 	<Form.Field {form} name="images">
@@ -114,7 +115,7 @@
 			<Form.Label>Images (up to 3)</Form.Label>
 			<Input
 				type="file"
-				accept="image/gif, image/jpeg, image/png, image/webp, image/svg+xml"
+				accept="image/gif, image/jpeg, image/png, image/webp"
 				multiple
 				on:change={(e) => limitFiles(e.target.files, 3)}
 				{...attrs}

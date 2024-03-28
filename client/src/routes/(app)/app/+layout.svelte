@@ -81,12 +81,7 @@
 						<Calendar class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
 					</div>
 				</a>
-
-				<!-- <a href="/app">
-					<div class="button">
-						<Gear class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
-					</div>
-				</a> -->
+				
 			</div>
 
 			<!-- // profile info -->
