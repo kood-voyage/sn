@@ -12,7 +12,6 @@
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import { Table } from 'svelte-radix';
 	import { handleImageCopression } from '$lib/client/image-compression';
-	import { handleSubmit } from './logic';
 	import { applyAction, deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import type { ActionResult } from '@sveltejs/kit';
@@ -25,9 +24,21 @@
 
 	const form = superForm(data, {
 		validators: zodClient(groupSchema),
-		onSubmit: (input) => {
-			handleSubmit(input.formData);
-			input.cancel();
+		onSubmit: async (input) => {
+			console.log('asdfasdf', input);
+			const image = input.formData.get('image') as File;
+			const imgResp = await handleImageCopression(image);
+			if (!imgResp.ok) {
+				input.cancel();
+				return;
+			}
+			const file = imgResp.file as File;
+
+			input.formData.set('image', file);
+			console.log(`compressedFile size ${file.size / 1024 / 1024} MB`);
+			// if (input.)
+			// handleSubmit(input.formData);
+			// input.cancel();
 		}
 	});
 
@@ -35,6 +46,7 @@
 
 	async function displayImagePreviews(file: File) {
 		console.log(file instanceof File);
+		$formData.image = file;
 		const reader = new FileReader();
 		reader.onloadend = (e) => (image = reader.result as string);
 		reader.readAsDataURL(file);

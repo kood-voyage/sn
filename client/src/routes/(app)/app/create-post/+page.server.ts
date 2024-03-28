@@ -1,6 +1,6 @@
 import type { PageServerLoad, Actions, } from './$types';
 import { superValidate } from 'sveltekit-superforms';
-import {postSchema} from "../post-schema"
+import { postSchema } from "../post-schema"
 
 import { zod } from 'sveltekit-superforms/adapters';
 import { getUserIdFromCookie } from '$lib/server/jwt-handle';
@@ -15,14 +15,14 @@ import { redirect } from '@sveltejs/kit';
 
 
 export const load: PageServerLoad = async () => {
-	const form = await superValidate(zod(postSchema));
+    const form = await superValidate(zod(postSchema));
 
-	return { form };
+    return { form };
 };
 
 
 export type Privacy = {
-	privacy: 'private' | 'public' | 'selected';
+    privacy: 'private' | 'public' | 'selected';
 }
 
 
@@ -42,62 +42,63 @@ export const actions: Actions = {
         // const form = await superValidate(event, zod(postSchema));
 
 
-		const {user_id}= getUserIdFromCookie(event)
+        const { user_id } = getUserIdFromCookie(event)
         const formData = await event.request.formData();
 
-		
+
         // Extracting other form fields
-		const post_id = uuidv4()
+        const post_id = uuidv4()
         const title = formData.get('title') as string;
         const content = formData.get('content') as string;
-		const privacy = formData.get('privacy') as Privacy
+        const privacy = formData.get('privacy') as Privacy
 
 
-		const imagesURL: string[] = []
+        const imagesURL: string[] = []
 
         // Extracting uploaded images
         const images = formData.getAll('images') as File[];
 
 
-		for(const [i,image] of images.entries()){
-			const resp = await saveToS3(("post"+(i+1)),post_id,image,"post")
-			imagesURL.push(S3_BUCKET + resp)
-		}
+        for (const [i, image] of images.entries()) {
+            const resp = await saveToS3(("post" + (i + 1)), post_id, image, "post")
+            imagesURL.push(S3_BUCKET + resp)
+        }
 
 
-		const json: Post ={
-			id: post_id,
-			user_id: user_id,
-			title: title,
-			content: content,
-			privacy: privacy,
-			community_id: "",
-			image_path : imagesURL
-		
-		}
+        const json: Post = {
+            id: post_id,
+            user_id: user_id,
+            title: title,
+            content: content,
+            privacy: privacy,
+            community_id: "",
+            image_path: imagesURL
 
-try {
-    const response = await fetch(`${LOCAL_PATH}/api/v1/auth/posts/create`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${event.cookies.get('at')}`,
-            'Content-Type': 'application/json' // Specify JSON content type
-        },
-        body: JSON.stringify(json) // Convert the JSON object to a string
-    });
+        }
+        console.log(json)
 
-    if (!response.ok) {
-        throw new Error('Failed to create post'); // Throw an error if response is not OK
-    }
+        try {
+            const response = await fetch(`${LOCAL_PATH}/api/v1/auth/posts/create`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${event.cookies.get('at')}`,
+                    'Content-Type': 'application/json' // Specify JSON content type
+                },
+                body: JSON.stringify(json) // Convert the JSON object to a string
+            });
 
-    // Handle successful response
-}  catch (err) {
-    if (err instanceof Error) {
-      return { ok: false, error: err, message: err.message }
-    } else {
-      return { ok: false, error: err, message: "Unknown Error" }
-    }
-  }
-		redirect(304, `/app/u`)
+            if (!response.ok) {
+                throw new Error('Failed to create post'); // Throw an error if response is not OK
+            }
+
+            // Handle successful response
+        } catch (err) {
+            if (err instanceof Error) {
+                return { ok: false, error: err, message: err.message }
+            } else {
+                return { ok: false, error: err, message: "Unknown Error" }
+            }
+        }
+        redirect(304, `/app/u`)
     }
 };

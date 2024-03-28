@@ -1,7 +1,6 @@
 import imageCompression from "browser-image-compression";
 
 export async function handleImageCopression(file: File) {
-  console.log("Started handleImage!")
   const imageFile = file
   // console.log('originalFile instanceof Blob', imageFile instanceof Blob); // true
   console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
@@ -13,13 +12,13 @@ export async function handleImageCopression(file: File) {
   }
   try {
     const compressedFile = await imageCompression(imageFile, options);
-    console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`);
+    // console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`);
 
     return { ok: true, file: compressedFile }
   } catch (error) {
     console.log("ERROR >>>", error);
     if (error instanceof Error) {
-      return { ok: false, error: error, message: error.message }
+      return ({ ok: false, error: error, message: error.message })
 
     } else {
       return { ok: false, error: error, message: "Misc Error" }
@@ -37,6 +36,7 @@ export async function uploadImages(formData: FormData) {
     },
   });
   if (!response.ok) {
+    console.log("NETWORK RESPONSE WAS WACK")
     throw new Error('Network response was not ok');
   }
 }
