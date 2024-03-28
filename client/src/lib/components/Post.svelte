@@ -28,7 +28,9 @@
 <Dialog.Root>
 	<Dialog.Trigger class="h-96 w-full sm:rounded-lg mb-1 sm:mb-0 ">
 		<div class="p-1">
-			<img src={image_path} alt="image1" />
+			{#if image_path != null}
+				<img src={image_path[0]} alt="image1" />
+			{/if}
 			<p class="text-lg text-ellipsis w-full text-left">{title}</p>
 			<p class="lines3 text-sm text-left text-slate-400">{content}</p>
 		</div>
@@ -44,16 +46,16 @@
 
 			<Carousel.Root bind:api>
 				<Carousel.Content>
-					<Carousel.Item>
-						<img src={image_path} alt="image1" /></Carousel.Item>
+					{#each image_path as image}
+						<Carousel.Item> <img src={image} alt="image1" /></Carousel.Item>
+
+
+					{/each}
+
 
 					
-					<Carousel.Item
-						><img
-							src="https://resources.finalsite.net/images/v1629478453/usmk12org/yizzw0mr1escg58pmhvp/esports.png"
-							alt="image1"
-						/></Carousel.Item
-					>
+
+					
 				</Carousel.Content>
 
 				<Carousel.Previous class="left-2" />

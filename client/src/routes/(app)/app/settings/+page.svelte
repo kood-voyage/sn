@@ -2,7 +2,6 @@
 	import { Avatar } from 'bits-ui';
 	import { handleSubmit } from './logic.js';
 	import { handleImageCopression } from '$lib/client/image-compression.js';
-	import { enhance } from '$app/forms';
 
 	export let data;
 
@@ -10,11 +9,6 @@
 
 	$: previewAvatar = avatar;
 	$: previewCover = cover;
-
-	// $: console.log(previewAvatar);
-	// $: console.log(previewCover);
-
-	// console.log(event);
 
 	let fileInputAvatar: HTMLInputElement;
 	async function PreviewAvatar() {

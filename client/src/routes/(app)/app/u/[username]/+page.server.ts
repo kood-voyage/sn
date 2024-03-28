@@ -14,11 +14,7 @@ export const load: PageServerLoad = async (event) => {
       username: "Undefined"
     }
   }
-
-
-
-
-
+  
   return data
 
 }
