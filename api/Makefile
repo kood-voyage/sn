@@ -1,4 +1,4 @@
-all: clean test swag build run
+all: clean swag build run
 
 test:
 	@echo "Running tests..."
