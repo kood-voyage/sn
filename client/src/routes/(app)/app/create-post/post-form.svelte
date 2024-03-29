@@ -12,6 +12,8 @@
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import { createPostImagesStore } from '$lib/store/create-post-store';
 
+	import { Editor } from 'novel-svelte';
+
 	export let data: SuperValidated<Infer<PostSchema>>;
 
 	let images = [];
@@ -63,8 +65,6 @@
 		<Carousel.Next />
 	</Carousel.Root>
 {/if}
-
-
 
 <form
 	method="POST"
@@ -125,3 +125,5 @@
 	</Form.Field>
 	<Form.Button class="w-full">Submit</Form.Button>
 </form>
+
+<Editor />
