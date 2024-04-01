@@ -80,7 +80,7 @@ func (g *GroupRepository) Update(group model.Group, privacy int) error {
 }
 
 func (g *GroupRepository) Get(groupId string) (*model.Group, error) {
-	query := `SELECT * FROM community WHERE id = ?`
+	query := `SELECT * FROM community WHERE name = ?`
 	var group model.Group
 	if err := g.store.Db.QueryRow(query, groupId).Scan(
 		&group.ID,
@@ -91,12 +91,12 @@ func (g *GroupRepository) Get(groupId string) (*model.Group, error) {
 		return nil, err
 	}
 
-	gMembers, err := g.Members(groupId)
+	gMembers, err := g.Members(group.ID)
 	if err != nil {
 		return nil, err
 	}
 	group.Members = *gMembers
-	paths, err := g.store.Image().Get(groupId)
+	paths, err := g.store.Image().Get(group.ID)
 	if err != nil {
 		return nil, err
 	}

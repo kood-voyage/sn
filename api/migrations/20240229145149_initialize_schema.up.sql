@@ -17,7 +17,7 @@ INSERT INTO user (id) VALUES
 CREATE TABLE community (
                            id text PRIMARY KEY UNIQUE NOT NULL,
                            creator_id text NOT NULL,
-                           name text NOT NULL,
+                           name text UNIQUE NOT NULL,
                            description text NOT NULL,
                            FOREIGN KEY (creator_id) REFERENCES user (id)
 );
