@@ -36,9 +36,6 @@
 
 			input.formData.set('image', file);
 			console.log(`compressedFile size ${file.size / 1024 / 1024} MB`);
-			// if (input.)
-			// handleSubmit(input.formData);
-			// input.cancel();
 		}
 	});
 
