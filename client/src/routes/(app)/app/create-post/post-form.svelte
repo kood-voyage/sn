@@ -1,4 +1,7 @@
 <script lang="ts">
+	// import Editor from 'tailwind-editor';
+	// let html = '';
+
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
@@ -12,11 +15,12 @@
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import { createPostImagesStore } from '$lib/store/create-post-store';
 
-	import { Editor } from 'novel-svelte';
+	import Tiptap from '$lib/components/Tiptap.svelte';
+	import Editorsn from '$lib/components/Editorsn.svelte';
 
 	export let data: SuperValidated<Infer<PostSchema>>;
 
-	let images = [];
+	let images: File[] = [];
 
 	const form = superForm(data, {
 		validators: zodClient(postSchema)
@@ -24,7 +28,7 @@
 
 	const { form: formData, enhance } = form;
 
-	function limitFiles(files, maxFiles) {
+	function limitFiles(files: File[], maxFiles: number) {
 		images = Array.from(files);
 
 		console.log('hello');
@@ -37,13 +41,19 @@
 		}
 	}
 
-	function displayImagePreviews() {
-		const updatedImages = [];
+	function displayImagePreviews(): void {
+		const updatedImages: File[] = [];
 
 		images.forEach((image) => {
 			const reader = new FileReader();
+
 			reader.onload = (e) => {
-				updatedImages.push(e.target.result);
+				if (e.target == null) {
+					return;
+				}
+
+				const result = e.target.result;
+				updatedImages.push(result);
 			};
 			reader.readAsDataURL(image);
 		});
@@ -126,4 +136,5 @@
 	<Form.Button class="w-full">Submit</Form.Button>
 </form>
 
-<Editor />
+
+<Editorsn />
