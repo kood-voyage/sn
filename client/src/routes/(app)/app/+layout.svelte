@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { ModeWatcher } from 'mode-watcher';
 
-
-
 	export let data;
 
 	import {
@@ -11,12 +9,12 @@
 		currentUserStore
 	} from '$lib/store/user-store.js';
 
-	currentUserStore.set(data.data); 
+	currentUserStore.set(data.data);
 
 	currentUserFollowers.set(data.followers);
 	currentUserFollowing.set(data.following);
 
-	const { username, email, first_name, last_name, avatar } = $currentUserStore
+	const { username, email, first_name, last_name, avatar } = $currentUserStore;
 	///
 	import Sun from 'svelte-radix/Sun.svelte';
 	import Moon from 'svelte-radix/Moon.svelte';
@@ -83,7 +81,6 @@
 						<Calendar class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
 					</div>
 				</a>
-				
 			</div>
 
 			<!-- // profile info -->

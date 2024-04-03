@@ -10,6 +10,7 @@
 
 	import { data } from '$lib/emojis';
 	import Input from './ui/input/input.svelte';
+	import { lift } from '@tiptap/pm/commands';
 
 	// Declare searchQuery as a writable store
 	const searchQuery = writable('');
@@ -43,14 +44,81 @@
 		document.execCommand('italic');
 	}
 
-	function insertEmojiAtEnd(emoji: any) {
-		const editor = document.getElementById('editor');
-		if (editor) {
-			// Create a new text node containing the emoji character
-			const emojiNode = document.createTextNode(emoji.character);
-			// Append the emoji node to the editor
-			editor.appendChild(emojiNode);
+	interface CursorPosition {
+		line: number;
+		position: number;
+	}
+	let lastFocusedPosition: CursorPosition | null = null;
+
+	lastFocusedPosition = {
+		line: 0,
+		position: 0
+	};
+
+	function insertEmojiAtLastFocus(emoji: any) {
+		if (lastFocusedPosition !== null) {
+			const editor = document.getElementById('editor');
+			if (editor) {
+				const emojiCharacter = emoji.character;
+				const lines = editor.innerText.split('\n');
+				const currentLine = lines[lastFocusedPosition.line];
+				const textBeforeCursor = currentLine.slice(0, lastFocusedPosition.position);
+				const textAfterCursor = currentLine.slice(lastFocusedPosition.position);
+				lines[lastFocusedPosition.line] = textBeforeCursor + emojiCharacter + textAfterCursor;
+				editor.innerText = lines.join('\n');
+			}
 		}
+	}
+	function storeLastFocusPosition() {
+		const editor = document.getElementById('editor');
+
+		if (editor) {
+			const selection = window.getSelection();
+			if (selection && selection.anchorNode && selection.focusNode) {
+				const range = document.createRange();
+				range.setStart(selection.anchorNode, selection.anchorOffset);
+				range.setEnd(selection.focusNode, selection.focusOffset);
+				const rect = range.getBoundingClientRect();
+				const lineHeight = parseInt(getComputedStyle(editor).lineHeight, 10);
+				const line = Math.floor((rect.top - editor.getBoundingClientRect().top) / lineHeight);
+				const position = range.startOffset;
+				lastFocusedPosition = { line, position };
+			}
+		}
+	}
+
+	function handleEditorInput(event: InputEvent) {
+		const editor = event.target as HTMLElement;
+		const content = editor.innerText;
+		const lines = content.split('\n');
+		const cursorPosition = getCaretPosition(editor);
+
+		console.log(cursorPosition);
+		console.log(editor);
+
+		// Check if a newline character is inserted
+		if (lines.length > lastFocusedPosition.line + 1) {
+			// Newline inserted, handle the event here
+			// For example, you could update the lastFocusedPosition:
+			lastFocusedPosition = {
+				line: cursorPosition.line,
+				position: cursorPosition.position
+			};
+		}
+	}
+
+	function getCaretPosition(element: HTMLElement): CursorPosition {
+		const selection = window.getSelection();
+		if (selection) {
+			const range = selection.getRangeAt(0);
+			const preRange = range.cloneRange();
+			preRange.selectNodeContents(element);
+			preRange.setEnd(range.startContainer, range.startOffset);
+			const line = preRange.toString().split('\n').length - 1;
+			const position = preRange.toString().length - preRange.toString().lastIndexOf('\n') - 1;
+			return { line, position };
+		}
+		return { line: 0, position: 0 };
 	}
 </script>
 
@@ -58,7 +126,7 @@
 	<div class="flex">
 		<button on:click={toggleBold}><FontBold /></button>
 		<button on:click={toggleItalic}><FontItalic /></button>
-		<button id="emoji">
+		<button id="emoji" on:click|stopPropagation={storeLastFocusPosition}>
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger class="w-[32px] h-[32px]"><Face /></DropdownMenu.Trigger>
 				<DropdownMenu.Content>
@@ -77,7 +145,7 @@
 							{#each filteredEmojis as emoji}
 								<DropdownMenu.Item
 									class="w-[32px] h-[32px]"
-									on:click={() => insertEmojiAtEnd(emoji)}
+									on:click={() => insertEmojiAtLastFocus(emoji)}
 								>
 									{emoji.character}
 								</DropdownMenu.Item>
@@ -93,5 +161,7 @@
 		id="editor"
 		contenteditable="true"
 		class="max-h-64 overflow-scroll border rounded-md p-2"
+		on:keydown={handleEditorInput}
+		on:focus={handleEditorInput}
 	></div>
 </div>
