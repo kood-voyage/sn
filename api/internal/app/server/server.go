@@ -124,7 +124,7 @@ func configureRouter(s *Server) {
 	s.router.POST("/api/v1/auth/chats/add/line", s.addLineChat())
 	//--WEBSOCKET--//
 	s.router.GET("/ws", s.wsHandler())
-	s.router.GET("/test/ws", s.wsService.HandleWS)
+	s.router.GET("/auth/ws", s.wsService.HandleWS)
 
 	s.router.GET("/login/{id}", s.login())
 }

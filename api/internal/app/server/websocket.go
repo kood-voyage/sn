@@ -58,7 +58,11 @@ func (cs *ChatService) HandleWS(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	id := "testid"
+	sourceID, ok := r.Context().Value(ctxUserID).(string)
+	if !ok {
+		return
+	}
+	id := sourceID
 	//append clients to keep track of clients
 	client := NewClient(id, conn)
 	cs.AddClient(client)
@@ -150,7 +154,7 @@ func (cs *ChatService) getUsers(p Payload) ([]*Client, error) {
 	}
 }
 
-func (cs *ChatService) writeToUsers(clients []*Client, p Payload) error{
+func (cs *ChatService) writeToUsers(clients []*Client, p Payload) error {
 	for _, c := range clients {
 		if err := c.conn.WriteJSON(p); err != nil {
 			return err
