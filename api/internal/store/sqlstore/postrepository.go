@@ -15,10 +15,10 @@ type PostRepository struct {
 
 func (p *PostRepository) Create(post *model.Post, privacy int) error {
 	query := `INSERT INTO post (
-                  id,
-                  user_id,
-                  title,
-                  content) VALUES (?,?,?,?)`
+				id,
+				user_id,
+				title,
+				content) VALUES (?,?,?,?)`
 
 	_, err := p.store.Db.Exec(query,
 		post.ID,
