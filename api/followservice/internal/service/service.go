@@ -69,6 +69,7 @@ func (f *followService) FollowUser(ctx context.Context, sourceId, targetId strin
 		fmt.Println(reflect.ValueOf(existing))
 		test := reflect.ValueOf(existing).IsValid()
 		fmt.Println("TEST --> ", test)
+		fmt.Println("JEPS -> ", reflect.Zero(reflect.TypeOf(existing)).Interface()) 
 		if existing != nil {
 			return nil, errors.New("request already exists")
 		}
