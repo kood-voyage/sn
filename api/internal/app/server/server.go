@@ -35,11 +35,12 @@ type Error struct {
 }
 
 type Server struct {
-	router   *router.Router
-	logger   *log.Logger
-	store    store.Store
-	types    model.Type
-	wsClient client.ChatClient
+	router    *router.Router
+	logger    *log.Logger
+	store     store.Store
+	types     model.Type
+	wsClient  client.ChatClient
+	wsService *ChatService
 }
 
 type Option func(*config.Config)
@@ -54,11 +55,12 @@ func newServer(store store.Store, opts ...Option) *Server {
 	}
 
 	s := &Server{
-		router:   router.New(),
-		logger:   log.Default(),
-		store:    store,
-		types:    model.InitializeTypes(),
-		wsClient: client.NewClient(config.ChatServiceURL),
+		router:    router.New(),
+		logger:    log.Default(),
+		store:     store,
+		types:     model.InitializeTypes(),
+		wsClient:  client.NewClient(config.ChatServiceURL),
+		wsService: NewChatServer(store),
 	}
 
 	configureRouter(s)
@@ -116,8 +118,13 @@ func configureRouter(s *Server) {
 	s.router.DELETE("/api/v1/auth/group/event/delete/{id}", s.deleteEvent())
 	s.router.GET("/api/v1/auth/group/event/{id}", s.getEvent())
 	s.router.GET("/api/v1/auth/group/event/{id}/register/{opt}", s.registerEvent())
+	//---------CHATS--------------//
+	s.router.POST("/api/v1/auth/chats/create", s.createChat())
+	s.router.POST("/api/v1/auth/chats/add/user", s.addUserChat())
+	s.router.POST("/api/v1/auth/chats/add/line", s.addLineChat())
 	//--WEBSOCKET--//
 	s.router.GET("/ws", s.wsHandler())
+	s.router.GET("/test/ws", s.wsService.HandleWS)
 
 	s.router.GET("/login/{id}", s.login())
 }

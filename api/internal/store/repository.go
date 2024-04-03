@@ -65,3 +65,12 @@ type EventRepository interface {
 	Get(eventId string) (*model.Event, error)
 	Register(userid, eventId string, opt int) error
 }
+
+type ChatRepository interface {
+	Create(chat model.Chat) (*model.Chat, error)
+	AddUser(user model.User, chat model.Chat) error
+	GetUsers(chat model.Chat) ([]model.User, error)
+	AddLine(line *model.ChatLine) (*model.ChatLine, error)
+	//TO-DO
+	// DeleteUser()
+}
