@@ -152,3 +152,37 @@ func (g *GroupRepository) AddMember(groupId, userId string) error {
 
 	return nil
 }
+
+func (g *GroupRepository) GetAll(types model.Type) (*[]model.Group, error) {
+	query := `SELECT * FROM community`
+
+	var groups []model.Group
+	rows, err := g.store.Db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var group model.Group
+		if err := rows.Scan(&group.ID, &group.CreatorID, &group.Name, &group.Description); err != nil {
+			return nil, err
+		}
+		privacy, err := g.store.Privacy().Check(group.ID) 
+		if err != nil {
+			return nil, err
+		}
+		group.Privacy, err = types.IntToString(privacy)
+		if err != nil {
+			return nil, err
+		}
+
+		group.ImagePaths, err = g.store.Image().Get(group.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		groups = append(groups, group)
+	}
+
+	return &groups, nil
+}

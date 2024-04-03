@@ -186,6 +186,26 @@ func (s *Server) groupGet() http.HandlerFunc {
 	}
 }
 
+// groupGetAll handles the retrieval of all group and their information.
+//
+// @Summary Returns groups
+// @Tags group
+// @Produce json
+// @Success 200 {object} []model.Group
+// @Failure 422 {object} Error
+// @Router /api/v1/auth/group [get]
+func (s *Server) groupGetAll() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		groups, err := s.store.Group().GetAll(s.types)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, http.StatusOK, groups)
+	}
+}
+
 // groupInvite handles the invitation of a member to a group.
 //
 // @Summary Creates a request to invite another user to a group
