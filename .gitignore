@@ -30,3 +30,6 @@ go.work
 /api/build/
 /api/vendor.protogen/
 /api/bin/
+
+/api/vendor.protogen
+/api/bin
