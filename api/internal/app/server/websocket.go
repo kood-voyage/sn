@@ -42,7 +42,7 @@ type Payload struct {
 	Address  string `json:"address" validate:"required|contains:group,direct,broadcast"`
 	ID       string `json:"id" validate:"required"`
 	SourceID string `json:"source_id" validate:"required"`
-	Data     any    `json:"data" validate:"required"`
+	Data     any    `json:"data"`
 }
 
 // need middleware to grab user_id
@@ -110,7 +110,6 @@ func (c *Client) wsRecieveLoop(cs *ChatService) {
 			//validate the payload
 			c.conn.WriteJSON(fmt.Sprintf("bad payload - %v", err))
 		} else {
-			//if it is status
 			users, err := cs.getUsers(body)
 			if err != nil {
 				fmt.Println("THIS IS AN ERROR IN wsRecieveLoop", err)
@@ -118,7 +117,6 @@ func (c *Client) wsRecieveLoop(cs *ChatService) {
 			if err := cs.writeToUsers(users, body); err != nil {
 				fmt.Println(" THIS IS AN ERROR IN WSRECIEVE LOOP", err)
 			}
-			c.conn.WriteJSON(body)
 		}
 	}
 }
@@ -141,7 +139,6 @@ func (cs *ChatService) getUsers(p Payload) ([]*Client, error) {
 			}
 		}
 		return client, nil
-		//get users within that groupchat
 	case "direct":
 		client, err := cs.getClient(p.ID)
 		if err != nil {
