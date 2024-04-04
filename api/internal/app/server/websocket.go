@@ -47,6 +47,7 @@ type Payload struct {
 
 // need middleware to grab user_id
 func (cs *ChatService) HandleWS(w http.ResponseWriter, r *http.Request) {
+	sourceID := r.PathValue("id")
 	wsUpgrader := websocket.Upgrader{
 		ReadBufferSize:  1028,
 		WriteBufferSize: 1028,
@@ -56,11 +57,6 @@ func (cs *ChatService) HandleWS(w http.ResponseWriter, r *http.Request) {
 	conn, err := wsUpgrader.Upgrade(w, r, nil)
 	if err != nil {
 		fmt.Println(err)
-		return
-	}
-	sourceID, ok := r.Context().Value(ctxUserID).(string)
-	if !ok {
-		fmt.Println("TEST")
 		return
 	}
 	id := sourceID
