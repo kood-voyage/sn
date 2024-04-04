@@ -17,6 +17,7 @@ type Store struct {
 	privacyRepository *PrivacyRepository
 	eventRepository   *EventRepository
 	chatRepository    *ChatRepository
+	imageRepository   *ImageRepository
 }
 
 func New(db *sql.DB) *Store {
@@ -134,4 +135,16 @@ func (s *Store) Chat() store.ChatRepository {
 	}
 
 	return s.chatRepository
+}
+
+func (s *Store) Image() store.ImageRepository {
+	if s.imageRepository != nil {
+		return s.imageRepository
+	}
+
+	s.imageRepository = &ImageRepository{
+		store: s,
+	}
+
+	return s.imageRepository
 }
