@@ -2,5 +2,6 @@
   "port": ":8080",
   "database_driver": "sqlite3",
   "database_url": "./internal/db/database.db?_foreign_keys=on",
-  "database_migrations": "./migrations"
+  "database_migrations": "./migrations",
+  "chatservice_url": "ws://localhost:30000/ws"
 }

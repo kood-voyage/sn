@@ -66,10 +66,11 @@ type EventRepository interface {
 	Register(userid, eventId string, opt int) error
 }
 
-type ImageRepository interface {
-	Add(parentId string, paths []string) error
-	Delete(id string) error
-	DeleteAll(parentId string) error
-	Update(parentId string, paths []string) error
-	Get(parentId string) ([]string, error)
+type ChatRepository interface {
+	Create(chat model.Chat) (*model.Chat, error)
+	AddUser(user model.User, chat model.Chat) error
+	GetUsers(chat model.Chat) ([]model.User, error)
+	AddLine(line *model.ChatLine) (*model.ChatLine, error)
+	// TO-DO
+	// DeleteUser()
 }

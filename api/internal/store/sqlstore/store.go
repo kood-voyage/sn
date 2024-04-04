@@ -2,6 +2,7 @@ package sqlstore
 
 import (
 	"database/sql"
+
 	"social-network/internal/store"
 )
 
@@ -15,7 +16,7 @@ type Store struct {
 	groupRepository   *GroupRepository
 	privacyRepository *PrivacyRepository
 	eventRepository   *EventRepository
-	imageRepository   *ImageRepository
+	chatRepository    *ChatRepository
 }
 
 func New(db *sql.DB) *Store {
@@ -123,14 +124,14 @@ func (s *Store) Event() store.EventRepository {
 	return s.eventRepository
 }
 
-func (s *Store) Image() store.ImageRepository {
-	if s.imageRepository != nil {
-		return s.imageRepository
+func (s *Store) Chat() store.ChatRepository {
+	if s.chatRepository != nil {
+		return s.chatRepository
 	}
 
-	s.imageRepository = &ImageRepository{
+	s.chatRepository = &ChatRepository{
 		store: s,
 	}
 
-	return s.imageRepository
+	return s.chatRepository
 }

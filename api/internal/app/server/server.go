@@ -7,13 +7,15 @@ import (
 	"net/http"
 	"os"
 	_ "social-network/docs"
+	"social-network/internal/app/config"
 	"social-network/internal/model"
 	"social-network/internal/store"
+	"social-network/pkg/client"
 	"social-network/pkg/jwttoken"
 	"social-network/pkg/router"
 	"time"
 
-	"github.com/swaggo/http-swagger"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 const (
@@ -33,18 +35,32 @@ type Error struct {
 }
 
 type Server struct {
-	router *router.Router
-	logger *log.Logger
-	store  store.Store
-	types  model.Type
+	router    *router.Router
+	logger    *log.Logger
+	store     store.Store
+	types     model.Type
+	wsClient  client.ChatClient
+	wsService *ChatService
 }
 
-func newServer(store store.Store) *Server {
+type Option func(*config.Config)
+
+func newServer(store store.Store, opts ...Option) *Server {
+
+	config := &config.Config{}
+
+	// Apply options
+	for _, opt := range opts {
+		opt(config)
+	}
+
 	s := &Server{
-		router: router.New(),
-		logger: log.Default(),
-		store:  store,
-		types:  model.InitializeTypes(),
+		router:    router.New(),
+		logger:    log.Default(),
+		store:     store,
+		types:     model.InitializeTypes(),
+		wsClient:  client.NewClient(config.ChatServiceURL),
+		wsService: NewChatServer(store),
 	}
 
 	configureRouter(s)
@@ -102,8 +118,25 @@ func configureRouter(s *Server) {
 	s.router.DELETE("/api/v1/auth/group/event/delete/{id}", s.deleteEvent())
 	s.router.GET("/api/v1/auth/group/event/{id}", s.getEvent())
 	s.router.GET("/api/v1/auth/group/event/{id}/register/{opt}", s.registerEvent())
+	//---------CHATS--------------//
+	s.router.POST("/api/v1/auth/chats/create", s.createChat())
+	s.router.POST("/api/v1/auth/chats/add/user", s.addUserChat())
+	s.router.POST("/api/v1/auth/chats/add/line", s.addLineChat())
+	//--WEBSOCKET--//
+	s.router.GET("/ws", s.wsHandler())
+	s.router.GET("/auth/ws", s.wsService.HandleWS)
 
 	s.router.GET("/login/{id}", s.login())
+}
+
+func (s *Server) wsHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if err := s.wsClient.Connect(w, r); err != nil {
+			s.error(w, http.StatusBadRequest, err)
+			return
+		}
+		s.respond(w, http.StatusOK, nil)
+	}
 }
 
 func (s *Server) error(w http.ResponseWriter, code int, err error) {

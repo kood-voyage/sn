@@ -1,4 +1,4 @@
-all: clean swag build run
+all: test swag buildchat chat buildapi api
 
 test:
 	@echo "Running tests..."
@@ -8,16 +8,20 @@ swag:
 	@echo "Building swagger docs..."
 	@swag init -g cmd/api/main.go
 
-build:
-	@echo "Building binary..."
+buildapi:
+	@echo "Building api..."
 	@go build -o ./build/api/api ./cmd/api
 
-clean:
-	@echo "Cleaning up..."
-	@rm -rf ./build
-
-run: build
+api: buildapi
 	@echo "Running API..."
 	@./build/api/api
 
-.PHONY: all test swag build clean run
+buildchat:
+	@echo "Building chatservice..."
+	@go build -o ./build/chats/chatservice ./cmd/chatservice
+
+chat: buildchat
+	@echo "Running chatservice..."
+	@./build/chats/chatservice
+
+.PHONY: all test swag buildapi buildchat chat clean run 
