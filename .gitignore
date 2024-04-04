@@ -28,6 +28,8 @@ api/build
 go.work
 /api/internal/db/database.db
 /api/build/
+/api/vendor.protogen/
+/api/bin/
 
 /api/vendor.protogen
 /api/bin

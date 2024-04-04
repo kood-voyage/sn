@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Avatar } from 'bits-ui';
-	import { handleImageCopression, handleSubmit } from './page.js';
+	import { handleSubmit } from './page.js';
+	import { handleImageCopression } from '$lib/client/image-compression.js';
 	import { enhance } from '$app/forms';
 
 	export let data;
@@ -138,4 +139,6 @@
 			class="w-20 bg-slate-600 p-2 rounded-xl"
 		/>
 	</form>
+
+
 </div>

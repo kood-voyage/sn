@@ -1153,6 +1153,12 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "image_path": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "parent_id": {
                     "type": "string"
                 },
@@ -1211,6 +1217,12 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "image_path": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "members": {
                     "type": "array",
                     "items": {
@@ -1244,6 +1256,12 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "image_path": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "privacy": {
                     "type": "string"

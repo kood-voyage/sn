@@ -1,4 +1,4 @@
-all: test swag buildchat chat buildapi api
+all: clean swag build run
 
 test:
 	@echo "Running tests..."

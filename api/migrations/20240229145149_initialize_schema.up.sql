@@ -17,7 +17,7 @@ INSERT INTO user (id) VALUES
 CREATE TABLE community (
                            id text PRIMARY KEY UNIQUE NOT NULL,
                            creator_id text NOT NULL,
-                           name text NOT NULL,
+                           name text UNIQUE NOT NULL,
                            description text NOT NULL,
                            FOREIGN KEY (creator_id) REFERENCES user (id)
 );
@@ -276,3 +276,9 @@ VALUES
     ('selected_user6', 'user2', 'post2'),
     ('selected_user7', 'user3', 'post5'),
     ('selected_user8', 'user4', 'post5');
+
+CREATE TABLE image (
+    id text NOT NULL UNIQUE,
+    parent_id text NOT NULL,
+    path text NOT NULL
+)

@@ -43,12 +43,12 @@ type CommentRepository interface {
 
 type GroupRepository interface {
 	Create(group model.Group, privacy int) (*model.Group, error)
-	Delete(group_id string) error
+	Delete(groupId string) error
 	Update(group model.Group, privacy int) error
-	Get(group_id string) (*model.Group, error)
-	Members(group_id string) (*[]model.User, error)
-	IsMember(group_id, user_id string) (bool, error)
-	AddMember(group_id, user_id string) error
+	Get(groupId string) (*model.Group, error)
+	Members(groupId string) (*[]model.User, error)
+	IsMember(groupId, userId string) (bool, error)
+	AddMember(groupId, userId string) error
 }
 
 type PrivacyRepository interface {
@@ -64,6 +64,14 @@ type EventRepository interface {
 	Delete(eventId string) error
 	Get(eventId string) (*model.Event, error)
 	Register(userid, eventId string, opt int) error
+}
+
+type ImageRepository interface {
+	Add(parentId string, paths []string) error
+	Delete(id string) error
+	DeleteAll(parentId string) error
+	Update(parentId string, paths []string) error
+	Get(parentId string) ([]string, error)
 }
 
 type ChatRepository interface {

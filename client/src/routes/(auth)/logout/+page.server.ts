@@ -8,8 +8,6 @@ export const prerender = false;
 export const load: PageServerLoad = async (event) => {
 
 
-    console.log("GERE")
-
     deleteTokens(event)
 
     redirect(303, "/signin")

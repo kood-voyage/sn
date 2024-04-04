@@ -155,25 +155,31 @@ func (s *Server) groupGet() http.HandlerFunc {
 			return
 		}
 
+		//firstly retrieve the group
+		group, err := s.store.Group().Get(r.PathValue("id"))
+		if err != nil {
+			s.error(w, http.StatusUnauthorized, err)
+			return
+		}
+
 		//check group privacy status
-		privacy, err := s.store.Privacy().Check(r.PathValue("id"))
+		privacy, err := s.store.Privacy().Check(group.ID)
 		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
 
 		if privacy == s.types.Privacy.Private {
-			_, err := s.store.Group().IsMember(r.PathValue("id"), sourceID) 
+			t, err := s.store.Group().IsMember(group.ID, sourceID)
 			if err != nil {
 				s.error(w, http.StatusForbidden, err)
 				return
 			}
-		}
 
-		group, err := s.store.Group().Get(r.PathValue("id"))
-		if err != nil {
-			s.error(w, http.StatusUnauthorized, err)
-			return
+			if !t {
+				s.error(w, http.StatusForbidden, errors.New("you don't have access to this group"))
+				return
+			}
 		}
 
 		s.respond(w, http.StatusOK, Response{Data: group})
