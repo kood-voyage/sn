@@ -93,3 +93,35 @@ func (s *Server) jwtMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxUserID, id)))
 	})
 }
+
+func (s *Server) jwtMiddlewareForCookies(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		cookie, err := r.Cookie("at")
+		if err != nil {
+			s.error(w, http.StatusUnauthorized, err)
+			return
+		}
+
+		// Parse the token
+		alg := jwttoken.HmacSha256(os.Getenv(jwtKey))
+		claims, err := alg.DecodeAndValidate(cookie.Value)
+		if err != nil {
+			s.error(w, http.StatusUnauthorized, err)
+			return
+		}
+
+		user_id, err := claims.Get("user_id")
+		if err != nil {
+			s.error(w, http.StatusUnauthorized, err)
+			return
+		}
+
+		user_id_string, ok := user_id.(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("user_id is not a string"))
+			return
+		}
+
+		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxUserID, user_id_string)))
+	})
+}

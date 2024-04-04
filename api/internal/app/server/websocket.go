@@ -60,6 +60,7 @@ func (cs *ChatService) HandleWS(w http.ResponseWriter, r *http.Request) {
 	}
 	sourceID, ok := r.Context().Value(ctxUserID).(string)
 	if !ok {
+		fmt.Println("TEST")
 		return
 	}
 	id := sourceID
