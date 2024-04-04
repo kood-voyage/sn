@@ -1,15 +1,27 @@
 <script lang="ts">
+	import PostForm from '$lib/components/post-form.svelte';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import type { GroupJson } from '$lib/server/api/group-requests';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+	let id: string, name: string, description: string, image_path: string;
+	const groupResp = data.group;
 
-	const { name } = data;
-
-	// type Data = {
-	// 	post: number;
-	// 	followers: number;
-	// 	following: number;
-	// };
+	try {
+		const data = groupResp.data as GroupJson;
+		id = data.id;
+		name = data.name;
+		description = data.description;
+		image_path = data.image_path[0];
+	} catch (err) {
+		console.error(err);
+		name = '404 Not Found';
+		description = '';
+		image_path =
+			'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg';
+	}
 </script>
 
 <svelte:head>
@@ -25,30 +37,63 @@
 			<!-- banner img  -->
 			<div class="m-auto h-32 sm:h-60 max-w-[1096px] p-0 sm:px-2">
 				<img
-					class="h-full w-full object-cover sm:rounded-xl"
-					src="https://profilemediabucket-voyage.s3.amazonaws.com/group/e9957939-7d54-40b1-bfef-081952574981/coverb"
+					class="h-full w-full object-cover object-center sm:rounded-xl"
+					src={image_path}
 					alt="banner"
 				/>
 			</div>
 
 			<div class="max-w-[1096px] sm:px-2 h-16">
-				<div class="w-full bg-slate-200/30 p-1 mt-1 h-full flex items-center sm:rounded-xl">
-					<div class="h-full align-middle self-center">
-						<p class="h-full w-fit align-middle self-center">{name}</p>
+				<div
+					class="w-full bg-slate-200/30 p-1 mt-1 h-full flex justify-between items-center sm:rounded-xl"
+				>
+					<div class="h-full align-middle flex-col self-start">
+						<p class="md:text-xl text-lg text-ellipsis w-full bold text-left font-bold mr-2">
+							{name}
+						</p>
+						<p class="lines3 text-sm text-left text-slate-400">{description}</p>
+					</div>
+					<div class="flex flex-row">
+						<form action="?/invite" method="post" class=" text-center">
+							<input type="text" hidden name="target_id" value={id} />
+							<button class="text-sm rounded-md px-5 border bg-sky-500 p-1 m-0.5" type="submit">
+								Invite User
+							</button>
+						</form>
+						<form>
+							<input type="text" hidden name="target_id" value={id} />
+
+							<Dialog.Root>
+								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
+									>Create Post</Dialog.Trigger
+								>
+
+								<Dialog.Content>
+									<PostForm data={data.form} />
+									<!-- <Dialog.Header class=""> -->
+									<!-- <Dialog.Title>{title}</Dialog.Title>
+
+														<Dialog.Description>
+															{content}
+														</Dialog.Description>
+
+									
+
+														<div class="py-2 text-center text-sm text-muted-foreground">
+															Slide {current} of {count}
+														</div>
+													</Dialog.Header>
+													<div class="w-full h-full"></div>
+
+													<a href={`/app/post/${id}`} class="w-full h-4">to post</a> -->
+								</Dialog.Content>
+							</Dialog.Root>
+						</form>
+						<!-- 
+						-->
 					</div>
 				</div>
 			</div>
-
-			<!-- <div class="w-full relative">
-				<img
-					src="https://api.contentstack.io/v2/assets/575e4d1c0342dfd738264a1f/download?uid=bltada7771f270d08f6"
-					alt="banner"
-					class="m-auto h-32 w-32 relative bottom-20 rounded-full border-4 border-white object-cover dark:border-slate-950"
-				/>
-				<h1 class="sm:bottom-4 left-[140px] text-2xl font-bold">
-					{name}
-				</h1>
-			</div> -->
 		</div>
 
 		<!-- group activity / posts -->

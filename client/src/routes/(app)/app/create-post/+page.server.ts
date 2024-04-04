@@ -1,6 +1,6 @@
 import type { PageServerLoad, Actions, } from './$types';
 import { superValidate } from 'sveltekit-superforms';
-import { postSchema } from "../post-schema"
+import { postSchema } from "../../../../lib/types/post-schema"
 
 import { zod } from 'sveltekit-superforms/adapters';
 import { getUserIdFromCookie } from '$lib/server/jwt-handle';

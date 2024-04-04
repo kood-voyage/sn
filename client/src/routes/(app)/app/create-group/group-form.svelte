@@ -2,7 +2,7 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import { groupSchema, type GroupSchema } from '../group-schema';
+	import { groupSchema, type GroupSchema } from '$lib/types/group-schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Label } from '$lib/components/ui/label/index.js';

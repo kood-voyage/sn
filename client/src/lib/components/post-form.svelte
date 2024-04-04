@@ -2,7 +2,7 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import { postSchema, type PostSchema } from '../post-schema';
+	import { postSchema, type PostSchema } from '$lib/types/post-schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Label } from '$lib/components/ui/label/index.js';
@@ -11,13 +11,27 @@
 
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import { createPostImagesStore } from '$lib/store/create-post-store';
+	import { handleImageCopression } from '$lib/client/image-compression';
 
 	export let data: SuperValidated<Infer<PostSchema>>;
 
 	let images = [];
 
 	const form = superForm(data, {
-		validators: zodClient(postSchema)
+		validators: zodClient(postSchema),
+		onSubmit: async (input) => {
+			console.log('asdfasdf', input);
+			const image = input.formData.get('image') as File;
+			const imgResp = await handleImageCopression(image);
+			if (!imgResp.ok) {
+				input.cancel();
+				return;
+			}
+			const file = imgResp.file as File;
+
+			input.formData.set('image', file);
+			console.log(`compressedFile size ${file.size / 1024 / 1024} MB`);
+		}
 	});
 
 	const { form: formData, enhance } = form;
@@ -63,8 +77,6 @@
 		<Carousel.Next />
 	</Carousel.Root>
 {/if}
-
-
 
 <form
 	method="POST"

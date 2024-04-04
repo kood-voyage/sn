@@ -8,6 +8,6 @@ export async function mainGetGroup(event: RequestEvent, group_name: string) {
     return { ...respGroup }
   }
 
-  console.log(respGroup.data)
+  // console.log(respGroup)
   return { ...respGroup }
 }
