@@ -3,11 +3,13 @@ package server
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
-	"social-network/pkg/jwttoken"
 	"strings"
 	"time"
+
+	"social-network/pkg/jwttoken"
 
 	"github.com/google/uuid"
 )
@@ -78,14 +80,12 @@ func (s *Server) jwtMiddleware(next http.Handler) http.Handler {
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 		alg := jwttoken.HmacSha256(os.Getenv(jwtKey))
 		claims, err := alg.DecodeAndValidate(token)
-
 		if err != nil {
 			s.error(w, http.StatusUnauthorized, err)
 			return
 		}
 
 		id, err := claims.Get("user_id")
-
 		if err != nil {
 			s.error(w, http.StatusUnauthorized, err)
 			return
@@ -98,6 +98,7 @@ func (s *Server) jwtMiddlewareForCookies(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("at")
 		if err != nil {
+			fmt.Println("COOKIE AND ERROR ", r.Cookies(), cookie, err)
 			s.error(w, http.StatusUnauthorized, err)
 			return
 		}

@@ -33,7 +33,19 @@
 
 	import { setMode, resetMode } from 'mode-watcher';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { onDestroy, onMount } from 'svelte';
+	import { closeWebSocket, connectWebSocket } from '$lib/client/websocket.js';
+	import type { User } from '$lib/types/user.js';
 
+	let currentUser = $currentUserStore as User;
+	onMount(() => {
+		// console.log(document.cookie);
+		connectWebSocket(currentUser.id);
+	});
+
+	onDestroy(() => {
+		closeWebSocket();
+	});
 	///
 </script>
 
@@ -81,7 +93,6 @@
 						<Calendar class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
 					</div>
 				</a>
-				
 			</div>
 
 			<!-- // profile info -->

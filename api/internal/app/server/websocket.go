@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
+
 	"social-network/internal/model"
 	"social-network/internal/store"
 	"social-network/pkg/validator"
-	"sync"
 
 	"github.com/gorilla/websocket"
 )
@@ -58,13 +59,15 @@ func (cs *ChatService) HandleWS(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	sourceID, ok := r.Context().Value(ctxUserID).(string)
-	if !ok {
-		fmt.Println("TEST")
-		return
-	}
+	// sourceID, ok := r.Context().Value(ctxUserID).(string)
+	sourceID := r.PathValue("id")
+	fmt.Println(sourceID)
+	// if !ok {
+	// 	fmt.Println("TEST")
+	// 	return
+	// }
 	id := sourceID
-	//append clients to keep track of clients
+	// append clients to keep track of clients
 	client := NewClient(id, conn)
 	cs.AddClient(client)
 	fmt.Printf("Clients connected: %+v\n", cs.Clients)
@@ -104,7 +107,7 @@ func (c *Client) wsRecieveLoop(cs *ChatService) {
 	for {
 		var body Payload
 		if err := c.conn.ReadJSON(&body); err != nil {
-			if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+			if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway, websocket.CloseAbnormalClosure, websocket.CloseNoStatusReceived) {
 				return
 			}
 			log.Println("Read error:", err)
@@ -112,7 +115,7 @@ func (c *Client) wsRecieveLoop(cs *ChatService) {
 		}
 		fmt.Printf("Recieved message: %+v\n", body)
 		if err := validator.Validate(body); err != nil {
-			//validate the payload
+			// validate the payload
 			c.conn.WriteJSON(fmt.Sprintf("bad payload - %v", err))
 		} else {
 			users, err := cs.getUsers(body)
@@ -165,8 +168,8 @@ func (cs *ChatService) writeToUsers(clients []*Client, p Payload) error {
 }
 
 func (cs *ChatService) sendUserStatus(client Client) {
-	//get current user follow list
-	//check all the user id-s from the follow list if we have a connection with specific id send that user according status
+	// get current user follow list
+	// check all the user id-s from the follow list if we have a connection with specific id send that user according status
 	userFollowList, err := cs.store.User().GetFollowers(client.id)
 	if err != nil {
 		fmt.Println("SOMETHING WENT WRONG WHILE CALCULATING STATUSES")
@@ -188,8 +191,8 @@ func (cs *ChatService) sendUserStatus(client Client) {
 }
 
 func (cs *ChatService) getOnlineUsers(client Client) {
-	//get current user follow list
-	//check all the use id-s from the follow list if we hahve a connection with specific id send current user all the information about users -- online or offline
+	// get current user follow list
+	// check all the use id-s from the follow list if we hahve a connection with specific id send current user all the information about users -- online or offline
 	userFollowList, err := cs.store.User().GetFollowers(client.id)
 	if err != nil {
 		fmt.Println("SOMETHING WENT WRONG WHILE CALCULATING STATUSES")

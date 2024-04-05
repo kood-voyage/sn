@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
+
 	_ "social-network/docs"
 	"social-network/internal/app/config"
 	"social-network/internal/model"
@@ -13,7 +15,6 @@ import (
 	"social-network/pkg/client"
 	"social-network/pkg/jwttoken"
 	"social-network/pkg/router"
-	"time"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -46,7 +47,6 @@ type Server struct {
 type Option func(*config.Config)
 
 func newServer(store store.Store, opts ...Option) *Server {
-
 	config := &config.Config{}
 
 	// Apply options
@@ -75,8 +75,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func configureRouter(s *Server) {
 	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware)
 	s.router.UseWithPrefix("auth", s.jwtMiddleware)
-	s.router.UseWithPrefix("cookie", s.jwtMiddlewareForCookies)
-
+	// s.router.UseWithPrefix("cookie", s.jwtMiddlewareForCookies)
 
 	s.router.GET("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://ec2-3-84-51-36.compute-1.amazonaws.com:8080/swagger/doc.json"),
@@ -126,7 +125,7 @@ func configureRouter(s *Server) {
 	s.router.POST("/api/v1/auth/chats/add/line", s.addLineChat())
 	//--WEBSOCKET--//
 	s.router.GET("/ws", s.wsHandler())
-	s.router.GET("/cookie/ws", s.wsService.HandleWS)
+	s.router.GET("/cookie/ws/{id}", s.wsService.HandleWS)
 
 	s.router.GET("/login/{id}", s.login())
 }
@@ -160,8 +159,7 @@ func (s *Server) decode(r *http.Request, data interface{}) error {
 	return nil
 }
 
-//FOR DEVELOPMENT PURPOSES TO GENERATE JWT TOKEN
-
+// FOR DEVELOPMENT PURPOSES TO GENERATE JWT TOKEN
 func (s *Server) login() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		newToken := jwttoken.NewClaims()

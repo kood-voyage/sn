@@ -144,7 +144,6 @@
 
 		<!-- profile activity / posts -->
 
-		
 		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-1 p-0 sm:p-4 mt-5 md:mt-0">
 			{#if posts !== null}
 				{#each posts as data}

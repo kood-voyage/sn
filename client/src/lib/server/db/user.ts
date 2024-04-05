@@ -5,21 +5,21 @@ export type RowType = {
   username: string,
   first_name: string,
   last_name: string,
-  avatar:string,
-  cover:string,
-  description:string
+  avatar: string,
+  cover: string,
+  description: string
 
 }
 
 export function mainGetAllUsers() {
   type RowType = {
-    user_id: string,
+    id: string,
     username: string,
     first_name: string,
     last_name: string,
-    avatar:string,
-  cover:string,
-  description:string
+    avatar: string,
+    cover: string,
+    description: string
   }
 
   const query = `SELECT id,

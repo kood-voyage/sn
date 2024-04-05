@@ -30,6 +30,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 
           if (rdecoded && typeof rdecoded == "object") {
             refreshTokens(event, rdecoded.access_token_id)
+            if (pathname.startsWith("/signin") || pathname.startsWith("/signup")) {
+              redirect(303, "/app")
+            }
           }
 
         } else {
@@ -43,7 +46,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   })
 
 
-  
+
 
 
 

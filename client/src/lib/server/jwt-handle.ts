@@ -37,7 +37,12 @@ export function createTokens(event: CreateEvent | RefreshEvent, user_id: string)
     return new Date((new Date()).getTime() + time * 1000);
   }
 
-  event.cookies.set("at", access_token, { path: "/", expires: timeConvert(min15) })
+  event.cookies.set("at", access_token, {
+    path: "/", expires: timeConvert(min15),
+    httpOnly: false,
+    secure: false,
+    sameSite: "none"
+  })
   event.cookies.set("rt", refresh_token, { path: "/", expires: timeConvert(week) })
   return { ok: true }
 }
@@ -45,7 +50,9 @@ export function createTokens(event: CreateEvent | RefreshEvent, user_id: string)
 export function deleteTokens(event: RefreshEvent) {
   const negTime = new Date((new Date()).getTime() - 1 * 1000)
   event.cookies.set("rt", "", { path: "/", expires: negTime })
-  event.cookies.set("at", "", { path: "/", expires: negTime })
+  event.cookies.set("at", "", {
+    path: "/", expires: negTime
+  })
 }
 
 export function refreshTokens(event: RefreshEvent, access_token_id: string) {
