@@ -1,5 +1,14 @@
+<script lang="ts">
+	import * as Dialog from '$lib/components/ui/dialog';
+	import type { PageData } from './$types';
+	import PeopleSearch from './people-search.svelte';
+
+	export let data: PageData;
+	console.log(data.data);
+</script>
+
 <svelte:head>
-	<title>chat</title>
+	<title>Chat</title>
 </svelte:head>
 
 <!-- chat page -->
@@ -7,8 +16,36 @@
 	<!-- user list -->
 	<div class="overflow-scroll h-screen w-14 sm:w-60 bg-slate-50 dark:bg-slate-900">
 		<!-- search group / friends -->
-		<div class="border-b-2 border-slate-300 dark:border-slate-950 h-12 hidden sm:block">
-			<div class="p-2">
+		<div class="border-b-2 border-slate-300 dark:border-slate-950 h-22 hidden sm:block">
+			<Dialog.Root>
+				<div class="p-2 pb-1">
+					<Dialog.Trigger
+						class="text-sm rounded-md h-fit w-full  py-1 border dark:hover:bg-slate-800 bg-slate-300 dark:bg-slate-950 "
+						>New Chat</Dialog.Trigger
+					>
+				</div>
+
+				<Dialog.Content class="w-fit h-fit max-h-96">
+					<PeopleSearch userInfo={data.data} />
+					<!-- <Dialog.Header class=""> -->
+					<!-- <Dialog.Title>{title}</Dialog.Title>
+
+														<Dialog.Description>
+															{content}
+														</Dialog.Description>
+
+									
+
+														<div class="py-2 text-center text-sm text-muted-foreground">
+															Slide {current} of {count}
+														</div>
+													</Dialog.Header>
+													<div class="w-full h-full"></div>
+
+													<a href={`/app/post/${id}`} class="w-full h-4">to post</a> -->
+				</Dialog.Content>
+			</Dialog.Root>
+			<div class="p-2 pt-1">
 				<p class="bg-slate-300 dark:bg-slate-950 rounded py-1 px-2">find friend</p>
 			</div>
 		</div>

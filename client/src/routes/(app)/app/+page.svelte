@@ -15,7 +15,6 @@
 
 	let messages: MessageStore = [];
 	let statuses: UserStatusStore = {};
-
 	let currentUser = $currentUserStore as User;
 
 	messageStore.subscribe((value) => {

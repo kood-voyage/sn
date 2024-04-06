@@ -1,6 +1,6 @@
 import { db } from ".";
 
-export type RowType = {
+export type UserRowType = {
   user_id: string,
   username: string,
   first_name: string,
@@ -12,15 +12,7 @@ export type RowType = {
 }
 
 export function mainGetAllUsers() {
-  type RowType = {
-    id: string,
-    username: string,
-    first_name: string,
-    last_name: string,
-    avatar: string,
-    cover: string,
-    description: string
-  }
+
 
   const query = `SELECT id,
     username,
@@ -29,7 +21,7 @@ export function mainGetAllUsers() {
   try {
     const prep = db.prepare(query)
 
-    const row = prep.all() as RowType[]
+    const row = prep.all() as UserRowType[]
 
     if (typeof row === 'object' && row !== null && row.length != 0) {
 

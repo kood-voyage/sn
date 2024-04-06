@@ -4,7 +4,6 @@ import type { PageServerLoad } from "./$types";
 export const load: PageServerLoad = async () => {
 
 
-
   const data = mainGetAllUsers()
   if (!data.ok) {
     console.error(data.message)
