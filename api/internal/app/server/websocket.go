@@ -60,7 +60,7 @@ func (cs *ChatService) HandleWS(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	id := sourceID
-	//append clients to keep track of clients
+	//append client to keep track of clients
 	client := NewClient(id, conn)
 	cs.AddClient(client)
 	fmt.Printf("Clients connected: %+v\n", cs.Clients)
@@ -100,7 +100,7 @@ func (c *Client) wsRecieveLoop(cs *ChatService) {
 	for {
 		var body Payload
 		if err := c.conn.ReadJSON(&body); err != nil {
-			if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+			if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway, websocket.CloseAbnormalClosure, websocket.CloseNoStatusReceived) {
 				return
 			}
 			log.Println("Read error:", err)
