@@ -40,7 +40,7 @@
 	let currentUser = $currentUserStore as User;
 	onMount(() => {
 		// console.log(document.cookie);
-		connectWebSocket(currentUser.id);
+		connectWebSocket(data.access_token);
 	});
 
 	onDestroy(() => {

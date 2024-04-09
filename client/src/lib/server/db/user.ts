@@ -11,7 +11,9 @@ export type UserRowType = {
 
 }
 
-export function mainGetAllUsers() {
+type ReturnType = { ok: true, data: UserRowType[] } | { ok: false, error: Error | unknown, message: string }
+
+export function mainGetAllUsers(): ReturnType {
 
 
   const query = `SELECT id,

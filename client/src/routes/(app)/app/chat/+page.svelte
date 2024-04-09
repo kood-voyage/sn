@@ -1,10 +1,19 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog';
+	import type { UserRowType } from '$lib/server/db/user';
 	import type { PageData } from './$types';
 	import PeopleSearch from './people-search.svelte';
 
 	export let data: PageData;
-	console.log(data.data);
+	// console.log(data.data);
+
+	let searchQuery = '';
+
+	let people = data.data as UserRowType[];
+
+	$: filteredPeople = people
+		.filter((person) => person.username.toLowerCase().includes(searchQuery.toLowerCase()))
+		.slice(0, 6);
 </script>
 
 <svelte:head>
@@ -26,27 +35,21 @@
 				</div>
 
 				<Dialog.Content class="w-fit h-fit max-h-96">
-					<PeopleSearch userInfo={data.data} />
-					<!-- <Dialog.Header class=""> -->
-					<!-- <Dialog.Title>{title}</Dialog.Title>
-
-														<Dialog.Description>
-															{content}
-														</Dialog.Description>
-
-									
-
-														<div class="py-2 text-center text-sm text-muted-foreground">
-															Slide {current} of {count}
-														</div>
-													</Dialog.Header>
-													<div class="w-full h-full"></div>
-
-													<a href={`/app/post/${id}`} class="w-full h-4">to post</a> -->
+					{#if data.ok}
+						<PeopleSearch userInfo={data.data} />
+					{:else}
+						<p>Data is not available or an error occurred.</p>
+					{/if}
 				</Dialog.Content>
 			</Dialog.Root>
+
 			<div class="p-2 pt-1">
-				<p class="bg-slate-300 dark:bg-slate-950 rounded py-1 px-2">find friend</p>
+				<input
+					type="text"
+					placeholder="Find friend..."
+					class="bg-slate-300 dark:bg-slate-950 w-full rounded py-1 px-2 cursor-pointer"
+					bind:value={searchQuery}
+				/>
 			</div>
 		</div>
 
@@ -58,35 +61,15 @@
 				<p class="text-xs">DIRECT MESSAGES</p>
 			</div>
 
-			<div class="block sm:hidden h-12"></div>
-
-			<ol>
-				<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 active">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto sm:mx-2"
-					/>
-					<p>Nikita</p>
-				</li>
-
-				<li class="user hover:bg-slate-300 dark:hover:bg-slate-800">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Markus"
-						alt="avatar"
-						class="m-auto sm:mx-2"
-					/>
-					<p>Markus</p>
-				</li>
-
-				<li class="user hover:bg-slate-300 dark:hover:bg-slate-800">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Harri"
-						alt="avatar"
-						class="m-auto sm:mx-2"
-					/>
-					<p>Harri</p>
-				</li>
+			<ol class="">
+				{#each filteredPeople as person (person)}
+					<!-- <img src={person.avatar} alt="avatar" class="m-auto sm:mx-2" /> -->
+					<li class="user hover:bg-slate-300 dark:hover:bg-slate-800 text-center">
+						<img src={person.avatar} alt="avatar" class="m-auto sm:mx-2" />
+						<p class=" align-middle justify-center text-center">{person.username}</p>
+					</li>
+					<!-- <li class="person-item select-none text-center hover:bg-slate-500">{person.username}</li> -->
+				{/each}
 			</ol>
 		</div>
 	</div>
@@ -122,12 +105,12 @@
 
 	@media (min-width: 640px) {
 		div ol li.user p {
-			@apply ml-2 block items-center text-center align-middle;
+			@apply ml-2 flex items-center text-center align-middle;
 		}
 	}
 
 	div ol li.user img {
-		@apply h-8 items-center justify-center rounded-full;
+		@apply h-8 w-8 items-center justify-center rounded-full;
 	}
 
 	.active {
