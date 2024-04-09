@@ -47,7 +47,11 @@ type Payload struct {
 
 // need middleware to grab user_id
 func (cs *ChatService) HandleWS(w http.ResponseWriter, r *http.Request) {
-	sourceID := r.PathValue("id")
+	sourceID, ok := r.Context().Value(ctxUserID).(string)
+	if !ok {
+		fmt.Println("unauthorized")
+		return
+	}
 	wsUpgrader := websocket.Upgrader{
 		ReadBufferSize:  1028,
 		WriteBufferSize: 1028,
@@ -59,9 +63,8 @@ func (cs *ChatService) HandleWS(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	id := sourceID
 	//append client to keep track of clients
-	client := NewClient(id, conn)
+	client := NewClient(sourceID, conn)
 	cs.AddClient(client)
 	fmt.Printf("Clients connected: %+v\n", cs.Clients)
 
