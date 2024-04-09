@@ -13,7 +13,7 @@ type Chat struct {
 type ChatLine struct {
 	ID        string    `db:"id" json:"id"`
 	ChatID    string    `db:"chat_id" json:"chat_id" validate:"required"`
-	UserID    string    `db:"user_id" json:"user_id" validate:"required"`
+	UserID    string    `db:"user_id" json:"user_id"`
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
 	Message   string    `db:"message" json:"message"`
 }
