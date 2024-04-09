@@ -8,8 +8,8 @@ let webSocket: WebSocket;
 
 
 // Function to establish WebSocket connection
-export function connectWebSocket(user_id: string) {
-  webSocket = new WebSocket(`ws://localhost:8080/cookie/ws/${user_id}`);
+export function connectWebSocket(access_token: string) {
+  webSocket = new WebSocket(`ws://localhost:8080/cookie/ws?at=${access_token}`);
   webSocket.onmessage = function (event) {
     console.log('Received message:', event.data);
   };
