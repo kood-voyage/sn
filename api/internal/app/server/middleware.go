@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -94,18 +93,12 @@ func (s *Server) jwtMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func (s *Server) jwtMiddlewareForCookies(next http.Handler) http.Handler {
+func (s *Server) jwtMiddlewareForQuery(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie("at")
-		if err != nil {
-			fmt.Println("COOKIE AND ERROR ", r.Cookies(), cookie, err)
-			s.error(w, http.StatusUnauthorized, err)
-			return
-		}
-
+		accessToken := r.URL.Query().Get("at")
 		// Parse the token
 		alg := jwttoken.HmacSha256(os.Getenv(jwtKey))
-		claims, err := alg.DecodeAndValidate(cookie.Value)
+		claims, err := alg.DecodeAndValidate(accessToken)
 		if err != nil {
 			s.error(w, http.StatusUnauthorized, err)
 			return
@@ -117,12 +110,6 @@ func (s *Server) jwtMiddlewareForCookies(next http.Handler) http.Handler {
 			return
 		}
 
-		user_id_string, ok := user_id.(string)
-		if !ok {
-			s.error(w, http.StatusUnauthorized, errors.New("user_id is not a string"))
-			return
-		}
-
-		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxUserID, user_id_string)))
+		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxUserID, user_id)))
 	})
 }

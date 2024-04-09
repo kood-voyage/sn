@@ -75,7 +75,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func configureRouter(s *Server) {
 	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware)
 	s.router.UseWithPrefix("auth", s.jwtMiddleware)
-	// s.router.UseWithPrefix("cookie", s.jwtMiddlewareForCookies)
+	s.router.UseWithPrefix("cookie", s.jwtMiddlewareForQuery)
 
 	s.router.GET("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://ec2-3-84-51-36.compute-1.amazonaws.com:8080/swagger/doc.json"),
