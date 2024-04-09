@@ -165,20 +165,20 @@ func (cs *ChatService) writeToUsers(clients []*Client, p Payload) error {
 }
 
 func (cs *ChatService) sendUserStatus(client Client) {
-	// get current user follow list
-	// check all the user id-s from the follow list if we have a connection with specific id send that user according status
-	userFollowList, err := cs.store.User().GetFollowers(client.id)
+	// get current user chats list
+	// check all the user id-s from the chats list if we have a connection with specific id send that user according status
+	userSendList, err := cs.store.Chat().GetChatsForUser(client.id)
 	if err != nil {
 		fmt.Println("SOMETHING WENT WRONG WHILE CALCULATING STATUSES")
 		return
 	}
 	for _, c := range cs.Clients {
-		for _, user := range userFollowList {
+		for _, user := range userSendList {
 			if c.id == user.ID {
 				c.conn.WriteJSON(Payload{
 					Type:     "status",
-					Address:  "broadcast",
-					ID:       "",
+					Address:  "direct",
+					ID:       c.id,
 					SourceID: client.id,
 					Data:     true,
 				})
@@ -190,7 +190,7 @@ func (cs *ChatService) sendUserStatus(client Client) {
 func (cs *ChatService) getOnlineUsers(client Client) {
 	// get current user follow list
 	// check all the use id-s from the follow list if we hahve a connection with specific id send current user all the information about users -- online or offline
-	userFollowList, err := cs.store.User().GetFollowers(client.id)
+	userSendList, err := cs.store.Chat().GetChatsForUser(client.id)
 	if err != nil {
 		fmt.Println("SOMETHING WENT WRONG WHILE CALCULATING STATUSES")
 		return
@@ -198,17 +198,17 @@ func (cs *ChatService) getOnlineUsers(client Client) {
 	var sendList []model.User
 
 	for _, c := range cs.Clients {
-		for _, user := range userFollowList {
+		for _, user := range userSendList {
 			if c.id == user.ID {
-				sendList = append(sendList, user)
+				sendList = append(sendList, *user)
 			}
 		}
 	}
 	r := Payload{
 		Type:     "status",
-		Address:  "broadcast",
-		ID:       "",
-		SourceID: client.id,
+		Address:  "direct",
+		ID:       client.id,
+		SourceID: "server",
 		Data:     sendList,
 	}
 	if err := client.conn.WriteJSON(r); err != nil {
