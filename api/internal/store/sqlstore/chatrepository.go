@@ -118,3 +118,25 @@ func (c *ChatRepository) Load(chat_id, user_id string) ([]*model.ChatLine, error
 
 	return chatLines, nil
 }
+
+func (c *ChatRepository) GetChatsForUser(userID string) ([]*model.User, error) {
+	query := `SELECT DISTINCT cu.user_id FROM chat_users cu JOIN chat_users cu2 ON cu.chat_id = cu2.chat_id WHERE cu2.user_id = ? AND cu.user_id != ?`
+
+	rows, err := c.store.Db.Query(query, userID, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []*model.User
+	for rows.Next() {
+		var user model.User
+		if err := rows.Scan(&user.ID); err != nil {
+			return nil, err
+		}
+
+		users = append(users, &user)
+	}
+
+	return users, nil
+}
