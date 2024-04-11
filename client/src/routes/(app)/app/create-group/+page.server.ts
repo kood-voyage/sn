@@ -2,7 +2,7 @@ import type { PageServerLoad, Actions, } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { v4 as uuidv4 } from 'uuid';
 import { zod } from 'sveltekit-superforms/adapters';
-import { groupSchema } from '../../../../lib/types/group-schema';
+import { groupSchema } from '$lib/types/group-schema';
 import { saveToS3 } from '$lib/server/images/upload';
 import { LOCAL_PATH, S3_BUCKET } from '$env/static/private';
 import { redirect } from '@sveltejs/kit';
@@ -75,8 +75,8 @@ export const actions: Actions = {
 
 			// Handle successful response
 		} catch (err) {
-			console.log("ERROR >>>", err.name)
 			if (err instanceof Error) {
+				console.log("ERROR >>>", err.name)
 				//  { ok: false, error: err, message: err.message }
 			} else {
 				//  { ok: false, error: err, message: "Unknown Error" }

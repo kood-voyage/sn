@@ -9,11 +9,18 @@
 
 	let searchQuery = '';
 
-	let people = data.data as UserRowType[];
+	let people: UserRowType[] = [];
+	if (data.ok) {
+		people = data.data;
+	}
 
-	$: filteredPeople = people
-		.filter((person) => person.username.toLowerCase().includes(searchQuery.toLowerCase()))
-		.slice(0, 6);
+	let filteredPeople: UserRowType[] = [];
+
+	$: if (people.length != 0 && people != undefined) {
+		filteredPeople = people
+			.filter((person) => person.username.toLowerCase().includes(searchQuery.toLowerCase()))
+			.slice(0, 6);
+	}
 </script>
 
 <svelte:head>
@@ -26,22 +33,17 @@
 	<div class="overflow-scroll h-screen w-14 sm:w-60 bg-slate-50 dark:bg-slate-900">
 		<!-- search group / friends -->
 		<div class="border-b-2 border-slate-300 dark:border-slate-950 h-22 hidden sm:block">
-			<Dialog.Root>
+			{#if data.ok}
+				<PeopleSearch userInfo={data.data} />
+			{:else}
 				<div class="p-2 pb-1">
-					<Dialog.Trigger
-						class="text-sm rounded-md h-fit w-full  py-1 border dark:hover:bg-slate-800 bg-slate-300 dark:bg-slate-950 "
-						>New Chat</Dialog.Trigger
+					<p
+						class="text-sm rounded-md h-fit w-full p-1 border select-none bg-slate-300 dark:bg-slate-950"
 					>
+						Not Found
+					</p>
 				</div>
-
-				<Dialog.Content class="w-fit h-fit max-h-96">
-					{#if data.ok}
-						<PeopleSearch userInfo={data.data} />
-					{:else}
-						<p>Data is not available or an error occurred.</p>
-					{/if}
-				</Dialog.Content>
-			</Dialog.Root>
+			{/if}
 
 			<div class="p-2 pt-1">
 				<input
@@ -58,18 +60,27 @@
 			<!-- header h1 -->
 
 			<div class="hidden sm:block p-2">
-				<p class="text-xs">DIRECT MESSAGES</p>
+				<p class="text-xs select-none">DIRECT MESSAGES</p>
 			</div>
 
 			<ol class="">
-				{#each filteredPeople as person (person)}
-					<!-- <img src={person.avatar} alt="avatar" class="m-auto sm:mx-2" /> -->
-					<li class="user hover:bg-slate-300 dark:hover:bg-slate-800 text-center">
-						<img src={person.avatar} alt="avatar" class="m-auto sm:mx-2" />
-						<p class=" align-middle justify-center text-center">{person.username}</p>
-					</li>
-					<!-- <li class="person-item select-none text-center hover:bg-slate-500">{person.username}</li> -->
-				{/each}
+				{#if filteredPeople.length != 0}
+					{#each filteredPeople as person (person)}
+						<!-- <img src={person.avatar} alt="avatar" class="m-auto sm:mx-2" /> -->
+						<li class="user hover:bg-slate-300 dark:hover:bg-slate-800 text-center select-none">
+							<img src={person.avatar} alt="avatar" class="m-auto sm:mx-2" />
+							<p
+								class=" align-middle justify-center text-center"
+								on:click={() => {
+									// (dialogOpen = false)
+								}}
+							>
+								{person.username}
+							</p>
+						</li>
+						<!-- <li class="person-item select-none text-center hover:bg-slate-500">{person.username}</li> -->
+					{/each}
+				{/if}
 			</ol>
 		</div>
 	</div>
@@ -113,11 +124,11 @@
 		@apply h-8 w-8 items-center justify-center rounded-full;
 	}
 
-	.active {
+	/* .active {
 		@apply bg-slate-400 dark:bg-slate-700;
-	}
-
+	} */
+	/* 
 	.user .active p {
 		@apply text-slate-900 dark:text-slate-100;
-	}
+	} */
 </style>

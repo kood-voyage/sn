@@ -79,6 +79,9 @@ type ChatRepository interface {
 	AddUser(user model.User, chat model.Chat) error
 	GetUsers(chat model.Chat) ([]model.User, error)
 	AddLine(line *model.ChatLine) (*model.ChatLine, error)
+	GetAll(user_id string) ([]*model.Chat, error)
+	Load(chat_id, user_id string) ([]*model.ChatLine, error)
+	GetChatsForUser(userID string) ([]*model.User, error)
 	// TO-DO
 	// DeleteUser()
 }

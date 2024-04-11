@@ -1,4 +1,5 @@
 import { db } from ".";
+import type { ReturnType } from "$lib/types/requests";
 
 export type UserRowType = {
   user_id: string,
@@ -11,9 +12,9 @@ export type UserRowType = {
 
 }
 
-type ReturnType = { ok: true, data: UserRowType[] } | { ok: false, error: Error | unknown, message: string }
+type userResp = ReturnType<UserRowType>
 
-export function mainGetAllUsers(): ReturnType {
+export function mainGetAllUsers(): userResp {
 
 
   const query = `SELECT id,
