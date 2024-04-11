@@ -3,9 +3,10 @@ package sqlstore
 import (
 	"database/sql"
 	"fmt"
-	"github.com/google/uuid"
 	"social-network/internal/model"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 type PostRepository struct {
@@ -229,4 +230,43 @@ func (p *PostRepository) RemoveSelected(userList *[]model.User, parentID string)
 	_, err := p.store.Db.Exec(query, values...)
 
 	return err
+}
+
+func (p *PostRepository) GetUserFeed(user_id string) ([]*model.Post, error) {
+	query := `SELECT DISTINCT p.id, p.title, p.content, p.user_id, COALESCE(p.community_id, '') AS community_id, p.created_at, image.path
+FROM post p
+LEFT JOIN image ON p.id = image.parent_id
+LEFT JOIN privacy pr ON pr.id = p.id
+LEFT JOIN follower f ON f.source_id = ? AND f.target_id = p.user_id
+LEFT JOIN selected_users su ON su.parent_id = p.id AND su.user_id = ?
+LEFT JOIN member m ON m.user_id = ? AND (m.group_id = p.community_id OR m.type_id = 1)
+WHERE (pr.type_id = 1 OR (pr.type_id = 3 AND su.id IS NOT NULL) OR m.id IS NOT NULL) AND f.id IS NOT NULL
+ORDER BY p.created_at DESC;
+`
+
+	var posts []*model.Post
+	rows, err := p.store.Db.Query(query, user_id, user_id, user_id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var post model.Post
+		var path sql.NullString
+		if err = rows.Scan(&post.ID, &post.Title, &post.Content, &post.UserID, &post.CommunityID, &post.CreatedAt, &path); err != nil {
+			return nil, err
+		}
+
+		if path.Valid {
+			post.ImagePaths, err = p.store.Image().Get(post.ID)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		posts = append(posts, &post)
+	}
+
+	return posts, nil
 }
