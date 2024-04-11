@@ -86,7 +86,7 @@ func (s *Server) addLineChat() http.HandlerFunc {
 			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 			return
 		}
-		
+
 		chatLine := model.NewChatLine()
 		chatLine.UserID = sourceID
 		if err := s.decode(r, &chatLine); err != nil {
@@ -160,6 +160,30 @@ func (s *Server) getChatLines() http.HandlerFunc {
 
 		s.respond(w, http.StatusOK, Response{
 			Data: chatLines,
+		})
+	}
+}
+
+// getChatLines Retrieve all chatlines of a specific chat
+//
+// @Summary Get all chatlines of a specific chat
+// @Tags chats
+// @Accept json
+// @Produce json
+// @Success 201 {object} []model.ChatLine
+// @Failure 422 {object} Error
+// @Router /api/v1/auth/chats/{id} [get]
+func (s *Server) getAllChatUsers() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		chat := model.Chat{ID: r.PathValue("id")}
+		chatUsers, err := s.store.Chat().GetUsers(chat)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, http.StatusOK, Response{
+			Data: chatUsers,
 		})
 	}
 }

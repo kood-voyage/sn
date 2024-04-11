@@ -187,7 +187,7 @@ func (cs *ChatService) sendUserStatus(client Client) {
 }
 
 func (cs *ChatService) getOnlineUsers(client Client) {
-	//get current user follow list
+	//get current user chats list
 	//check all the use id-s from the follow list if we hahve a connection with specific id send current user all the information about users -- online or offline
 	userSendList, err := cs.store.Chat().GetChatsForUser(client.id)
 	if err != nil {
