@@ -124,6 +124,7 @@ func configureRouter(s *Server) {
 	s.router.POST("/api/v1/auth/chats/add/user", s.addUserChat())
 	s.router.POST("/api/v1/auth/chats/add/line", s.addLineChat())
 	s.router.GET("/api/v1/auth/chats", s.getAllChats())
+	s.router.GET("/api/v1/auth/chats/get/users/{id}", s.getAllChatUsers())
 	s.router.GET("/api/v1/auth/chats/{id}", s.getChatLines())
 	//--WEBSOCKET--//
 	s.router.GET("/ws", s.wsHandler())

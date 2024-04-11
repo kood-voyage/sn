@@ -7,7 +7,8 @@ import (
 )
 
 type Chat struct {
-	ID string `db:"id" json:"id" validate:"required"`
+	ID      string `db:"id" json:"id" validate:"required"`
+	GroupID string `db:"group_id" json:"group_id"`
 }
 
 type ChatLine struct {

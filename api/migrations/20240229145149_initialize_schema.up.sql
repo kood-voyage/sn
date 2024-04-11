@@ -121,7 +121,7 @@ CREATE TABLE event_registered_users (
                                         user_id text NOT NULL,
                                         event_id text NOT NULL,
                                         FOREIGN KEY (type_id) REFERENCES event_option_type (id),
-                                        FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+                                        FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
                                         FOREIGN KEY (event_id) REFERENCES event (id) ON DELETE CASCADE
 );
 
@@ -132,7 +132,8 @@ VALUES
     ('registration3_id', 1, 'user5', 'event2'); -- Going
 
 CREATE TABLE chat (
-                      id text PRIMARY KEY UNIQUE NOT NULL
+                      id text PRIMARY KEY UNIQUE NOT NULL,
+                      group_id text
 );
 
 CREATE TABLE chat_users (

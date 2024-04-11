@@ -12,9 +12,9 @@ type ChatRepository struct {
 }
 
 func (c *ChatRepository) Create(chat model.Chat) (*model.Chat, error) {
-	query := `INSERT INTO chat (id) VALUES (?)`
+	query := `INSERT INTO chat (id, group_id) VALUES (?, ?)`
 
-	_, err := c.store.Db.Exec(query, chat.ID)
+	_, err := c.store.Db.Exec(query, chat.ID, chat.GroupID)
 
 	if err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func (c *ChatRepository) GetAll(user_id string) ([]*model.Chat, error) {
 	var chats []*model.Chat
 	for rows.Next() {
 		var chat model.Chat
-		if err := rows.Scan(&chat.ID); err != nil {
+		if err := rows.Scan(&chat.ID, &chat.GroupID); err != nil {
 			return nil, err
 		}
 
