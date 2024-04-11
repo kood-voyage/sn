@@ -6,7 +6,7 @@ type Group struct {
 	Name        string   `db:"name" json:"name" validate:"required|min_len:2|max_len:25"`
 	Description string   `db:"description" json:"description" validate:"required"`
 	ImagePaths  []string `db:"path" json:"image_path"`
-	Privacy     string   `validate:"required|contains:public,private"`
+	Privacy     string   `json:"privacy" validate:"required|contains:public,private"`
 	Members     []User   `json:"members"`
 }
 
