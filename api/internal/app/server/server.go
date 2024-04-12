@@ -77,7 +77,7 @@ func configureRouter(s *Server) {
 	s.router.UseWithPrefix("auth", s.jwtMiddleware)
 
 	s.router.GET("/swagger/*", httpSwagger.Handler(
-		httpSwagger.URL("http://ec2-54-91-167-36.compute-1.amazonaws.com:8080/swagger/doc.json"),
+		httpSwagger.URL("http://ec2-3-84-51-36.compute-1.amazonaws.com:8080/swagger/doc.json"),
 	))
 	//---------USER---------//
 	s.router.GET("/api/v1/auth/user/create/{privacy_state}", s.userCreate())
@@ -110,6 +110,7 @@ func configureRouter(s *Server) {
 	s.router.PUT("/api/v1/auth/group/update", s.groupUpdate())
 	s.router.DELETE("/api/v1/auth/group/delete/{id}", s.groupDelete())
 	s.router.GET("/api/v1/auth/group/{id}", s.groupGet())
+	s.router.GET("/api/v1/auth/group", s.groupGetAll())
 	s.router.POST("/api/v1/auth/group/invite", s.groupInvite())
 	s.router.POST("/api/v1/auth/group/request", s.groupInviteRequest())
 	//---------EVENT--------------//

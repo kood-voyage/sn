@@ -10,6 +10,10 @@ definitions:
         type: string
       id:
         type: string
+      image_path:
+        items:
+          type: string
+        type: array
       parent_id:
         type: string
       post_id:
@@ -51,6 +55,10 @@ definitions:
         type: string
       id:
         type: string
+      image_path:
+        items:
+          type: string
+        type: array
       members:
         items:
           $ref: '#/definitions/model.User'
@@ -73,6 +81,10 @@ definitions:
         type: string
       id:
         type: string
+      image_path:
+        items:
+          type: string
+        type: array
       privacy:
         type: string
       title:
@@ -262,6 +274,24 @@ paths:
       summary: Resolves a follow request
       tags:
       - follow
+  /api/v1/auth/group:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Group'
+            type: array
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Returns groups
+      tags:
+      - group
   /api/v1/auth/group/{id}:
     get:
       produces:

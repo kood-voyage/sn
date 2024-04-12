@@ -43,12 +43,13 @@ type CommentRepository interface {
 
 type GroupRepository interface {
 	Create(group model.Group, privacy int) (*model.Group, error)
-	Delete(group_id string) error
+	Delete(groupId string) error
 	Update(group model.Group, privacy int) error
-	Get(group_id string) (*model.Group, error)
-	Members(group_id string) (*[]model.User, error)
-	IsMember(group_id, user_id string) (bool, error)
-	AddMember(group_id, user_id string) error
+	Get(groupId string) (*model.Group, error)
+	Members(groupId string) (*[]model.User, error)
+	IsMember(groupId, userId string) (bool, error)
+	AddMember(groupId, userId string) error
+	GetAll(model.Type) (*[]model.Group, error)
 }
 
 type PrivacyRepository interface {

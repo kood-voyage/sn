@@ -155,28 +155,54 @@ func (s *Server) groupGet() http.HandlerFunc {
 			return
 		}
 
-		//check group privacy status
-		privacy, err := s.store.Privacy().Check(r.PathValue("id"))
-		if err != nil {
-			s.error(w, http.StatusUnprocessableEntity, err)
-			return
-		}
-
-		if privacy == s.types.Privacy.Private {
-			_, err := s.store.Group().IsMember(r.PathValue("id"), sourceID) 
-			if err != nil {
-				s.error(w, http.StatusForbidden, err)
-				return
-			}
-		}
-
+		//firstly retrieve the group
 		group, err := s.store.Group().Get(r.PathValue("id"))
 		if err != nil {
 			s.error(w, http.StatusUnauthorized, err)
 			return
 		}
 
+		//check group privacy status
+		privacy, err := s.store.Privacy().Check(group.ID)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		if privacy == s.types.Privacy.Private {
+			t, err := s.store.Group().IsMember(group.ID, sourceID)
+			if err != nil {
+				s.error(w, http.StatusForbidden, err)
+				return
+			}
+
+			if !t {
+				s.error(w, http.StatusForbidden, errors.New("you don't have access to this group"))
+				return
+			}
+		}
+
 		s.respond(w, http.StatusOK, Response{Data: group})
+	}
+}
+
+// groupGetAll handles the retrieval of all group and their information.
+//
+// @Summary Returns groups
+// @Tags group
+// @Produce json
+// @Success 200 {object} []model.Group
+// @Failure 422 {object} Error
+// @Router /api/v1/auth/group [get]
+func (s *Server) groupGetAll() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		groups, err := s.store.Group().GetAll(s.types)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, http.StatusOK, groups)
 	}
 }
 

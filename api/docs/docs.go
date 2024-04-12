@@ -219,6 +219,34 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/auth/group": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "group"
+                ],
+                "summary": "Returns groups",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Group"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/server.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/auth/group/create": {
             "post": {
                 "produces": [
@@ -1153,6 +1181,12 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "image_path": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "parent_id": {
                     "type": "string"
                 },
@@ -1211,6 +1245,12 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "image_path": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "members": {
                     "type": "array",
                     "items": {
@@ -1244,6 +1284,12 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "image_path": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "privacy": {
                     "type": "string"
