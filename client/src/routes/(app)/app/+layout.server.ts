@@ -1,5 +1,5 @@
 import { getUser } from "$lib/server/db/profile"
-import { getUserIdFromCookie, global_access_token } from "$lib/server/jwt-handle"
+import { getUserIdFromCookie } from "$lib/server/jwt-handle"
 import type { RequestEvent } from "@sveltejs/kit"
 import type { RouteParams } from "../../(auth)/signin/$types"
 import type { LayoutServerLoad } from "./$types"
@@ -9,6 +9,7 @@ import { getUserFollowers, getUserFollowing } from "$lib/server/api/user-request
 
 
 export const load: LayoutServerLoad = async (event: RequestEvent<RouteParams, "/(auth)/signin"> | RequestEvent<Partial<Record<string, string>>, string | null>) => {
+  const globalData = event.locals.globalData
   const idResp = getUserIdFromCookie(event)
   if (!idResp.ok) {
     return
@@ -27,7 +28,7 @@ export const load: LayoutServerLoad = async (event: RequestEvent<RouteParams, "/
 
 
 
-  data.access_token = global_access_token
+  data.access_token = globalData.access_token
   data.followers = followers
   data.following = following
 

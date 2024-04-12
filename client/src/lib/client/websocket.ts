@@ -10,6 +10,7 @@ let webSocket: WebSocket;
 // Function to establish WebSocket connection
 export function connectWebSocket(access_token: string) {
   webSocket = new WebSocket(`ws://localhost:8080/cookie/ws?at=${access_token}`);
+
   webSocket.onmessage = function (event) {
     console.log('Received message:', event.data);
   };
@@ -48,6 +49,9 @@ export function connectWebSocket(access_token: string) {
 
   webSocket.onerror = (error) => {
     console.error('WebSocket error: ', error);
+
+    // if (access_token == undefined) {}
+
   };
 
   webSocket.onclose = () => {

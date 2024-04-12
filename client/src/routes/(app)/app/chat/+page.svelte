@@ -69,12 +69,7 @@
 						<!-- <img src={person.avatar} alt="avatar" class="m-auto sm:mx-2" /> -->
 						<li class="user hover:bg-slate-300 dark:hover:bg-slate-800 text-center select-none">
 							<img src={person.avatar} alt="avatar" class="m-auto sm:mx-2" />
-							<p
-								class=" align-middle justify-center text-center"
-								on:click={() => {
-									// (dialogOpen = false)
-								}}
-							>
+							<p class=" align-middle justify-center text-center">
 								{person.username}
 							</p>
 						</li>

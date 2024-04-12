@@ -34,11 +34,12 @@ export function createTokens(event: CreateEvent | RefreshEvent, user_id: string)
     user_id,
     access_token_id
   }, JWT_KEY, { algorithm: 'HS256' })
-  global_access_token = access_token
 
   function timeConvert(time: number) {
     return new Date((new Date()).getTime() + time * 1000);
   }
+
+  // event.locals.globalData = { access_token: access_token }
 
   event.cookies.set("at", access_token, {
     path: "/", expires: timeConvert(min15),

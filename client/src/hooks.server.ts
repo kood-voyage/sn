@@ -36,6 +36,7 @@ export const handle: Handle = async ({ event, resolve }) => {
           }
 
         } else {
+          event.locals.globalData = { access_token: access_token }
           if (pathname.startsWith("/signin") || pathname.startsWith("/signup")) {
             redirect(303, "/app")
           }
@@ -44,9 +45,6 @@ export const handle: Handle = async ({ event, resolve }) => {
       })
     }
   })
-
-
-
 
 
 
