@@ -10,7 +10,6 @@
 
 	import { data } from '$lib/emojis';
 	import Input from './ui/input/input.svelte';
-	import { lift } from '@tiptap/pm/commands';
 
 	// Declare searchQuery as a writable store
 	const searchQuery = writable('');
@@ -157,11 +156,18 @@
 		</button>
 	</div>
 
+
+
 	<div
 		id="editor"
 		contenteditable="true"
 		class="max-h-64 overflow-scroll border rounded-md p-2"
 		on:keydown={handleEditorInput}
 		on:focus={handleEditorInput}
-	></div>
+	/>
+
+
 </div>
+
+
+

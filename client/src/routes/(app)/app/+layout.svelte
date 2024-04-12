@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { ModeWatcher } from 'mode-watcher';
-
 	export let data;
 
 	import {
@@ -13,6 +12,16 @@
 
 	currentUserFollowers.set(data.followers);
 	currentUserFollowing.set(data.following);
+
+	// type Payload = {
+	// 	type: string;
+	// 	address: string;
+	// 	id: string;
+	// 	source_id: string;
+	// 	data: any;
+	// };
+
+
 
 	const { username, email, first_name, last_name, avatar } = $currentUserStore;
 	///
