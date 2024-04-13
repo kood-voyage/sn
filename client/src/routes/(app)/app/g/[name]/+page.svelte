@@ -12,6 +12,8 @@
 	const currentUser = $currentUserStore;
 	let isMember = false;
 
+	console.log('FORMVALUE', data.form);
+
 	if (currentUser && 'id' in currentUser) {
 		groupResp.data?.members?.forEach((user) => {
 			if (user.id == currentUser.id) {
@@ -76,27 +78,18 @@
 
 								<Dialog.Root>
 									<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
-										>Create Post</Dialog.Trigger
+										>Create Post2</Dialog.Trigger
 									>
 
 									<Dialog.Content>
 										<PostForm data={data.form} />
-										<!-- <Dialog.Header class=""> -->
-										<!-- <Dialog.Title>{title}</Dialog.Title>
 
-														<Dialog.Description>
-															{content}
-														</Dialog.Description>
 
-									
+		
 
-														<div class="py-2 text-center text-sm text-muted-foreground">
-															Slide {current} of {count}
-														</div>
-													</Dialog.Header>
-													<div class="w-full h-full"></div>
+										<div class="w-full h-full"></div>
 
-													<a href={`/app/post/${id}`} class="w-full h-4">to post</a> -->
+										<a href={`/app/post/${id}`} class="w-full h-4">to post</a>
 									</Dialog.Content>
 								</Dialog.Root>
 							</form>

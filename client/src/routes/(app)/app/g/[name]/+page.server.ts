@@ -8,7 +8,6 @@ import { zod } from 'sveltekit-superforms/adapters';
 export const load: PageServerLoad = async (event) => {
   const form = await superValidate(zod(postSchema));
 
-
   console.log(event.params.name)
   console.log((await event.parent()))
   const data = (await mainGetGroup(event, event.params.name))
@@ -28,3 +27,5 @@ export const load: PageServerLoad = async (event) => {
 //2. page.server.ts peab looma g sisse 
 //3. returnin loadis data --> data tuleb valja page.sveltes --> naeb marco name filedes script +page.server.ts ja page.svelte
 //4. 
+
+
