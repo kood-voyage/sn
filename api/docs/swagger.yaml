@@ -384,6 +384,24 @@ paths:
       summary: Resolves a follow request
       tags:
       - follow
+  /api/v1/auth/group:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Group'
+            type: array
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/server.Error'
+      summary: Returns groups
+      tags:
+      - group
   /api/v1/auth/group/{id}:
     get:
       produces:

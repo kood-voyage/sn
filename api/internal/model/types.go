@@ -1,5 +1,7 @@
 package model
 
+import "errors"
+
 type Type struct {
 	Privacy PrivacyType
 	Request RequestType
@@ -75,4 +77,28 @@ func InitializeTypes() Type {
 			},
 		},
 	}
+}
+
+func (t *Type) IntToString(num int) (string, error) {
+	for key, val := range t.Privacy.Values {
+		if val == num {
+			return key, nil
+		}
+	}
+	for key, val := range t.Request.Values {
+		if val == num {
+			return key, nil
+		}
+	}
+	for key, val := range t.Member.Values {
+		if val == num {
+			return key, nil
+		}
+	}
+	for key, val := range t.Event.Values {
+		if val == num {
+			return key, nil
+		}
+	}
+	return "", errors.New("no valid num")
 }
