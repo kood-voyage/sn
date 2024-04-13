@@ -1,4 +1,5 @@
 import { messageStore, userStatusStore, type ServerMessage } from "$lib/store/websocket-store";
+import { redirect } from "@sveltejs/kit";
 
 
 
@@ -50,7 +51,9 @@ export function connectWebSocket(access_token: string) {
   webSocket.onerror = (error) => {
     console.error('WebSocket error: ', error);
 
-    // if (access_token == undefined) {}
+    if (access_token == undefined) {
+      redirect(303, window.location.href)
+    }
 
   };
 

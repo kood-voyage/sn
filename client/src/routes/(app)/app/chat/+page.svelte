@@ -11,7 +11,7 @@
 
 	let people: UserRowType[] = [];
 	if (data.ok) {
-		people = data.data;
+		people = data.data.usersData;
 	}
 
 	let filteredPeople: UserRowType[] = [];
@@ -34,7 +34,7 @@
 		<!-- search group / friends -->
 		<div class="border-b-2 border-slate-300 dark:border-slate-950 h-22 hidden sm:block">
 			{#if data.ok}
-				<PeopleSearch userInfo={data.data} />
+				<PeopleSearch userInfo={people} />
 			{:else}
 				<div class="p-2 pb-1">
 					<p

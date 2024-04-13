@@ -2,7 +2,9 @@ package server
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
+
 	"social-network/internal/model"
 	"social-network/pkg/validator"
 )
@@ -181,7 +183,7 @@ func (s *Server) getAllChatUsers() http.HandlerFunc {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
-
+		fmt.Println("CHAT USERS >>> ", chatUsers)
 		s.respond(w, http.StatusOK, Response{
 			Data: chatUsers,
 		})

@@ -25,9 +25,6 @@ export const load: LayoutServerLoad = async (event: RequestEvent<RouteParams, "/
 
 
 
-
-
-
   data.access_token = globalData.access_token
   data.followers = followers
   data.following = following

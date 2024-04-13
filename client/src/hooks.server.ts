@@ -30,6 +30,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
           if (rdecoded && typeof rdecoded == "object") {
             refreshTokens(event, rdecoded.access_token_id)
+            event.locals.globalData = { access_token: access_token }
             if (pathname.startsWith("/signin") || pathname.startsWith("/signup")) {
               redirect(303, "/app")
             }
@@ -45,8 +46,6 @@ export const handle: Handle = async ({ event, resolve }) => {
       })
     }
   })
-
-
 
 
 

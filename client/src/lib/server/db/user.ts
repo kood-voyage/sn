@@ -2,7 +2,7 @@ import { db } from ".";
 import type { ReturnType } from "$lib/types/requests";
 
 export type UserRowType = {
-  user_id: string,
+  id: string,
   username: string,
   first_name: string,
   last_name: string,
@@ -12,7 +12,7 @@ export type UserRowType = {
 
 }
 
-type userResp = ReturnType<UserRowType>
+type userResp = ReturnType<UserRowType[]>
 
 export function mainGetAllUsers(): userResp {
 

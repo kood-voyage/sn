@@ -22,15 +22,16 @@
 		onSubmit: async (input) => {
 			console.log('asdfasdf', input);
 			const image = input.formData.get('image') as File;
-			const imgResp = await handleImageCopression(image);
-			if (!imgResp.ok) {
-				input.cancel();
-				return;
-			}
-			const file = imgResp.file as File;
 
-			input.formData.set('image', file);
-			console.log(`compressedFile size ${file.size / 1024 / 1024} MB`);
+			// const imgResp = await handleImageCopression(image);
+			// if (!imgResp.ok) {
+			// 	input.cancel();
+			// 	return;
+			// }
+			// const file = imgResp.file as File;
+
+			input.formData.set('image', image);
+			// console.log(`compressedFile size ${file.size / 1024 / 1024} MB`);
 		}
 	});
 
