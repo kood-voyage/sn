@@ -5,11 +5,16 @@
 	import FontBold from 'svelte-radix/FontBold.svelte';
 	import FontItalic from 'svelte-radix/FontItalic.svelte';
 
+	const dispatch = createEventDispatcher();
+
+	let editorValue;
+
 	import pkg from 'lodash';
 	const { debounce } = pkg;
 
 	import { data } from '$lib/emojis';
 	import Input from './ui/input/input.svelte';
+	import { createEventDispatcher } from 'svelte';
 
 	// Declare searchQuery as a writable store
 	const searchQuery = writable('');
@@ -92,8 +97,7 @@
 		const lines = content.split('\n');
 		const cursorPosition = getCaretPosition(editor);
 
-		console.log(cursorPosition);
-		console.log(editor);
+		// console.log(cursorPosition);
 
 		// Check if a newline character is inserted
 		if (lines.length > lastFocusedPosition.line + 1) {
@@ -104,6 +108,18 @@
 				position: cursorPosition.position
 			};
 		}
+
+		// const html = Array.prototype.reduce.call(
+		// 	editorValue,
+		// 	function (html, node) {
+		// 		return html + (node.outerHTML || node.nodeValue);
+		// 	},
+		// 	''
+		// );
+
+		editorValue = event.target;
+		console.log('Editor val >>>', editorValue);
+		dispatch('valueChange', editorValue);
 	}
 
 	function getCaretPosition(element: HTMLElement): CursorPosition {
@@ -156,8 +172,6 @@
 		</button>
 	</div>
 
-
-
 	<div
 		id="editor"
 		contenteditable="true"
@@ -165,9 +179,4 @@
 		on:keydown={handleEditorInput}
 		on:focus={handleEditorInput}
 	/>
-
-
 </div>
-
-
-

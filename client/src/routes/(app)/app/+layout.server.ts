@@ -8,28 +8,48 @@ import { getUserFollowers,getUserFollowing } from "$lib/server/api/user-requests
 
 
 
+
+
+
+// interface Response {
+//     ok: boolean;
+//     error?: string | undefined;
+//     message?: string | undefined;
+
+// }
+
+// interface FollowerResponse extends Response  {
+//     data: follower[];
+// }
+
+
+// interface follower {
+//   id: string;
+//   member_type:number;
+// }
+
+
+
+
+
 export const load: LayoutServerLoad = async (event: RequestEvent<RouteParams, "/(auth)/signin"> | RequestEvent<Partial<Record<string, string>>, string | null>) => {
   const idResp = getUserIdFromCookie(event)
   if (!idResp.ok) {
     return
   }
 
+
+
   const user_id = idResp.user_id as string
-  const data = await getUser(user_id)
+
+  const data = getUser(user_id)
+
+
 
 
 
   const followers = await getUserFollowers(event,user_id)
-  const following = await getUserFollowing(event,user_id)
-
-
-
-
-
-  
-
-  data.followers = followers
-  data.following = following
+  const following  = await getUserFollowing(event,user_id)
 
 
 
@@ -42,7 +62,7 @@ export const load: LayoutServerLoad = async (event: RequestEvent<RouteParams, "/
   }
 
 
-  return data
+  return {data : data.data,followers, following }
   
 }
 

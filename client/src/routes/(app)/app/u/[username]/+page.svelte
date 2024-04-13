@@ -4,8 +4,6 @@
 	import { currentUserFollowing, currentUserStore } from '$lib/store/user-store';
 	export let data: PageData;
 
-
-
 	let isCurrentUserFollowing = false;
 
 	console.log($currentUserFollowing);
@@ -21,15 +19,9 @@
 	const followersCount = data.followers ? data.followers.length : 0;
 	const followingCount = data.following ? data.following.length : 0;
 
+	const { posts } = data;
 
-
-
-	const {posts} = data
-
-
-	console.log(posts)
-
-
+	console.log(posts);
 </script>
 
 <svelte:head>
@@ -42,10 +34,12 @@
 	<div class=" m-auto h-full w-full max-w-[1096px]">
 		<!-- profile info header -->
 		<div class="profile-info relative">
-			<!-- banner img  -->
+			<!-- cover img  -->
 			<div class="m-auto h-24 sm:h-40 max-w-[1096px] p-0 sm:p-4">
+<!-- i know how i can change image position -->
 				<img
-					class="h-full w-full rounded-none sm:rounded-xl object-cover"
+					class="h-full w-full rounded-none sm:rounded-xl object-cover relative"
+					style="object-position: 0% 0%" 
 					src={data.user.cover}
 					alt="cover"
 				/>
@@ -87,7 +81,9 @@
 						<!-- 
 					or unfollow button -->
 					{:else}
-						<a href="/app/create-post"><button class="text-sm px-5 rounded-md border"> Create Post</button></a>
+						<a href="/app/create-post"
+							><button class="text-sm px-5 rounded-md border"> Create Post</button></a
+						>
 						<a href="/app/settings">
 							<button class="text-sm px-5 rounded-md border"> Settings</button></a
 						>
@@ -150,11 +146,10 @@
 
 		<!-- profile activity / posts -->
 
-		
 		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-1 p-0 sm:p-4 mt-5 md:mt-0">
 			{#if posts !== null}
 				{#each posts as data}
-					<Post data={data} />
+					<Post {data} />
 				{/each}
 			{/if}
 		</div>

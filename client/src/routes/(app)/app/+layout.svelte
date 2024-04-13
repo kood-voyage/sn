@@ -2,6 +2,7 @@
 	import { ModeWatcher } from 'mode-watcher';
 	export let data;
 
+
 	import {
 		currentUserFollowers,
 		currentUserFollowing,
@@ -21,9 +22,8 @@
 	// 	data: any;
 	// };
 
+		const { username, email, first_name, last_name, avatar } = $currentUserStore;
 
-
-	const { username, email, first_name, last_name, avatar } = $currentUserStore;
 	///
 	import Sun from 'svelte-radix/Sun.svelte';
 	import Moon from 'svelte-radix/Moon.svelte';
@@ -42,6 +42,8 @@
 
 	import { setMode, resetMode } from 'mode-watcher';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import type { LayoutData } from './$types';
+	import type { User } from '$lib/types/user';
 
 	///
 </script>

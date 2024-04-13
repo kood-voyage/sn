@@ -15,15 +15,19 @@
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import { createPostImagesStore } from '$lib/store/create-post-store';
 
-	import Tiptap from '$lib/components/Tiptap.svelte';
 	import Editorsn from '$lib/components/Editorsn.svelte';
+	import { onMount } from 'svelte';
 
 	export let data: SuperValidated<Infer<PostSchema>>;
 
 	let images: File[] = [];
+	let childValue;
 
 	const form = superForm(data, {
-		validators: zodClient(postSchema)
+		validators: zodClient(postSchema),
+		onSubmit: ({ formData }) => {
+			formData.set('content', childValue);
+		}
 	});
 
 	const { form: formData, enhance } = form;
@@ -40,6 +44,10 @@
 			displayImagePreviews();
 		}
 	}
+
+	// setInterval(() => {
+	// 	console.log(divElement.childNodes);
+	// }, 1000)
 
 	function displayImagePreviews(): void {
 		const updatedImages: File[] = [];
@@ -59,6 +67,12 @@
 		});
 
 		createPostImagesStore.set(updatedImages);
+	}
+
+	function handleChildValue(value) {
+		childValue = value.detail.innerHTML;
+
+		console.log(childValue);
 	}
 </script>
 
@@ -111,7 +125,7 @@
 		<Form.Control let:attrs>
 			<Form.Label>Body</Form.Label>
 
-			<Textarea {...attrs} bind:value={$formData.content} placeholder="body" />
+			<Editorsn {...attrs} placeholder="body" on:valueChange={handleChildValue} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -135,6 +149,3 @@
 	</Form.Field>
 	<Form.Button class="w-full">Submit</Form.Button>
 </form>
-
-
-<Editorsn />
