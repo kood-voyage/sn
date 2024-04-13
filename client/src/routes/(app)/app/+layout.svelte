@@ -2,7 +2,6 @@
 	import { ModeWatcher } from 'mode-watcher';
 	export let data;
 
-
 	import {
 		currentUserFollowers,
 		currentUserFollowing,
@@ -14,15 +13,8 @@
 	currentUserFollowers.set(data.followers);
 	currentUserFollowing.set(data.following);
 
-	// type Payload = {
-	// 	type: string;
-	// 	address: string;
-	// 	id: string;
-	// 	source_id: string;
-	// 	data: any;
-	// };
 
-		const { username, email, first_name, last_name, avatar } = $currentUserStore;
+	const { username, email, first_name, last_name, avatar } = $currentUserStore;
 
 	///
 	import Sun from 'svelte-radix/Sun.svelte';
@@ -42,10 +34,7 @@
 
 	import { setMode, resetMode } from 'mode-watcher';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import type { LayoutData } from './$types';
-	import type { User } from '$lib/types/user';
 
-	///
 </script>
 
 <ModeWatcher />
@@ -213,6 +202,6 @@
 
 <style>
 	.button {
-		@apply flex h-[58px] w-[58px] cursor-pointer rounded transition-all duration-300  hover:bg-slate-100 hover:dark:bg-slate-900;
+		@apply flex h-[58px] w-[58px] cursor-pointer rounded transition-all duration-300  hover:bg-neutral-100 hover:dark:bg-neutral-900;
 	}
 </style>

@@ -9,7 +9,6 @@
 	$: previewAvatar = avatar;
 	$: previewCover = cover;
 
-
 	let fileInputAvatar: HTMLInputElement;
 	async function PreviewAvatar() {
 		let file = fileInputAvatar.files[0];
@@ -130,9 +129,7 @@
 			type="button"
 			value="save"
 			on:click={handleSubmit}
-			class="w-20 bg-slate-600 p-2 rounded-xl"
+			class="w-20 bg-neutral-600 p-2 rounded-xl"
 		/>
 	</form>
-
-
 </div>

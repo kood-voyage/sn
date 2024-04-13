@@ -46,53 +46,26 @@
 	}
 </script>
 
-<Dialog.Root>
-	<Dialog.Trigger class="h-full w-full sm:rounded mb-1 sm:mb-0 aspect-square group hover:shadow-lg">
-		<div class="flex w-full h-full relative">
-			{#if image_path != null}
-				<div class="hover:bg-slate-900/50 w-full h-full absolute"></div>
-				<img src={image_path[0]} alt="image1" class="h-full w-full object-cover sm:rounded" />
-			{/if}
+<a
+	href={`/app/post/${id}`}
+	class="h-full w-full sm:rounded mb-1 sm:mb-0 aspect-square group hover:shadow-lg"
+>
+	<div class="flex w-full h-full relative">
+		{#if image_path != null}
+			<div class="hover:bg-neutral-900/50 w-full h-full absolute"></div>
+			<img src={image_path[0]} alt="image1" class="h-full w-full object-cover sm:rounded" />
+		{/if}
 
-			<div
-				class="absolute w-full bg-slate-100 dark:bg-slate-950 bottom-0 p-2 opacity-0 group-hover:opacity-100 h-8 overflow-hidden group-hover:h-16 transition-all ease-in-out duration-100 rounded-t flex flex-col"
-			>
-				<p class="text-sm md:text-lg font-medium text-ellipsis w-full text-left line-clamp-1">
-					{title}
-				</p>
-				<p class="text-xs text-ellipsis w-full text-left line-clamp-1 text-right">
-					created at {formatDate(created_at)}
-				</p>
-				<!-- <p class="text-sm text-left text-slate-400">{content}</p> -->
-			</div>
+		<div
+			class="absolute w-full bg-neutral-100 dark:bg-neutral-950 bottom-0 p-2 opacity-0 group-hover:opacity-100 h-8 overflow-hidden group-hover:h-16 transition-all ease-in-out duration-100 rounded-t flex flex-col"
+		>
+			<p class="text-sm md:text-lg font-medium text-ellipsis w-full text-left line-clamp-1">
+				{title}
+			</p>
+			<p class="text-xs text-ellipsis w-full text-left line-clamp-1 text-right">
+				created at {formatDate(created_at)}
+			</p>
+			<!-- <p class="text-sm text-left text-slate-400">{content}</p> -->
 		</div>
-	</Dialog.Trigger>
-
-	<Dialog.Content>
-		<Dialog.Header class="">
-			<Dialog.Title>{title}</Dialog.Title>
-
-			<Dialog.Description>
-				{@html content}
-			</Dialog.Description>
-
-			<Carousel.Root bind:api>
-				<Carousel.Content>
-					{#each image_path as image}
-						<Carousel.Item><img src={image} alt="image1" /></Carousel.Item>
-					{/each}
-				</Carousel.Content>
-
-				<Carousel.Previous class="left-2" />
-				<Carousel.Next class="right-2" />
-			</Carousel.Root>
-
-			<div class="py-2 text-center text-sm text-muted-foreground">
-				Slide {current} of {count}
-			</div>
-		</Dialog.Header>
-		<div class="w-full h-full"></div>
-
-		<a href={`/app/post/${id}`} class="w-full h-4">to post</a>
-	</Dialog.Content>
-</Dialog.Root>
+	</div>
+</a>

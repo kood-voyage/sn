@@ -3,7 +3,6 @@
 
 	import PostFormComponent from './post-form.svelte';
 
-	console.log(data);
 </script>
 
 <p>Create post</p>

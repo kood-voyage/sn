@@ -4,7 +4,7 @@
 	export let time;
 </script>
 
-<div class="w-full flex mb-4 hover:bg-slate-200 dark:hover:bg-slate-700 p-1">
+<div class="w-full flex mb-4 hover:bg-neutral-200 dark:hover:bg-neutral-700 p-1">
 	<img src={user.image} class="w-8 h-8 rounded-full mx-2" alt={user.username + 'image'} />
 
 	<div class="flex flex-col">

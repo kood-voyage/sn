@@ -55,14 +55,16 @@
 <div class="p-12">
 	<input
 		type="text"
-		class="flex mx-auto my-2 w-[420px] p-2 rounded-md border dark:bg-slate-900"
+		class="flex mx-auto my-2 w-[420px] p-2 rounded-md border dark:bg-neutral-900"
 		placeholder="Search..."
 	/>
 	<hr class="w-[440px] m-auto" />
 
 	<div class="overflow-scroll h">
 		{#each groups as name}
-			<div class="flex m-auto w-[420px] p-2 hover:bg-slate-200 dark:hover:bg-slate-900 rounded-md">
+			<div
+				class="flex m-auto w-[420px] p-2 hover:bg-neutral-200 dark:hover:bg-neutral-900 rounded-md"
+			>
 				<a href="/app/g/{name.name}" class="flex">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={name.name}"

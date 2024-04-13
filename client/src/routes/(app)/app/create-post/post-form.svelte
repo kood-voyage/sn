@@ -139,6 +139,7 @@
 			<Form.Label>Images (up to 3)</Form.Label>
 			<Input
 				type="file"
+				required
 				accept="image/gif, image/jpeg, image/png, image/webp"
 				multiple
 				on:change={(e) => limitFiles(e.target.files, 3)}

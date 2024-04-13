@@ -1,18 +1,18 @@
 <script lang="ts">
 </script>
 
-<div class="w-14 sm:w-60 bg-slate-50 dark:bg-slate-900 h-full relative flex flex-col">
+<div class="w-14 sm:w-60 bg-neutral-50 dark:bg-neutral-900 h-full relative flex flex-col">
 	<!-- search group / friends -->
 	<div
 		class="border-b-2 border-slate-300 dark:border-slate-950 h-12 hidden sm:block sticky top-0 w-full"
 	>
 		<div class="p-2">
-			<p class="bg-slate-300 dark:bg-slate-950 rounded py-1 px-2">find friend</p>
+			<p class="bg-neutral-300 dark:bg-neutral-950 rounded py-1 px-2">find friend</p>
 		</div>
 	</div>
 
 	<!-- user list -->
-	<div class="sm:p-2 overflow-y-scroll ">
+	<div class="sm:p-2 overflow-y-scroll">
 		<!-- header h1 -->
 
 		<div class="hidden sm:block p-2">
@@ -23,7 +23,7 @@
 
 		<ol class="">
 			<!-- user Component  -->
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 active rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 active rounded">
 				<a href="/app/chat/dsadsd">
 					<div class="flex p-1">
 						<img
@@ -38,7 +38,7 @@
 				</a>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -51,7 +51,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -64,7 +64,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -77,7 +77,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -90,7 +90,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -103,7 +103,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -116,7 +116,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -129,7 +129,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -142,7 +142,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -155,7 +155,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -168,7 +168,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -181,7 +181,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -194,7 +194,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -207,7 +207,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -220,7 +220,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -233,7 +233,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -246,7 +246,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -259,7 +259,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -272,7 +272,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -285,7 +285,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -298,7 +298,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -311,7 +311,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -324,7 +324,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -337,7 +337,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -350,7 +350,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -363,7 +363,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -376,7 +376,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -389,7 +389,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -402,7 +402,7 @@
 				</div>
 			</li>
 
-			<li class="user group hover:bg-slate-300 dark:hover:bg-slate-800 rounded">
+			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
 				<div class="flex p-1">
 					<img
 						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
@@ -420,7 +420,7 @@
 
 <style>
 	.active {
-		@apply bg-slate-400 dark:bg-slate-700;
+		@apply bg-neutral-400 dark:bg-neutral-700;
 	}
 
 	.user .active p {

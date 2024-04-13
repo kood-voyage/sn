@@ -36,10 +36,10 @@
 		<div class="profile-info relative">
 			<!-- cover img  -->
 			<div class="m-auto h-24 sm:h-40 max-w-[1096px] p-0 sm:p-4">
-<!-- i know how i can change image position -->
+				<!-- i know how i can change image position -->
 				<img
 					class="h-full w-full rounded-none sm:rounded-xl object-cover relative"
-					style="object-position: 0% 0%" 
+					style="object-position: 0% 0%"
 					src={data.user.cover}
 					alt="cover"
 				/>
@@ -53,12 +53,12 @@
 				/>
 
 				<div
-					class="absolute bottom-1 sm:bottom-3 left-[140px] bg-white dark:bg-slate-950 rounded-2xl flex"
+					class="absolute bottom-1 sm:bottom-3 left-[140px] bg-white dark:bg-neutral-950 rounded-2xl flex"
 				>
 					<p class=" md:text-2xl font-bold mr-2">{data.user.username}</p>
 					<!-- <p class=" text-xs font-bold mr-2">{data.user.id}</p> -->
 					<!-- <p class="text-xs">
-						<span class="bg-slate-500 px-1 rounded-sm">AKA</span>
+						<span class="bg-neutral-500 px-1 rounded-sm">AKA</span>
 						{data.first_name}
 						{data.last_name}
 					</p> -->
@@ -91,18 +91,20 @@
 				</div>
 
 				<div class="hidden md:block">
-					<div class="flex dark:bg-slate-900 w-72 rounded-sm absolute right-1 bottom-4">
+					<div class="flex dark:bg-neutral-900 w-72 rounded-sm absolute right-1 bottom-4">
 						<div
-							class="text-xs w-1/3 border-r text-center hover:bg-slate-200 dark:hover:bg-slate-800 p-1"
+							class="text-xs w-1/3 border-r text-center hover:bg-neutral-200 dark:hover:bg-neutral-800 p-1"
 						>
 							<span class="font-bold">{'none'}</span> posts
 						</div>
 						<div
-							class="text-xs w-1/3 border-r text-center hover:bg-slate-200 dark:hover:bg-slate-800 p-1"
+							class="text-xs w-1/3 border-r text-center hover:bg-neutral-200 dark:hover:bg-neutral-800 p-1"
 						>
 							<span class="font-bold">{followersCount}</span> followers
 						</div>
-						<div class="text-xs w-1/3 text-center hover:bg-slate-200 dark:hover:bg-slate-800 p-1">
+						<div
+							class="text-xs w-1/3 text-center hover:bg-neutral-200 dark:hover:bg-neutral-800 p-1"
+						>
 							<span class="font-bold">{followingCount}</span> following
 						</div>
 					</div>
@@ -111,19 +113,19 @@
 
 			<div class="sm:mx-4 h-8 block md:hidden">
 				<div class="">
-					<div class="flex bg-slate-100 dark:bg-slate-900 w-full rounded-lg">
+					<div class="flex bg-neutral-100 dark:bg-neutral-900 w-full rounded-lg">
 						<div
-							class="text-xs w-1/3 border-r text-center p-4 hover:bg-slate-200 dark:hover:bg-slate-800 hover:rounded-l-lg"
+							class="text-xs w-1/3 border-r text-center p-4 hover:bg-neutral-200 dark:hover:bg-neutral-800 hover:rounded-l-lg"
 						>
 							<span class="font-bold">{'none'}</span> posts
 						</div>
 						<div
-							class="text-xs w-1/3 border-r text-center p-4 hover:bg-slate-200 dark:hover:bg-slate-800"
+							class="text-xs w-1/3 border-r text-center p-4 hover:bg-neutral-200 dark:hover:bg-neutral-800"
 						>
 							<span class="font-bold">{followersCount}</span> followers
 						</div>
 						<div
-							class="text-xs w-1/3 text-center p-4 hover:rounded-r-lg hover:bg-slate-200 dark:hover:bg-slate-800"
+							class="text-xs w-1/3 text-center p-4 hover:rounded-r-lg hover:bg-neutral-200 dark:hover:bg-neutral-800"
 						>
 							<span class="font-bold">{followingCount}</span> following
 						</div>

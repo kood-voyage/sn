@@ -172,6 +172,7 @@
 		</button>
 	</div>
 
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div
 		id="editor"
 		contenteditable="true"
