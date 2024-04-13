@@ -13,7 +13,7 @@ type User = {
   cover: string,
   description: string
 }
-export const currentUserStore = writable<User | object>({})
+export const currentUserStore = writable<User | object>()
 export const currentUserToken = writable()
 export const currentUserFollowers = writable([])
 export const currentUserFollowing = writable([])

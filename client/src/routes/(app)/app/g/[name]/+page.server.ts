@@ -23,3 +23,8 @@ export const load: PageServerLoad = async (event) => {
   return { group: { ...data }, form }
 
 }
+
+//1. server folderis api folder api folderis grouprequests.ts --> fetch request there
+//2. page.server.ts peab looma g sisse 
+//3. returnin loadis data --> data tuleb valja page.sveltes --> naeb marco name filedes script +page.server.ts ja page.svelte
+//4. 

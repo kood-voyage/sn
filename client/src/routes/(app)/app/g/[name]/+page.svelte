@@ -3,12 +3,22 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import type { GroupJson } from '$lib/server/api/group-requests';
+	import { currentUserStore } from '$lib/store/user-store';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 	let id: string, name: string, description: string, image_path: string;
 	const groupResp = data.group;
+	const currentUser = $currentUserStore;
+	let isMember = false;
 
+	if (currentUser && 'id' in currentUser) {
+		groupResp.data?.members?.forEach((user) => {
+			if (user.id == currentUser.id) {
+				isMember = true;
+			}
+		});
+	}
 	try {
 		const data = groupResp.data as GroupJson;
 		id = data.id;
@@ -54,24 +64,25 @@
 						<p class="lines3 text-sm text-left text-slate-400">{description}</p>
 					</div>
 					<div class="flex flex-row">
-						<form action="?/invite" method="post" class=" text-center">
-							<input type="text" hidden name="target_id" value={id} />
-							<button class="text-sm rounded-md px-5 border bg-sky-500 p-1 m-0.5" type="submit">
-								Invite User
-							</button>
-						</form>
-						<form>
-							<input type="text" hidden name="target_id" value={id} />
+						{#if isMember}
+							<form action="?/invite" method="post" class=" text-center">
+								<input type="text" hidden name="target_id" value={id} />
+								<button class="text-sm rounded-md px-5 border bg-sky-500 p-1 m-0.5" type="submit">
+									Invite User
+								</button>
+							</form>
+							<form>
+								<input type="text" hidden name="target_id" value={id} />
 
-							<Dialog.Root>
-								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
-									>Create Post</Dialog.Trigger
-								>
+								<Dialog.Root>
+									<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
+										>Create Post</Dialog.Trigger
+									>
 
-								<Dialog.Content>
-									<PostForm data={data.form} />
-									<!-- <Dialog.Header class=""> -->
-									<!-- <Dialog.Title>{title}</Dialog.Title>
+									<Dialog.Content>
+										<PostForm data={data.form} />
+										<!-- <Dialog.Header class=""> -->
+										<!-- <Dialog.Title>{title}</Dialog.Title>
 
 														<Dialog.Description>
 															{content}
@@ -86,9 +97,17 @@
 													<div class="w-full h-full"></div>
 
 													<a href={`/app/post/${id}`} class="w-full h-4">to post</a> -->
-								</Dialog.Content>
-							</Dialog.Root>
-						</form>
+									</Dialog.Content>
+								</Dialog.Root>
+							</form>
+						{:else}
+							<form action="?/join" method="post" class=" text-center">
+								<input type="text" hidden name="target_id" value={id} />
+								<button class="text-sm rounded-md px-5 border bg-sky-500 p-1 m-0.5" type="submit">
+									Join group
+								</button>
+							</form>
+						{/if}
 						<!-- 
 						-->
 					</div>

@@ -12,6 +12,7 @@ export type GroupJson = {
   members: null | Array<string>
 }
 
+
 export async function getGroup(event: RequestEvent, group_name: string) {
 
   try {
@@ -36,4 +37,25 @@ export async function getGroup(event: RequestEvent, group_name: string) {
     }
   }
 
+}
+
+export async function getGroups(event: RequestEvent) {
+
+  try {
+    const fetchResp = await fetch(`${LOCAL_PATH}/api/v1/auth/group`, {
+      headers: {
+        "Authorization": `Bearer ${event.cookies.get('at')?.valueOf()}`
+      }
+    })
+    const json = (await fetchResp.json()).data as GroupJson[]
+
+    return {ok: true, data: json}
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
 }

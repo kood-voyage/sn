@@ -202,7 +202,7 @@ func (s *Server) groupGetAll() http.HandlerFunc {
 			return
 		}
 
-		s.respond(w, http.StatusOK, groups)
+		s.respond(w, http.StatusOK, Response{Data: groups})
 	}
 }
 
