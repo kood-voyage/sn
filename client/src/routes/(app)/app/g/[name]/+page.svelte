@@ -5,6 +5,7 @@
 	import type { GroupJson } from '$lib/server/api/group-requests';
 	import { currentUserStore } from '$lib/store/user-store';
 	import type { PageData } from './$types';
+	import GroupPostForm from './groupPostForm.svelte';
 
 	export let data: PageData;
 	let id: string, name: string, description: string, image_path: string;
@@ -12,9 +13,14 @@
 	const currentUser = $currentUserStore;
 	let isMember = false;
 
-	console.log('FORMVALUE', data.form);
+	console.log('--------');
+	console.log(groupResp.data);
+	console.log('--------');
 
 	if (currentUser && 'id' in currentUser) {
+		if (groupResp.data.creator_id == currentUser.id) {
+			isMember = true;
+		}
 		groupResp.data?.members?.forEach((user) => {
 			if (user.id == currentUser.id) {
 				isMember = true;
@@ -34,6 +40,15 @@
 		image_path =
 			'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg';
 	}
+
+
+
+
+
+
+
+
+
 </script>
 
 <svelte:head>
@@ -78,18 +93,12 @@
 
 								<Dialog.Root>
 									<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
-										>Create Post2</Dialog.Trigger
+										>Create Post</Dialog.Trigger
 									>
 
 									<Dialog.Content>
-										<PostForm data={data.form} />
+										<GroupPostForm data={data.form} groupId={groupResp.data.id} />
 
-
-		
-
-										<div class="w-full h-full"></div>
-
-										<a href={`/app/post/${id}`} class="w-full h-4">to post</a>
 									</Dialog.Content>
 								</Dialog.Root>
 							</form>
