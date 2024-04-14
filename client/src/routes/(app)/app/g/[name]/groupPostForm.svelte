@@ -11,10 +11,7 @@
 	import { createPostImagesStore } from '$lib/store/create-post-store';
 	import { z } from 'zod';
 
-
-
-
-	// i made schema here, i think it's more appropriate 
+	// I made schema here, i think it's more appropriate
 	export const groupPostSchema = z.object({
 		groupId: z.string(),
 		title: z.string(),
@@ -28,19 +25,18 @@
 	export let data;
 	export let groupId: string;
 
+	console.log(data);
+
 	let images = [];
 
 	const form = superForm(data, {
 		validators: zodClient(groupPostSchema),
-
-
 
 		// all of this looks to coomplicated for me :(
 		onSubmit: async (input) => {
 			const image = input.formData.get('image') as File;
 
 			input.formData.set('groupId', groupId); /// i dont't know about this but i want to store current groupId to a groupPostSchema
-
 
 			// const imgResp = await handleImageCopression(image);
 			// if (!imgResp.ok) {
@@ -51,8 +47,6 @@
 
 			input.formData.set('image', image);
 			// console.log(`compressedFile size ${file.size / 1024 / 1024} MB`);
-
-
 		}
 	});
 
@@ -60,7 +54,6 @@
 
 	function limitFiles(files, maxFiles) {
 		images = Array.from(files);
-
 
 		if (images.length > maxFiles) {
 			alert('You can only select up to 3 images.');
@@ -99,11 +92,9 @@
 	</Carousel.Root>
 {/if}
 
-
-
 <form
 	method="POST"
-	action="?/groupPostSubmit" 
+	action="?/groupPostSubmit"
 	enctype="multipart/form-data"
 	use:enhance
 	class="w-full mt-10"

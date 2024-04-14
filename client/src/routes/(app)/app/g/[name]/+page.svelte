@@ -97,6 +97,10 @@
 									>
 
 									<Dialog.Content>
+
+										<!-- I tried to put 2 PROPS to this component  -->
+										<!-- data : Took from previous Form, and i dont remember why it's required  -->
+										<!-- groupId - this PROP i put intentionally because i think we need PARENT_ID for post in groups -->
 										<GroupPostForm data={data.form} groupId={groupResp.data.id} />
 
 									</Dialog.Content>
