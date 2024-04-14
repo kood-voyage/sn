@@ -4,59 +4,28 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { Dash } from 'svelte-radix';
+	import { currentUserStore } from '$lib/store/user-store';
 
 	export let data: PageData;
 
+	const currentUser = $currentUserStore;
 	const groups = data.groups.data;
-	// console.log('DATA', groupsResp);
+	let isMember = false;
+	let renderedGroupIds: string[] = [];
 
-	// const groups = [
-	// 	{ name: 'Team Valor', members: 5, description: 'Fearless warriors fighting for victory.' },
-	// 	{
-	// 		name: 'Pixel Rangers',
-	// 		members: 8,
-	// 		description: 'Guardians of the gaming realm, pixel by pixel.'
-	// 	},
-	// 	{ name: 'Quest Keepers', members: 3, description: 'Explorers on an epic quest for glory.' },
-	// 	{ name: 'Level Legends', members: 6, description: 'Ascending to legendary gaming heights.' },
-	// 	{ name: 'Game Guardians', members: 4, description: 'Protectors of the gaming universe.' },
-	// 	{
-	// 		name: 'Console Crusaders',
-	// 		members: 7,
-	// 		description: 'Crusading through realms via console adventures.'
-	// 	},
-	// 	{ name: 'Joystick Jugglers', members: 2, description: 'Masters of precision and control.' },
-	// 	{
-	// 		name: 'Elite Empire',
-	// 		members: 9,
-	// 		description: 'Ruling the gaming empire with elite skills.'
-	// 	},
-	// 	{
-	// 		name: 'Respawn Rebels',
-	// 		members: 1,
-	// 		description: 'Rebels with a cause, rising again and again.'
-	// 	},
-	// 	{
-	// 		name: 'Warrior Wizards',
-	// 		members: 5,
-	// 		description: 'Wizards wielding gaming magic on the battlefield.'
-	// 	},
-	// 	{
-	// 		name: 'Warrior Wizards1',
-	// 		members: 4,
-	// 		description: 'Wizards wielding gaming magic on the battlefield.'
-	// 	},
-	// 	{
-	// 		name: 'Warrior Wizards2',
-	// 		members: 6,
-	// 		description: 'Wizards wielding gaming magic on the battlefield.'
-	// 	},
-	// 	{
-	// 		name: 'Warrior Wizards3',
-	// 		members: 1,
-	// 		description: 'Wizards wielding gaming magic on the battlefield.'
-	// 	}
-	// ];
+	groups?.forEach((group) => {
+		if (currentUser && 'id' in currentUser) {
+			group.members?.forEach((member) => {
+				if (member.id == currentUser.id) {
+					renderedGroupIds.push(group.id);
+				} else {
+					if (group.creator_id == currentUser.id) {
+						renderedGroupIds.push(group.id);
+					}
+				}
+			});
+		}
+	});
 </script>
 
 <svelte:head>
@@ -84,34 +53,60 @@
 		</div>
 		{#if groups}
 			{#each groups as group}
-				<div
-					class="flex m-auto w-[420px] p-2 hover:bg-slate-200 dark:hover:bg-slate-900 rounded-md overflow-hidden"
-				>
-					<a href="/app/g/{group.name.replace(/\s/g, '_')}" class="flex w-full">
-						<img
-							src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={group.name}"
-							alt="user-avatar"
-							class="w-16 mr-2"
-						/>
-						<div>
-							<p class="font-bold">{group.name}</p>
-							<p class="text-sm text-blue-500">
-								Members:
-								{#if group.members != null}
-									<span>
-										{group.members}
-									</span>
-								{:else}
-									<span>0</span>
-								{/if}
-							</p>
-							<p class="text-sm text-slate-500">{group.description}</p>
+				{#if ((group.privacy == 'public' || group.members) && (!group.members || group.members.some((member) => member.id == currentUser.id))) || group.privacy == 'public'}
+					<div
+						class="flex m-auto w-[420px] p-2 hover:bg-slate-200 dark:hover:bg-slate-900 rounded-md overflow-hidden"
+					>
+						<a href="/app/g/{group.name.replace(/\s/g, '_')}" class="flex w-full">
+							<img
+								src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={group.name}"
+								alt="user-avatar"
+								class="w-16 mr-2"
+							/>
+							<div>
+								<p class="font-bold">{group.name}</p>
+								<p class="text-sm text-blue-500">
+									Members:
+									{#if group.members != null}
+										<span>{group.members.length}</span>
+									{:else}
+										<span>0</span>
+									{/if}
+								</p>
+								<p class="text-sm text-slate-500">{group.description}</p>
+							</div>
+						</a>
+					</div>
+				{/if}
+			{/each}
+			{#each groups as group}
+				{#if group.privacy == 'private'}
+					{#if !renderedGroupIds.includes(group.id)}
+						<div
+							class="flex m-auto w-[420px] p-2 hover:bg-slate-200 dark:hover:bg-slate-900 rounded-md overflow-hidden"
+						>
+							<div class="flex w-full opacity-50">
+								<img
+									src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={group.name}"
+									alt="user-avatar"
+									class="w-16 mr-2"
+								/>
+								<div>
+									<p class="font-bold">{group.name} <span class="text-red-500">Private</span></p>
+									<p class="text-sm text-blue-500">
+										Members:
+										{#if group.members != null}
+											<span>{group.members.length}</span>
+										{:else}
+											<span>0</span>
+										{/if}
+									</p>
+									<p class="text-sm text-slate-500">{group.description}</p>
+								</div>
+							</div>
 						</div>
-					</a>
-					<!-- <div class="flex">
-				<button class="text-sm p-1 bg-blue-500">follow</button>
-			</div> -->
-				</div>
+					{/if}
+				{/if}
 			{/each}
 		{/if}
 	</div>

@@ -15,8 +15,6 @@ export const load: PageServerLoad = async (event) => {
     }
   }
 
-  // console.log(typeof data)
-  // console.log(typeof data.data)
   return { groups: { ...data }}
 
 }

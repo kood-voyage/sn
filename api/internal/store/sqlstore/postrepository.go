@@ -18,13 +18,15 @@ func (p *PostRepository) Create(post *model.Post, privacy int) error {
                   id,
                   user_id,
                   title,
-                  content) VALUES (?,?,?,?)`
+                  content,
+				  community_id) VALUES (?,?,?,?, ?)`
 
 	_, err := p.store.Db.Exec(query,
 		post.ID,
 		post.UserID,
 		post.Title,
-		post.Content)
+		post.Content,
+		post.CommunityID)
 	if err != nil {
 		return err
 	}

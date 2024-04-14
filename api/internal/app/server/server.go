@@ -112,8 +112,10 @@ func configureRouter(s *Server) {
 	s.router.DELETE("/api/v1/auth/group/delete/{id}", s.groupDelete())
 	s.router.GET("/api/v1/auth/group/{id}", s.groupGet())
 	s.router.GET("/api/v1/auth/group", s.groupGetAll())
+	s.router.GET("/api/v1/auth/group/posts/{id}", s.groupGetPost())
 	s.router.POST("/api/v1/auth/group/invite", s.groupInvite())
 	s.router.POST("/api/v1/auth/group/request", s.groupInviteRequest())
+	s.router.GET("/api/v1/auth/group/join/{id}", s.joinGroup())
 	//---------EVENT--------------//
 	s.router.POST("/api/v1/auth/group/event/create", s.createEvent())
 	s.router.PUT("/api/v1/auth/group/event/update", s.updateEvent())

@@ -1,5 +1,6 @@
 import { LOCAL_PATH } from "$env/static/private";
-import type { RequestEvent } from "@sveltejs/kit";
+import { error, type RequestEvent } from "@sveltejs/kit";
+import { type ReturnType } from "$lib/types/requests";
 
 
 export type GroupJson = {
@@ -9,11 +10,22 @@ export type GroupJson = {
   description: string,
   image_path: Array<string>,
   privacy: string,
-  members: null | Array<string>
+  members: null | Array<{id: string, member_type: number}>
 }
 
+export type GroupPostJson = {
+  id: string,
+  title: string,
+  content: string,
+  user_id: string,
+  community_id: string | null,
+  created_at: Date,
+  privacy: string | null
+}
 
-export async function getGroup(event: RequestEvent, group_name: string) {
+type GetGroup = ReturnType<GroupJson>
+
+export async function getGroup(event: RequestEvent, group_name: string): Promise<GetGroup> {
 
   try {
 
@@ -22,7 +34,7 @@ export async function getGroup(event: RequestEvent, group_name: string) {
         "Authorization": `Bearer ${event.cookies.get('at')?.valueOf()}`
       }
     })
-    const json = (await fetchResp.json()).data as GroupJson
+    const json = (await fetchResp.json()).data
 
 
     // console.log(json)
@@ -49,6 +61,53 @@ export async function getGroups(event: RequestEvent) {
     })
     const json = (await fetchResp.json()).data as GroupJson[]
 
+    return {ok: true, data: json}
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
+
+export async function getGroupPosts(event: RequestEvent, group_name: string) {
+
+  try {
+    const fetchResp = await fetch(`${LOCAL_PATH}/api/v1/auth/group/posts/${group_name.replace("_", " ")}`, {
+      headers: {
+        "Authorization": `Bearer ${event.cookies.get('at')?.valueOf()}`
+      }
+    })
+    const json = (await fetchResp.json()).data as GroupPostJson[]
+
+    return {ok: true, data: json}
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
+
+export async function joinGroup(event: RequestEvent, group_name: string) {
+ try {
+    const fetchResp = await fetch(`${LOCAL_PATH}/api/v1/auth/group/join/${group_name.replace("_", " ")}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${event.cookies.get('at')?.valueOf()}`
+      }
+    });
+
+    if (!fetchResp.ok) {
+      const errorMessage = await fetchResp.json(); 
+      return { ok: false, error: errorMessage, message: "error " }
+    }
+
+    const json = (await fetchResp.json()).data
     return {ok: true, data: json}
 
   } catch (err) {

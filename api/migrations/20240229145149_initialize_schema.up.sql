@@ -51,8 +51,7 @@ CREATE TABLE post (
                       user_id text NOT NULL,
                       community_id text DEFAULT NULL,
                       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                      FOREIGN KEY (user_id) REFERENCES user (id),
-                      FOREIGN KEY (community_id) REFERENCES community (id)
+                      FOREIGN KEY (user_id) REFERENCES user (id)
 );
 
 INSERT INTO post (id, title, content, user_id, community_id, created_at) VALUES

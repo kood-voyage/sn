@@ -88,8 +88,23 @@ func (g *GroupRepository) Get(groupId string) (*model.Group, error) {
 		&group.Name,
 		&group.Description,
 	); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("group does not exist")
+		}
 		return nil, err
 	}
+
+	// privacy, err := g.store.Privacy().Check(group.ID)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// if privacy == 1 {
+	// 	group.Privacy = "public"
+	// }else if privacy == 2 {
+	// 	group.Privacy = "private"
+	// }else if privacy == 3{
+	// 	group.Privacy = "selected"
+	// }
 
 	gMembers, err := g.Members(group.ID)
 	if err != nil {
@@ -167,7 +182,7 @@ func (g *GroupRepository) GetAll(types model.Type) (*[]model.Group, error) {
 		if err := rows.Scan(&group.ID, &group.CreatorID, &group.Name, &group.Description); err != nil {
 			return nil, err
 		}
-		privacy, err := g.store.Privacy().Check(group.ID) 
+		privacy, err := g.store.Privacy().Check(group.ID)
 		if err != nil {
 			return nil, err
 		}
@@ -181,8 +196,52 @@ func (g *GroupRepository) GetAll(types model.Type) (*[]model.Group, error) {
 			return nil, err
 		}
 
+		members, err := g.Members(group.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		group.Members = *members
+
 		groups = append(groups, group)
 	}
 
 	return &groups, nil
+}
+
+func (g *GroupRepository) GetPosts(group_id string) ([]*model.Post, error) {
+	query := `SELECT p.id, p.title, p.content, p.user_id, COALESCE(p.community_id, '') AS community_id, p.created_at, i.path FROM post p
+              LEFT JOIN image i ON p.id = i.parent_id
+              WHERE community_id = ?`
+	var postsMap = make(map[string]*model.Post)
+
+	rows, err := g.store.Db.Query(query, group_id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var postID string
+		var post model.Post
+		var imagePath sql.NullString
+
+		if err := rows.Scan(&postID, &post.Title, &post.Content, &post.UserID, &post.CommunityID, &post.CreatedAt, &imagePath); err != nil {
+			return nil, err
+		}
+
+		if _, ok := postsMap[postID]; !ok {
+			postsMap[postID] = &post
+		}
+
+		if imagePath.Valid {
+			postsMap[postID].ImagePaths = append(postsMap[postID].ImagePaths, imagePath.String)
+		}
+	}
+
+	var posts []*model.Post
+	for _, post := range postsMap {
+		posts = append(posts, post)
+	}
+
+	return posts, nil
 }

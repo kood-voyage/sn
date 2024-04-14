@@ -16,7 +16,7 @@ export const load: LayoutServerLoad = async (event: RequestEvent<RouteParams, "/
   }
 
   const user_id = idResp.user_id as string
-  const data = await getUser(user_id)
+  const data = getUser(user_id)
 
 
 
