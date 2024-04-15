@@ -3,6 +3,7 @@
 	import type { User } from '$lib/types/user';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { enhance } from '$app/forms';
+	import { createEventDispatcher } from 'svelte';
 
 	type SampleData = {
 		id: string;
@@ -13,6 +14,8 @@
 		cover: string;
 		description: string;
 	};
+
+	const dispatch = createEventDispatcher();
 
 	let dialogOpen = false;
 	let people: SampleData[] = [];
@@ -59,9 +62,11 @@
 					<form
 						method="post"
 						use:enhance={({ formData }) => {
-							console.log('FormData >>', formData);
+							dispatch('submit', {});
+							// console.log('FormData >>', formData);
 							formData.set('target', person.id);
-							console.log(person.id);
+							// console.log(person.id);
+							dialogOpen = false;
 						}}
 						action="/app/chat?/NewChat"
 					>

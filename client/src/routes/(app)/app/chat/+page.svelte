@@ -1,25 +1,47 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog';
 	import type { UserRowType } from '$lib/server/db/user';
+	import type { UserModel } from '$lib/types/user';
 	import type { PageData } from './$types';
+	import type { ChatsWithUsers } from './+page.server';
 	import PeopleSearch from './people-search.svelte';
 
 	export let data: PageData;
 	// console.log(data.data);
 
+	$: console.log(data);
 	let searchQuery = '';
 
 	let people: UserRowType[] = [];
+	let chats: ChatsWithUsers = {};
 	if (data.ok) {
 		people = data.data.usersData;
+		chats = data.data.chatsData;
 	}
 
-	let filteredPeople: UserRowType[] = [];
+	let filteredPeople: UserModel[] = [];
 
-	$: if (people.length != 0 && people != undefined) {
-		filteredPeople = people
-			.filter((person) => person.username.toLowerCase().includes(searchQuery.toLowerCase()))
-			.slice(0, 6);
+	// console.log(chats);
+	$: if (Object.values(chats).length != 0 && Object.values(chats) != undefined) {
+		filteredPeople = Object.entries(chats)
+			.filter((chat) => {
+				// console.log('CHAT >>>', chat);
+				// const key = chat[0];
+				// const value = chat[1];
+				// console.log('Key >>>', key);
+				// console.log('Value >>>', value);
+				// if (chat.length == 0) return false
+				// if (chat.length == 1) return true
+				// const out = chat.filter
+				// return chat[0].username.toLowerCase().includes(searchQuery.toLowerCase());
+			})
+			.map((val) => {
+				// console.log(val);
+				return val[0];
+			});
+		// .slice(0, 6);
+
+		// console.log(filteredPeople);
 	}
 </script>
 
@@ -66,6 +88,7 @@
 			<ol class="">
 				{#if filteredPeople.length != 0}
 					{#each filteredPeople as person (person)}
+						<!-- {console.log('HERE', person)} -->
 						<!-- <img src={person.avatar} alt="avatar" class="m-auto sm:mx-2" /> -->
 						<li class="user hover:bg-slate-300 dark:hover:bg-slate-800 text-center select-none">
 							<img src={person.avatar} alt="avatar" class="m-auto sm:mx-2" />

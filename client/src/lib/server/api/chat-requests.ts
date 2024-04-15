@@ -86,8 +86,8 @@ export type GetChatUsers = {
   member_type: number
 }
 
-type GetChatResp = ReturnType<GetChatUsers>
-export async function GetChatUsers(event: RequestEvent, chat_id: string): Promise<GetChatResp> {
+type GetChatResp = ReturnType<GetChatUsers[]>
+export async function getChatUsers(event: RequestEvent, chat_id: string): Promise<GetChatResp> {
   try {
     const fetchResp = await fetch(`${LOCAL_PATH}/api/v1/auth/chats/get/users/${chat_id}`, {
       method: "get",
@@ -98,7 +98,7 @@ export async function GetChatUsers(event: RequestEvent, chat_id: string): Promis
     })
     const json = (await fetchResp.json()).data
 
-    console.log(json)
+    // console.log(json)
 
     return { ok: true, data: json }
   } catch (err) {

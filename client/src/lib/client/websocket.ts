@@ -1,16 +1,25 @@
-import { messageStore, userStatusStore, type ServerMessage } from "$lib/store/websocket-store";
-import { redirect } from "@sveltejs/kit";
+import { messageStore, userStatusStore, webSocketStore, type ServerMessage } from "$lib/store/websocket-store";
 
 
 
 
-let webSocket: WebSocket;
-// let messagess = [];
+let webSocket: WebSocket
+webSocketStore.subscribe((obj) => {
+  if (obj.access_token == undefined) return
+  if (obj.websocket != undefined) return
+  if (obj.access_token) connectWebSocket(obj.access_token)
+})
 
+export const ssr = false
+export async function connectWebSocket(access_token: string) {
 
-// Function to establish WebSocket connection
-export function connectWebSocket(access_token: string) {
   webSocket = new WebSocket(`ws://localhost:8080/cookie/ws?at=${access_token}`);
+  if (webSocket)
+    webSocketStore.update((obj) => {
+      obj.websocket = webSocket
+      return { ...obj }
+    })
+  // console.log("THIS IS WEBSOCKET >>>", webSocket)
 
   webSocket.onmessage = function (event) {
     console.log('Received message:', event.data);
@@ -51,14 +60,17 @@ export function connectWebSocket(access_token: string) {
   webSocket.onerror = (error) => {
     console.error('WebSocket error: ', error);
 
-    if (access_token == undefined) {
-      redirect(303, window.location.href)
-    }
+    // webSocketStore.set({ websocket: undefined, access_token: undefined })
+    // if (access_token == undefined) {
+    //   redirect(303, window.location.href)
+    // }
 
   };
 
   webSocket.onclose = () => {
+    webSocketStore.set({ websocket: undefined, access_token: undefined })
     console.log('WebSocket connection closed');
+
     // Optionally, implement reconnection logic here
   };
   return webSocket
@@ -81,6 +93,7 @@ export function closeWebSocket() {
 
 
 export function sendMessage(message: string) {
+
   if (webSocket.readyState === WebSocket.OPEN) {
     webSocket.send(message);
   } else {

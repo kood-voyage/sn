@@ -1,12 +1,19 @@
-import { GetChatUsers, addUserToChat, createChat, getAllChats, type GetAllChats } from "$lib/server/api/chat-requests";
-import { mainGetAllUsers, type UserRowType } from "$lib/server/db/user";
-import { fail } from "@sveltejs/kit";
+import { addUserToChat, createChat, getAllChats, getChatUsers, type GetAllChats } from "$lib/server/api/chat-requests";
+import { getUsersFromArray, mainGetAllUsers, type UserRowType } from "$lib/server/db/user";
+import { fail, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { v4 as uuidv4 } from 'uuid';
 import type { ReturnType } from "$lib/types/requests";
+import type { UserModel } from "$lib/types/user";
+import { getUserIdFromCookie } from "$lib/server/jwt-handle";
 
-
-type DataType = { usersData: UserRowType[] }
+export type ChatsWithUsers = {
+  [key: string]: {
+    users: UserModel[];
+    group_id: string
+  }
+}
+type DataType = { usersData: UserRowType[], chatsData: ChatsWithUsers }
 
 type LoadResp = ReturnType<DataType>
 
@@ -32,31 +39,21 @@ export const load: PageServerLoad = async (event): Promise<LoadResp> => {
 
   const usersData = usersResp.data as UserRowType[]
   const chatsData = chatsResp.data as GetAllChats[]
-  // console.log(chatsData)
 
-  type ChatsWithUsers = {
-    [key: string]: {
-      id: string,
-      member_type: number
+  const chatsWithUserInfo: ChatsWithUsers = {}
+  if (chatsData != undefined && chatsData.length != 0)
+    for (const chat of chatsData) {
+      const chatUserResp = await getChatUsers(event, chat.id)
+      if (!chatUserResp.ok) {
+        console.error(chatUserResp.message)
+        return { ...chatUserResp }
+      }
+      const users = await getUsersFromArray(chatUserResp.data)
+
+      chatsWithUserInfo[chat.id] = users
     }
-  }
 
-  const chatsWithUserInfo: ChatsWithUsers = {
-
-  }
-  for (const chat of chatsData) {
-    // console.log(chat)
-    const chatUserResp = await GetChatUsers(event, chat.id)
-    if (!chatUserResp.ok) {
-      console.error(chatUserResp.message)
-      return { ...chatUserResp }
-    }
-    // console.log(chatUserResp)
-    chatsWithUserInfo[chat.id] = chatUserResp.data
-  }
-  console.log(chatsWithUserInfo)
-
-  const dataOut = { usersData, chatsData }
+  const dataOut = { usersData, chatsData: chatsWithUserInfo }
 
   return { ok: true, data: dataOut }
 }
@@ -86,7 +83,24 @@ export const actions: Actions = {
     }
 
     // Add User to the created Chat
-    const addUserResp = await addUserToChat(event, target_user, id)
+    let addUserResp = await addUserToChat(event, target_user, id)
+    if (!addUserResp.ok) {
+      console.error(addUserResp.error)
+      return fail(400, { ok: false })
+    }
+    if (addUserResp.data <= 200, addUserResp.data >= 299) {
+      const err = new Error("Adding User To Chat failed with Status Code >>> " + addUserResp.data.toString())
+      console.error(err)
+      return fail(addUserResp.data, { ok: false })
+    }
+
+    const userIDResp = getUserIdFromCookie(event)
+    if (!userIDResp.ok) {
+      console.error(userIDResp.error)
+      return fail(400, { ok: false })
+    }
+
+    addUserResp = await addUserToChat(event, userIDResp.user_id as string, id)
     if (!addUserResp.ok) {
       console.error(addUserResp.error)
       return fail(400, { ok: false })
@@ -98,7 +112,7 @@ export const actions: Actions = {
     }
 
 
-    return { status: addUserResp.data, success: true }
+    return redirect(303, "/app/chat")
   },
 
 };

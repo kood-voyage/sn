@@ -1,5 +1,27 @@
 import { db } from ".";
 import type { ReturnType } from "$lib/types/requests";
+import { getUser } from "./profile";
+import type { UserModel } from "$lib/types/user";
+
+
+type ApiUsers = {
+  id: string;
+  member_type: number;
+}
+
+export async function getUsersFromArray(users: Array<ApiUsers>) {
+  const arr_out: Array<UserModel> = []
+  for (const user of users) {
+    const userResp = getUser(user.id)
+    if (!userResp.ok) {
+      continue
+    }
+
+    arr_out.push(userResp.data)
+
+  }
+  return arr_out
+}
 
 export type UserRowType = {
   id: string,
@@ -9,7 +31,6 @@ export type UserRowType = {
   avatar: string,
   cover: string,
   description: string
-
 }
 
 type userResp = ReturnType<UserRowType[]>

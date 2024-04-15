@@ -7,6 +7,10 @@ export type ServerMessage = {
   source_id: string,
   data: string | object,
 }
+
+export type WebSocketStore = { websocket: WebSocket | undefined, access_token: string | undefined }
+export const webSocketStore = writable<WebSocketStore>({ websocket: undefined, access_token: undefined })
+
 export type MessageStore = Array<ServerMessage>
 export const messageStore = writable<MessageStore>([])
 
