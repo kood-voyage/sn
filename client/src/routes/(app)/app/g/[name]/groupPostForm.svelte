@@ -10,17 +10,9 @@
 
 	import { createPostImagesStore } from '$lib/store/create-post-store';
 	import { z } from 'zod';
+	import { groupPostSchema } from '$lib/types/group-schema';
 
 	// I made schema here, i think it's more appropriate
-	export const groupPostSchema = z.object({
-		groupId: z.string(),
-		title: z.string(),
-		content: z.string().min(8),
-		images: z
-			.array(z.any()) // Temporarily treat images as an array of any type
-			.max(3, { message: 'You can only upload up to 3 images.' })
-			.optional()
-	});
 
 	export let data;
 	export let groupId: string;
@@ -29,7 +21,14 @@
 	let images = [];
 
 	const form = superForm(data, {
-		validators: zodClient(groupPostSchema)
+		validators: zodClient(groupPostSchema),
+		onSubmit: async ({ action, submitter }) => {
+			// console.log('RAN >>>', action);
+			// console.log('RAN >>>', submitter);
+		},
+		onResult: async ({ result }) => {
+			// console.log('RESULT >>>', result);
+		}
 
 		// all of this looks to coomplicated for me :(
 		// onSubmit: async (input) => {
@@ -50,7 +49,7 @@
 		// }
 	});
 
-	const { form: formData, enhance } = form;
+	const { form: formData, enhance, submit } = form;
 
 	function limitFiles(files, maxFiles) {
 		images = Array.from(files);
@@ -93,7 +92,7 @@
 {/if}
 
 <form
-	method="POST"
+	method="post"
 	action="?/groupPostSubmit"
 	enctype="multipart/form-data"
 	use:enhance
@@ -133,5 +132,5 @@
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
-	<Form.Button class="w-full">Submit</Form.Button>
+	<Form.Button type="submit" on:submit={(e) => submit()} class="w-full">Submit</Form.Button>
 </form>
