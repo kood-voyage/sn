@@ -70,10 +70,6 @@
 				connectWebSocket(access_token);
 				return;
 			}
-			if (obj.access_token == undefined && obj.websocket == undefined) {
-				webSocketStore.set({ websocket: undefined, access_token: undefined });
-				return;
-			}
 		});
 	});
 

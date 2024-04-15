@@ -7,7 +7,7 @@ let webSocket: WebSocket
 webSocketStore.subscribe((obj) => {
   if (obj.access_token == undefined) return
   if (obj.websocket != undefined) return
-  if (obj.access_token) connectWebSocket(obj.access_token)
+  if (obj.access_token != undefined && obj.websocket == undefined) connectWebSocket(obj.access_token)
 })
 
 export const ssr = false
