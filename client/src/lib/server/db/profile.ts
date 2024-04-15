@@ -19,7 +19,8 @@ type User = {
   last_name: string,
   avatar: string,
   cover: string,
-  description: string
+  description: string,
+  timestamp:string
 }
 
 export async function getProfile(event: RequestEvent, username: string) {
@@ -81,7 +82,8 @@ export function getUser(unique_credentials: string) {
     last_name,
     avatar,
     cover,
-    description
+    description,
+    timestamp
     FROM user WHERE username = ? OR id = ?`
 
   try {

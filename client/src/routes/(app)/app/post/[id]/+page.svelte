@@ -1,19 +1,25 @@
 <script lang="ts">
+	import Editorsn from '$lib/components/Editorsn.svelte';
 	import CarouselItem from '$lib/components/ui/carousel/carousel-item.svelte';
 	import CarouselNext from '$lib/components/ui/carousel/carousel-next.svelte';
 	import CarouselPrevious from '$lib/components/ui/carousel/carousel-previous.svelte';
 	import * as Carousel from '$lib/components/ui/carousel/index.js';
-	import { EnterFullScreen, ExitFullScreen } from 'svelte-radix';
+	import { ChatBubble, EnterFullScreen, ExitFullScreen } from 'svelte-radix';
+	import Author from './author.svelte';
+	import Content from './content.svelte';
+	import Comments from './comments.svelte';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import CommentForm from './comment-form.svelte';
 
 	export let data;
 
-	const { post } = data;
+	const { post, postAuthor,comments } = data;
 
 	let toggle = false;
 </script>
 
-<div class="h-screen flex flex-col lg:flex-row">
-	<div class="bg-black w-full h-full flex px-16 m-auto items-center relative justify-center">
+<div class="h-screen flex flex-col lg:flex-row dark:bg-neutral-800">
+	<div class="bg-black w-full h-full flex px-16 m-auto relative justify-center">
 		<Carousel.Root
 			class="flex flex-col h-full my-auto justify-center"
 			opts={{ loop: true, skipSnaps: true, watchDrag: false, dragThreshold: 0 }}
@@ -43,16 +49,25 @@
 		</button>
 	</div>
 
-	<div class="w-full lg:w-[480px] flex flex-col {toggle && 'hidden'}">
-		<header class="0 w-full h-96 overflow-y-scroll p-1">{@html post.content}</header>
+	<div class="w-full lg:w-[480px] flex flex-col h-screen {toggle && 'hidden'}">
+		<Author {postAuthor} created_at={post.created_at} />
 
-		<div class="h-full w-full lg:w-[480px] overflow-y-scroll">
-			comment section
-			<div class="text-2xl w-full">
-				<div class=" w-full h-[1000px]"></div>
-			</div>
+		<Content content={post.content} />
+
+		<Tooltip.Root>
+			<Tooltip.Trigger class="justify-end h-8 w-full border-b flex pr-4">
+				<ChatBubble class="flex items-center text-muted-foreground w-4" />
+				<span class="flex items-center text-muted-foreground w-4 ml-2">{comments.length}</span>
+			</Tooltip.Trigger>
+			<Tooltip.Content align="center" alignOffset={800} class="flex items-center self-center">
+				<p>Comments {comments.length}</p>
+			</Tooltip.Content>
+		</Tooltip.Root>
+
+		<div class="h-full w-full lg:max-w-[480px] overflow-y-scroll">
+			<Comments comments={comments} />
 		</div>
 
-		<footer class=" w-full h-40">editor</footer>
+		<footer class=" w-full p-4"><CommentForm data={data.form} post_id={data.post.id} /></footer>
 	</div>
 </div>

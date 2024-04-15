@@ -21,6 +21,7 @@
 	export let data: SuperValidated<Infer<PostSchema>>;
 
 	let images: File[] = [];
+	
 	let childValue;
 
 	const form = superForm(data, {
@@ -45,9 +46,6 @@
 		}
 	}
 
-	// setInterval(() => {
-	// 	console.log(divElement.childNodes);
-	// }, 1000)
 
 	function displayImagePreviews(): void {
 		const updatedImages: File[] = [];
@@ -72,8 +70,9 @@
 	function handleChildValue(value) {
 		childValue = value.detail.innerHTML;
 
-		console.log(childValue);
 	}
+
+	
 </script>
 
 {#if $createPostImagesStore.length > 0}

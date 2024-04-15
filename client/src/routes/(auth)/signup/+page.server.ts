@@ -4,7 +4,7 @@ import { superValidate } from 'sveltekit-superforms';
 
 import { signUpSchema } from '../schema';
 
-// import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 
 import jwt from 'jsonwebtoken'
@@ -60,7 +60,5 @@ export const actions: Actions = {
 		}
 	}
 };
-function uuidv4(): string {
-	throw new Error('Function not implemented.');
-}
+
 

@@ -9,10 +9,10 @@
 	} from '$lib/store/user-store.js';
 
 	currentUserStore.set(data.data);
-
 	currentUserFollowers.set(data.followers);
 	currentUserFollowing.set(data.following);
 
+	
 
 	const { username, email, first_name, last_name, avatar } = $currentUserStore;
 
@@ -28,13 +28,15 @@
 	import Globe from 'svelte-radix/Globe.svelte';
 	import Plus from 'svelte-radix/Plus.svelte';
 
+	import * as Tooltip from '$lib/components/ui/tooltip';
+
 	import Avatar from 'svelte-radix/Avatar.svelte';
 
 	import { Button } from '$lib/components/ui/button/index.js';
 
 	import { setMode, resetMode } from 'mode-watcher';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-
+	import NavigationItem from './navigation-item.svelte';
 </script>
 
 <ModeWatcher />
@@ -46,41 +48,12 @@
 			<div class="h-1/6"></div>
 
 			<div class="flex flex-col h-4/6 items-center sm:w-[60px]">
-				<a href="/app">
-					<div class="button">
-						<Home class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
-					</div>
-				</a>
-
-				<a href="/app/u">
-					<div class="button">
-						<Person class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
-					</div>
-				</a>
-
-				<a href="/app/g">
-					<div class="button">
-						<Globe class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
-					</div>
-				</a>
-
-				<a href="/app/chat">
-					<div class="button">
-						<ChatBubble class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
-					</div>
-				</a>
-
-				<a href="/app">
-					<div class="button">
-						<Bell class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
-					</div>
-				</a>
-
-				<a href="/app">
-					<div class="button">
-						<Calendar class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
-					</div>
-				</a>
+				<NavigationItem href="/app" msg="Home" Icon={Home} />
+				<NavigationItem href="/app/u" msg="Users" Icon={Person} />
+				<NavigationItem href="/app/g" msg="Groups" Icon={Globe} />
+				<NavigationItem href="/app/chat" msg="Chats" Icon={ChatBubble} />
+				<NavigationItem href="/app/notification" msg="Notifications" Icon={Bell} />
+				<NavigationItem href="/app/events" msg="Events" Icon={Calendar} />
 			</div>
 
 			<!-- // profile info -->
@@ -112,9 +85,6 @@
 								<span>Create post</span>
 							</a>
 						</DropdownMenu.Item>
-
-						<DropdownMenu.Separator />
-						<DropdownMenu.Item class="text-blue-500">{username}</DropdownMenu.Item>
 
 						<DropdownMenu.Separator />
 						<DropdownMenu.Group>
@@ -199,9 +169,3 @@
 		></div>
 	</div>
 </div>
-
-<style>
-	.button {
-		@apply flex h-[58px] w-[58px] cursor-pointer rounded transition-all duration-300  hover:bg-neutral-100 hover:dark:bg-neutral-900;
-	}
-</style>

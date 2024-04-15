@@ -176,7 +176,7 @@
 	<div
 		id="editor"
 		contenteditable="true"
-		class="max-h-64 overflow-scroll border rounded-md p-2"
+		class="max-h-64 overflow-scroll border rounded-md p-2 dark:border-neutral-700 "
 		on:keydown={handleEditorInput}
 		on:focus={handleEditorInput}
 	/>
