@@ -24,30 +24,30 @@
 
 	export let data;
 	export let groupId: string;
-
-	console.log(data);
+	console.log('THIS IS THE DATA', groupId);
 
 	let images = [];
 
 	const form = superForm(data, {
-		validators: zodClient(groupPostSchema),
+		validators: zodClient(groupPostSchema)
 
 		// all of this looks to coomplicated for me :(
-		onSubmit: async (input) => {
-			const image = input.formData.get('image') as File;
+		// onSubmit: async (input) => {
+		// 	console.log('THIS IS ANOTHER TEST');
+		// 	const image = input.formData.get('image') as File;
 
-			input.formData.set('groupId', groupId); /// i dont't know about this but i want to store current groupId to a groupPostSchema
+		// 	input.formData.set('groupId', groupId); /// i dont't know about this but i want to store current groupId to a groupPostSchema
 
-			// const imgResp = await handleImageCopression(image);
-			// if (!imgResp.ok) {
-			// 	input.cancel();
-			// 	return;
-			// }
-			// const file = imgResp.file as File;
+		// 	// const imgResp = await handleImageCopression(image);
+		// 	// if (!imgResp.ok) {
+		// 	// 	input.cancel();
+		// 	// 	return;
+		// 	// }
+		// 	// const file = imgResp.file as File;
 
-			input.formData.set('image', image);
-			// console.log(`compressedFile size ${file.size / 1024 / 1024} MB`);
-		}
+		// 	input.formData.set('image', image);
+		// 	// console.log(`compressedFile size ${file.size / 1024 / 1024} MB`);
+		// }
 	});
 
 	const { form: formData, enhance } = form;

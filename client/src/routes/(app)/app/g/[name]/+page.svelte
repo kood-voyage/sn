@@ -15,10 +15,6 @@
 	const groupPosts = data.posts;
 	let isMember = false;
 
-	console.log('--------');
-	if (groupResp.ok) console.log(groupResp.data);
-	console.log('--------');
-
 	if (currentUser && 'id' in currentUser) {
 		if (groupResp.ok && groupResp.data.creator_id == currentUser.id) {
 			isMember = true;
@@ -87,26 +83,25 @@
 									Invite User
 								</button>
 							</form>
-							<form>
-								<input type="text" hidden name="target_id" value={id} />
 
-								<Dialog.Root>
-									<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
-										>Create Post</Dialog.Trigger
-									>
+							<input type="text" hidden name="target_id" value={id} />
 
-									<Dialog.Content>
-										<!-- I tried to put 2 PROPS to this component  -->
-										<!-- data : Took from previous Form, and i dont remember why it's required  -->
-										<!-- groupId - this PROP i put intentionally because i think we need PARENT_ID for post in groups -->
-										{#if groupResp.ok}
-											<GroupPostForm data={data.form} groupId={groupResp.data.id} />
-										{:else}
-											<p class="m-2">Group Info Not found, try reloading the page!</p>
-										{/if}
-									</Dialog.Content>
-								</Dialog.Root>
-							</form>
+							<Dialog.Root>
+								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
+									>Create Post</Dialog.Trigger
+								>
+
+								<Dialog.Content>
+									<!-- I tried to put 2 PROPS to this component  -->
+									<!-- data : Took from previous Form, and i dont remember why it's required  -->
+									<!-- groupId - this PROP i put intentionally because i think we need PARENT_ID for post in groups -->
+									{#if groupResp.ok}
+										<GroupPostForm data={data.form} groupId={groupResp.data.id} />
+									{:else}
+										<p class="m-2">Group Info Not found, try reloading the page!</p>
+									{/if}
+								</Dialog.Content>
+							</Dialog.Root>
 						{:else}
 							<form action="?/groupJoinSubmit" method="post" class=" text-center">
 								<p>
