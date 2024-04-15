@@ -3,20 +3,42 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import type { GroupJson } from '$lib/server/api/group-requests';
+	import { currentUserStore } from '$lib/store/user-store';
 	import type { PageData } from './$types';
+	import GroupPostForm from './groupPostForm.svelte';
 
 	export let data: PageData;
 	let id: string, name: string, description: string, image_path: string;
 	const groupResp = data.group;
+	const currentUser = $currentUserStore;
+	let errorMessage = '';
+	const groupPosts = data.posts;
+	let isMember = false;
 
-	try {
+	if (currentUser && 'id' in currentUser) {
+		if (groupResp.ok && groupResp.data.creator_id == currentUser.id) {
+			isMember = true;
+		}
+		if (groupResp.ok)
+			groupResp.data.members?.forEach((user) => {
+				if (user && user.id == currentUser.id) {
+					isMember = true;
+				}
+			});
+	}
+
+	if (groupResp.ok) {
 		const data = groupResp.data as GroupJson;
 		id = data.id;
 		name = data.name;
 		description = data.description;
-		image_path = data.image_path[0];
-	} catch (err) {
-		console.error(err);
+		if (data.image_path) {
+			image_path = data.image_path[0];
+		} else {
+			image_path =
+				'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg';
+		}
+	} else {
 		name = '404 Not Found';
 		description = '';
 		image_path =
@@ -54,13 +76,14 @@
 						<p class="lines3 text-sm text-left text-slate-400">{description}</p>
 					</div>
 					<div class="flex flex-row">
-						<form action="?/invite" method="post" class=" text-center">
-							<input type="text" hidden name="target_id" value={id} />
-							<button class="text-sm rounded-md px-5 border bg-sky-500 p-1 m-0.5" type="submit">
-								Invite User
-							</button>
-						</form>
-						<form>
+						{#if isMember}
+							<form action="?/invite" method="post" class=" text-center">
+								<input type="text" hidden name="target_id" value={id} />
+								<button class="text-sm rounded-md px-5 border bg-sky-500 p-1 m-0.5" type="submit">
+									Invite User
+								</button>
+							</form>
+
 							<input type="text" hidden name="target_id" value={id} />
 
 							<Dialog.Root>
@@ -69,26 +92,29 @@
 								>
 
 								<Dialog.Content>
-									<PostForm data={data.form} />
-									<!-- <Dialog.Header class=""> -->
-									<!-- <Dialog.Title>{title}</Dialog.Title>
-
-														<Dialog.Description>
-															{content}
-														</Dialog.Description>
-
-									
-
-														<div class="py-2 text-center text-sm text-muted-foreground">
-															Slide {current} of {count}
-														</div>
-													</Dialog.Header>
-													<div class="w-full h-full"></div>
-
-													<a href={`/app/post/${id}`} class="w-full h-4">to post</a> -->
+									<!-- I tried to put 2 PROPS to this component  -->
+									<!-- data : Took from previous Form, and i dont remember why it's required  -->
+									<!-- groupId - this PROP i put intentionally because i think we need PARENT_ID for post in groups -->
+									{#if groupResp.ok}
+										<GroupPostForm data={data.form} groupId={groupResp.data.id} />
+									{:else}
+										<p class="m-2">Group Info Not found, try reloading the page!</p>
+									{/if}
 								</Dialog.Content>
 							</Dialog.Root>
-						</form>
+						{:else}
+							<form action="?/groupJoinSubmit" method="post" class=" text-center">
+								<p>
+									{#if errorMessage}
+										{errorMessage}
+									{/if}
+								</p>
+								<input type="text" hidden name="target_id" value={id} />
+								<button class="text-sm rounded-md px-5 border bg-sky-500 p-1 m-0.5" type="submit">
+									Join group
+								</button>
+							</form>
+						{/if}
 						<!-- 
 						-->
 					</div>
@@ -99,11 +125,24 @@
 		<!-- group activity / posts -->
 
 		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-0 sm:p-4 mt-5 md:mt-0">
-			<div class="bg-pink-500 h-56 w-full sm:rounded-lg">group</div>
+			{#if groupPosts}
+				{#each groupPosts as post}
+					<div class="bg-white rounded-lg p-4 mb-4">
+						<p class="text-xl font-bold">TITLE: {post.title}</p>
+						<p class="text-gray-600">CONTENT: {post.content}</p>
+						<div class="flex items-center mt-2">
+							<p class="text-gray-700 mr-2">User ID: {post.user_id}</p>
+							<p class="text-gray-700">Created At: {post.created_at}</p>
+						</div>
+						<p class="text-gray-700">IMAGE IF THERE IS {post.image_path}</p>
+					</div>
+				{/each}
+			{/if}
+			<!-- <div class="bg-pink-500 h-56 w-full sm:rounded-lg">group</div>
 			<div class="bg-purple-500 h-56 w-full sm:rounded-lg">group</div>
 			<div class="bg-red-500 h-56 w-full sm:rounded-lg">123</div>
 			<div class="bg-yellow-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-orange-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-orange-500 h-56 w-full sm:rounded-lg">123</div> -->
 		</div>
 	</div>
 </main>

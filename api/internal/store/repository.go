@@ -49,6 +49,8 @@ type GroupRepository interface {
 	Members(groupId string) (*[]model.User, error)
 	IsMember(groupId, userId string) (bool, error)
 	AddMember(groupId, userId string) error
+	GetAll(model.Type) (*[]model.Group, error)
+	GetPosts(group_id string) ([]*model.Post, error)
 }
 
 type PrivacyRepository interface {

@@ -1,13 +1,16 @@
 import type { RequestEvent } from "@sveltejs/kit";
-import { getGroup } from "../api/group-requests";
+import { getGroup, type GroupJson } from "$lib/server/api/group-requests";
+import { type ReturnType } from "$lib/types/requests";
 
-export async function mainGetGroup(event: RequestEvent, group_name: string) {
+type GetGroupType = ReturnType<GroupJson>
 
-  const respGroup = await getGroup(event, group_name)
+export async function mainGetGroup(event: RequestEvent, group_name: string): Promise<GetGroupType> {
+  const originalGroupName = group_name.replace(/_/g, ' ');
+
+  const respGroup = await getGroup(event, originalGroupName);
   if (!respGroup.ok) {
-    return { ...respGroup }
+    return { ...respGroup };
   }
 
-  // console.log(respGroup)
-  return { ...respGroup }
+  return { ...respGroup };
 }
