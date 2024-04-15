@@ -410,8 +410,6 @@ func (s *Server) groupGetPost() http.HandlerFunc {
 			return
 		}
 
-		fmt.Println(" THIS IS A MOTHEFACKING ", group_posts)
-
 		s.respond(w, http.StatusOK, Response{Data: group_posts})
 	}
 }

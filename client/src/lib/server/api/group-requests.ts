@@ -1,6 +1,7 @@
 import { LOCAL_PATH } from "$env/static/private";
 import { error, type RequestEvent } from "@sveltejs/kit";
 import { type ReturnType } from "$lib/types/requests";
+import type { string } from "zod";
 
 
 export type GroupJson = {
@@ -17,6 +18,7 @@ export type GroupPostJson = {
   id: string,
   title: string,
   content: string,
+  image_path: string[],
   user_id: string,
   community_id: string | null,
   created_at: Date,
@@ -72,7 +74,7 @@ export async function getGroups(event: RequestEvent) {
   }
 }
 
-export async function getGroupPosts(event: RequestEvent, group_name: string) {
+export async function getGroupPosts(event: RequestEvent, group_name: string): Promise<ReturnType<GroupPostJson[]>> {
 
   try {
     const fetchResp = await fetch(`${LOCAL_PATH}/api/v1/auth/group/posts/${group_name.replace("_", " ")}`, {
@@ -82,6 +84,7 @@ export async function getGroupPosts(event: RequestEvent, group_name: string) {
     })
     const json = (await fetchResp.json()).data as GroupPostJson[]
 
+    console.log("posts", json)
     return {ok: true, data: json}
 
   } catch (err) {

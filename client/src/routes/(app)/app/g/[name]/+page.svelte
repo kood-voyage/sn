@@ -12,7 +12,7 @@
 	const groupResp = data.group;
 	const currentUser = $currentUserStore;
 	let errorMessage = '';
-	const groupPosts = data.posts.data;
+	const groupPosts = data.posts;
 	let isMember = false;
 
 	console.log('--------');
@@ -139,10 +139,7 @@
 							<p class="text-gray-700 mr-2">User ID: {post.user_id}</p>
 							<p class="text-gray-700">Created At: {post.created_at}</p>
 						</div>
-						<p class="text-gray-700">
-							IMAGE IF THERE IS
-							{post.image_path}
-						</p>
+						<p class="text-gray-700">IMAGE IF THERE IS {post.image_path}</p>
 					</div>
 				{/each}
 			{/if}

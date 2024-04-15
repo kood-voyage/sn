@@ -9,15 +9,15 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { type ReturnType } from "$lib/types/requests";
 import { getGroupPosts, joinGroup, type GroupJson, type GroupPostJson } from "$lib/server/api/group-requests";
 import { type User } from "$lib/types/user";
+import { object } from "zod";
 
 type GroupType = ReturnType<GroupJson>
-type GroupPostType = ReturnType<GroupPostJson>
 
 type LoadType = {
     group: GroupType,
     form: SuperValidated<{ title: string; content: string; privacy: string; images?: any[] | undefined; }, any, { title: string; content: string; privacy: string; images?: any[] | undefined; }>,
-    data: User
-    posts: GroupPostType
+    data: User,
+    posts: GroupPostJson[]
 }
 
 export const load: PageServerLoad = async (event): Promise<LoadType> => {
@@ -26,13 +26,14 @@ export const load: PageServerLoad = async (event): Promise<LoadType> => {
   const groupPostData = (await getGroupPosts(event, event.params.name))
   if (!groupPostData.ok) {
     console.error(groupPostData.message)
+    // return {data: {}, posts: undefined, form: form, group: undefined}
   }
 
   const data = (await mainGetGroup(event, event.params.name))
   if (!data.ok) {
     console.error(data.message)
   }
-  let info: LoadType = {data: parentData.data, posts: groupPostData, form: form, group: {...data} };
+  let info: LoadType = {data: parentData.data, posts: groupPostData.data, form: form, group: {...data} };
   // console.log(typeof data)
   // console.log(typeof data.data)
 

@@ -94,17 +94,17 @@ func (g *GroupRepository) Get(groupId string) (*model.Group, error) {
 		return nil, err
 	}
 
-	// privacy, err := g.store.Privacy().Check(group.ID)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// if privacy == 1 {
-	// 	group.Privacy = "public"
-	// }else if privacy == 2 {
-	// 	group.Privacy = "private"
-	// }else if privacy == 3{
-	// 	group.Privacy = "selected"
-	// }
+	privacy, err := g.store.Privacy().Check(group.ID)
+	if err != nil {
+		return nil, err
+	}
+	if privacy == 1 {
+		group.Privacy = "public"
+	} else if privacy == 2 {
+		group.Privacy = "private"
+	} else if privacy == 3 {
+		group.Privacy = "selected"
+	}
 
 	gMembers, err := g.Members(group.ID)
 	if err != nil {

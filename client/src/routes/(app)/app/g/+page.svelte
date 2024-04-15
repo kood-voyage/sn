@@ -5,12 +5,12 @@
 	import { onMount } from 'svelte';
 	import { Dash } from 'svelte-radix';
 	import { currentUserStore } from '$lib/store/user-store';
+	import type { User } from '$lib/types/user';
 
 	export let data: PageData;
 
-	const currentUser = $currentUserStore;
+	const currentUser = $currentUserStore as User;
 	const groups = data.groups.data;
-	let isMember = false;
 	let renderedGroupIds: string[] = [];
 
 	groups?.forEach((group) => {
@@ -40,7 +40,7 @@
 	/>
 	<hr class="w-[440px] m-auto" />
 
-	<div class="overflow-scroll h">
+	<div class="overflow-hidden h">
 		<div
 			class="flex m-auto w-[420px] p-2 mt-1 hover:bg-slate-200 dark:hover:bg-slate-900 rounded-md overflow-hidden"
 		>
