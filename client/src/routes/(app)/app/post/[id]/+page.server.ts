@@ -64,6 +64,10 @@ export const load: PageServerLoad = async (event) => {
   // const comments = commentsJson.data
 
 
+
+  console.log(comments)
+
+
   return {post,postAuthor,form,comments}
 
 }
@@ -77,7 +81,7 @@ commentSubmit: async (event) => {
     const post_id = formData.get('post_id') as string;
     const parent_id = formData.get('parent_id') as string
     const content = formData.get('content') as string;
-    const image_path = ["",""]
+    const image_path = ["","","","",""]
 
 
 		// const imagesURL: string[] = []

@@ -1,29 +1,43 @@
 <script lang="ts">
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { page } from '$app/stores';
 
 	export let comments;
 
 	import en from 'javascript-time-ago/locale/en';
-
 	import TimeAgo from 'javascript-time-ago';
-
 	TimeAgo.addDefaultLocale(en);
-
 	const timeAgo = new TimeAgo('en-US');
+
+	let previousUserId = comments[0].user_id;
+
+	// console.log($page.data.data.id);
+
+
+
+    console.loh
 </script>
 
 <div class="h-full px-4">
 	{#each comments as comment}
 		<div class="flex p-2">
-			<img
-				src="https://sm.ign.com/ign_nordic/cover/a/avatar-gen/avatar-generations_prsz.jpg"
-				alt="avatar"
-				class="w-9 h-9 object-cover rounded-full"
-			/>
+			{#if $page.data.data.id === comment.user_id}
+				<img
+					src={$page.data.data.avatar}
+					alt="avatar"
+					class="w-9 h-9 object-cover rounded-full"
+				/>
+			{:else}
+				<img
+					src="https://sm.ign.com/ign_nordic/cover/a/avatar-gen/avatar-generations_prsz.jpg"
+					alt="avatar"
+					class="w-9 h-9 object-cover rounded-full"
+				/>
+			{/if}
 
 			<div class="flex flex-col">
 				<div class="flex flex-col p-2 mx-2 bg-neutral-200 dark:bg-neutral-700 rounded-2xl">
-					<p class="text-[9px]">{comment.user_id}</p>
+					<p class="text-[10px]">{$page.data.data.id === comment.user_id ? $page.data.data.username :comment.user_id}</p>
 					<div class="w-full text-md">{@html comment.content}</div>
 				</div>
 
