@@ -56,7 +56,7 @@ export const actions: Actions = {
 			privacy: formData.get("privacy"),
 		}
 		console.log("GROUP >>>", JSON.stringify(group))
-
+		
 		try {
 			const response = await fetch(`${LOCAL_PATH}/api/v1/auth/group/create`, {
 				method: 'POST',
@@ -66,14 +66,24 @@ export const actions: Actions = {
 				},
 				body: JSON.stringify(group) // Convert the JSON object to a string
 			});
-
+			
 			console.log("didnt throw error by itself", response.status)
 			console.log(await response.json())
 			// if (!response.ok) {
-			// 	throw new Error('Failed to create group'); // Throw an error if response is not OK
-			// }
+				// 	throw new Error('Failed to create group'); // Throw an error if response is not OK
+				// }
+				
+				// Handle successful response
 
-			// Handle successful response
+
+			//add creator to the group also
+			const resp = await fetch(`${LOCAL_PATH}/api/v1/auth/group/join/${group.name}`, {
+				method: 'GET',
+				headers: {
+					'Authorization': `Bearer ${event.cookies.get('at')}`,
+				},
+			})
+
 		} catch (err) {
 			if (err instanceof Error) {
 				console.log("ERROR >>>", err.name)
@@ -84,19 +94,6 @@ export const actions: Actions = {
 		}
 		console.log("hello")
 		redirect(303, `g/${group.name}`)
-
-
-
-
-
-		// const file = formData.get("image") as File
-		// console.log(`Sent File size ${file.size / 1024 / 1024} MB`)
-
-
-
-
-
-		// redirect(303, "/app/create-group")
 
 	},
 

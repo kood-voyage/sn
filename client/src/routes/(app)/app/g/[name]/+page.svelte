@@ -15,6 +15,7 @@
 	const groupPosts = data.posts;
 	let isMember = false;
 
+	console.log("GROUP RESPOSNE", groupResp)
 	if (currentUser && 'id' in currentUser) {
 		if (groupResp.ok && groupResp.data.creator_id == currentUser.id) {
 			isMember = true;

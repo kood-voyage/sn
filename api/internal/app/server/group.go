@@ -3,7 +3,6 @@ package server
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"net/http"
 	"social-network/internal/model"
 	"social-network/pkg/validator"
@@ -381,7 +380,6 @@ func (s *Server) groupGetPost() http.HandlerFunc {
 
 		groupInfo, err := s.store.Group().Get(group_name)
 		if err != nil {
-			fmt.Println("TEST1 ERROR", err)
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
@@ -389,14 +387,10 @@ func (s *Server) groupGetPost() http.HandlerFunc {
 		if s.types.Privacy.Values[groupInfo.Privacy] == s.types.Privacy.Private {
 			t, err := s.store.Group().IsMember(groupInfo.ID, sourceID)
 			if err != nil {
-				fmt.Println("TEST2 ERROR", err)
-
 				s.error(w, http.StatusUnprocessableEntity, err)
 				return
 			}
 			if !t {
-				fmt.Println("TEST3 ERROR", t)
-
 				s.error(w, http.StatusForbidden, errors.New("group is private and user is not part of the group"))
 				return
 			}
@@ -404,8 +398,6 @@ func (s *Server) groupGetPost() http.HandlerFunc {
 
 		group_posts, err := s.store.Group().GetPosts(groupInfo.ID)
 		if err != nil {
-			fmt.Println("TEST4 ERROR", err)
-
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
@@ -431,7 +423,7 @@ func (s *Server) joinGroup() http.HandlerFunc {
 			return
 		}
 
-		if s.types.Privacy.Public != s.types.Privacy.Values[groupInfo.Privacy] {
+		if s.types.Privacy.Public != s.types.Privacy.Values[groupInfo.Privacy] && groupInfo.CreatorID != sourceID {
 			s.error(w, http.StatusForbidden, errors.New("can not join to private group"))
 			return
 		}

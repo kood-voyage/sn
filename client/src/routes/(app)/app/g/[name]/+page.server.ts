@@ -6,9 +6,12 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { type ReturnType } from "$lib/types/requests";
 import { getGroupPosts, joinGroup, type GroupJson, type GroupPostJson } from "$lib/server/api/group-requests";
 import { type User } from "$lib/types/user";
-
-import { z } from "zod";
+import { redirect } from '@sveltejs/kit';
+import { saveToS3 } from '$lib/server/images/upload';
+import { v4 as uuidv4 } from 'uuid';
 import { groupPostSchema } from "$lib/types/group-schema";
+import { getUserIdFromCookie } from '$lib/server/jwt-handle';
+import { LOCAL_PATH, S3_BUCKET } from "$env/static/private";
 
 type GroupType = ReturnType<GroupJson>
 
@@ -43,78 +46,81 @@ export const load: PageServerLoad = async (event): Promise<LoadType> => {
 export const actions: Actions = {
   groupPostSubmit: async (event) => {
     console.log("THIS IS EXECUTED")
-    console.log(event)
+    // console.log(event)
 
-    return { type: "success", status: 201 }
     // Validate the form data
     // const form = await superValidate(event, zod(groupPostSchema));
+    // console.log("FROM", form)
 
 
     // // HERE IS GET A USER_ID 
-    // const { user_id } = getUserIdFromCookie(event)
+    const { user_id } = getUserIdFromCookie(event)
 
     // // HERE YOU CAN GET ALL FORM DATA
-    // const formData = await event.request.formData();
+    const formData = await event.request.formData();
 
     // // Extracting other form fields
-    // const post_id = uuidv4()
-    // const title = formData.get('title') as string;
-    // const content = formData.get('content') as string;
-    // const groupId = formData.get('groupId') as string;
+    const post_id = uuidv4()
+    const title = formData.get('title') as string;
+    const content = formData.get('content') as string;
+    const privacy = formData.get('privacy') as string;
+    const groupId = event.params.name
+  
 
-
-    // console.log(title)
-    // console.log(content)
-    // console.log(groupId)
+    console.log(user_id)
+    console.log(title)
+    console.log(content)
+    console.log(groupId)
+    console.log(privacy)
 
 
 
 
     // Extracting uploaded images
 
-    //         const imagesURL: string[] = []
-    // const images = formData.getAll('images') as File[];
+    const imagesURL: string[] = []
+    const images = formData.getAll('images') as File[];
+
+    console.log(images)
 
 
-    // for (const [i, image] of images.entries()) {
-    //     const resp = await saveToS3(("post" + (i + 1)), post_id, image, "post")
-    //     imagesURL.push(S3_BUCKET + resp)
-    // }
+    for (const [i, image] of images.entries()) {
+        const resp = await saveToS3(("post" + (i + 1)), post_id, image, "post")
+        imagesURL.push(S3_BUCKET + resp)
+    }
 
 
-    // const json: Group = {
-    //     id: post_id,
-    //     user_id: user_id,
-    //     title: title,
-    //     content: content,
-    //     community_id: "",
-    //     image_path: imagesURL
-    // }
-    // console.log(json)
+    const json = {
+        id: post_id,
+        user_id: user_id,
+        title: title,
+        content: content,
+        community_id: groupId,
+        image_path: imagesURL
+    }
+    console.log(json)
 
-    // try {
-    //     const response = await fetch(`${LOCAL_PATH}/api/v1/auth/posts/create`, {
-    //         method: 'POST',
-    //         headers: {
-    //             'Authorization': `Bearer ${event.cookies.get('at')}`,
-    //             'Content-Type': 'application/json' // Specify JSON content type
-    //         },
-    //         body: JSON.stringify(json) // Convert the JSON object to a string
-    //     });
+    try {
+        const response = await fetch(`${LOCAL_PATH}/api/v1/auth/posts/create`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${event.cookies.get('at')}`,
+                'Content-Type': 'application/json' // Specify JSON content type
+            },
+            body: JSON.stringify(json) // Convert the JSON object to a string
+        });
 
-    //     if (!response.ok) {
-    //         throw new Error('Failed to create post'); // Throw an error if response is not OK
-    //     }
+        if (!response.ok) {
+            throw new Error('Failed to create post'); // Throw an error if response is not OK
+        }
+        // Handle successful response
+} catch (err) {
+    // Extracting only necessary information from the error object
+    const errorMessage = err instanceof Error ? err.message : "Unknown Error";
 
-    //     // Handle successful response
-    // } catch (err) {
-    //     if (err instanceof Error) {
-    //         return { ok: false, error: err, message: err.message }
-    //     } else {
-    //         return { ok: false, error: err, message: "Unknown Error" }
-    //     }
-    // }
-    // redirect(304, `/app/g`)
+    return { ok: false, error: errorMessage, message: errorMessage };
+}
+    redirect(304, `/app/g/${event.params.name}`)
   },
   groupJoinSubmit: async (event) => {
     try {
@@ -144,7 +150,7 @@ export const actions: Actions = {
 
 //TODO: HERE IS ACTION TEMPLATE
 
-function uuidv4() {
-  throw new Error("Function not implemented.");
-}
+// function uuidv4() {
+//   throw new Error("Function not implemented.");
+// }
 
