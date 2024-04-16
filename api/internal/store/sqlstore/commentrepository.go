@@ -65,9 +65,8 @@ func (c CommentRepository) Delete(commentID, userID string) error {
 
 	return nil
 }
-
 func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
-	q := `
+    q := `
     WITH RECURSIVE CommentHierarchy AS (
         -- Anchor member: Start with the top-level comments for the post
         SELECT
@@ -100,47 +99,48 @@ func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
             CommentHierarchy ch ON c.parent_id = ch.id
     )
     SELECT
-        ch.*,
-        i.path AS image_path
+        ch.*
     FROM
         CommentHierarchy ch
-    LEFT JOIN
-        image i ON ch.id = i.parent_id;
     `
 
-	rows, err := c.store.Db.Query(q, id)
-	if err != nil {
-		return nil, err
-	}
 
-	var comments []model.Comment
-	for rows.Next() {
-		var comment model.Comment
-		var imagePath sql.NullString
-		if err = rows.Scan(
-			&comment.ID,
-			&comment.UserID,
-			&comment.PostID,
-			&comment.ParentID,
-			&comment.Content,
-			&comment.CreatedAt,
-			&comment.Count,
-			&imagePath,
-		); err != nil {
-			return nil, err
-		}
-		if imagePath.Valid {
-			comment.ImagePaths = append(comment.ImagePaths, imagePath.String)
-		}
-		comments = append(comments, comment)
-	}
+    rows, err := c.store.Db.Query(q, id)
+    if err != nil {
+        return nil, err
+    }
 
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
+    var comments []model.Comment
+    for rows.Next() {
+        var comment model.Comment
+        var imagePath sql.NullString
+        if err = rows.Scan(
+            &comment.ID,
+            &comment.UserID,
+            &comment.PostID,
+            &comment.ParentID,
+            &comment.Content,
+            &comment.CreatedAt,
+            &comment.Count,
+            // &imagePath,
+        ); err != nil {
+            return nil, err
+        }
+        if imagePath.Valid {
+            comment.ImagePaths = append(comment.ImagePaths, imagePath.String)
+        }
+        comments = append(comments, comment)
+    }
 
-	return &comments, nil
+    if err = rows.Err(); err != nil {
+        return nil, err
+    }
+
+    return &comments, nil
 }
+
+
+
 
 func (c CommentRepository) Update(comment *model.Comment) error {
 	query := `UPDATE comment SET content = ? WHERE id = ?`
