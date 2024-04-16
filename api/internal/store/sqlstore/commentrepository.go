@@ -1,7 +1,6 @@
 package sqlstore
 
 import (
-	"database/sql"
 	"fmt"
 	"social-network/internal/model"
 )
@@ -16,14 +15,18 @@ func (c CommentRepository) Create(comment *model.Comment) error {
                      user_id,
                      post_id,
                      parent_id,
-                     content) VALUES (?,?,?,?,?)`
+                     content,
+                     user_name,
+                     user_avatar) VALUES (?,?,?,?,?,?,?)`
 
 	_, err := c.store.Db.Exec(query,
 		comment.ID,
 		comment.UserID,
 		comment.PostID,
 		getParentID(comment),
-		comment.Content)
+		comment.Content,
+		comment.UserName,
+		comment.UserAvatar)
 	if err != nil {
 		return err
 	}
@@ -66,9 +69,8 @@ func (c CommentRepository) Delete(commentID, userID string) error {
 	return nil
 }
 func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
-    q := `
+	q := `
     WITH RECURSIVE CommentHierarchy AS (
-        -- Anchor member: Start with the top-level comments for the post
         SELECT
             c.id,
             c.user_id,
@@ -76,6 +78,8 @@ func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
             COALESCE(c.parent_id, '') AS parent_id,
             c.content,
             c.created_at,
+            c.user_name,
+            c.user_avatar,
             (SELECT COUNT(*) FROM comment subc WHERE subc.parent_id = c.id) AS count
         FROM
             comment c
@@ -84,7 +88,6 @@ func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
     
         UNION ALL
 
-        -- Recursive member: Join with sub-comments
         SELECT
             c.id,
             c.user_id,
@@ -92,6 +95,8 @@ func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
             COALESCE(c.parent_id, '') AS parent_id,
             c.content,
             c.created_at,
+            c.user_name,
+            c.user_avatar,
             (SELECT COUNT(*) FROM comment subc WHERE subc.parent_id = c.id) AS count
         FROM
             comment c
@@ -104,43 +109,36 @@ func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
         CommentHierarchy ch
     `
 
+	rows, err := c.store.Db.Query(q, id)
+	if err != nil {
+		return nil, err
+	}
 
-    rows, err := c.store.Db.Query(q, id)
-    if err != nil {
-        return nil, err
-    }
+	var comments []model.Comment
+	for rows.Next() {
+		var comment model.Comment
+		if err = rows.Scan(
+			&comment.ID,
+			&comment.UserID,
+			&comment.PostID,
+			&comment.ParentID,
+			&comment.Content,
+			&comment.CreatedAt,
+			&comment.UserName,
+			&comment.UserAvatar,
+			&comment.Count,
+		); err != nil {
+			return nil, err
+		}
+		comments = append(comments, comment)
+	}
 
-    var comments []model.Comment
-    for rows.Next() {
-        var comment model.Comment
-        var imagePath sql.NullString
-        if err = rows.Scan(
-            &comment.ID,
-            &comment.UserID,
-            &comment.PostID,
-            &comment.ParentID,
-            &comment.Content,
-            &comment.CreatedAt,
-            &comment.Count,
-            // &imagePath,
-        ); err != nil {
-            return nil, err
-        }
-        if imagePath.Valid {
-            comment.ImagePaths = append(comment.ImagePaths, imagePath.String)
-        }
-        comments = append(comments, comment)
-    }
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 
-    if err = rows.Err(); err != nil {
-        return nil, err
-    }
-
-    return &comments, nil
+	return &comments, nil
 }
-
-
-
 
 func (c CommentRepository) Update(comment *model.Comment) error {
 	query := `UPDATE comment SET content = ? WHERE id = ?`

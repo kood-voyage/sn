@@ -1,8 +1,9 @@
 package model
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Comment struct {
@@ -13,6 +14,8 @@ type Comment struct {
 	Content    string    `db:"content" json:"content" validate:"required"`
 	ImagePaths []string  `db:"path" json:"image_path"`
 	CreatedAt  time.Time `db:"created_at" json:"created_at"`
+	UserName   string    `db:"user_name" json:"user_name"`
+	UserAvatar string    `db:"user_avatar" json:"user_avatar"`
 	Count      string    `json:"count"`
 }
 
