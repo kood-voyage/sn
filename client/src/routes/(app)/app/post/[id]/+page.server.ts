@@ -1,12 +1,8 @@
 import { LOCAL_PATH } from "$env/static/private"
 import {getUser } from "$lib/server/db/profile";
-// import type { Action } from "@sveltejs/kit";
 import type { PageServerLoad, Actions, } from './$types';
 import { commentSchema } from "../../comment-schema";
-
-
 import { superValidate } from 'sveltekit-superforms';
-
 import { zod } from 'sveltekit-superforms/adapters';
 import { redirect } from "@sveltejs/kit";
 import { getUserIdFromCookie } from "$lib/server/jwt-handle";
@@ -36,7 +32,6 @@ export interface Comment {
 
 export const load: PageServerLoad = async (event) => {
 	const post_id = event.params.id
-
 	const postResponse = await fetch(`${LOCAL_PATH}/api/v1/auth/posts/${post_id}`,{
 		method: 'GET',
 		headers: {
@@ -64,7 +59,7 @@ export const load: PageServerLoad = async (event) => {
   // const comments = commentsJson.data
 
 
-
+  console.log("HERE IS")
   console.log(comments)
 
 
@@ -81,7 +76,8 @@ commentSubmit: async (event) => {
     const post_id = formData.get('post_id') as string;
     const parent_id = formData.get('parent_id') as string
     const content = formData.get('content') as string;
-    const image_path = ["","","","",""]
+    const user_name =formData.get('user_name') as string;
+    const user_avatar =formData.get('user_avatar') as string;
 
 
 		// const imagesURL: string[] = []
@@ -93,12 +89,12 @@ commentSubmit: async (event) => {
 		// }
 
 		const json: Comment ={
-			user_id: user_id,
-      post_id: post_id,
-      parent_id: parent_id,
-      content: content,
-      image_path: image_path,
-
+			user_id,
+      post_id,
+      parent_id,
+      content,
+      user_name,
+      user_avatar
 		}
 
 try {

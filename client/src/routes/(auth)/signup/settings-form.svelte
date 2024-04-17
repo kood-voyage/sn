@@ -6,17 +6,18 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
 	import RedStar from './red-star.svelte';
-
 	import EyeOpen from 'svelte-radix/EyeOpen.svelte';
 	import EyeClosed from 'svelte-radix/EyeClosed.svelte';
 
-	let isHide: boolean = true;
 
 	function toogle() {
 		isHide = !isHide;
 	}
 
 	export let data: SuperValidated<Infer<SignUpSchema>>;
+
+
+	let isHide: boolean = true;
 
 	const form = superForm(data, {
 		validators: zodClient(signUpSchema)
@@ -83,13 +84,16 @@
 						placeholder="********"
 					/>
 
-					<div class="absolute right-0 bottom-[6px] mr-4 opacity-50">
+					<button
+						class="absolute right-0 bottom-[6px] mr-4 opacity-50"
+						on:click|preventDefault={toogle}
+					>
 						{#if isHide}
-							<EyeClosed on:click={toogle} />
+							<EyeClosed />
 						{:else}
-							<EyeOpen on:click={toogle} />
+							<EyeOpen />
 						{/if}
-					</div>
+					</button>
 				</div>
 			</Form.Control>
 			<Form.FieldErrors />
@@ -108,13 +112,16 @@
 							placeholder="********"
 						/>
 
-						<div class="absolute right-0 bottom-[6px] mr-4 opacity-50">
+						<button
+							class="absolute right-0 bottom-[6px] mr-4 opacity-50"
+							on:click|preventDefault={toogle}
+						>
 							{#if isHide}
-								<EyeClosed on:click={toogle} />
+								<EyeClosed />
 							{:else}
-								<EyeOpen on:click={toogle} />
+								<EyeOpen />
 							{/if}
-						</div>
+						</button>
 					</div>
 				</Form.Control>
 				<Form.FieldErrors />

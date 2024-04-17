@@ -1,10 +1,9 @@
 <script lang="ts">
-	import Editorsn from '$lib/components/Editorsn.svelte';
 	import CarouselItem from '$lib/components/ui/carousel/carousel-item.svelte';
 	import CarouselNext from '$lib/components/ui/carousel/carousel-next.svelte';
 	import CarouselPrevious from '$lib/components/ui/carousel/carousel-previous.svelte';
 	import * as Carousel from '$lib/components/ui/carousel/index.js';
-	import { ChatBubble, EnterFullScreen, ExitFullScreen } from 'svelte-radix';
+	import {ChatBubble, EnterFullScreen, ExitFullScreen } from 'svelte-radix';
 	import Author from './author.svelte';
 	import Content from './content.svelte';
 	import Comments from './comments.svelte';
@@ -16,6 +15,8 @@
 	const { post, postAuthor,comments } = data;
 
 	let toggle = false;
+
+	const commentsLength = comments === null ? 0 : comments.length
 </script>
 
 <div class="h-screen flex flex-col lg:flex-row dark:bg-neutral-800">
@@ -57,10 +58,10 @@
 		<Tooltip.Root>
 			<Tooltip.Trigger class="justify-end h-8 w-full border-b flex pr-4">
 				<ChatBubble class="flex items-center text-muted-foreground w-4" />
-				<span class="flex items-center text-muted-foreground w-4 ml-2">{comments.length}</span>
+				<span class="flex items-center text-muted-foreground w-4 ml-2">{commentsLength}</span>
 			</Tooltip.Trigger>
 			<Tooltip.Content align="center" alignOffset={800} class="flex items-center self-center">
-				<p>Comments {comments.length}</p>
+				<p>Comments {commentsLength}</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 

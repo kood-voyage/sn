@@ -1,11 +1,7 @@
 import imageCompression from "browser-image-compression";
 
 export async function handleImageCopression(file: File) {
-  console.log("Started handleImage!")
   const imageFile = file
-  // console.log('originalFile instanceof Blob', imageFile instanceof Blob); // true
-  console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
-
   const options = {
     maxSizeMB: 1,
     maxWidthOrHeight: 1920,
@@ -13,8 +9,6 @@ export async function handleImageCopression(file: File) {
   }
   try {
     const compressedFile = await imageCompression(imageFile, options);
-    // console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
-    console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
 
     return { ok: true, file: compressedFile } // write your own logic
   } catch (error) {
@@ -30,7 +24,7 @@ export async function handleImageCopression(file: File) {
 }
 
 export async function uploadImages(formData: FormData) {
-  console.log("FORMDATA >>>", formData)
+
   const response = await fetch(window.location.href, { // Or use a specific path if necessary
     method: 'POST',
     body: formData, // FormData containing the compressed images and other form data

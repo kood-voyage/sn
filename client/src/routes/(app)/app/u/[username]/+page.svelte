@@ -6,8 +6,6 @@
 
 	let isCurrentUserFollowing = false;
 
-	console.log($currentUserFollowing);
-
 	if ($currentUserFollowing.data !== null && $currentUserFollowing.data !== undefined) {
 		for (const following of $currentUserFollowing.data) {
 			if (following.id === data.user.id) {
@@ -21,7 +19,6 @@
 
 	const { posts } = data;
 
-	console.log(posts);
 </script>
 
 <svelte:head>

@@ -2,20 +2,14 @@
 	export let postAuthor;
 	export let created_at;
 
-	console.log(postAuthor);
-	console.log(created_at);
-
 	import Calendar from 'svelte-radix/Calendar.svelte';
 	import * as HoverCard from '$lib/components/ui/hover-card/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-
 	import en from 'javascript-time-ago/locale/en';
-
 	import TimeAgo from 'javascript-time-ago';
 	import { Globe } from 'svelte-radix';
 
 	TimeAgo.addDefaultLocale(en);
-
 	const timeAgo = new TimeAgo('en-US');
 
 </script>

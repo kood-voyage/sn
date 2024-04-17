@@ -17,14 +17,10 @@
 		if (imageResp.ok && imageResp.file) {
 			file = imageResp.file;
 		}
-		console.log(file);
-
 		let reader = new FileReader();
-
 		reader.onloadend = function () {
 			previewAvatar = reader.result;
 		};
-
 		if (file) {
 			reader.readAsDataURL(file);
 		} else {
@@ -35,19 +31,14 @@
 	let fileInputCover: HTMLInputElement;
 	async function PreviewCover() {
 		let file = fileInputCover.files[0];
-		// console.log(file);
 		const imageResp = await handleImageCopression(file);
 		if (imageResp.ok && imageResp.file) {
 			file = imageResp.file;
 		}
-		// console.log(file);
-
 		let reader = new FileReader();
-
 		reader.onloadend = function () {
 			previewCover = reader.result;
 		};
-
 		if (file) {
 			reader.readAsDataURL(file);
 		} else {

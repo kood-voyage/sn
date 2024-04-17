@@ -35,9 +35,6 @@
 
 	function limitFiles(files: File[], maxFiles: number) {
 		images = Array.from(files);
-
-		console.log('hello');
-
 		if (images.length > maxFiles) {
 			alert('You can only select up to 3 images.');
 			images = images.slice(0, maxFiles); // Limit the images array to the first 3 images

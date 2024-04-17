@@ -4,12 +4,12 @@
 	import Face from 'svelte-radix/Face.svelte';
 	import FontBold from 'svelte-radix/FontBold.svelte';
 	import FontItalic from 'svelte-radix/FontItalic.svelte';
+	import pkg from 'lodash';
 
 	const dispatch = createEventDispatcher();
 
 	let editorValue;
 
-	import pkg from 'lodash';
 	const { debounce } = pkg;
 
 	import { data } from '$lib/emojis';
@@ -135,12 +135,25 @@
 		}
 		return { line: 0, position: 0 };
 	}
+
+	function handlePaste(event: ClipboardEvent) {
+		event.preventDefault();
+		const clipboardData = event.clipboardData || window.clipboardData;
+		const paste = clipboardData.getData('text/html');
+		const sanitizedPaste = removeInlineStyles(paste);
+		document.execCommand('insertHTML', false, sanitizedPaste);
+	}
+
+	function removeInlineStyles(html: string): string {
+		// Remove inline style attributes
+		return html.replace(/<[^>]+style\s*=\s*['"][^'"]*['"][^>]*>/gi, '');
+	}
 </script>
 
 <div>
 	<div class="flex">
-		<button on:click={toggleBold}><FontBold /></button>
-		<button on:click={toggleItalic}><FontItalic /></button>
+		<button on:click|preventDefault={toggleBold}><FontBold /></button>
+		<button on:click|preventDefault={toggleItalic}><FontItalic /></button>
 		<button id="emoji" on:click|stopPropagation={storeLastFocusPosition}>
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger class="w-[32px] h-[32px]"><Face /></DropdownMenu.Trigger>
@@ -176,7 +189,8 @@
 	<div
 		id="editor"
 		contenteditable="true"
-		class="max-h-64 overflow-scroll border rounded-md p-2 dark:border-neutral-700 "
+		class="max-h-64 overflow-scroll border rounded-md p-2"
+		on:paste={handlePaste}
 		on:keydown={handleEditorInput}
 		on:focus={handleEditorInput}
 	/>

@@ -1,13 +1,18 @@
 <script lang="ts">
 	import Editorsn from '$lib/components/Editorsn.svelte';
 	import * as Form from '$lib/components/ui/form';
-	import { Input } from '$lib/components/ui/input';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { commentSchema } from '../../comment-schema';
 	import { superForm } from 'sveltekit-superforms';
+	import { page } from '$app/stores';
 
 	export let data;
-	export let post_id;
+	export let post_id : string;
+
+
+	
+
+	console.log($page.data.data.username)
 
 	let childValue = '';
 
@@ -17,6 +22,8 @@
 			formData.set('content', childValue);
 			formData.set('post_id', post_id);
 			formData.set('content', childValue);
+			formData.set('user_name', $page.data.data.username)
+			formData.set('user_avatar',$page.data.data.avatar )
 		}
 	});
 
@@ -36,8 +43,8 @@
 	class="w-full"
 >
 	<Form.Field {form} name="content">
-		<Form.Control let:attrs>
-			<Editorsn {...attrs} on:valueChange={handleChildValue} />
+		<Form.Control>
+			<Editorsn on:valueChange={handleChildValue} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>

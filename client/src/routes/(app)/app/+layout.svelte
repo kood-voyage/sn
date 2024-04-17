@@ -8,15 +8,6 @@
 		currentUserStore
 	} from '$lib/store/user-store.js';
 
-	currentUserStore.set(data.data);
-	currentUserFollowers.set(data.followers);
-	currentUserFollowing.set(data.following);
-
-	
-
-	const { username, email, first_name, last_name, avatar } = $currentUserStore;
-
-	///
 	import Sun from 'svelte-radix/Sun.svelte';
 	import Moon from 'svelte-radix/Moon.svelte';
 	import Home from 'svelte-radix/Home.svelte';
@@ -27,16 +18,17 @@
 	import ChatBubble from 'svelte-radix/ChatBubble.svelte';
 	import Globe from 'svelte-radix/Globe.svelte';
 	import Plus from 'svelte-radix/Plus.svelte';
-
-	import * as Tooltip from '$lib/components/ui/tooltip';
-
 	import Avatar from 'svelte-radix/Avatar.svelte';
-
 	import { Button } from '$lib/components/ui/button/index.js';
-
 	import { setMode, resetMode } from 'mode-watcher';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import NavigationItem from './navigation-item.svelte';
+
+	currentUserStore.set(data.data);
+	currentUserFollowers.set(data.followers);
+	currentUserFollowing.set(data.following);
+
+	const { username, email, first_name, last_name, avatar } = $currentUserStore;
 </script>
 
 <ModeWatcher />

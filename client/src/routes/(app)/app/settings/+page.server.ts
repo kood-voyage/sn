@@ -25,40 +25,22 @@ export const actions: Actions = {
     const data = await event.request.formData()
     const user_resp = getUserIdFromCookie(event)
     const id = user_resp.user_id as string
-
     const avatar = data.get("fileInputAvatar") as File
-    // console.log(avatar)
-
-
     const cover = data.get("fileInputCover") as File
-    // console.log(cover)
 
-
-
-    // Check if the file is an image
     if (avatar.type.startsWith('image/')) {
-
-      // Logic when avatar is not empty and is an image
-
       const avatarResp = await saveUserAvatarToS3(user_resp, avatar)
-
       if (!avatarResp.ok) {
         return avatarResp.error
       }
 
       const avatarUrl = avatarResp.resp
-
       if (avatarUrl) setAvatar(avatarUrl, id)
-
-
     } else {
       console.log("The selected file is not an image.");
     }
 
-
     if (cover.type.startsWith('image/')) {
-      // Logic when avatar is not empty and is an image
-
       const coverResp = await saveUserCoverToS3(user_resp, cover)
 
       if (!coverResp.ok) {
@@ -78,6 +60,3 @@ export const actions: Actions = {
 
   }
 }
-
-
-// Function to reduce the image size
