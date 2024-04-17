@@ -9,7 +9,7 @@ type ApiUsers = {
   member_type: number;
 }
 
-export async function getUsersFromArray(users: Array<ApiUsers>) {
+export function getUsersFromArray(users: Array<ApiUsers>) {
   const arr_out: Array<UserModel> = []
   for (const user of users) {
     const userResp = getUser(user.id)

@@ -27,8 +27,7 @@
 	if (userInfo != undefined) {
 		people = userInfo;
 	}
-	// $: console.log(dialogOpen);
-	// Computed property that filters the list based on the search query
+
 	$: if (people != undefined && people.length != 0) {
 		filteredPeople = people
 			.filter((person) => person.username.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -62,7 +61,7 @@
 					<form
 						method="post"
 						use:enhance={({ formData }) => {
-							dispatch('submit', {});
+							dispatch('submit', { detail: 'Data or message from PeopleSearch' });
 							// console.log('FormData >>', formData);
 							formData.set('target', person.id);
 							// console.log(person.id);

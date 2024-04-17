@@ -1,7 +1,6 @@
 import { LOCAL_PATH } from "$env/static/private";
-import { error, type RequestEvent } from "@sveltejs/kit";
+import { type RequestEvent } from "@sveltejs/kit";
 import { type ReturnType } from "$lib/types/requests";
-import type { string } from "zod";
 
 
 export type GroupJson = {
@@ -11,7 +10,7 @@ export type GroupJson = {
   description: string,
   image_path: Array<string>,
   privacy: string,
-  members: null | Array<{id: string, member_type: number}>
+  members: null | Array<{ id: string, member_type: number }>
 }
 
 export type GroupPostJson = {
@@ -25,7 +24,7 @@ export type GroupPostJson = {
   privacy: string | null
 }
 
-type GetGroup = ReturnType<GroupJson>
+export type GetGroup = ReturnType<GroupJson>
 
 export async function getGroup(event: RequestEvent, group_name: string): Promise<GetGroup> {
 
@@ -39,7 +38,8 @@ export async function getGroup(event: RequestEvent, group_name: string): Promise
     const json = (await fetchResp.json()).data
 
 
-    // console.log(json)
+    console.log(fetchResp.status)
+    console.log(json)
 
     return { ok: true, data: json }
 
@@ -63,7 +63,7 @@ export async function getGroups(event: RequestEvent) {
     })
     const json = (await fetchResp.json()).data as GroupJson[]
 
-    return {ok: true, data: json}
+    return { ok: true, data: json }
 
   } catch (err) {
     if (err instanceof Error) {
@@ -85,7 +85,7 @@ export async function getGroupPosts(event: RequestEvent, group_name: string): Pr
     const json = (await fetchResp.json()).data as GroupPostJson[]
 
     console.log("posts", json)
-    return {ok: true, data: json}
+    return { ok: true, data: json }
 
   } catch (err) {
     if (err instanceof Error) {
@@ -97,7 +97,7 @@ export async function getGroupPosts(event: RequestEvent, group_name: string): Pr
 }
 
 export async function joinGroup(event: RequestEvent, group_name: string) {
- try {
+  try {
     const fetchResp = await fetch(`${LOCAL_PATH}/api/v1/auth/group/join/${group_name.replace("_", " ")}`, {
       method: "GET",
       headers: {
@@ -106,12 +106,12 @@ export async function joinGroup(event: RequestEvent, group_name: string) {
     });
 
     if (!fetchResp.ok) {
-      const errorMessage = await fetchResp.json(); 
+      const errorMessage = await fetchResp.json();
       return { ok: false, error: errorMessage, message: "error " }
     }
 
     const json = (await fetchResp.json()).data
-    return {ok: true, data: json}
+    return { ok: true, data: json }
 
   } catch (err) {
     if (err instanceof Error) {

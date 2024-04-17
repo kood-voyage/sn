@@ -3,19 +3,20 @@ import { getUsersFromArray, mainGetAllUsers, type UserRowType } from "$lib/serve
 import { fail, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { v4 as uuidv4 } from 'uuid';
-import type { ReturnType } from "$lib/types/requests";
+import type { ReturnToClientType } from "$lib/types/requests";
 import type { UserModel } from "$lib/types/user";
 import { getUserIdFromCookie } from "$lib/server/jwt-handle";
+import { getGroup, type GetGroup, type GroupJson } from "$lib/server/api/group-requests";
 
 export type ChatsWithUsers = {
   [key: string]: {
     users: UserModel[];
-    group_id: string
+    group: GroupJson | { id: string }
   }
 }
 type DataType = { usersData: UserRowType[], chatsData: ChatsWithUsers }
 
-type LoadResp = ReturnType<DataType>
+type LoadResp = ReturnToClientType<DataType>
 
 export const load: PageServerLoad = async (event): Promise<LoadResp> => {
 
@@ -24,16 +25,17 @@ export const load: PageServerLoad = async (event): Promise<LoadResp> => {
   const usersResp = (mainGetAllUsers())
   // const usersResp = { ok: false, err: new Error("NO PROBLEM") }
   if (!usersResp.ok) {
-    console.error(usersResp.message)
-    return { ...usersResp }
+    console.error(usersResp.error)
+    return { ok: usersResp.ok, message: usersResp.message }
 
   }
 
   const chatsResp = await getAllChats(event)
   if (!chatsResp.ok) {
-    console.error(chatsResp.message)
-    return { ...chatsResp }
+    console.error(chatsResp.error)
+    return { ok: chatsResp.ok, message: chatsResp.message }
   }
+
 
 
 
@@ -45,12 +47,27 @@ export const load: PageServerLoad = async (event): Promise<LoadResp> => {
     for (const chat of chatsData) {
       const chatUserResp = await getChatUsers(event, chat.id)
       if (!chatUserResp.ok) {
-        console.error(chatUserResp.message)
-        return { ...chatUserResp }
+        console.error(chatUserResp.error)
+        return { ok: chatUserResp.ok, message: chatUserResp.message }
       }
-      const users = await getUsersFromArray(chatUserResp.data)
+      const users = getUsersFromArray(chatUserResp.data)
 
-      chatsWithUserInfo[chat.id] = users
+
+      let groupResp: GetGroup = { ok: false, error: new Error("GroupResp Not declared yet"), message: "No group Resp Yet" }
+      let groupJson: GroupJson | { id: string } = { id: chat.group_id }
+      if (chat.group_id != "" && chat.group_id != undefined) {
+        groupResp = await getGroup(event, chat.group_id)
+        if (!groupResp.ok) {
+          console.log("WELP")
+          console.error(groupResp.error)
+          return { ok: groupResp.ok, message: groupResp.message }
+        }
+        groupJson = groupResp.data
+        console.log(groupResp)
+      }
+
+
+      chatsWithUserInfo[chat.id] = { users, group: groupJson }
     }
 
   const dataOut = { usersData, chatsData: chatsWithUserInfo }
@@ -64,11 +81,6 @@ export const actions: Actions = {
 
     // Create and Get variables like chat_id and user_id, respectively.
     const id = uuidv4()
-    const target_user = formData.get("target") as string
-    if (typeof target_user != "string" || target_user == undefined) {
-      console.error(new Error("User ID not found on form"))
-      return fail(400, { ok: false })
-    }
 
     // Create Chat 
     const createResp = await createChat(event, id)
@@ -82,6 +94,22 @@ export const actions: Actions = {
       return fail(createResp.data, { ok: false })
     }
 
+    // Get the target User to add to chat
+    const target_user = formData.get("target") as string
+    if (typeof target_user != "string" || target_user == undefined) {
+      console.error(new Error("User ID not found on form"))
+      return fail(400, { ok: false })
+    }
+
+    // Get the user creating the post 
+    const userIDResp = getUserIdFromCookie(event)
+    if (!userIDResp.ok) {
+      console.error(userIDResp.error)
+      return fail(400, { ok: false })
+    }
+
+
+
     // Add User to the created Chat
     let addUserResp = await addUserToChat(event, target_user, id)
     if (!addUserResp.ok) {
@@ -94,12 +122,12 @@ export const actions: Actions = {
       return fail(addUserResp.data, { ok: false })
     }
 
-    const userIDResp = getUserIdFromCookie(event)
-    if (!userIDResp.ok) {
-      console.error(userIDResp.error)
-      return fail(400, { ok: false })
+    // If the users are the same then just return and don't try to add a second one
+    if (userIDResp.user_id == target_user) {
+      return redirect(303, "/app/chat")
     }
 
+    // Otherwise add the second user
     addUserResp = await addUserToChat(event, userIDResp.user_id as string, id)
     if (!addUserResp.ok) {
       console.error(addUserResp.error)

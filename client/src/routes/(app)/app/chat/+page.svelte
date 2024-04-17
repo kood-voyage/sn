@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog';
 	import type { UserRowType } from '$lib/server/db/user';
+	import { currentUserStore } from '$lib/store/user-store';
 	import type { UserModel } from '$lib/types/user';
 	import type { PageData } from './$types';
 	import type { ChatsWithUsers } from './+page.server';
@@ -9,9 +10,10 @@
 	export let data: PageData;
 	// console.log(data.data);
 
-	$: console.log(data);
+	// $: console.log(data);
 	let searchQuery = '';
 
+	let userData = $currentUserStore;
 	let people: UserRowType[] = [];
 	let chats: ChatsWithUsers = {};
 	if (data.ok) {
@@ -21,27 +23,66 @@
 
 	let filteredPeople: UserModel[] = [];
 
+	$: chats_arr = Object.values(chats);
+
 	// console.log(chats);
-	$: if (Object.values(chats).length != 0 && Object.values(chats) != undefined) {
-		filteredPeople = Object.entries(chats)
-			.filter((chat) => {
-				// console.log('CHAT >>>', chat);
-				// const key = chat[0];
-				// const value = chat[1];
-				// console.log('Key >>>', key);
-				// console.log('Value >>>', value);
-				// if (chat.length == 0) return false
-				// if (chat.length == 1) return true
-				// const out = chat.filter
-				// return chat[0].username.toLowerCase().includes(searchQuery.toLowerCase());
-			})
-			.map((val) => {
-				// console.log(val);
-				return val[0];
-			});
+	$: if (chats_arr.length != 0 && chats_arr != undefined) {
+		filteredPeople = Object.entries(chats).map((chat) => {
+			// console.log('CHAT >>>', chat);
+			const key = chat[0];
+			const value = chat[1];
+
+			const users = value.users;
+			const group_id = value.group;
+			// console.log(value);
+
+			for (const user of users) {
+				// console.log(user);
+			}
+
+			// console.log(value.group_id != '' && value.group_id != undefined);
+			// if (group_id != '' && group_id != undefined) {
+			// }
+
+			// console.log('Key >>>', key);
+			// console.log('Value >>>', value);
+			// if (chat.length == 0) return false
+			// if (chat.length == 1) return true
+			// const out = chat.filter
+			// return chat[0].username.toLowerCase().includes(searchQuery.toLowerCase());
+			return;
+		});
+		filteredPeople = [];
+		// .filter((chat) => {
+		// 	// console.log('CHAT >>>', chat);
+		// 	// const key = chat[0];
+		// 	// const value = chat[1];
+		// 	// const users = value.users;
+		// 	// const group_id = value.group_id;
+		// 	// for (const user of users) {
+		// 	// 	console.log(user);
+		// 	// }
+		// 	// // console.log(value.group_id != '' && value.group_id != undefined);
+		// 	// if (value.group_id != '' && value.group_id != undefined) {
+		// 	// }
+		// 	// console.log('Key >>>', key);
+		// 	// console.log('Value >>>', value);
+		// 	// if (chat.length == 0) return false
+		// 	// if (chat.length == 1) return true
+		// 	// const out = chat.filter
+		// 	// return chat[0].username.toLowerCase().includes(searchQuery.toLowerCase());
+		// })
+		// .map((val) => {
+		// 	// console.log(val);
+		// 	return val[0];
+		// });
 		// .slice(0, 6);
 
 		// console.log(filteredPeople);
+	}
+
+	function handleSubmission(event: CustomEvent) {
+		console.log('Submitted from PeopleSearch:', event.detail);
 	}
 </script>
 
@@ -56,7 +97,7 @@
 		<!-- search group / friends -->
 		<div class="border-b-2 border-slate-300 dark:border-slate-950 h-22 hidden sm:block">
 			{#if data.ok}
-				<PeopleSearch userInfo={people} />
+				<PeopleSearch userInfo={people} on:submit={handleSubmission} />
 			{:else}
 				<div class="p-2 pb-1">
 					<p
