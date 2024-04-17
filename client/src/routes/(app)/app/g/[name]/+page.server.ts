@@ -12,14 +12,17 @@ import { v4 as uuidv4 } from 'uuid';
 import { groupPostSchema } from "$lib/types/group-schema";
 import { getUserIdFromCookie } from '$lib/server/jwt-handle';
 import { LOCAL_PATH, S3_BUCKET } from "$env/static/private";
+import { mainGetAllUsers, type UserRowType, type userResp } from "$lib/server/db/user";
 
 type GroupType = ReturnType<GroupJson>
+type AllUserType = ReturnType<UserRowType[]>
 
 type LoadType = {
   group: GroupType,
   form: SuperValidated<{ title: string; content: string; privacy: string; images?: any[] | undefined; }, any, { title: string; content: string; privacy: string; images?: any[] | undefined; }>,
   data: User,
-  posts: GroupPostJson[]
+  posts: GroupPostJson[],
+  allusers: AllUserType
 }
 
 
@@ -36,7 +39,15 @@ export const load: PageServerLoad = async (event): Promise<LoadType> => {
   if (!data.ok) {
     console.error(data.message)
   }
-  let info: LoadType = { data: parentData.data, posts: groupPostData.data, form: form, group: { ...data } };
+  
+
+    const allUsers =  mainGetAllUsers()
+    if (!allUsers.ok){
+      console.error("something wrong with getting all users")
+    }
+    console.log("THIS IS ALL THE USESRS", allUsers)
+  
+  let info: LoadType = { data: parentData.data, posts: groupPostData.data, form: form, group: { ...data }, allusers: allUsers.data};
   // console.log(typeof data)
   // console.log(typeof data.data)
 
@@ -45,13 +56,6 @@ export const load: PageServerLoad = async (event): Promise<LoadType> => {
 
 export const actions: Actions = {
   groupPostSubmit: async (event) => {
-    console.log("THIS IS EXECUTED")
-    // console.log(event)
-
-    // Validate the form data
-    // const form = await superValidate(event, zod(groupPostSchema));
-    // console.log("FROM", form)
-
 
     // // HERE IS GET A USER_ID 
     const { user_id } = getUserIdFromCookie(event)
@@ -65,15 +69,6 @@ export const actions: Actions = {
     const content = formData.get('content') as string;
     const privacy = formData.get('privacy') as string;
     const groupId = event.params.name
-  
-
-    console.log(user_id)
-    console.log(title)
-    console.log(content)
-    console.log(groupId)
-    console.log(privacy)
-
-
 
 
     // Extracting uploaded images
@@ -95,10 +90,10 @@ export const actions: Actions = {
         user_id: user_id,
         title: title,
         content: content,
-        community_id: groupId,
+        privacy: privacy,
+        community_id: groupId.replace("_", " "),
         image_path: imagesURL
     }
-    console.log(json)
 
     try {
         const response = await fetch(`${LOCAL_PATH}/api/v1/auth/posts/create`, {
@@ -143,14 +138,3 @@ export const actions: Actions = {
 //2. page.server.ts peab looma g sisse 
 //3. returnin loadis data --> data tuleb valja page.sveltes --> naeb marco name filedes script +page.server.ts ja page.svelte
 //4. 
-
-
-
-
-
-//TODO: HERE IS ACTION TEMPLATE
-
-// function uuidv4() {
-//   throw new Error("Function not implemented.");
-// }
-

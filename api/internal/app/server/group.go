@@ -383,7 +383,6 @@ func (s *Server) groupGetPost() http.HandlerFunc {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
-
 		if s.types.Privacy.Values[groupInfo.Privacy] == s.types.Privacy.Private {
 			t, err := s.store.Group().IsMember(groupInfo.ID, sourceID)
 			if err != nil {
@@ -396,7 +395,7 @@ func (s *Server) groupGetPost() http.HandlerFunc {
 			}
 		}
 
-		group_posts, err := s.store.Group().GetPosts(groupInfo.ID)
+		group_posts, err := s.store.Group().GetPosts(groupInfo.Name)
 		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return

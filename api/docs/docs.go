@@ -1284,6 +1284,9 @@ const docTemplate = `{
                 "id"
             ],
             "properties": {
+                "group_id": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 }

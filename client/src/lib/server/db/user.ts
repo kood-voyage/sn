@@ -33,7 +33,7 @@ export type UserRowType = {
   description: string
 }
 
-type userResp = ReturnType<UserRowType[]>
+export type userResp = ReturnType<UserRowType[]>
 
 export function mainGetAllUsers(): userResp {
 
