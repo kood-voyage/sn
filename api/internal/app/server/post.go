@@ -28,12 +28,14 @@ func (s *Server) createPost() http.HandlerFunc {
 		}
 
 		if err := s.decode(r, post); err != nil {
+			fmt.Println("ERROR 1 ", err)
 			s.error(w, http.StatusInternalServerError, err)
 			return
 		}
 		post.UserID = userID
 
 		if err := validator.Validate(post); err != nil {
+			fmt.Println("ERROR 2 ", err)
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
@@ -43,6 +45,8 @@ func (s *Server) createPost() http.HandlerFunc {
 			post,
 			s.types.Privacy.Values[post.Privacy],
 		); err != nil {
+			fmt.Println("ERROR 3 ", err)
+
 			s.error(w, http.StatusInternalServerError, err)
 			return
 		}

@@ -2,6 +2,8 @@ basePath: /
 definitions:
   model.Chat:
     properties:
+      group_id:
+        type: string
       id:
         type: string
     required:

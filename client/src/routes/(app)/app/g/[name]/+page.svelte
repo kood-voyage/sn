@@ -6,6 +6,7 @@
 	import { currentUserStore } from '$lib/store/user-store';
 	import type { PageData } from './$types';
 	import GroupPostForm from './groupPostForm.svelte';
+	import Namelayout from './namelayout.svelte';
 
 	export let data: PageData;
 	let id: string, name: string, description: string, image_path: string;
@@ -15,6 +16,7 @@
 	const groupPosts = data.posts;
 	let isMember = false;
 
+	console.log('GROUP RESPOSNWTF!@!!!', groupPosts);
 	if (currentUser && 'id' in currentUser) {
 		if (groupResp.ok && groupResp.data.creator_id == currentUser.id) {
 			isMember = true;
@@ -77,12 +79,19 @@
 					</div>
 					<div class="flex flex-row">
 						{#if isMember}
-							<form action="?/invite" method="post" class=" text-center">
-								<input type="text" hidden name="target_id" value={id} />
-								<button class="text-sm rounded-md px-5 border bg-sky-500 p-1 m-0.5" type="submit">
-									Invite User
-								</button>
-							</form>
+							<Dialog.Root>
+								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
+									>Invite user</Dialog.Trigger
+								>
+
+								<Dialog.Content>
+									{#if groupResp.ok}
+										<Namelayout data={data.form} />
+									{:else}
+										<p class="m-2">Group Info Not found, try reloading the page!</p>
+									{/if}
+								</Dialog.Content>
+							</Dialog.Root>
 
 							<input type="text" hidden name="target_id" value={id} />
 

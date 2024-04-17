@@ -2,7 +2,6 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import { postSchema, type PostSchema } from '$lib/types/post-schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
@@ -11,6 +10,8 @@
 	import { createPostImagesStore } from '$lib/store/create-post-store';
 	import { z } from 'zod';
 	import { groupPostSchema } from '$lib/types/group-schema';
+	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 
 	// I made schema here, i think it's more appropriate
 
@@ -114,6 +115,19 @@
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
+
+	<RadioGroup.Root class="my-3" value="public">
+		<div class="flex items-center space-x-2">
+			<RadioGroup.Item value="public" id="r1" />
+			<Label for="r1">Public</Label>
+		</div>
+		<div class="flex items-center space-x-2">
+			<RadioGroup.Item value="private" id="r2" />
+			<Label for="r2">Private</Label>
+		</div>
+
+		<RadioGroup.Input name="privacy" />
+	</RadioGroup.Root>
 
 	<!-- Img Preview -->
 
