@@ -100,6 +100,7 @@ func configureRouter(s *Server) {
 	s.router.DELETE("/api/v1/auth/posts/delete/{id}", s.deletePost())
 	s.router.POST("/api/v1/auth/posts/selected/add", s.addSelected())
 	s.router.POST("/api/v1/auth/posts/selected/delete", s.deleteSelected())
+	s.router.GET("/api/v1/auth/posts/feed", s.getFeed())
 	//---------COMMENT------------//
 	s.router.POST("/api/v1/auth/comment/create", s.createComment())
 	s.router.PUT("/api/v1/auth/comment/update", s.updateComment())
