@@ -211,3 +211,29 @@ func (s *Server) userNotifications() http.HandlerFunc {
 		s.respond(w, http.StatusOK, Response{Data: notifications})
 	}
 }
+
+func (s *Server) userHasInvite() http.HandlerFunc {
+	type request struct {
+		UserList []string `json:"user_list"`
+		ParentID string   `json:"parent_id"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req request
+		err := s.decode(r, &req)
+		if err != nil {
+			s.error(w, http.StatusBadRequest, err)
+			return
+		}
+
+		var userList []string
+		for _, user := range req.UserList {
+			hasRequest, _ := s.store.Request().UserHasRequest(user, req.ParentID)
+			if !hasRequest {
+				userList = append(userList, user)
+			}
+		}
+
+		s.respond(w, http.StatusOK, Response{Data: userList})
+	}
+}

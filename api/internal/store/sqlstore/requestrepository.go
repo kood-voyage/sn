@@ -64,3 +64,13 @@ func (r *RequestRepository) Get(request model.Request) (*model.Request, error) {
 
 	return &req, nil
 }
+
+func (r *RequestRepository) UserHasRequest(targetId string, parentId string) (bool, error) {
+	query := `SELECT * FROM request WHERE target_id = ? AND parent_id = ?`
+	var count int
+	if err := r.store.Db.QueryRow(query, targetId, parentId).Scan(&count); err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}
