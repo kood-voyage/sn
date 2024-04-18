@@ -41,7 +41,7 @@ export async function saveUserAvatarToS3(userResp: UserResp, file: File) {
 
   const user_id = userResp.user_id as string
 
-  return { ok: true, resp: await saveToS3("avatar", user_id, file) }
+  return { ok: true, resp: await saveToS3("avatar", user_id, file,"profile") }
 }
 
 export async function saveUserCoverToS3(userResp: UserResp, file: File) {
@@ -52,15 +52,19 @@ export async function saveUserCoverToS3(userResp: UserResp, file: File) {
 
   const user_id = userResp.user_id as string
 
-  return { ok: true, resp: await saveToS3("cover", user_id, file) }
+  return { ok: true, resp: await saveToS3("cover", user_id, file, "profile") }
 };
 
 
 
 
-async function saveToS3(type: string, userId: string, file: File): Promise<string | undefined> {
+type Topic = 'profile' | 'post' | 'group' | 'comment' | 'chat';
+
+
+export async function saveToS3(type: string, Id: string, file: File, topic: Topic): Promise<string | undefined> {
+
   const extension = file.name.slice(file.name.lastIndexOf('.'));
-  const key = `profile/${userId}/${type}${extension}`;
+  const key = `${topic}/${Id}/${type}${extension}`;
 
   // Convert File to ArrayBuffer then to Buffer
   const arrayBuffer = await file.arrayBuffer();
@@ -84,8 +88,6 @@ async function saveToS3(type: string, userId: string, file: File): Promise<strin
 
 
 
-
-
 export async function mainUpload() {
   try {
     const results = await client.send(command);
@@ -100,6 +102,4 @@ export async function mainUpload() {
   } finally {
     // finally.
   }
-  // console.log(client)
-  // console.log(command)
 }

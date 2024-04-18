@@ -1,9 +1,6 @@
 import type { PageServerLoad, Actions, } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 
-
-import { apiCreateUser } from '$lib/server/api/user-requests';
-
 import { signInSchema } from '../schema';
 
 import { zod } from 'sveltekit-superforms/adapters';
@@ -45,7 +42,7 @@ export const actions: Actions = {
 
 		const respToken = createTokens(event, user_id)
 
-
+		
 
 
 		if (!respToken.ok) {

@@ -3,10 +3,10 @@
 	let previewBanner = '';
 
 	function PreviewAvatar() {
-		var fileInput = document.getElementById('fileInputAvatar');
+		const fileInput = document.getElementById('fileInputAvatar');
 
-		var file = fileInput.files[0];
-		var reader = new FileReader();
+		const file = fileInput.files[0];
+		const reader = new FileReader();
 
 		reader.onloadend = function () {
 			previewAvatar = reader.result;
@@ -20,10 +20,10 @@
 	}
 
 	function PreviewBanner() {
-		var fileInput = document.getElementById('fileInputBanner');
+		const fileInput = document.getElementById('fileInputBanner');
 
-		var file = fileInput.files[0];
-		var reader = new FileReader();
+		const file = fileInput.files[0];
+		const reader = new FileReader();
 
 		reader.onloadend = function () {
 			previewBanner = reader.result;

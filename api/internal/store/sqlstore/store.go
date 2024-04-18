@@ -15,6 +15,7 @@ type Store struct {
 	groupRepository   *GroupRepository
 	privacyRepository *PrivacyRepository
 	eventRepository   *EventRepository
+	chatRepository    *ChatRepository
 	imageRepository   *ImageRepository
 }
 
@@ -68,6 +69,9 @@ func (s *Store) Post() store.PostRepository {
 	s.postRepository = &PostRepository{
 		store: s,
 	}
+	s.imageRepository = &ImageRepository{
+		store: s,
+	}
 
 	return s.postRepository
 }
@@ -118,6 +122,18 @@ func (s *Store) Event() store.EventRepository {
 	}
 
 	return s.eventRepository
+}
+
+func (s *Store) Chat() store.ChatRepository {
+	if s.chatRepository != nil {
+		return s.chatRepository
+	}
+
+	s.chatRepository = &ChatRepository{
+		store: s,
+	}
+
+	return s.chatRepository
 }
 
 func (s *Store) Image() store.ImageRepository {

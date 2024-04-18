@@ -3,9 +3,10 @@ package sqlstore
 import (
 	"database/sql"
 	"fmt"
-	"github.com/google/uuid"
 	"social-network/internal/model"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 type PostRepository struct {
@@ -14,10 +15,10 @@ type PostRepository struct {
 
 func (p *PostRepository) Create(post *model.Post, privacy int) error {
 	query := `INSERT INTO post (
-                  id,
-                  user_id,
-                  title,
-                  content) VALUES (?,?,?,?)`
+				id,
+				user_id,
+				title,
+				content) VALUES (?,?,?,?)`
 
 	_, err := p.store.Db.Exec(query,
 		post.ID,
@@ -198,7 +199,7 @@ GROUP BY
 
 		posts = append(posts, post)
 	}
-
+	fmt.Println(posts)
 	return posts, nil
 }
 

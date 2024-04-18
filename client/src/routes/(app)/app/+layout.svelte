@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { ModeWatcher } from 'mode-watcher';
-
 	export let data;
 
 	import {
@@ -9,13 +8,6 @@
 		currentUserStore
 	} from '$lib/store/user-store.js';
 
-	currentUserStore.set(data.data);
-
-	currentUserFollowers.set(data.followers);
-	currentUserFollowing.set(data.following);
-
-	const { username, email, first_name, last_name, avatar } = data.data;
-	///
 	import Sun from 'svelte-radix/Sun.svelte';
 	import Moon from 'svelte-radix/Moon.svelte';
 	import Home from 'svelte-radix/Home.svelte';
@@ -25,67 +17,35 @@
 	import Calendar from 'svelte-radix/Calendar.svelte';
 	import ChatBubble from 'svelte-radix/ChatBubble.svelte';
 	import Globe from 'svelte-radix/Globe.svelte';
-
+	import Plus from 'svelte-radix/Plus.svelte';
 	import Avatar from 'svelte-radix/Avatar.svelte';
-
 	import { Button } from '$lib/components/ui/button/index.js';
-
 	import { setMode, resetMode } from 'mode-watcher';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import NavigationItem from './navigation-item.svelte';
 
-	///
+	currentUserStore.set(data.data);
+	currentUserFollowers.set(data.followers);
+	currentUserFollowing.set(data.following);
+
+	const { username, email, first_name, last_name, avatar } = $currentUserStore;
 </script>
 
 <ModeWatcher />
 
-<div class=" h-screen sm:h-auto sm:flex">
+<div class="w-screen h-screen sm:h-auto sm:flex">
 	<!-- nav Vertical-->
 	<div class="hidden sm:block sm:w-[60px] relative shadow-md border-r">
 		<div class="h-screen sm:w-[60px]">
 			<div class="h-1/6"></div>
 
 			<div class="flex flex-col h-4/6 items-center sm:w-[60px]">
-				<a href="/app">
-					<div class="button">
-						<Home class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
-					</div>
-				</a>
-
-				<a href="/app/u">
-					<div class="button">
-						<Person class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
-					</div>
-				</a>
-
-				<a href="/app/g">
-					<div class="button">
-						<Globe class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
-					</div>
-				</a>
-
-				<a href="/app/chat">
-					<div class="button">
-						<ChatBubble class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
-					</div>
-				</a>
-
-				<a href="/app">
-					<div class="button">
-						<Bell class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
-					</div>
-				</a>
-
-				<a href="/app">
-					<div class="button">
-						<Calendar class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
-					</div>
-				</a>
-
-				<!-- <a href="/app">
-					<div class="button">
-						<Gear class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
-					</div>
-				</a> -->
+				<NavigationItem href="/app" msg="Home" Icon={Home} />
+				<NavigationItem href="/app/u" msg="Users" Icon={Person} />
+				<NavigationItem href="/app/g" msg="Groups" Icon={Globe} />
+				<NavigationItem href="/app/chat" msg="Chats" Icon={ChatBubble} />
+				<NavigationItem href="/app/notification" msg="Notifications" Icon={Bell} />
+				<NavigationItem href="/app/events" msg="Events" Icon={Calendar} />
 			</div>
 
 			<!-- // profile info -->
@@ -107,7 +67,16 @@
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content class="w-56">
 						<DropdownMenu.Label>My Account</DropdownMenu.Label>
-						<DropdownMenu.Item class="text-blue-500">{username}</DropdownMenu.Item>
+
+						<DropdownMenu.Item >
+							<a href="/app/create-post" class="flex w-full text-primary">
+								<span class="mr-2">
+									<Plus class="h-[1rem] w-[1rem]" />
+								</span>
+
+								<span >Create post</span>
+							</a>
+						</DropdownMenu.Item>
 
 						<DropdownMenu.Separator />
 						<DropdownMenu.Group>
@@ -192,9 +161,3 @@
 		></div>
 	</div>
 </div>
-
-<style>
-	.button {
-		@apply flex h-[58px] w-[58px] cursor-pointer rounded transition-all duration-300  hover:bg-slate-100 hover:dark:bg-slate-900;
-	}
-</style>

@@ -9,8 +9,6 @@ export const handle: Handle = async ({ event, resolve }) => {
   const refresh_token = event.cookies.get("rt") as string
   const pathname = event.url.pathname
 
-
-
   jwt.verify(refresh_token, process.env.JWT_KEY || JWT_KEY, (err, rdecoded) => {
 
     if (err != null) {
@@ -37,7 +35,7 @@ export const handle: Handle = async ({ event, resolve }) => {
       })
     }
   })
-
+  
   const response = await resolve(event);
   return response;
 };

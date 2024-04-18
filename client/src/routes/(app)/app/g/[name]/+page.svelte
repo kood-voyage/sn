@@ -32,7 +32,7 @@
 			</div>
 
 			<div class="max-w-[1096px] sm:px-2 h-16">
-				<div class="w-full bg-slate-200 h-full flex items-center">
+				<div class="w-full bg-neutral-200 h-full flex items-center">
 					<div class="h-full align-middle self-center">
 						<p class="h-full w-20 align-middle self-center">{name}</p>
 					</div>
