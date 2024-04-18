@@ -10,7 +10,7 @@
 	<Tooltip.Trigger>
 		<a {href}>
 			<div class="button">
-				<Icon class="h-[1.2rem] w-[1.2rem] m-auto self-center" />
+				<Icon class="h-[1.2rem] w-[1.2rem] m-auto self-center " />
 			</div>
 		</a></Tooltip.Trigger
 	>
@@ -21,6 +21,6 @@
 
 <style>
 	.button {
-		@apply flex h-[58px] w-[58px] cursor-pointer rounded transition-all duration-300  hover:bg-neutral-100 hover:dark:bg-neutral-900;
+		@apply flex h-[58px] w-[58px] cursor-pointer rounded transition-all duration-300  hover:bg-primary hover:dark:bg-primary;
 	}
 </style>

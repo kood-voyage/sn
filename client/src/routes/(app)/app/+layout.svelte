@@ -68,13 +68,13 @@
 					<DropdownMenu.Content class="w-56">
 						<DropdownMenu.Label>My Account</DropdownMenu.Label>
 
-						<DropdownMenu.Item>
-							<a href="/app/create-post" class="flex w-full">
+						<DropdownMenu.Item >
+							<a href="/app/create-post" class="flex w-full text-primary">
 								<span class="mr-2">
 									<Plus class="h-[1rem] w-[1rem]" />
 								</span>
 
-								<span>Create post</span>
+								<span >Create post</span>
 							</a>
 						</DropdownMenu.Item>
 

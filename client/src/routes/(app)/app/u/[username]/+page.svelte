@@ -22,7 +22,7 @@
 </script>
 
 <svelte:head>
-	<title>u/{data.username}</title>
+	<title>u/{data.data.username}</title>
 </svelte:head>
 
 <!-- user profile page -->
@@ -54,24 +54,19 @@
 				>
 					<p class=" md:text-2xl font-bold mr-2">{data.user.username}</p>
 					<!-- <p class=" text-xs font-bold mr-2">{data.user.id}</p> -->
-					<!-- <p class="text-xs">
-						<span class="bg-neutral-500 px-1 rounded-sm">AKA</span>
-						{data.first_name}
-						{data.last_name}
-					</p> -->
 
 					{#if $currentUserStore.id !== data.user.id}
 						{#if isCurrentUserFollowing}
 							<form action="?/unfollow" method="post">
 								<input type="text" hidden name="target_id" value={data.user.id} />
 
-								<button class="text-sm px-5 rounded-md bg-red-500" type="submit"> unfollow </button>
+								<button class="text-sm px-5 rounded-md bg-secondary" type="submit"> unfollow </button>
 							</form>
 						{:else}
 							<form action="?/follow" method="post">
 								<input type="text" hidden name="target_id" value={data.user.id} />
 
-								<button class="text-sm px-5 rounded-md bg-sky-500" type="submit"> follow </button>
+								<button class="text-sm px-5 rounded-md bg-primary" type="submit"> follow </button>
 							</form>
 						{/if}
 

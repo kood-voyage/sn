@@ -59,7 +59,9 @@
 		<div
 			class="absolute w-full bg-neutral-100 dark:bg-neutral-950 bottom-0 p-2 opacity-0 group-hover:opacity-100 h-8 overflow-hidden group-hover:h-16 transition-all ease-in-out duration-100 rounded-t flex flex-col"
 		>
-			<p class="text-sm md:text-lg font-medium text-ellipsis w-full text-left line-clamp-1">
+			<p
+				class="text-sm md:text-lg font-medium text-ellipsis w-full text-left line-clamp-1 text-primary"
+			>
 				{title}
 			</p>
 			<p class="text-xs text-ellipsis w-full text-left line-clamp-1 text-right">
