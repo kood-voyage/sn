@@ -33,7 +33,7 @@
 
 <ModeWatcher />
 
-<div class=" h-screen sm:h-auto sm:flex">
+<div class="w-screen h-screen sm:h-auto sm:flex">
 	<!-- nav Vertical-->
 	<div class="hidden sm:block sm:w-[60px] relative shadow-md border-r">
 		<div class="h-screen sm:w-[60px]">

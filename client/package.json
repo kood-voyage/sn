@@ -44,9 +44,6 @@
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.529.1",
 		"@tinyhttp/cookie": "^2.1.0",
-		"@tiptap/core": "^2.2.4",
-		"@tiptap/pm": "^2.2.4",
-		"@tiptap/starter-kit": "^2.2.4",
 		"@types/bcrypt": "^5.0.2",
 		"@types/better-sqlite3": "^7.6.9",
 		"@types/browser-image-compression": "^1.0.9",
@@ -65,7 +62,6 @@
 		"paneforge": "^0.0.2",
 		"svelte-radix": "^1.1.0",
 		"sveltekit-superforms": "^2.6.2",
-		"tailwind-editor": "^0.3.2",
 		"tailwind-merge": "^2.2.1",
 		"tailwind-variants": "^0.2.0",
 		"uuid": "^9.0.1",

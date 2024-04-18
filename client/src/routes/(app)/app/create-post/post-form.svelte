@@ -1,83 +1,55 @@
 <script lang="ts">
-	// import Editor from 'tailwind-editor';
-	// let html = '';
-
+	import * as Carousel from '$lib/components/ui/carousel/index.js';
+	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import * as Form from '$lib/components/ui/form';
+
 	import { Input } from '$lib/components/ui/input';
-	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import Editor from '$lib/components/Editor.svelte';
+
 	import { postSchema, type PostSchema } from '../post-schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { Label } from '$lib/components/ui/label/index.js';
-
-	import * as Carousel from '$lib/components/ui/carousel/index.js';
-
-	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
-	import { createPostImagesStore } from '$lib/store/create-post-store';
-
-	import Editorsn from '$lib/components/Editorsn.svelte';
-	import { onMount } from 'svelte';
+	import { editorValue } from '$lib/store/editor-store';
 
 	export let data: SuperValidated<Infer<PostSchema>>;
-
-	let images: File[] = [];
-	
-	let childValue;
 
 	const form = superForm(data, {
 		validators: zodClient(postSchema),
 		onSubmit: ({ formData }) => {
-			formData.set('content', childValue);
+			formData.set('content', $editorValue);
 		}
 	});
 
 	const { form: formData, enhance } = form;
 
-	function limitFiles(files: File[], maxFiles: number) {
-		images = Array.from(files);
-		if (images.length > maxFiles) {
-			alert('You can only select up to 3 images.');
-			images = images.slice(0, maxFiles); // Limit the images array to the first 3 images
-		} else {
-			displayImagePreviews();
-		}
+	let files;
+
+	function handleFileChange(event) {
+		files = event.target.files;
 	}
 
-
-	function displayImagePreviews(): void {
-		const updatedImages: File[] = [];
-
-		images.forEach((image) => {
-			const reader = new FileReader();
-
-			reader.onload = (e) => {
-				if (e.target == null) {
-					return;
-				}
-
-				const result = e.target.result;
-				updatedImages.push(result);
+	function generateImagePreviews(files) {
+		return Array.from(files).map((file) => {
+			const objectURL = URL.createObjectURL(file);
+			return {
+				name: file.name,
+				size: file.size,
+				preview: objectURL
 			};
-			reader.readAsDataURL(image);
 		});
-
-		createPostImagesStore.set(updatedImages);
 	}
 
-	function handleChildValue(value) {
-		childValue = value.detail.innerHTML;
-
-	}
-
-	
+	$: imagePreviews = files ? generateImagePreviews(files) : [];
 </script>
 
-{#if $createPostImagesStore.length > 0}
+{#if files}
+	<p>Image Preview</p>
 	<Carousel.Root class="w-full max-w-xs m-auto">
 		<Carousel.Content>
-			{#each $createPostImagesStore as $image}
+			{#each imagePreviews as file}
 				<Carousel.Item>
-					<img src={$image} alt="preview" />
+					<img src={file.preview} alt="Preview" />
 				</Carousel.Item>
 			{/each}
 		</Carousel.Content>
@@ -118,31 +90,24 @@
 		<Form.FieldErrors />
 	</Form.Field>
 	<Form.Field {form} name="content">
-		<Form.Control let:attrs>
-			<Form.Label>Body</Form.Label>
-
-			<Editorsn {...attrs} placeholder="body" on:valueChange={handleChildValue} />
-		</Form.Control>
-		<Form.FieldErrors />
+		<div class="border border-neutral-800 p-2 rounded-lg">
+			<Editor />
+		</div>
 	</Form.Field>
-
-	<!-- Img Preview -->
-
-	<!-- Input field for uploading multiple images -->
 
 	<Form.Field {form} name="images">
 		<Form.Control let:attrs>
-			<Form.Label>Images (up to 3)</Form.Label>
 			<Input
-				type="file"
 				required
 				accept="image/gif, image/jpeg, image/png, image/webp"
+				on:change={handleFileChange}
+				type="file"
 				multiple
-				on:change={(e) => limitFiles(e.target.files, 3)}
 				{...attrs}
 			/>
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
+
 	<Form.Button class="w-full">Submit</Form.Button>
 </form>

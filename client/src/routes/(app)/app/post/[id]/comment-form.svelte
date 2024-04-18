@@ -1,38 +1,41 @@
 <script lang="ts">
-	import Editorsn from '$lib/components/Editorsn.svelte';
+	import Editor from '$lib/components/Editor.svelte';
 	import * as Form from '$lib/components/ui/form';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { commentSchema } from '../../comment-schema';
 	import { superForm } from 'sveltekit-superforms';
 	import { page } from '$app/stores';
+	import { editorValue } from '$lib/store/editor-store';
+	import { PaperPlane } from 'svelte-radix';
 
 	export let data;
-	export let post_id : string;
+	export let post_id;
 
-
-	
-
-	console.log($page.data.data.username)
-
-	let childValue = '';
+	console.log($page.data.data.username);
 
 	const form = superForm(data, {
 		validators: zodClient(commentSchema),
 		onSubmit: ({ formData }) => {
-			formData.set('content', childValue);
 			formData.set('post_id', post_id);
-			formData.set('content', childValue);
-			formData.set('user_name', $page.data.data.username)
-			formData.set('user_avatar',$page.data.data.avatar )
+			formData.set('content', $editorValue);
+			formData.set('user_name', $page.data.data.username);
+			formData.set('user_avatar', $page.data.data.avatar);
 		}
 	});
 
 	const { form: formData, enhance } = form;
 
-	function handleChildValue(value: any) {
-		childValue = value.detail.innerHTML;
-	}
+	// Function to handle form submission
+	const handleSubmit = () => {
+		formData.submit();
+	};
 
+	// Add event listener for Enter key press
+	const handleKeyPress = (event: KeyboardEvent) => {
+		if (event.key === 'Enter') {
+			handleSubmit();
+		}
+	};
 </script>
 
 <form
@@ -40,33 +43,11 @@
 	action="?/commentSubmit"
 	enctype="multipart/form-data"
 	use:enhance
-	class="w-full"
+	class="bg-neutral-700/50 rounded-lg relative w-full flex p-2"
 >
-	<Form.Field {form} name="content">
-		<Form.Control>
-			<Editorsn on:valueChange={handleChildValue} />
-		</Form.Control>
-		<Form.FieldErrors />
-	</Form.Field>
+	<div class="w-[99%] text-wrap ">
+		<Editor />
+	</div>
 
-	<Form.Button class="w-full">Submit</Form.Button>
+	<button type="submit" class="absolute right-2"><PaperPlane /></button>
 </form>
-
-<!-- Img Preview -->
-
-<!-- Input field for uploading multiple images -->
-
-<!-- <Form.Field {form} name="images">
-		<Form.Control let:attrs>
-			<Form.Label>Images (up to 3)</Form.Label>
-			<Input
-				type="file"
-				required
-				accept="image/gif, image/jpeg, image/png, image/webp"
-				multiple
-				on:change={(e) => limitFiles(e.target.files, 3)}
-				{...attrs}
-			/>
-		</Form.Control>
-		<Form.FieldErrors />
-	</Form.Field> -->

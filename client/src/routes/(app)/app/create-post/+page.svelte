@@ -1,10 +1,15 @@
 <script lang="ts">
 	export let data;
-
 	import PostFormComponent from './post-form.svelte';
-
 </script>
 
-<p>Create post</p>
+<svelte:head>
+	<title>create post</title>
+	<meta name="robots" content="noindex nofollow" />
+	<html lang="en" />
+</svelte:head>
 
-<PostFormComponent data={data.form} />
+<div>
+	<p class="w-full text-2xl py-2">Create post</p>
+	<PostFormComponent data={data.form} />
+</div>

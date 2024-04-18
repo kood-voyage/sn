@@ -3,7 +3,7 @@
 	import CarouselNext from '$lib/components/ui/carousel/carousel-next.svelte';
 	import CarouselPrevious from '$lib/components/ui/carousel/carousel-previous.svelte';
 	import * as Carousel from '$lib/components/ui/carousel/index.js';
-	import {ChatBubble, EnterFullScreen, ExitFullScreen } from 'svelte-radix';
+	import { ChatBubble, EnterFullScreen, ExitFullScreen } from 'svelte-radix';
 	import Author from './author.svelte';
 	import Content from './content.svelte';
 	import Comments from './comments.svelte';
@@ -12,14 +12,16 @@
 
 	export let data;
 
-	const { post, postAuthor,comments } = data;
+	const { post, postAuthor, comments } = data;
 
 	let toggle = false;
 
-	const commentsLength = comments === null ? 0 : comments.length
+	const commentsLength = comments === null ? 0 : comments.length;
 </script>
 
-<div class="h-screen flex flex-col lg:flex-row dark:bg-neutral-800">
+<div class="h-screen flex flex-col lg:flex-row dark:bg-neutral-800 overflow-y-scroll ">
+
+
 	<div class="bg-black w-full h-full flex px-16 m-auto relative justify-center">
 		<Carousel.Root
 			class="flex flex-col h-full my-auto justify-center"
@@ -50,7 +52,7 @@
 		</button>
 	</div>
 
-	<div class="w-full lg:w-[480px] flex flex-col h-screen {toggle && 'hidden'}">
+	<div class="w-full lg:w-[480px] lg:overflow-y-scroll flex flex-col {toggle && 'hidden'}">
 		<Author {postAuthor} created_at={post.created_at} />
 
 		<Content content={post.content} />
@@ -65,10 +67,12 @@
 			</Tooltip.Content>
 		</Tooltip.Root>
 
-		<div class="h-full w-full lg:max-w-[480px] overflow-y-scroll">
-			<Comments comments={comments} />
+		<div class="h-full w-full lg:max-w-[480px] lg:overflow-y-scroll">
+			<Comments {comments} />
 		</div>
 
-		<footer class=" w-full p-4"><CommentForm data={data.form} post_id={data.post.id} /></footer>
+		<footer class="w-full p-4 ">
+			<CommentForm data={data.form} post_id={data.post.id} />
+		</footer>
 	</div>
 </div>
