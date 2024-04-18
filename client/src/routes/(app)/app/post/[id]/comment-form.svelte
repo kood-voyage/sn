@@ -7,6 +7,7 @@
 	import { page } from '$app/stores';
 	import { editorValue } from '$lib/store/editor-store';
 	import { PaperPlane } from 'svelte-radix';
+	import { commentsStore } from '$lib/store/comments-store';
 
 	export let data;
 	export let post_id;
@@ -20,6 +21,26 @@
 			formData.set('content', $editorValue);
 			formData.set('user_name', $page.data.data.username);
 			formData.set('user_avatar', $page.data.data.avatar);
+
+
+			let temporary = {
+				content: $editorValue,
+				post_id: post_id,
+				user_name: $page.data.data.username,
+				user_avatar:$page.data.data.avatar,
+				created_at: Date.now()
+			}
+
+
+			commentsStore.update(prev => [...prev, temporary]);
+
+			
+
+			editorValue.set(null)
+
+
+
+
 		}
 	});
 

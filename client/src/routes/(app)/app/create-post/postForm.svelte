@@ -43,7 +43,7 @@
 	$: imagePreviews = files ? generateImagePreviews(files) : [];
 </script>
 
-{#if files}
+{#if imagePreviews}
 	<p>Image Preview</p>
 	<Carousel.Root class="w-full max-w-xs m-auto">
 		<Carousel.Content>
@@ -63,7 +63,6 @@
 	action="?/postSubmit"
 	enctype="multipart/form-data"
 	use:enhance
-	class="w-full mt-10"
 >
 	<RadioGroup.Root value="public">
 		<div class="flex items-center space-x-2">

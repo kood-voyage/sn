@@ -12,11 +12,12 @@
 	import { Link2 } from 'svelte-radix';
 	import DropdownMenuLabel from './ui/dropdown-menu/dropdown-menu-label.svelte';
 
-	let editorContent = '';
-
+	let editorContent
 	let linkInput;
-
 	$: editorValue.set(editorContent);
+	$: if($editorValue === null){
+		editorContent = ""
+	}
 
 	const { debounce } = pkg;
 

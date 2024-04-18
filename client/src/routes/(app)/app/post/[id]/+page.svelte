@@ -9,19 +9,20 @@
 	import Comments from './comments.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import CommentForm from './comment-form.svelte';
+	import { commentsStore } from '$lib/store/comments-store';
 
 	export let data;
 
 	const { post, postAuthor, comments } = data;
 
+	commentsStore.set(comments);
+
 	let toggle = false;
 
-	const commentsLength = comments === null ? 0 : comments.length;
+	$: commentsLength = $commentsStore === null ? 0 : $commentsStore.length;
 </script>
 
-<div class="h-screen flex flex-col lg:flex-row dark:bg-neutral-800 overflow-y-scroll ">
-
-
+<div class="h-screen flex flex-col lg:flex-row dark:bg-neutral-800 overflow-y-scroll">
 	<div class="bg-black w-full h-full flex px-16 m-auto relative justify-center">
 		<Carousel.Root
 			class="flex flex-col h-full my-auto justify-center"
@@ -68,10 +69,10 @@
 		</Tooltip.Root>
 
 		<div class="h-full w-full lg:max-w-[480px] lg:overflow-y-scroll">
-			<Comments {comments} />
+			<Comments />
 		</div>
 
-		<footer class="w-full p-4 ">
+		<footer class="w-full p-4">
 			<CommentForm data={data.form} post_id={data.post.id} />
 		</footer>
 	</div>
