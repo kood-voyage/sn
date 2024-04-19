@@ -11,7 +11,7 @@ import { getGroup, type GetGroup, type GroupJson } from "$lib/server/api/group-r
 export type ChatsWithUsers = {
   [key: string]: {
     users: UserModel[];
-    group: GroupJson | { id: string }
+    group: GroupJson | { name: string }
   }
 }
 type DataType = { usersData: UserRowType[], chatsData: ChatsWithUsers }
@@ -54,7 +54,7 @@ export const load: PageServerLoad = async (event): Promise<LoadResp> => {
 
 
       let groupResp: GetGroup = { ok: false, error: new Error("GroupResp Not declared yet"), message: "No group Resp Yet" }
-      let groupJson: GroupJson | { id: string } = { id: chat.group_id }
+      let groupJson: GroupJson | { name: string } = { name: chat.group_id }
       if (chat.group_id != "" && chat.group_id != undefined) {
         groupResp = await getGroup(event, chat.group_id)
         if (!groupResp.ok) {

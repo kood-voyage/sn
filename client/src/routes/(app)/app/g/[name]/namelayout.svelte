@@ -10,9 +10,9 @@
 	// const users = mainGetAllUsers();
     const groupUsers = $page.data.group.data.members
 	function inviteUser() {
-		const resp = fetch(`${LOCAL_PATH}/api/v1/auth/group/invite`, {
-            headers: 
-        })
+		// const resp = fetch(`${LOCAL_PATH}/api/v1/auth/group/invite`, {
+    //         headers: 
+    //     })
 	}
 
     function isInGroup(user: User) {

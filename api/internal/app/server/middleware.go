@@ -29,6 +29,7 @@ func (s *Server) logRequest(next http.Handler) http.Handler {
 			return
 		}
 
+		s.logger.Println()
 		s.logger.Printf("started %s %s ----- remote_addr:%s request_id:%s",
 			r.Method,
 			r.RequestURI,

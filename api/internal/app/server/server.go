@@ -56,7 +56,7 @@ func newServer(store store.Store, opts ...Option) *Server {
 
 	s := &Server{
 		router:    router.New(),
-		logger:    log.Default(),
+		logger:    log.New(os.Stdout, "", 0),
 		store:     store,
 		types:     model.InitializeTypes(),
 		wsClient:  client.NewClient(config.ChatServiceURL),
