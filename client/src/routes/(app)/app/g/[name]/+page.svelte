@@ -1,5 +1,4 @@
 <script lang="ts">
-	import PostForm from '$lib/components/post-form.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import type { GroupJson } from '$lib/server/api/group-requests';
