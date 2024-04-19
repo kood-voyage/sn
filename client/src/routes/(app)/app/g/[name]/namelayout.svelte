@@ -3,7 +3,7 @@
 	import * as Command from '$lib/components/ui/command';
     import { page } from `$app/stores`
 	import type { User } from '$lib/types/user';
-	import { LOCAL_PATH } from '$env/static/private';
+	// import { LOCAL_PATH } from '$env/static/private';
 
 
     const allUsers = $page.data.allusers
@@ -11,8 +11,8 @@
     const groupUsers = $page.data.group.data.members
 	function inviteUser() {
 		// const resp = fetch(`${LOCAL_PATH}/api/v1/auth/group/invite`, {
-    //         headers: 
-    //     })
+        //     headers: 
+        // })
 	}
 
     function isInGroup(user: User) {

@@ -158,7 +158,7 @@ func (s *Server) groupGet() http.HandlerFunc {
 		//firstly retrieve the group
 		group, err := s.store.Group().Get(r.PathValue("id"))
 		if err != nil {
-			s.error(w, http.StatusUnauthorized, err)
+			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
 
