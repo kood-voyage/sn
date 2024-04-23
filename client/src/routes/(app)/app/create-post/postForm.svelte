@@ -10,14 +10,15 @@
 	import { postSchema, type PostSchema } from '../post-schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { editorValue } from '$lib/store/editor-store';
 
 	export let data: SuperValidated<Infer<PostSchema>>;
+
+	let editorContent =""
 
 	const form = superForm(data, {
 		validators: zodClient(postSchema),
 		onSubmit: ({ formData }) => {
-			formData.set('content', $editorValue);
+			formData.set('content', editorContent);
 		}
 	});
 
@@ -41,6 +42,9 @@
 	}
 
 	$: imagePreviews = files ? generateImagePreviews(files) : [];
+
+
+
 </script>
 
 {#if imagePreviews}
@@ -57,6 +61,8 @@
 		<Carousel.Next />
 	</Carousel.Root>
 {/if}
+
+
 
 <form
 	method="POST"
@@ -90,7 +96,7 @@
 	</Form.Field>
 	<Form.Field {form} name="content">
 		<div class="border border-neutral-800 p-2 rounded-lg">
-			<Editor />
+			<Editor bind:editorContent/>
 		</div>
 	</Form.Field>
 

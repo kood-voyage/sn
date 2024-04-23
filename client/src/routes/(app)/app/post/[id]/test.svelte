@@ -1,7 +1,5 @@
 <script>
 
-	import { unknown } from 'zod';
-
 </script>
 <div>
     <slot name="name">unknown</slot>

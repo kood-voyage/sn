@@ -1,46 +1,40 @@
 <script lang="ts">
 	import Editor from '$lib/components/Editor.svelte';
-	import * as Form from '$lib/components/ui/form';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { commentSchema } from '../../comment-schema';
 	import { superForm } from 'sveltekit-superforms';
 	import { page } from '$app/stores';
-	import { editorValue } from '$lib/store/editor-store';
 	import { PaperPlane } from 'svelte-radix';
 	import { commentsStore } from '$lib/store/comments-store';
 
-	export let data;
-	export let post_id;
+	import * as Form from '$lib/components/ui/form';
 
-	console.log($page.data.data.username);
+	export let data;
+	export let post_id: string
+
+	let editorContent :string
 
 	const form = superForm(data, {
 		validators: zodClient(commentSchema),
 		onSubmit: ({ formData }) => {
 			formData.set('post_id', post_id);
-			formData.set('content', $editorValue);
+			formData.set('content', editorContent);
 			formData.set('user_name', $page.data.data.username);
 			formData.set('user_avatar', $page.data.data.avatar);
 
-
 			let temporary = {
-				content: $editorValue,
-				post_id: post_id,
-				user_name: $page.data.data.username,
-				user_avatar:$page.data.data.avatar,
-				created_at: Date.now()
-			}
+					content: editorContent,
+					post_id: post_id,
+					user_name: $page.data.data.username,
+					user_avatar: $page.data.data.avatar,
+					created_at: Date.now()
+				};
 
+				
 
-			commentsStore.update(prev => [...prev, temporary]);
+				commentsStore.update((prev) => [...prev, temporary]);
 
-			
-
-			editorValue.set(null)
-
-
-
-
+				editorContent = '';
 		}
 	});
 
@@ -57,6 +51,8 @@
 			handleSubmit();
 		}
 	};
+
+	$: console.log(editorContent);
 </script>
 
 <form
@@ -66,9 +62,16 @@
 	use:enhance
 	class="bg-neutral-700/50 rounded-lg relative w-full flex p-2"
 >
-	<div class="w-[99%] text-wrap ">
-		<Editor />
-	</div>
+	<!-- <div class="w-[99%] text-wrap">
+		
+	</div> -->
+
+	<Form.Field {form} name="content" class="w-[99%] text-wrap">
+		<Form.Control let:attrs>
+			<Editor bind:editorContent {...attrs} />
+		</Form.Control>
+		<Form.FieldErrors />
+	</Form.Field>
 
 	<button type="submit" class="absolute right-2"><PaperPlane /></button>
 </form>

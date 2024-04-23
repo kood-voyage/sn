@@ -13,12 +13,6 @@
 
 	console.log($commentsStore);
 
-
-
-
-
-
-
 </script>
 
 <div class="w-full">

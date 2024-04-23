@@ -32,7 +32,9 @@
 				{#each post.image_path as image, i (i)}
 					<CarouselItem class="my-auto h-full">
 						<div class="">
-							<img src={image} class="m-auto" alt={'' + i} />
+							<img loading="lazy" src={image} class="m-auto" alt={'' + i} />
+
+							<!-- <enhanced:img src={image} sizes="min(1280px, 100vw)" class="m-auto"/> -->
 						</div>
 					</CarouselItem>
 				{/each}

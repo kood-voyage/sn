@@ -2,8 +2,6 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { writable } from 'svelte/store';
 
-	import { editorValue } from '$lib/store/editor-store';
-
 	import Face from 'svelte-radix/Face.svelte';
 	import pkg from 'lodash';
 
@@ -12,12 +10,9 @@
 	import { Link2 } from 'svelte-radix';
 	import DropdownMenuLabel from './ui/dropdown-menu/dropdown-menu-label.svelte';
 
-	let editorContent
+	export let editorContent;
+
 	let linkInput;
-	$: editorValue.set(editorContent);
-	$: if($editorValue === null){
-		editorContent = ""
-	}
 
 	const { debounce } = pkg;
 

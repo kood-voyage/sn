@@ -3,6 +3,8 @@
 
 	export let data;
 	const userList = data.data as RowType[];
+
+	console.log(userList);
 </script>
 
 <svelte:head>
