@@ -2,11 +2,12 @@ package server
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"net/http"
 	"os"
+	"social-network/internal/model"
 	"social-network/pkg/jwttoken"
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -69,27 +70,70 @@ func (s *Server) CORSMiddleware(next http.Handler) http.Handler {
 
 func (s *Server) jwtMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authHeader := r.Header.Get("Authorization")
-		if !strings.HasPrefix(authHeader, "Bearer ") || authHeader == "" {
-			s.error(w, http.StatusUnauthorized, errors.New("unauthorized"))
-			return
-		}
-
-		token := strings.TrimPrefix(authHeader, "Bearer ")
-		alg := jwttoken.HmacSha256(os.Getenv(jwtKey))
-		claims, err := alg.DecodeAndValidate(token)
-
+		accessToken, err := r.Cookie("at")
 		if err != nil {
-			s.error(w, http.StatusUnauthorized, err)
-			return
-		}
+			refreshToken, err := r.Cookie("rt")
+			if err != nil {
+				s.error(w, http.StatusUnauthorized, err)
+				return
+			}
+			alg := jwttoken.HmacSha256(os.Getenv(jwtKey))
+			claims, err := alg.DecodeAndValidate(refreshToken.Value)
+			if err != nil {
+				s.error(w, http.StatusUnauthorized, err)
+				return
+			}
+			id, err := claims.Get("at_id")
+			if err != nil {
+				s.error(w, http.StatusUnauthorized, err)
+				return
+			}
+			session, err := s.store.Session().Check(id.(string))
+			if err != nil {
+				if err == sql.ErrNoRows {
+					s.error(w, http.StatusUnauthorized, errors.New("no valid session"))
+					return
+				}
+				s.error(w, http.StatusUnauthorized, err)
+				return
+			}
+			accessToken_id := uuid.New().String()
+			atToken, err := NewAccessToken(accessToken_id, session.UserID, time.Now().Add(15*time.Minute))
+			if err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+			rtToken, err := NewRefreshToken(accessToken_id, time.Now().Add(24*7*time.Hour))
+			if err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+			_, err = s.store.Session().Update(session.AcessID, model.Session{AcessID: accessToken_id, UserID: session.UserID, CreatedAT: time.Now().Add(24 * 7 * time.Hour)})
+			if err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
 
-		id, err := claims.Get("user_id")
+			http.SetCookie(w, atToken)
+			http.SetCookie(w, rtToken)
+			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxUserID, session.UserID)))
+		} else {
 
-		if err != nil {
-			s.error(w, http.StatusUnauthorized, err)
-			return
+			alg := jwttoken.HmacSha256(os.Getenv(jwtKey))
+			claims, err := alg.DecodeAndValidate(accessToken.Value)
+			if err != nil {
+				s.error(w, http.StatusUnauthorized, err)
+				return
+			}
+
+			id, err := claims.Get("user_id")
+
+			if err != nil {
+				s.error(w, http.StatusUnauthorized, err)
+				return
+			}
+			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxUserID, id)))
+
 		}
-		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxUserID, id)))
 	})
 }

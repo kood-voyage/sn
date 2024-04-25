@@ -3,11 +3,24 @@ package store
 import "social-network/internal/model"
 
 type UserRepository interface {
-	Create(user *model.User, privacy int) error
+	Create(user model.User, privacy int) (*model.User, error)
 	GetFollowers(userID string) ([]model.User, error)
 	GetFollowing(userID string) ([]model.User, error)
 	IsFollowing(source_id, target_id string) (bool, error)
 	GetNotifications(user_id string) ([]model.Request, error)
+	GetAll() ([]model.User, error)
+	SetDescription(user_id, description string) error
+	SetCover(user_id, cover string) error
+	SetAvatar(user_id, avatar string) error
+	Get(user_id string) (*model.User, error)
+}
+
+type SessionRepository interface {
+	Check(access_id string) (*model.Session, error)
+	Delete(access_id string) error
+	Update(access_id string, session model.Session) (*model.Session, error)
+	Create(session model.Session) (*model.Session, error)
+	DeleteByUser(user_id string) error 
 }
 
 type FollowRepository interface {

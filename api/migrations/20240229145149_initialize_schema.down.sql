@@ -18,4 +18,5 @@ DROP TABLE event;
 DROP TABLE comment;
 DROP TABLE post;
 DROP TABLE follower;
+DROP TABLE session;
 DROP TABLE user;

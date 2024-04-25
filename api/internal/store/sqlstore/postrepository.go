@@ -141,9 +141,10 @@ func (p *PostRepository) GetUsers(source_id, target_id string) ([]model.Post, er
     post.id,
     post.title,
     post.content,
-    post.user_id,
+    post.user_id AS post_user_id,
     post.created_at,
-    image.path
+    image.path AS image_path,
+    user.*
 FROM 
     post
 JOIN 
@@ -186,7 +187,8 @@ GROUP BY
 	for rows.Next() {
 		var post model.Post
 		var path sql.NullString
-		if err = rows.Scan(&post.ID, &post.Title, &post.Content, &post.UserID, &post.CreatedAt, &path); err != nil {
+		if err = rows.Scan(&post.ID, &post.Title, &post.Content, &post.UserID, &post.CreatedAt, &path,
+			&post.UserInformation.ID, &post.UserInformation.Username, &post.UserInformation.Email, &post.UserInformation.Password, &post.UserInformation.CreatedAt, &post.UserInformation.DateOfBirth, &post.UserInformation.FirstName, &post.UserInformation.LastName, &post.UserInformation.Description, &post.UserInformation.Avatar, &post.UserInformation.Cover); err != nil {
 			return nil, err
 		}
 

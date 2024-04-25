@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"social-network/internal/app/config"
 	"social-network/internal/store/sqlstore"
 
@@ -24,6 +26,9 @@ import (
 // @in header
 // @name Authorization
 func Start(config *config.Config) error {
+	if os.Getenv("JWT_KEY") == "" {
+		log.Fatal("JWT_KEY not imported")
+	}
 	db, err := newDB(config.DatabaseURL, config.Migrations, config.Driver)
 	if err != nil {
 		return err
