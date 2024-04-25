@@ -2,20 +2,22 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import en from 'javascript-time-ago/locale/en';
 	import TimeAgo from 'javascript-time-ago';
-	import { onMount } from 'svelte';
-
-	export let comments;
+	import { afterUpdate, onMount } from 'svelte';
+	import { commentsStore } from '$lib/store/comments-store';
 
 	onMount(() => {
 		TimeAgo.addDefaultLocale(en);
 	});
 
 	const timeAgo = new TimeAgo('en-US');
+
+	console.log($commentsStore);
+
 </script>
 
-<div class="w-full  ">
-	{#if comments && comments.length > 0}
-		{#each comments as comment}
+<div class="w-full">
+	{#if $commentsStore && $commentsStore.length > 0}
+		{#each $commentsStore as comment}
 			<div class="flex p-4">
 				<img src={comment.user_avatar} alt="avatar" class="w-9 h-9 object-cover rounded-full" />
 
@@ -24,7 +26,9 @@
 						<p class="text-[10px]">
 							{comment.user_name}
 						</p>
-						<div class="w-full max-w-[400px] text-md break-words lg:max-w-[280px]">{@html comment.content}</div>
+						<div class="w-full max-w-[400px] text-md break-words lg:max-w-[280px]">
+							{@html comment.content}
+						</div>
 					</div>
 
 					<Tooltip.Root>
