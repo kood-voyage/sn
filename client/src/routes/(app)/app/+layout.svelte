@@ -26,6 +26,8 @@
 	// import { onDestroy, onMount } from 'svelte';
 	// import { closeWebSocket, connectWebSocket } from '$lib/client/websocket.js';
 	import type { User } from '$lib/types/user.js';
+	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
+	import { onMount } from 'svelte';
 	// import { invalidateAll } from '$app/navigation';
 	// import { webSocketStore } from '$lib/store/websocket-store.js';
 
@@ -71,10 +73,34 @@
 	// 	closeWebSocket();
 	// });
 
-
 	// const { username, email, first_name, last_name, avatar } = $currentUserStore;
 
-	
+	let currentUser;
+
+	async function getCurrentUser() {
+		const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/current`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Access-Control-Request-Method': 'GET'
+			},
+			credentials: 'include'
+		});
+
+		const data = await response.json();
+
+		currentUserStore.set(data.data);
+
+		if (response) {
+			return data.data;
+		} else {
+			throw new Error('Failed to get current user');
+		}
+	}
+
+	onMount(async () => {
+		currentUser = await getCurrentUser();
+	});
 </script>
 
 <ModeWatcher />
@@ -104,7 +130,9 @@
 						<Button builders={[builder]} variant="ghost" class="w-[58px] h-[58px] p-0">
 							<div class="flex flex-col items-center justify-center h-[32px] w-[32px] p-0">
 								<img
-									src="avatar"
+									src={$currentUserStore
+										? $currentUserStore.avatar
+										: 'https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg'}
 									alt="avatar"
 									class="rounded-full object-cover hover:rounded-[10px] h-[32px] w-[32px]"
 								/>
@@ -127,7 +155,7 @@
 						<DropdownMenu.Separator />
 						<DropdownMenu.Group>
 							<DropdownMenu.Item>
-								<a href="/app/u/username" class="flex w-full">
+								<a href="/app/u/{$currentUserStore.username}" class="flex w-full">
 									<span class="mr-2">
 										<Avatar class="h-[1rem] w-[1rem]" />
 									</span>
@@ -172,9 +200,9 @@
 							<DropdownMenu.Sub>
 								<DropdownMenu.SubTrigger>About</DropdownMenu.SubTrigger>
 								<DropdownMenu.SubContent>
-									<DropdownMenu.Item>first_name</DropdownMenu.Item>
-									<DropdownMenu.Item>last_name</DropdownMenu.Item>
-									<DropdownMenu.Item>email</DropdownMenu.Item>
+									<DropdownMenu.Item>{$currentUserStore.first_name}</DropdownMenu.Item>
+									<DropdownMenu.Item>{$currentUserStore.last_name}</DropdownMenu.Item>
+									<DropdownMenu.Item>{$currentUserStore.email}</DropdownMenu.Item>
 								</DropdownMenu.SubContent>
 							</DropdownMenu.Sub>
 						</DropdownMenu.Group>
