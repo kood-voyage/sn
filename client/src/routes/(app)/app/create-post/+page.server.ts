@@ -3,11 +3,11 @@ import { superValidate } from 'sveltekit-superforms';
 import { postSchema } from "../../../../lib/types/post-schema"
 
 import { zod } from 'sveltekit-superforms/adapters';
-import { getUserIdFromCookie } from '$lib/server/jwt-handle';
+import { getUserIdFromCookie } from '$lib/client/jwt-handle';
 
 
 import { v4 as uuidv4 } from 'uuid';
-import { saveToS3 } from '$lib/server/images/upload';
+import { saveToS3 } from '$lib/client/images/upload';
 import { LOCAL_PATH, S3_BUCKET, WEBSITE_PATH } from '$env/static/private';
 import { redirect } from '@sveltejs/kit';
 

@@ -11,8 +11,6 @@ import (
 	"social-network/internal/model"
 	"social-network/pkg/jwttoken"
 
-	"social-network/pkg/jwttoken"
-
 	"github.com/google/uuid"
 )
 

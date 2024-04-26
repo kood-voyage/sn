@@ -2,11 +2,10 @@
 	import type { PageData } from './$types';
 	import SettingsForm from './settings-form.svelte';
 	export let data: PageData;
+
+	console.log(data);
+	console.log('HI');
 </script>
-
-<!-- <div class="w-0 flex hover:-bottom-28">
-
-</div> -->
 
 <div>
 	<SettingsForm data={data.form} />

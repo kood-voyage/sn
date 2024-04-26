@@ -49,7 +49,6 @@
 		"@types/better-sqlite3": "^7.6.9",
 		"@types/browser-image-compression": "^1.0.9",
 		"@types/uuid": "^9.0.8",
-		"bcrypt": "^5.1.1",
 		"better-sqlite3": "^9.4.3",
 		"bits-ui": "^0.18.6",
 		"browser-image-compression": "^2.0.2",

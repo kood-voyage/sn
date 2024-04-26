@@ -1,6 +1,6 @@
 import { getUser, setAvatar, setCover, setDescription } from "$lib/server/db/profile";
-import { saveUserAvatarToS3, saveUserCoverToS3 } from "$lib/server/images/upload";
-import { getUserIdFromCookie } from "$lib/server/jwt-handle";
+import { saveUserAvatarToS3, saveUserCoverToS3 } from "$lib/client/images/upload";
+import { getUserIdFromCookie } from "$lib/client/jwt-handle";
 import type { Actions, PageServerLoad } from "./$types";
 
 

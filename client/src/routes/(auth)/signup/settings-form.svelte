@@ -4,29 +4,61 @@
 	import { signUpSchema, type SignUpSchema } from '../schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { v4 as uuidv4 } from 'uuid';
 
 	import RedStar from './red-star.svelte';
 	import EyeOpen from 'svelte-radix/EyeOpen.svelte';
 	import EyeClosed from 'svelte-radix/EyeClosed.svelte';
-
+	import { CreateUser, type CreateUserType } from '$lib/types/user';
+	import { apiCreateUser } from '$lib/client/api/user-requests';
 
 	function toogle() {
 		isHide = !isHide;
 	}
 
-	export let data: SuperValidated<Infer<SignUpSchema>>;
+	// 	{
+	//     "id": "somerandomidlaterfromfrontend",
+	//     "username": "testuser",
+	//     "email": "test@user.ee",
+	//     "password": "testUser",
+	//     "timestamp": "2024-04-25T00:00:00Z",
+	//     "date_of_birth": "11-11-1111",
+	//     "first_name": "first name",
+	//     "last_name": "last name",
+	//     "description": "this is my fantastic bio",
+	//     "avatar": "your_avatar_url_here",
+	//     "cover": "your_cover_url_here",
+	//     "member_type": "public"
+	// }
 
+	// CreateUser()
+
+	export let data: SuperValidated<Infer<SignUpSchema>>;
 
 	let isHide: boolean = true;
 
 	const form = superForm(data, {
-		validators: zodClient(signUpSchema)
+		validators: zodClient(signUpSchema),
+		onSubmit: ({ formData, cancel }) => {
+			const { username, email, dateOfBirth, password, repeatPassword, firstName, lastName } =
+				$formData;
+
+			const user = new CreateUser({ username, email, dateOfBirth, password, firstName, lastName });
+			console.log(JSON.stringify(user));
+
+			console.log(apiCreateUser(user));
+
+			cancel();
+		},
+		onError: (event) => {
+			console.log(event);
+		}
 	});
 
 	const { form: formData, enhance } = form;
 </script>
 
-<form method="POST" action="?/signup" use:enhance>
+<form method="POST" use:enhance>
 	<Form.Field {form} name="username">
 		<Form.Control let:attrs>
 			<Form.Label>Username <RedStar /></Form.Label>

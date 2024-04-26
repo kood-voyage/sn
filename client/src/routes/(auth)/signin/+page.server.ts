@@ -7,7 +7,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { checkSessionExists, checkUserExists, deleteSession } from '$lib/server/db';
 
 import { fail } from '@sveltejs/kit';
-import { createTokens } from '$lib/server/jwt-handle';
+import { createTokens } from '$lib/client/jwt-handle';
 import { apiCreateUser } from '$lib/server/api/user-requests';
 
 
@@ -43,7 +43,7 @@ export const actions: Actions = {
 
 		const respToken = createTokens(event, user_id)
 
-		
+
 
 
 		if (!respToken.ok) {

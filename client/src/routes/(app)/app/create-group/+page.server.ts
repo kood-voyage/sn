@@ -3,7 +3,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { v4 as uuidv4 } from 'uuid';
 import { zod } from 'sveltekit-superforms/adapters';
 import { groupSchema } from '$lib/types/group-schema';
-import { saveToS3 } from '$lib/server/images/upload';
+import { saveToS3 } from '$lib/client/images/upload';
 import { LOCAL_PATH, S3_BUCKET } from '$env/static/private';
 import { redirect } from '@sveltejs/kit';
 
@@ -56,7 +56,7 @@ export const actions: Actions = {
 			privacy: formData.get("privacy"),
 		}
 		console.log("GROUP >>>", JSON.stringify(group))
-		
+
 		try {
 			const response = await fetch(`${LOCAL_PATH}/api/v1/auth/group/create`, {
 				method: 'POST',
@@ -66,14 +66,14 @@ export const actions: Actions = {
 				},
 				body: JSON.stringify(group) // Convert the JSON object to a string
 			});
-			
+
 			console.log("didnt throw error by itself", response.status)
 			console.log(await response.json())
 			// if (!response.ok) {
-				// 	throw new Error('Failed to create group'); // Throw an error if response is not OK
-				// }
-				
-				// Handle successful response
+			// 	throw new Error('Failed to create group'); // Throw an error if response is not OK
+			// }
+
+			// Handle successful response
 
 
 			//add creator to the group also

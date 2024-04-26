@@ -5,7 +5,7 @@ import type { Actions, PageServerLoad } from "./$types";
 import { v4 as uuidv4 } from 'uuid';
 import type { ReturnToClientType } from "$lib/types/requests";
 import type { UserModel } from "$lib/types/user";
-import { getUserIdFromCookie } from "$lib/server/jwt-handle";
+import { getUserIdFromCookie } from "$lib/client/jwt-handle";
 import { getGroup, type GetGroup, type GroupJson } from "$lib/server/api/group-requests";
 
 export type ChatsWithUsers = {
