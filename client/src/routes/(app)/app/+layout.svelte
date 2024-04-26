@@ -70,7 +70,11 @@
 	onDestroy(() => {
 		closeWebSocket();
 	});
+
+
 	const { username, email, first_name, last_name, avatar } = $currentUserStore;
+
+	
 </script>
 
 <ModeWatcher />

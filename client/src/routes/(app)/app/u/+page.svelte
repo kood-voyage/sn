@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { RowType } from '$lib/server/db/user';
+	// import type { RowType } from '$lib/server/db/user';
 
 	export let data;
-	const userList = data.data as RowType[];
+	// const userList = data.data as RowType[];
 
-	console.log(userList);
+	console.log(data);
 </script>
 
 <svelte:head>
@@ -19,21 +19,5 @@
 	/>
 	<hr class="w-[440px] m-auto" />
 
-	{#each userList as user}
-		<div
-			class="flex m-auto w-[420px] p-2 hover:bg-neutral-200 dark:hover:bg-neutral-900 rounded-md"
-		>
-			<a href="/app/u/{user.username}" class="flex">
-				<img src={user.avatar} alt="user-avatar" class="rounded-full w-12 h-12 mr-2 object-cover" />
-				<div>
-					<p class="font-bold">{user.username}</p>
-					<p class="text-xs text-slate-400 dard:text-slate-600">
-						{user.first_name}
-						{user.last_name}
-					</p>
-					<!-- <p class="text-xs text-slate-600">{user.description == null ? "..." : user.description}</p> -->
-				</div>
-			</a>
-		</div>
-	{/each}
+
 </div>

@@ -1,6 +1,5 @@
 import { PUBLIC_LOCAL_PATH } from "$env/static/public"
 import type { UserModel } from "$lib/types/user"
-import type { RequestEvent } from "@sveltejs/kit"
 import type { SignIn } from "../../../routes/(auth)/signin/type"
 
 
@@ -18,7 +17,6 @@ export async function RegisterUser(user: UserModel) {
     })
 
 
-    console.log(await resp)
 
     if (resp.ok) {
       return { ok: resp.ok, status: resp.statusText }
@@ -55,21 +53,14 @@ export async function LoginUser(credentials: SignIn) {
     })
 
 
-
-    console.log(await resp.json())
-
     if (resp.ok) {
       return { ok: resp.ok, status: resp.statusText }
     } else {
       return { ok: resp.ok, status: resp.statusText }
     }
 
-
-
-
   } catch (err) {
     console.log("ERRRRRR", err)
-
 
     if (err instanceof Error) {
 

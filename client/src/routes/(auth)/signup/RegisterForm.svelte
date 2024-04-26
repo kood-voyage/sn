@@ -58,8 +58,6 @@
 				privacy: 'public'
 			};
 
-			console.log(JSON.stringify(user));
-
 			RegisterUser(user);
 
 			cancel();

@@ -20,11 +20,7 @@
 				password
 			};
 
-			console.log(JSON.stringify(credentials));
-
 			LoginUser(credentials);
-
-			cancel();
 		},
 		onError: (event) => {
 			console.log(event);
