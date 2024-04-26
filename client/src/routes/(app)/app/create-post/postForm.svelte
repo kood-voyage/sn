@@ -13,7 +13,7 @@
 
 	export let data: SuperValidated<Infer<PostSchema>>;
 
-	let editorContent =""
+	let editorContent = '';
 
 	const form = superForm(data, {
 		validators: zodClient(postSchema),
@@ -42,9 +42,6 @@
 	}
 
 	$: imagePreviews = files ? generateImagePreviews(files) : [];
-
-
-
 </script>
 
 {#if imagePreviews}
@@ -62,14 +59,7 @@
 	</Carousel.Root>
 {/if}
 
-
-
-<form
-	method="POST"
-	action="?/postSubmit"
-	enctype="multipart/form-data"
-	use:enhance
->
+<form method="POST" action="?/postSubmit" enctype="multipart/form-data" use:enhance>
 	<RadioGroup.Root value="public">
 		<div class="flex items-center space-x-2">
 			<RadioGroup.Item value="public" id="r1" />
@@ -96,7 +86,7 @@
 	</Form.Field>
 	<Form.Field {form} name="content">
 		<div class="border border-neutral-800 p-2 rounded-lg">
-			<Editor bind:editorContent/>
+			<Editor bind:editorContent />
 		</div>
 	</Form.Field>
 

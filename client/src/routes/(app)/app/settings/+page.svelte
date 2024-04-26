@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { handleSubmit } from './page.js';
+	import { Avatar } from 'bits-ui';
+	import { handleSubmit } from './logic.js';
 	import { handleImageCopression } from '$lib/client/image-compression.js';
 
 	export let data;

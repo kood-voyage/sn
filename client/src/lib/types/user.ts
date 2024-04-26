@@ -10,10 +10,20 @@ export type UserStyle = {
   firstName: string,
   lastName: string,
   avatar: string,
-  cover:string,
-  description:string
+  cover: string,
+  description: string
+}
 
-
+export type UserModel = {
+  id: string,
+  username: string,
+  email: string,
+  date_of_birth: string,
+  first_name: string,
+  last_name: string,
+  avatar: string,
+  cover: string,
+  description: string
 }
 
 export class User implements UserStyle {
@@ -27,7 +37,7 @@ export class User implements UserStyle {
   lastName: string;
   avatar: string;
   cover: string;
-  description:string;
+  description: string;
 
 
   constructor(user: UserStyle) {
@@ -44,8 +54,6 @@ export class User implements UserStyle {
     this.description = user.description;
 
     this.initialize()
-
-
   }
 
   private initialize(): void {
@@ -54,16 +62,11 @@ export class User implements UserStyle {
 
     this.avatar = `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=` + this.username
     this.cover = "https://media.wired.com/photos/61f48f02d0e55ccbebd52d15/3:2/w_2400,h_1600,c_limit/Gear-Rant-Game-Family-Plans-1334436001.jpg"
-    this.description =""
+    this.description = ""
 
     const salt = bcrypt.genSaltSync(10);
 
     const hash = bcrypt.hashSync(this.password, salt);
-
-
-
-
-
     this.password = hash
   }
 

@@ -158,7 +158,7 @@ func (s *Server) groupGet() http.HandlerFunc {
 		//firstly retrieve the group
 		group, err := s.store.Group().Get(r.PathValue("id"))
 		if err != nil {
-			s.error(w, http.StatusUnauthorized, err)
+			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
 
@@ -202,7 +202,7 @@ func (s *Server) groupGetAll() http.HandlerFunc {
 			return
 		}
 
-		s.respond(w, http.StatusOK, groups)
+		s.respond(w, http.StatusOK, Response{Data: groups})
 	}
 }
 
@@ -366,5 +366,72 @@ func (s *Server) groupInviteRequest() http.HandlerFunc {
 				errors.New("invalid option"))
 		}
 
+	}
+}
+
+func (s *Server) groupGetPost() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sourceID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+			return
+		}
+		group_name := r.PathValue("id")
+
+		groupInfo, err := s.store.Group().Get(group_name)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		if s.types.Privacy.Values[groupInfo.Privacy] == s.types.Privacy.Private {
+			t, err := s.store.Group().IsMember(groupInfo.ID, sourceID)
+			if err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+			if !t {
+				s.error(w, http.StatusForbidden, errors.New("group is private and user is not part of the group"))
+				return
+			}
+		}
+
+		group_posts, err := s.store.Group().GetPosts(groupInfo.Name)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, http.StatusOK, Response{Data: group_posts})
+	}
+}
+
+func (s *Server) joinGroup() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sourceID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+			return
+		}
+		//id --> its actually group name
+		group_name := r.PathValue("id")
+
+		//check if group is public
+		groupInfo, err := s.store.Group().Get(group_name)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		if s.types.Privacy.Public != s.types.Privacy.Values[groupInfo.Privacy] && groupInfo.CreatorID != sourceID {
+			s.error(w, http.StatusForbidden, errors.New("can not join to private group"))
+			return
+		}
+
+		if err := s.store.Group().AddMember(groupInfo.ID, sourceID); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, http.StatusCreated, Response{Data: nil})
 	}
 }

@@ -1,7 +1,7 @@
 import { LOCAL_PATH } from "$env/static/private"
 import type { RequestEvent } from "@sveltejs/kit"
 
-export async function apiCreateUser(privacy_state: string , event: RequestEvent) {
+export async function apiCreateUser(privacy_state: string, event: RequestEvent) {
   try {
     const resp = await fetch(`${LOCAL_PATH}/api/v1/auth/user/create/${privacy_state}`, {
       headers: {

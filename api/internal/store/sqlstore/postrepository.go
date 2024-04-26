@@ -3,8 +3,9 @@ package sqlstore
 import (
 	"database/sql"
 	"fmt"
-	"social-network/internal/model"
 	"strings"
+
+	"social-network/internal/model"
 
 	"github.com/google/uuid"
 )
@@ -15,16 +16,18 @@ type PostRepository struct {
 
 func (p *PostRepository) Create(post *model.Post, privacy int) error {
 	query := `INSERT INTO post (
-				id,
-				user_id,
-				title,
-				content) VALUES (?,?,?,?)`
+                  id,
+                  user_id,
+                  title,
+                  content,
+				  community_id) VALUES (?,?,?,?, ?)`
 
 	_, err := p.store.Db.Exec(query,
 		post.ID,
 		post.UserID,
 		post.Title,
-		post.Content)
+		post.Content,
+		post.CommunityID)
 	if err != nil {
 		return err
 	}

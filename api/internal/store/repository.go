@@ -51,6 +51,7 @@ type GroupRepository interface {
 	IsMember(groupId, userId string) (bool, error)
 	AddMember(groupId, userId string) error
 	GetAll(model.Type) (*[]model.Group, error)
+	GetPosts(group_id string) ([]*model.Post, error)
 }
 
 type PrivacyRepository interface {
@@ -68,19 +69,22 @@ type EventRepository interface {
 	Register(userid, eventId string, opt int) error
 }
 
-type ChatRepository interface {
-	Create(chat model.Chat) (*model.Chat, error)
-	AddUser(user model.User, chat model.Chat) error
-	GetUsers(chat model.Chat) ([]model.User, error)
-	AddLine(line *model.ChatLine) (*model.ChatLine, error)
-	//TO-DO
-	// DeleteUser()
-}
-
 type ImageRepository interface {
 	Add(parentId string, paths []string) error
 	Delete(id string) error
 	DeleteAll(parentId string) error
 	Update(parentId string, paths []string) error
 	Get(parentId string) ([]string, error)
+}
+
+type ChatRepository interface {
+	Create(chat model.Chat) (*model.Chat, error)
+	AddUser(user model.User, chat model.Chat) error
+	GetUsers(chat model.Chat) ([]model.User, error)
+	AddLine(line *model.ChatLine) (*model.ChatLine, error)
+	GetAll(user_id string) ([]*model.Chat, error)
+	Load(chat_id, user_id string) ([]*model.ChatLine, error)
+	GetChatsForUser(userID string) ([]*model.User, error)
+	// TO-DO
+	// DeleteUser()
 }

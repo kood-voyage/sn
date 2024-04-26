@@ -1,15 +1,50 @@
 <script lang="ts">
+	import * as Dialog from '$lib/components/ui/dialog';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import type { GroupJson } from '$lib/server/api/group-requests';
+	import { currentUserStore } from '$lib/store/user-store';
 	import type { PageData } from './$types';
+	import GroupPostForm from './groupPostForm.svelte';
+	import Namelayout from './namelayout.svelte';
 
 	export let data: PageData;
+	let id: string, name: string, description: string, image_path: string;
+	const groupResp = data.group;
+	const currentUser = $currentUserStore;
+	let errorMessage = '';
+	const groupPosts = data.posts;
+	let isMember = false;
 
-	const { name } = data;
+	console.log('GROUP RESPOSNWTF!@!!!', groupPosts);
+	if (currentUser && 'id' in currentUser) {
+		if (groupResp.ok && groupResp.data.creator_id == currentUser.id) {
+			isMember = true;
+		}
+		if (groupResp.ok)
+			groupResp.data.members?.forEach((user) => {
+				if (user && user.id == currentUser.id) {
+					isMember = true;
+				}
+			});
+	}
 
-	// type Data = {
-	// 	post: number;
-	// 	followers: number;
-	// 	following: number;
-	// };
+	if (groupResp.ok) {
+		const data = groupResp.data as GroupJson;
+		id = data.id;
+		name = data.name;
+		description = data.description;
+		if (data.image_path) {
+			image_path = data.image_path[0];
+		} else {
+			image_path =
+				'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg';
+		}
+	} else {
+		name = '404 Not Found';
+		description = '';
+		image_path =
+			'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg';
+	}
 </script>
 
 <svelte:head>
@@ -25,40 +60,97 @@
 			<!-- banner img  -->
 			<div class="m-auto h-32 sm:h-60 max-w-[1096px] p-0 sm:px-2">
 				<img
-					class="h-full w-full object-cover sm:rounded-xl"
-					src="https://cdn1.vectorstock.com/i/1000x1000/07/70/floral-abstract-seamless-pattern-spring-vector-29920770.jpg"
+					class="h-full w-full object-cover object-center sm:rounded-xl"
+					src={image_path}
 					alt="banner"
 				/>
 			</div>
 
 			<div class="max-w-[1096px] sm:px-2 h-16">
-				<div class="w-full bg-neutral-200 h-full flex items-center">
-					<div class="h-full align-middle self-center">
-						<p class="h-full w-20 align-middle self-center">{name}</p>
+				<div
+					class="w-full bg-slate-200/30 p-1 mt-1 h-full flex justify-between items-center sm:rounded-xl"
+				>
+					<div class="h-full align-middle flex-col self-start">
+						<p class="md:text-xl text-lg text-ellipsis w-full bold text-left font-bold mr-2">
+							{name}
+						</p>
+						<p class="lines3 text-sm text-left text-slate-400">{description}</p>
+					</div>
+					<div class="flex flex-row">
+						{#if isMember}
+							<Dialog.Root>
+								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
+									>Invite user</Dialog.Trigger
+								>
+
+								<Dialog.Content>
+									{#if groupResp.ok}
+										<Namelayout data={data.form} />
+									{:else}
+										<p class="m-2">Group Info Not found, try reloading the page!</p>
+									{/if}
+								</Dialog.Content>
+							</Dialog.Root>
+
+							<input type="text" hidden name="target_id" value={id} />
+
+							<Dialog.Root>
+								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
+									>Create Post</Dialog.Trigger
+								>
+
+								<Dialog.Content>
+									<!-- I tried to put 2 PROPS to this component  -->
+									<!-- data : Took from previous Form, and i dont remember why it's required  -->
+									<!-- groupId - this PROP i put intentionally because i think we need PARENT_ID for post in groups -->
+									{#if groupResp.ok}
+										<GroupPostForm data={data.form} groupId={groupResp.data.id} />
+									{:else}
+										<p class="m-2">Group Info Not found, try reloading the page!</p>
+									{/if}
+								</Dialog.Content>
+							</Dialog.Root>
+						{:else}
+							<form action="?/groupJoinSubmit" method="post" class=" text-center">
+								<p>
+									{#if errorMessage}
+										{errorMessage}
+									{/if}
+								</p>
+								<input type="text" hidden name="target_id" value={id} />
+								<button class="text-sm rounded-md px-5 border bg-sky-500 p-1 m-0.5" type="submit">
+									Join group
+								</button>
+							</form>
+						{/if}
+						<!-- 
+						-->
 					</div>
 				</div>
 			</div>
-
-			<!-- <div class="w-full relative">
-				<img
-					src="https://api.contentstack.io/v2/assets/575e4d1c0342dfd738264a1f/download?uid=bltada7771f270d08f6"
-					alt="banner"
-					class="m-auto h-32 w-32 relative bottom-20 rounded-full border-4 border-white object-cover dark:border-slate-950"
-				/>
-				<h1 class="sm:bottom-4 left-[140px] text-2xl font-bold">
-					{name}
-				</h1>
-			</div> -->
 		</div>
 
 		<!-- group activity / posts -->
 
 		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-0 sm:p-4 mt-5 md:mt-0">
-			<div class="bg-pink-500 h-56 w-full sm:rounded-lg">group</div>
+			{#if groupPosts}
+				{#each groupPosts as post}
+					<div class="bg-white rounded-lg p-4 mb-4">
+						<p class="text-xl font-bold">TITLE: {post.title}</p>
+						<p class="text-gray-600">CONTENT: {post.content}</p>
+						<div class="flex items-center mt-2">
+							<p class="text-gray-700 mr-2">User ID: {post.user_id}</p>
+							<p class="text-gray-700">Created At: {post.created_at}</p>
+						</div>
+						<p class="text-gray-700">IMAGE IF THERE IS {post.image_path}</p>
+					</div>
+				{/each}
+			{/if}
+			<!-- <div class="bg-pink-500 h-56 w-full sm:rounded-lg">group</div>
 			<div class="bg-purple-500 h-56 w-full sm:rounded-lg">group</div>
 			<div class="bg-red-500 h-56 w-full sm:rounded-lg">123</div>
 			<div class="bg-yellow-500 h-56 w-full sm:rounded-lg">123</div>
-			<div class="bg-orange-500 h-56 w-full sm:rounded-lg">123</div>
+			<div class="bg-orange-500 h-56 w-full sm:rounded-lg">123</div> -->
 		</div>
 	</div>
 </main>

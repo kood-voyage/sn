@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
+
 	"social-network/internal/model"
 	"social-network/internal/store"
 	"social-network/pkg/validator"
-	"sync"
 
 	"github.com/gorilla/websocket"
 )
@@ -47,6 +48,11 @@ type Payload struct {
 
 // need middleware to grab user_id
 func (cs *ChatService) HandleWS(w http.ResponseWriter, r *http.Request) {
+	sourceID, ok := r.Context().Value(ctxUserID).(string)
+	if !ok {
+		fmt.Println("unauthorized")
+		return
+	}
 	wsUpgrader := websocket.Upgrader{
 		ReadBufferSize:  1028,
 		WriteBufferSize: 1028,
@@ -58,9 +64,8 @@ func (cs *ChatService) HandleWS(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	id := "testid"
-	//append clients to keep track of clients
-	client := NewClient(id, conn)
+	// append client to keep track of clients
+	client := NewClient(sourceID, conn)
 	cs.AddClient(client)
 	fmt.Printf("Clients connected: %+v\n", cs.Clients)
 
@@ -99,7 +104,7 @@ func (c *Client) wsRecieveLoop(cs *ChatService) {
 	for {
 		var body Payload
 		if err := c.conn.ReadJSON(&body); err != nil {
-			if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+			if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway, websocket.CloseAbnormalClosure, websocket.CloseNoStatusReceived) {
 				return
 			}
 			log.Println("Read error:", err)
@@ -107,7 +112,7 @@ func (c *Client) wsRecieveLoop(cs *ChatService) {
 		}
 		fmt.Printf("Recieved message: %+v\n", body)
 		if err := validator.Validate(body); err != nil {
-			//validate the payload
+			// validate the payload
 			c.conn.WriteJSON(fmt.Sprintf("bad payload - %v", err))
 		} else {
 			users, err := cs.getUsers(body)
@@ -150,7 +155,7 @@ func (cs *ChatService) getUsers(p Payload) ([]*Client, error) {
 	}
 }
 
-func (cs *ChatService) writeToUsers(clients []*Client, p Payload) error{
+func (cs *ChatService) writeToUsers(clients []*Client, p Payload) error {
 	for _, c := range clients {
 		if err := c.conn.WriteJSON(p); err != nil {
 			return err
@@ -160,20 +165,20 @@ func (cs *ChatService) writeToUsers(clients []*Client, p Payload) error{
 }
 
 func (cs *ChatService) sendUserStatus(client Client) {
-	//get current user follow list
-	//check all the user id-s from the follow list if we have a connection with specific id send that user according status
-	userFollowList, err := cs.store.User().GetFollowers(client.id)
+	// get current user chats list
+	// check all the user id-s from the chats list if we have a connection with specific id send that user according status
+	userSendList, err := cs.store.Chat().GetChatsForUser(client.id)
 	if err != nil {
 		fmt.Println("SOMETHING WENT WRONG WHILE CALCULATING STATUSES")
 		return
 	}
 	for _, c := range cs.Clients {
-		for _, user := range userFollowList {
+		for _, user := range userSendList {
 			if c.id == user.ID {
 				c.conn.WriteJSON(Payload{
 					Type:     "status",
-					Address:  "broadcast",
-					ID:       "",
+					Address:  "direct",
+					ID:       c.id,
 					SourceID: client.id,
 					Data:     true,
 				})
@@ -183,9 +188,9 @@ func (cs *ChatService) sendUserStatus(client Client) {
 }
 
 func (cs *ChatService) getOnlineUsers(client Client) {
-	//get current user follow list
-	//check all the use id-s from the follow list if we hahve a connection with specific id send current user all the information about users -- online or offline
-	userFollowList, err := cs.store.User().GetFollowers(client.id)
+	// get current user chats list
+	// check all the use id-s from the follow list if we hahve a connection with specific id send current user all the information about users -- online or offline
+	userSendList, err := cs.store.Chat().GetChatsForUser(client.id)
 	if err != nil {
 		fmt.Println("SOMETHING WENT WRONG WHILE CALCULATING STATUSES")
 		return
@@ -193,17 +198,17 @@ func (cs *ChatService) getOnlineUsers(client Client) {
 	var sendList []model.User
 
 	for _, c := range cs.Clients {
-		for _, user := range userFollowList {
+		for _, user := range userSendList {
 			if c.id == user.ID {
-				sendList = append(sendList, user)
+				sendList = append(sendList, *user)
 			}
 		}
 	}
 	r := Payload{
 		Type:     "status",
-		Address:  "broadcast",
-		ID:       "",
-		SourceID: client.id,
+		Address:  "direct",
+		ID:       client.id,
+		SourceID: "server",
 		Data:     sendList,
 	}
 	if err := client.conn.WriteJSON(r); err != nil {

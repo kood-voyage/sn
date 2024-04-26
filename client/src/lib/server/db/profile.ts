@@ -2,6 +2,8 @@ import { db } from "."
 import type { RequestEvent } from "@sveltejs/kit"
 import { getUserFollowers, getUserFollowing } from "../api/user-requests";
 import { getUserPosts } from "../api/post-requests";
+import type { ReturnType } from "$lib/types/requests";
+import type { UserModel } from "$lib/types/user";
 
 interface Response {
   ok: boolean;
@@ -10,18 +12,7 @@ interface Response {
   message: string;
 }
 
-type User = {
-  id: string,
-  username: string,
-  email: string,
-  date_of_birth: string,
-  first_name: string,
-  last_name: string,
-  avatar: string,
-  cover: string,
-  description: string,
-  timestamp:string
-}
+
 
 export async function getProfile(event: RequestEvent, username: string) {
   const userResp = getUser(username) as Response
@@ -30,7 +21,7 @@ export async function getProfile(event: RequestEvent, username: string) {
     return { ok: userResp.ok, error: userResp.error, message: userResp.message }
   }
 
-  const user = await userResp.data as User
+  const user = await userResp.data as UserModel
 
 
   const followingResp = await getUserFollowing(event, user.id)
@@ -40,7 +31,7 @@ export async function getProfile(event: RequestEvent, username: string) {
 
 
 
-    if (!posts.ok) {
+  if (!posts.ok) {
     return { ok: posts.ok, error: posts.error, message: posts.message }
   }
 
@@ -71,7 +62,9 @@ export async function getProfile(event: RequestEvent, username: string) {
   }
 }
 
-export function getUser(unique_credentials: string) {
+type GetUser = ReturnType<UserModel>
+
+export function getUser(unique_credentials: string): GetUser {
 
 
   const query = `SELECT id,
@@ -87,7 +80,7 @@ export function getUser(unique_credentials: string) {
     FROM user WHERE username = ? OR id = ?`
 
   try {
-    const user = db.prepare(query).get(unique_credentials, unique_credentials) as User
+    const user = db.prepare(query).get(unique_credentials, unique_credentials) as UserModel
 
     if (typeof user === 'object' && user !== null && user.id) {
 
@@ -108,16 +101,16 @@ export function getUser(unique_credentials: string) {
 
 
 
-export function setAvatar(link: string, user_id: string){
+export function setAvatar(link: string, user_id: string) {
 
 
   const path = "https://profilemediabucket-voyage.s3.amazonaws.com/" + link
-  
-  const query = `UPDATE user SET avatar = ? WHERE id = ?`
-    try {
-    db.prepare(query).run(path,user_id)
 
-    return { ok: true}
+  const query = `UPDATE user SET avatar = ? WHERE id = ?`
+  try {
+    db.prepare(query).run(path, user_id)
+
+    return { ok: true }
 
   } catch (err) {
     if (err instanceof Error) {
@@ -130,15 +123,15 @@ export function setAvatar(link: string, user_id: string){
 }
 
 
-export function setCover(link: string, user_id: string){
+export function setCover(link: string, user_id: string) {
 
   const path = "https://profilemediabucket-voyage.s3.amazonaws.com/" + link
 
   const query = `UPDATE user SET cover = ? WHERE id = ?`
-    try {
-    db.prepare(query).run(path,user_id)
+  try {
+    db.prepare(query).run(path, user_id)
 
-    return { ok: true}
+    return { ok: true }
 
   } catch (err) {
     if (err instanceof Error) {
@@ -151,13 +144,13 @@ export function setCover(link: string, user_id: string){
 }
 
 
-export function setDescription(link: string, user_id: string){
+export function setDescription(link: string, user_id: string) {
 
   const query = `UPDATE user SET description = ? WHERE id = ?`
-    try {
-    db.prepare(query).run(link,user_id)
+  try {
+    db.prepare(query).run(link, user_id)
 
-    return { ok: true}
+    return { ok: true }
 
   } catch (err) {
     if (err instanceof Error) {

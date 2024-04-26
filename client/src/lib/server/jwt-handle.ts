@@ -12,6 +12,8 @@ type RefreshEvent = RequestEvent<Partial<Record<string, string>>, string | null>
 const min15 = 60 * 15; // 15 minutes in seconds
 const week = 60 * 60 * 24 * 7; // 7 days in seconds
 
+export let global_access_token: string
+
 export function createTokens(event: CreateEvent | RefreshEvent, user_id: string) {
 
   const access_token_id: string = uuidv4()
@@ -37,7 +39,12 @@ export function createTokens(event: CreateEvent | RefreshEvent, user_id: string)
     return new Date((new Date()).getTime() + time * 1000);
   }
 
-  event.cookies.set("at", access_token, { path: "/", expires: timeConvert(min15) })
+  // event.locals.globalData = { access_token: access_token }
+
+  event.cookies.set("at", access_token, {
+    path: "/", expires: timeConvert(min15),
+    sameSite: "none"
+  })
   event.cookies.set("rt", refresh_token, { path: "/", expires: timeConvert(week) })
   return { ok: true }
 }
@@ -45,7 +52,9 @@ export function createTokens(event: CreateEvent | RefreshEvent, user_id: string)
 export function deleteTokens(event: RefreshEvent) {
   const negTime = new Date((new Date()).getTime() - 1 * 1000)
   event.cookies.set("rt", "", { path: "/", expires: negTime })
-  event.cookies.set("at", "", { path: "/", expires: negTime })
+  event.cookies.set("at", "", {
+    path: "/", expires: negTime
+  })
 }
 
 export function refreshTokens(event: RefreshEvent, access_token_id: string) {

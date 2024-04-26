@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"social-network/internal/app/config"
 	"social-network/internal/store/sqlstore"
 
@@ -32,6 +33,10 @@ func Start(config *config.Config) error {
 	defer db.Close()
 
 	store := sqlstore.New(db)
+
+	if os.Getenv("JWT_KEY") == "" {
+		return errors.New("JWT KEY not set")
+	}
 
 	srv := newServer(store, WithConfig(config))
 
