@@ -6,32 +6,31 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { v4 as uuidv4 } from 'uuid';
 
-	import RedStar from './red-star.svelte';
+	import RedStar from './RedStar.svelte';
 	import EyeOpen from 'svelte-radix/EyeOpen.svelte';
 	import EyeClosed from 'svelte-radix/EyeClosed.svelte';
 	import { CreateUser, type CreateUserType } from '$lib/types/user';
-	import { apiCreateUser } from '$lib/client/api/user-requests';
+	import { RegisterUser } from '$lib/client/api/user-requests';
+	import { date } from 'zod';
 
 	function toogle() {
 		isHide = !isHide;
 	}
 
-	// 	{
-	//     "id": "somerandomidlaterfromfrontend",
-	//     "username": "testuser",
-	//     "email": "test@user.ee",
-	//     "password": "testUser",
-	//     "timestamp": "2024-04-25T00:00:00Z",
-	//     "date_of_birth": "11-11-1111",
-	//     "first_name": "first name",
-	//     "last_name": "last name",
-	//     "description": "this is my fantastic bio",
-	//     "avatar": "your_avatar_url_here",
-	//     "cover": "your_cover_url_here",
-	//     "member_type": "public"
-	// }
-
-	// CreateUser()
+	export type UserModel = {
+		id: string;
+		username: string;
+		email: string;
+		password: string;
+		timestamp?: string;
+		date_of_birth: string;
+		first_name: string;
+		last_name: string;
+		description: string;
+		avatar: string;
+		cover: string;
+		privacy: string;
+	};
 
 	export let data: SuperValidated<Infer<SignUpSchema>>;
 
@@ -40,13 +39,28 @@
 	const form = superForm(data, {
 		validators: zodClient(signUpSchema),
 		onSubmit: ({ formData, cancel }) => {
-			const { username, email, dateOfBirth, password, repeatPassword, firstName, lastName } =
-				$formData;
+			const { username, email, dateOfBirth, password, firstName, lastName } = $formData;
 
-			const user = new CreateUser({ username, email, dateOfBirth, password, firstName, lastName });
+			// const user2 = new CreateUser({ username, email, dateOfBirth, password, firstName, lastName });
+
+			const user: UserModel = {
+				id: uuidv4(),
+				username,
+				email,
+				password,
+				date_of_birth: dateOfBirth,
+				first_name: firstName,
+				last_name: lastName,
+				description: `👋, I'm ${username}.`,
+				avatar: `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${username}`,
+				cover:
+					'https://t3.ftcdn.net/jpg/03/10/17/76/360_F_310177612_ZF5ucdsR1SEm76F9ydhfLzlotishG1Ug.jpg',
+				privacy: 'public'
+			};
+
 			console.log(JSON.stringify(user));
 
-			console.log(apiCreateUser(user));
+			RegisterUser(user);
 
 			cancel();
 		},

@@ -1,10 +1,11 @@
 import { PUBLIC_LOCAL_PATH } from "$env/static/public"
-import type { CreateUser } from "$lib/types/user"
+import type { UserModel } from "$lib/types/user"
 import type { RequestEvent } from "@sveltejs/kit"
+import type { SignIn } from "../../../routes/(auth)/signin/type"
 
 
 
-export async function apiCreateUser(user: CreateUser) {
+export async function RegisterUser(user: UserModel) {
   try {
     const resp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/user/create`, {
       method: "POST",
@@ -15,6 +16,10 @@ export async function apiCreateUser(user: CreateUser) {
       credentials: "include",
       body: JSON.stringify(user)
     })
+
+
+    console.log(await resp)
+
     if (resp.ok) {
       return { ok: resp.ok, status: resp.statusText }
     } else {
@@ -24,8 +29,53 @@ export async function apiCreateUser(user: CreateUser) {
   } catch (err) {
     console.log("ERRRRRR", err)
     if (err instanceof Error) {
+
+      console.log(err)
       return { ok: false, error: err, message: err.message }
     } else {
+
+      console.log(err)
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
+
+
+export async function LoginUser(credentials: SignIn) {
+
+  try {
+    const resp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/user/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "POST",
+      },
+      credentials: "include",
+      body: JSON.stringify(credentials)
+    })
+
+
+
+    console.log(await resp.json())
+
+    if (resp.ok) {
+      return { ok: resp.ok, status: resp.statusText }
+    } else {
+      return { ok: resp.ok, status: resp.statusText }
+    }
+
+
+
+
+  } catch (err) {
+    console.log("ERRRRRR", err)
+
+
+    if (err instanceof Error) {
+
+      return { ok: false, error: err, message: err.message }
+    } else {
+
       return { ok: false, error: err, message: "Unknown Error" }
     }
   }
