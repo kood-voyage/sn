@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -57,6 +58,9 @@ func (s *Server) CORSMiddleware(next http.Handler) http.Handler {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
 		}
+
+		fmt.Println(r.Method)
+		fmt.Println(http.MethodOptions)
 
 		// Allow only specific methods for actual requests
 		if r.Method == http.MethodOptions {
@@ -158,4 +162,17 @@ func (s *Server) jwtMiddlewareForQuery(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxUserID, user_id)))
 	})
+}
+
+func (s *Server) corsQuickFix() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        origin := r.Header.Get("Origin")
+        if origin != "" {
+            w.Header().Set("Access-Control-Allow-Origin", origin)
+            w.Header().Set("Access-Control-Allow-Credentials", "true")
+        }
+        w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
+        w.WriteHeader(http.StatusOK)
+    }
 }

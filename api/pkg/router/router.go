@@ -73,3 +73,7 @@ func (r *Router) PUT(pattern string, fn http.HandlerFunc) {
 func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	r.mux.ServeHTTP(w, req)
 }
+
+func (r *Router) OPTION(pattern string, fn http.HandlerFunc) {
+    r.Handle(http.MethodOptions+" "+pattern, fn)
+}

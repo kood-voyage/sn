@@ -3,6 +3,7 @@ package server
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
 	"social-network/internal/model"
 	"social-network/pkg/validator"
@@ -39,13 +40,17 @@ func (s *Server) userCreate() http.HandlerFunc {
 		}
 
 		privacy, ok := s.types.Privacy.Values[user.Privacy]
+
+		fmt.Println(user)
 		if !ok {
 			s.error(w, http.StatusUnprocessableEntity, errors.New("public, private, selected states are allowed"))
 			return
 		}
 
 		u, err := s.store.User().Create(user, privacy)
+
 		if err != nil {
+
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
@@ -102,11 +107,26 @@ func (s *Server) userLogin() http.HandlerFunc {
 			UserID:    user.ID,
 			CreatedAT: time.Now().Add(24 * 7 * time.Hour),
 		}
-		_, err = s.store.Session().Create(session)
+
+		oldSession, err := s.store.Session().CheckByUserId(user.ID)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				_, err = s.store.Session().Create(session)
+				if err != nil {
+					s.error(w, http.StatusUnprocessableEntity, err)
+					return
+				}
+			}
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		_, err = s.store.Session().Update(oldSession.AcessID, session)
 		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
+
 		http.SetCookie(w, accessToken)
 		http.SetCookie(w, refreshToken)
 		user.Sanitize()

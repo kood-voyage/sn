@@ -73,6 +73,11 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func configureRouter(s *Server) {
+
+	//Temporary
+	s.router.OPTION("/", s.corsQuickFix())
+
+	///
 	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware)
 	s.router.UseWithPrefix("auth", s.jwtMiddleware)
 	s.router.UseWithPrefix("cookie", s.jwtMiddlewareForQuery)
@@ -140,6 +145,7 @@ func configureRouter(s *Server) {
 	s.router.GET("/cookie/ws", s.wsService.HandleWS)
 
 	s.router.GET("/login/{id}", s.login())
+
 }
 
 func (s *Server) wsHandler() http.HandlerFunc {
