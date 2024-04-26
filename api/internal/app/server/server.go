@@ -98,6 +98,7 @@ func configureRouter(s *Server) {
 	s.router.GET("/api/v1/auth/user/posts/{id}", s.userPosts())
 	s.router.GET("/api/v1/auth/user/notifications", s.userNotifications())
 	s.router.GET("/api/v1/auth/user/all", s.userGetAll())
+	s.router.GET("/api/v1/auth/user/get/{id}", s.userGet())
 	//---------NOTIFICATION---------//
 	s.router.POST("/api/v1/auth/notification/create", s.notificationCreate())
 	s.router.DELETE("/api/v1/auth/notification/delete/{id}", s.notificationDelete())

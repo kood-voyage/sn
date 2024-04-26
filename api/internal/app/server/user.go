@@ -401,3 +401,16 @@ func (s *Server) userGetAll() http.HandlerFunc {
 		s.respond(w, http.StatusOK, Response{Data: users})
 	}
 }
+
+func (s *Server) userGet() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user, err := s.store.User().Get(r.PathValue("id"))
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		user.Sanitize()
+		s.respond(w, http.StatusOK, Response{Data: user})
+	}
+}
