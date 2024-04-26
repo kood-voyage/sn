@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
+
 	_ "social-network/docs"
 	"social-network/internal/app/config"
 	"social-network/internal/model"
@@ -13,7 +15,6 @@ import (
 	"social-network/pkg/client"
 	"social-network/pkg/jwttoken"
 	"social-network/pkg/router"
-	"time"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -46,7 +47,6 @@ type Server struct {
 type Option func(*config.Config)
 
 func newServer(store store.Store, opts ...Option) *Server {
-
 	config := &config.Config{}
 
 	// Apply options
@@ -56,7 +56,7 @@ func newServer(store store.Store, opts ...Option) *Server {
 
 	s := &Server{
 		router:    router.New(),
-		logger:    log.Default(),
+		logger:    log.New(os.Stdout, "", 0),
 		store:     store,
 		types:     model.InitializeTypes(),
 		wsClient:  client.NewClient(config.ChatServiceURL),
@@ -73,8 +73,14 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func configureRouter(s *Server) {
+
+	//Temporary
+	s.router.OPTION("/", s.corsQuickFix())
+
+	///
 	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware)
 	s.router.UseWithPrefix("auth", s.jwtMiddleware)
+	s.router.UseWithPrefix("cookie", s.jwtMiddlewareForQuery)
 
 	s.router.GET("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://ec2-3-84-51-36.compute-1.amazonaws.com:8080/swagger/doc.json"),
@@ -118,8 +124,10 @@ func configureRouter(s *Server) {
 	s.router.DELETE("/api/v1/auth/group/delete/{id}", s.groupDelete())
 	s.router.GET("/api/v1/auth/group/{id}", s.groupGet())
 	s.router.GET("/api/v1/auth/group", s.groupGetAll())
+	s.router.GET("/api/v1/auth/group/posts/{id}", s.groupGetPost())
 	s.router.POST("/api/v1/auth/group/invite", s.groupInvite())
 	s.router.POST("/api/v1/auth/group/request", s.groupInviteRequest())
+	s.router.GET("/api/v1/auth/group/join/{id}", s.joinGroup())
 	//---------EVENT--------------//
 	s.router.POST("/api/v1/auth/group/event/create", s.createEvent())
 	s.router.PUT("/api/v1/auth/group/event/update", s.updateEvent())
@@ -130,11 +138,15 @@ func configureRouter(s *Server) {
 	s.router.POST("/api/v1/auth/chats/create", s.createChat())
 	s.router.POST("/api/v1/auth/chats/add/user", s.addUserChat())
 	s.router.POST("/api/v1/auth/chats/add/line", s.addLineChat())
+	s.router.GET("/api/v1/auth/chats", s.getAllChats())
+	s.router.GET("/api/v1/auth/chats/get/users/{id}", s.getAllChatUsers())
+	s.router.GET("/api/v1/auth/chats/{id}", s.getChatLines())
 	//--WEBSOCKET--//
 	s.router.GET("/ws", s.wsHandler())
-	s.router.GET("/test/ws", s.wsService.HandleWS)
+	s.router.GET("/cookie/ws", s.wsService.HandleWS)
 
 	s.router.GET("/login/{id}", s.login())
+
 }
 
 func (s *Server) wsHandler() http.HandlerFunc {
@@ -179,8 +191,7 @@ func (s *Server) decode(r *http.Request, data interface{}) error {
 	return nil
 }
 
-//FOR DEVELOPMENT PURPOSES TO GENERATE JWT TOKEN
-
+// FOR DEVELOPMENT PURPOSES TO GENERATE JWT TOKEN
 func (s *Server) login() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		newToken := jwttoken.NewClaims()

@@ -4,11 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
+	"time"
+
 	"social-network/internal/model"
 	"social-network/pkg/jwttoken"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -29,6 +31,7 @@ func (s *Server) logRequest(next http.Handler) http.Handler {
 			return
 		}
 
+		s.logger.Println()
 		s.logger.Printf("started %s %s ----- remote_addr:%s request_id:%s",
 			r.Method,
 			r.RequestURI,
@@ -55,6 +58,9 @@ func (s *Server) CORSMiddleware(next http.Handler) http.Handler {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
 		}
+
+		fmt.Println(r.Method)
+		fmt.Println(http.MethodOptions)
 
 		// Allow only specific methods for actual requests
 		if r.Method == http.MethodOptions {
@@ -127,7 +133,6 @@ func (s *Server) jwtMiddleware(next http.Handler) http.Handler {
 			}
 
 			id, err := claims.Get("user_id")
-
 			if err != nil {
 				s.error(w, http.StatusUnauthorized, err)
 				return
@@ -136,4 +141,38 @@ func (s *Server) jwtMiddleware(next http.Handler) http.Handler {
 
 		}
 	})
+}
+
+func (s *Server) jwtMiddlewareForQuery(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		accessToken := r.URL.Query().Get("at")
+		// Parse the token
+		alg := jwttoken.HmacSha256(os.Getenv(jwtKey))
+		claims, err := alg.DecodeAndValidate(accessToken)
+		if err != nil {
+			s.error(w, http.StatusUnauthorized, err)
+			return
+		}
+
+		user_id, err := claims.Get("user_id")
+		if err != nil {
+			s.error(w, http.StatusUnauthorized, err)
+			return
+		}
+
+		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxUserID, user_id)))
+	})
+}
+
+func (s *Server) corsQuickFix() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        origin := r.Header.Get("Origin")
+        if origin != "" {
+            w.Header().Set("Access-Control-Allow-Origin", origin)
+            w.Header().Set("Access-Control-Allow-Credentials", "true")
+        }
+        w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
+        w.WriteHeader(http.StatusOK)
+    }
 }

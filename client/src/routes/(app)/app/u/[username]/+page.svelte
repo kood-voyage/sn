@@ -18,7 +18,6 @@
 	const followingCount = data.following ? data.following.length : 0;
 
 	const { posts } = data;
-
 </script>
 
 <svelte:head>
@@ -60,7 +59,9 @@
 							<form action="?/unfollow" method="post">
 								<input type="text" hidden name="target_id" value={data.user.id} />
 
-								<button class="text-sm px-5 rounded-md bg-secondary" type="submit"> unfollow </button>
+								<button class="text-sm px-5 rounded-md bg-secondary" type="submit">
+									unfollow
+								</button>
 							</form>
 						{:else}
 							<form action="?/follow" method="post">

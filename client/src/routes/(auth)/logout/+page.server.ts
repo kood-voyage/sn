@@ -1,4 +1,4 @@
-import { deleteTokens } from "$lib/server/jwt-handle"
+import { deleteTokens } from "$lib/client/jwt-handle"
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 export const prerender = false;

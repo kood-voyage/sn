@@ -2,6 +2,7 @@ package sqlstore
 
 import (
 	"database/sql"
+
 	"social-network/internal/store"
 )
 

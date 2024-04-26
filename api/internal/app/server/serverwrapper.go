@@ -38,6 +38,10 @@ func Start(config *config.Config) error {
 
 	store := sqlstore.New(db)
 
+	if os.Getenv("JWT_KEY") == "" {
+		return errors.New("JWT KEY not set")
+	}
+
 	srv := newServer(store, WithConfig(config))
 
 	srv.logger.Printf("The server is running on the port %v", config.Port)

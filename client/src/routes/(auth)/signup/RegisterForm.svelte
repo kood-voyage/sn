@@ -4,29 +4,75 @@
 	import { signUpSchema, type SignUpSchema } from '../schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { v4 as uuidv4 } from 'uuid';
 
-	import RedStar from './red-star.svelte';
+	import RedStar from './RedStar.svelte';
 	import EyeOpen from 'svelte-radix/EyeOpen.svelte';
 	import EyeClosed from 'svelte-radix/EyeClosed.svelte';
-
+	import { CreateUser, type CreateUserType } from '$lib/types/user';
+	import { RegisterUser } from '$lib/client/api/user-requests';
+	import { date } from 'zod';
 
 	function toogle() {
 		isHide = !isHide;
 	}
 
-	export let data: SuperValidated<Infer<SignUpSchema>>;
+	export type UserModel = {
+		id: string;
+		username: string;
+		email: string;
+		password: string;
+		timestamp?: string;
+		date_of_birth: string;
+		first_name: string;
+		last_name: string;
+		description: string;
+		avatar: string;
+		cover: string;
+		privacy: string;
+	};
 
+	export let data: SuperValidated<Infer<SignUpSchema>>;
 
 	let isHide: boolean = true;
 
 	const form = superForm(data, {
-		validators: zodClient(signUpSchema)
+		validators: zodClient(signUpSchema),
+		onSubmit: ({ formData, cancel }) => {
+			const { username, email, dateOfBirth, password, firstName, lastName } = $formData;
+
+			// const user2 = new CreateUser({ username, email, dateOfBirth, password, firstName, lastName });
+
+			const user: UserModel = {
+				id: uuidv4(),
+				username,
+				email,
+				password,
+				date_of_birth: dateOfBirth,
+				first_name: firstName,
+				last_name: lastName,
+				description: `👋, I'm ${username}.`,
+				avatar: `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${username}`,
+				cover:
+					'https://t3.ftcdn.net/jpg/03/10/17/76/360_F_310177612_ZF5ucdsR1SEm76F9ydhfLzlotishG1Ug.jpg',
+				privacy: 'public'
+			};
+
+			console.log(JSON.stringify(user));
+
+			RegisterUser(user);
+
+			cancel();
+		},
+		onError: (event) => {
+			console.log(event);
+		}
 	});
 
 	const { form: formData, enhance } = form;
 </script>
 
-<form method="POST" action="?/signup" use:enhance>
+<form method="POST" use:enhance>
 	<Form.Field {form} name="username">
 		<Form.Control let:attrs>
 			<Form.Label>Username <RedStar /></Form.Label>

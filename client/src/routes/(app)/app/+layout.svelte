@@ -23,11 +23,53 @@
 	import { setMode, resetMode } from 'mode-watcher';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import NavigationItem from './navigation-item.svelte';
+	import { onDestroy, onMount } from 'svelte';
+	import { closeWebSocket, connectWebSocket } from '$lib/client/websocket.js';
+	import type { User } from '$lib/types/user.js';
+	import { invalidateAll } from '$app/navigation';
+	import { webSocketStore } from '$lib/store/websocket-store.js';
 
 	currentUserStore.set(data.data);
 	currentUserFollowers.set(data.followers);
 	currentUserFollowing.set(data.following);
 
+	let currentUser = $currentUserStore as User;
+	const access_token = data.access_token as string;
+
+	onMount(() => {
+		// console.log(access_token);
+
+		if (access_token == undefined) {
+			invalidateAll();
+			// while (access_token == undefined) {}
+			webSocketStore.set({ websocket: undefined, access_token: undefined });
+		} else {
+		}
+		if (access_token != undefined) {
+			webSocketStore.update((obj) => {
+				obj.access_token = access_token;
+				// connectWebSocket(access_token);
+				return { ...obj };
+			});
+		}
+		webSocketStore.subscribe((obj) => {
+			// console.log('STORE STUFF >>> ', $webSocketStore.websocket, $webSocketStore.access_token);
+			// console.log($webSocketStore.access_token);
+			console.log('PROBLEM WITH INVALIDATE ');
+			if (access_token == undefined) {
+				invalidateAll();
+				return;
+			}
+			if (obj.access_token != undefined && obj.websocket == undefined) {
+				connectWebSocket(access_token);
+				return;
+			}
+		});
+	});
+
+	onDestroy(() => {
+		closeWebSocket();
+	});
 	const { username, email, first_name, last_name, avatar } = $currentUserStore;
 </script>
 
@@ -68,13 +110,13 @@
 					<DropdownMenu.Content class="w-56">
 						<DropdownMenu.Label>My Account</DropdownMenu.Label>
 
-						<DropdownMenu.Item >
+						<DropdownMenu.Item>
 							<a href="/app/create-post" class="flex w-full text-primary">
 								<span class="mr-2">
 									<Plus class="h-[1rem] w-[1rem]" />
 								</span>
 
-								<span >Create post</span>
+								<span>Create post</span>
 							</a>
 						</DropdownMenu.Item>
 
