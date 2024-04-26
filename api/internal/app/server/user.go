@@ -414,3 +414,20 @@ func (s *Server) userGet() http.HandlerFunc {
 		s.respond(w, http.StatusOK, Response{Data: user})
 	}
 }
+
+func (s *Server) currentUser() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+			return
+		}
+		user, err := s.store.User().Get(userID)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		user.Sanitize()
+		s.respond(w, http.StatusOK, Response{Data: user})
+	}
+}
