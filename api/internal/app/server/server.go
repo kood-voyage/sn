@@ -81,8 +81,13 @@ func configureRouter(s *Server) {
 		httpSwagger.URL("http://ec2-3-84-51-36.compute-1.amazonaws.com:8080/swagger/doc.json"),
 	))
 	//---------USER---------//
-	s.router.GET("/api/v1/auth/user/create/{privacy_state}", s.userCreate())
+	s.router.POST("/api/v1/user/create", s.userCreate())
+	s.router.POST("/api/v1/user/login", s.userLogin())
+	s.router.GET("/api/v1/auth/user/logout", s.userLogout())
 	s.router.GET("/api/v1/auth/user/privacy/{privacy_state}", s.userPrivacy())
+	s.router.PUT("/api/v1/auth/user/description", s.userDescription())
+	s.router.PUT("/api/v1/auth/user/cover", s.userCover())
+	s.router.PUT("/api/v1/auth/user/avatar", s.userAvatar())
 	s.router.GET("/api/v1/auth/user/followers/{id}", s.userFollowers())
 	s.router.GET("/api/v1/auth/user/following/{id}", s.userFollowing())
 	s.router.GET("/api/v1/auth/user/posts/{id}", s.userPosts())

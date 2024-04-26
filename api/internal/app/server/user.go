@@ -1,10 +1,14 @@
 package server
 
 import (
+	"database/sql"
 	"errors"
 	"net/http"
 	"social-network/internal/model"
 	"social-network/pkg/validator"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type ValidateStruct struct {
@@ -16,39 +20,115 @@ type ValidateStruct struct {
 // @Summary Create a user with privacy state
 // @Tags users
 // @Produce json
-// @Param privacy_state path string true "Only public, private, selected allowed"
+// @Param privacy_state path string true "Only public, private allowed"
 // @Success 201 {object} model.User
 // @Failure 401 {object} Error
 // @Failure 422 {object} Error
 // @Router /api/v1/auth/user/create/{privacy_state} [get]
 func (s *Server) userCreate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userID, ok := r.Context().Value(ctxUserID).(string)
-		if !ok {
-			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+		var user model.User
+		if err := s.decode(r, &user); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
-		user := &model.User{ID: userID}
 
-		privacy_state := r.PathValue("privacy_state")
-		privacy, ok := s.types.Privacy.Values[privacy_state]
+		if err := validator.Validate(user); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		privacy, ok := s.types.Privacy.Values[user.Privacy]
 		if !ok {
 			s.error(w, http.StatusUnprocessableEntity, errors.New("public, private, selected states are allowed"))
 			return
 		}
 
-		p := ValidateStruct{Privacy: privacy_state}
-		if err := validator.Validate(p); err != nil {
+		u, err := s.store.User().Create(user, privacy)
+		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
 
-		if err := s.store.User().Create(user, privacy); err != nil {
+		s.respond(w, http.StatusCreated, Response{Data: u})
+	}
+}
+
+func (s *Server) userLogin() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var loginDetails struct {
+			Login    string `json:"login" validate:"required"`
+			Password string `json:"password" validate:"required"`
+		}
+
+		if err := s.decode(r, &loginDetails); err != nil {
+			s.error(w, http.StatusUnauthorized, err)
+			return
+		}
+
+		if err := validator.Validate(loginDetails); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		user, err := s.store.User().Get(loginDetails.Login)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				s.error(w, http.StatusUnprocessableEntity, errors.New("no user found with specific login details"))
+				return
+			}
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
 
-		s.respond(w, http.StatusCreated, Response{Data: user})
+		if !user.ComparePassword(loginDetails.Password) {
+			s.error(w, http.StatusUnauthorized, errors.New("password incorrect"))
+			return
+		}
+
+		accesstoken_id := uuid.New().String()
+		accessToken, err := NewAccessToken(accesstoken_id, user.ID, time.Now().Add(15*time.Minute))
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		refreshToken, err := NewRefreshToken(accesstoken_id, time.Now().Add(24*7*time.Hour))
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		session := model.Session{
+			AcessID:   accesstoken_id,
+			UserID:    user.ID,
+			CreatedAT: time.Now().Add(24 * 7 * time.Hour),
+		}
+		_, err = s.store.Session().Create(session)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		http.SetCookie(w, accessToken)
+		http.SetCookie(w, refreshToken)
+		user.Sanitize()
+		s.respond(w, http.StatusOK, Response{Data: user})
+	}
+}
+
+func (s *Server) userLogout() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+			return
+		}
+		err := s.store.Session().DeleteByUser(userID)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		http.SetCookie(w, DeleteAccessToken())
+		http.SetCookie(w, DeleteRefreshToken())
+		s.respond(w, http.StatusOK, Response{Data: "Successfully logged out"})
 	}
 }
 
@@ -209,5 +289,83 @@ func (s *Server) userNotifications() http.HandlerFunc {
 		}
 
 		s.respond(w, http.StatusOK, Response{Data: notifications})
+	}
+}
+
+func (s *Server) userDescription() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+			return
+		}
+		var response struct {
+			Description string `json:"description" validate:"required|min_len:4"`
+		}
+		if err := s.decode(r, &response); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		if err := validator.Validate(response); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		err := s.store.User().SetDescription(userID, response.Description)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+		}
+		s.respond(w, http.StatusOK, Response{Data: "Successfully updated description"})
+	}
+}
+
+func (s *Server) userCover() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+			return
+		}
+		var response struct {
+			Cover string `json:"cover" validate:"required"`
+		}
+		if err := s.decode(r, &response); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		if err := validator.Validate(response); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		err := s.store.User().SetCover(userID, response.Cover)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+		}
+		s.respond(w, http.StatusOK, Response{Data: "Successfully updated cover"})
+	}
+}
+
+func (s *Server) userAvatar() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+			return
+		}
+		var response struct {
+			Avatar string `json:"avatar" validate:"required"`
+		}
+		if err := s.decode(r, &response); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		if err := validator.Validate(response); err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		err := s.store.User().SetAvatar(userID, response.Avatar)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+		}
+		s.respond(w, http.StatusOK, Response{Data: "Successfully updated avatar"})
 	}
 }
