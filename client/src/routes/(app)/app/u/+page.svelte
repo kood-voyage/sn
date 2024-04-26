@@ -3,6 +3,8 @@
 
 	export let data;
 	const userList = data.data as RowType[];
+
+	console.log(userList);
 </script>
 
 <svelte:head>
@@ -12,13 +14,15 @@
 <div class="p-4">
 	<input
 		type="text"
-		class="flex mx-auto my-2 w-[420px] p-2 rounded-md border dark:bg-slate-900"
+		class="flex mx-auto my-2 w-[420px] p-2 rounded-md border dark:bg-neutral-900"
 		placeholder="Search..."
 	/>
 	<hr class="w-[440px] m-auto" />
 
 	{#each userList as user}
-		<div class="flex m-auto w-[420px] p-2 hover:bg-slate-200 dark:hover:bg-slate-900 rounded-md">
+		<div
+			class="flex m-auto w-[420px] p-2 hover:bg-neutral-200 dark:hover:bg-neutral-900 rounded-md"
+		>
 			<a href="/app/u/{user.username}" class="flex">
 				<img src={user.avatar} alt="user-avatar" class="rounded-full w-12 h-12 mr-2 object-cover" />
 				<div>

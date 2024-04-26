@@ -9,6 +9,6 @@ type Store interface {
 	Comment() CommentRepository
 	Privacy() PrivacyRepository
 	Event() EventRepository
-	Image() ImageRepository
 	Chat() ChatRepository
+	Image() ImageRepository
 }

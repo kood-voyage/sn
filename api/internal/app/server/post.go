@@ -206,3 +206,23 @@ func (s *Server) deleteSelected() http.HandlerFunc {
 		s.respond(w, http.StatusNoContent, nil)
 	}
 }
+
+func (s *Server) getFeed() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("unauthorized"))
+			return
+		}
+
+		posts, err := s.store.Post().GetUserFeed(userID)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, http.StatusOK, Response{
+			Data: posts,
+		})
+	}
+}

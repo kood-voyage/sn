@@ -1,12 +1,9 @@
 import { LOCAL_PATH } from '$env/static/private';
 import type { Actions } from './$types';
-
 import { getProfile } from "$lib/server/db/profile"
 import type { PageServerLoad } from './$types';
 
-
 export const load: PageServerLoad = async (event) => {
-
   const data = (await getProfile(event, event.params.username))
   if (data.error) {
     console.error(data)
@@ -14,11 +11,8 @@ export const load: PageServerLoad = async (event) => {
       username: "Undefined"
     }
   }
-  
   return data
-
 }
-
 
 export const actions: Actions = {
 	follow: async (event) => {
@@ -42,8 +36,6 @@ export const actions: Actions = {
 
   },
 
-
-
   unfollow: async (event) => {
   const data = await event.request.formData()
   const target_id = data.get("target_id")
@@ -61,12 +53,6 @@ export const actions: Actions = {
       return { ok: false, error: err, message: "Unknown Error" }
     }
   }
-
   }
-
-
-
-
-
 }
 

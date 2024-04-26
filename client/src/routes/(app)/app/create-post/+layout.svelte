@@ -1,3 +1,3 @@
-<div class="w-[480px] m-auto">
+<div>
 	<slot />
 </div>

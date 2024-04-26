@@ -30,6 +30,7 @@ type PostRepository interface {
 	GetUsers(source_id, target_id string) ([]model.Post, error)
 	AddSelected(userList *[]model.User, parentID string) error
 	RemoveSelected(userList *[]model.User, parentID string) error
+	GetUserFeed(user_id string) ([]*model.Post, error)
 }
 
 type CommentRepository interface {

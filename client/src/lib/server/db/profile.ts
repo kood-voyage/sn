@@ -75,7 +75,8 @@ export function getUser(unique_credentials: string): GetUser {
     last_name,
     avatar,
     cover,
-    description
+    description,
+    timestamp
     FROM user WHERE username = ? OR id = ?`
 
   try {

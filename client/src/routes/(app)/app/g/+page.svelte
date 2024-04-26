@@ -35,7 +35,7 @@
 <div class="p-12">
 	<input
 		type="text"
-		class="flex mx-auto my-2 w-[420px] p-2 rounded-md border dark:bg-slate-900"
+		class="flex mx-auto my-2 w-[420px] p-2 rounded-md border dark:bg-neutral-900"
 		placeholder="Search..."
 	/>
 	<hr class="w-[440px] m-auto" />

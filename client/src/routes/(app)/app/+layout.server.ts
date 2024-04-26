@@ -9,38 +9,21 @@ import { getUserFollowers, getUserFollowing } from "$lib/server/api/user-request
 
 
 export const load: LayoutServerLoad = async (event: RequestEvent<RouteParams, "/(auth)/signin"> | RequestEvent<Partial<Record<string, string>>, string | null>) => {
-  const globalData = event.locals.globalData
   const idResp = getUserIdFromCookie(event)
   if (!idResp.ok) {
     return
   }
-
   const user_id = idResp.user_id as string
   const data = getUser(user_id)
-
-
-
   const followers = await getUserFollowers(event, user_id)
   const following = await getUserFollowing(event, user_id)
-
-
-
-  data.access_token = globalData.access_token
-  data.followers = followers
-  data.following = following
-
-
-
-
-
-
 
   if (data.error) {
     return {}
   }
 
 
-  return data
+  return { data: data.data, followers, following }
 
 }
 

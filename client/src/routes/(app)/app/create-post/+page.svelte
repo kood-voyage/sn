@@ -1,11 +1,15 @@
 <script lang="ts">
+	import PostFormComponent from './postForm.svelte';
 	export let data;
-
-	import PostFormComponent from './post-form.svelte';
-
-	console.log(data);
 </script>
 
-<p>Create post</p>
+<svelte:head>
+	<title>create post</title>
+	<html lang="en" />
+</svelte:head>
 
-<PostFormComponent data={data.form} />
+<div class="w-full">
+	<p class="w-full text-2xl py-2">Create post</p>
+
+	<PostFormComponent data={data.form} />
+</div>

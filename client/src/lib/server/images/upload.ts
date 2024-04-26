@@ -102,6 +102,4 @@ export async function mainUpload() {
   } finally {
     // finally.
   }
-  // console.log(client)
-  // console.log(command)
 }

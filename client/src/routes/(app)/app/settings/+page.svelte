@@ -18,14 +18,10 @@
 		if (imageResp.ok && imageResp.file) {
 			file = imageResp.file;
 		}
-		console.log(file);
-
 		let reader = new FileReader();
-
 		reader.onloadend = function () {
 			previewAvatar = reader.result;
 		};
-
 		if (file) {
 			reader.readAsDataURL(file);
 		} else {
@@ -36,19 +32,14 @@
 	let fileInputCover: HTMLInputElement;
 	async function PreviewCover() {
 		let file = fileInputCover.files[0];
-		// console.log(file);
 		const imageResp = await handleImageCopression(file);
 		if (imageResp.ok && imageResp.file) {
 			file = imageResp.file;
 		}
-		// console.log(file);
-
 		let reader = new FileReader();
-
 		reader.onloadend = function () {
 			previewCover = reader.result;
 		};
-
 		if (file) {
 			reader.readAsDataURL(file);
 		} else {
@@ -130,7 +121,7 @@
 			type="button"
 			value="save"
 			on:click={handleSubmit}
-			class="w-20 bg-slate-600 p-2 rounded-xl"
+			class="w-20 bg-neutral-600 p-2 rounded-xl"
 		/>
 	</form>
 </div>

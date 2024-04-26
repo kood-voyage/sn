@@ -60,7 +60,5 @@ export const actions: Actions = {
 		}
 	}
 };
-function uuidv4(): string {
-	throw new Error('Function not implemented.');
-}
+
 

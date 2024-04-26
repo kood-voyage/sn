@@ -65,7 +65,6 @@ export class User implements UserStyle {
     this.description = ""
 
     const salt = bcrypt.genSaltSync(10);
-    console.log(salt)
 
     const hash = bcrypt.hashSync(this.password, salt);
     this.password = hash

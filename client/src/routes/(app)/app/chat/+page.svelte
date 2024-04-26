@@ -148,16 +148,6 @@
 
 	<div class="w-full">
 		<!-- user chat header -->
-		<div class="h-12 bg-slate-50 dark:bg-slate-800 px-4">
-			<div class="flex p-2 h-full">
-				<img
-					src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-					alt="avatar"
-					class="w-8 rounded-full mr-2"
-				/>
-				<p class="h-full text-center">Nikita</p>
-			</div>
-		</div>
 
 		<!-- direct chat -->
 		<div class="p-4"></div>

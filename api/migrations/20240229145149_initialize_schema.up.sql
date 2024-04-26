@@ -70,20 +70,22 @@ CREATE TABLE comment (
                          parent_id text DEFAULT NULL,
                          content text NOT NULL,
                          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                         user_name text NOT NULL,
+                         user_avatar text NOT NULL,
                          FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ,
                          FOREIGN KEY (post_id) REFERENCES post (id) ON DELETE CASCADE ,
                          FOREIGN KEY (parent_id) REFERENCES comment (id) ON DELETE CASCADE
 );
 
-INSERT INTO comment (id, user_id, post_id, parent_id, content, created_at) VALUES
-                                                                               ('comment1', 'user2', 'post1', NULL, 'Comment on post 1', '2022-01-01 12:30:00'),
-                                                                               ('comment2', 'user3', 'post1', NULL, 'Another comment on post 1', '2022-01-01 13:00:00'),
-                                                                               ('comment3', 'user4', 'post2', NULL, 'Comment on post 2', '2022-01-02 14:00:00'),
-                                                                               ('comment4', 'user1', 'post3', NULL, 'Comment on post 3', '2022-01-03 16:00:00'),
-                                                                               ('comment5', 'user5', 'post4', NULL, 'Comment on post 4', '2022-01-04 10:00:00'),
-                                                                               ('comment6', 'user2', 'post5', NULL, 'Comment on post 5', '2022-01-05 18:00:00'),
-                                                                               ('comment7', 'user3', 'post5', 'comment6', 'Reply to comment 6', '2022-01-05 18:30:00'),
-                                                                               ('comment8', 'user4', 'post5', NULL, 'Another comment on post 5', '2022-01-05 19:00:00');
+INSERT INTO comment (id, user_id, post_id, parent_id, content, created_at, user_name, user_avatar) VALUES
+                                                                               ('comment1', 'user2', 'post1', NULL, 'Comment on post 1', '2022-01-01 12:30:00', 'user5', 'test_image'),
+                                                                               ('comment2', 'user3', 'post1', NULL, 'Another comment on post 1', '2022-01-01 13:00:00', 'user5', 'test_image'),
+                                                                               ('comment3', 'user4', 'post2', NULL, 'Comment on post 2', '2022-01-02 14:00:00', 'user5', 'test_image'),
+                                                                               ('comment4', 'user1', 'post3', NULL, 'Comment on post 3', '2022-01-03 16:00:00', 'user5', 'test_image'),
+                                                                               ('comment5', 'user5', 'post4', NULL, 'Comment on post 4', '2022-01-04 10:00:00', 'user5', 'test_image'),
+                                                                               ('comment6', 'user2', 'post5', NULL, 'Comment on post 5', '2022-01-05 18:00:00', 'user5', 'test_image'),
+                                                                               ('comment7', 'user3', 'post5', 'comment6', 'Reply to comment 6', '2022-01-05 18:30:00', 'user5', 'test_image'),
+                                                                               ('comment8', 'user4', 'post5', NULL, 'Another comment on post 5', '2022-01-05 19:00:00', 'user5', 'test_image');
 
 CREATE TABLE event (
                        id text PRIMARY KEY UNIQUE NOT NULL,
