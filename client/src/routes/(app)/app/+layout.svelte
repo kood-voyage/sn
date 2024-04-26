@@ -23,56 +23,56 @@
 	import { setMode, resetMode } from 'mode-watcher';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import NavigationItem from './navigation-item.svelte';
-	import { onDestroy, onMount } from 'svelte';
-	import { closeWebSocket, connectWebSocket } from '$lib/client/websocket.js';
+	// import { onDestroy, onMount } from 'svelte';
+	// import { closeWebSocket, connectWebSocket } from '$lib/client/websocket.js';
 	import type { User } from '$lib/types/user.js';
-	import { invalidateAll } from '$app/navigation';
-	import { webSocketStore } from '$lib/store/websocket-store.js';
+	// import { invalidateAll } from '$app/navigation';
+	// import { webSocketStore } from '$lib/store/websocket-store.js';
 
-	currentUserStore.set(data.data);
-	currentUserFollowers.set(data.followers);
-	currentUserFollowing.set(data.following);
+	// currentUserStore.set(data.data);
+	// currentUserFollowers.set(data.followers);
+	// currentUserFollowing.set(data.following);
 
-	let currentUser = $currentUserStore as User;
-	const access_token = data.access_token as string;
+	// let currentUser = $currentUserStore as User;
+	// const access_token = data.access_token as string;
 
-	onMount(() => {
-		// console.log(access_token);
+	// onMount(() => {
+	// 	// console.log(access_token);
 
-		if (access_token == undefined) {
-			invalidateAll();
-			// while (access_token == undefined) {}
-			webSocketStore.set({ websocket: undefined, access_token: undefined });
-		} else {
-		}
-		if (access_token != undefined) {
-			webSocketStore.update((obj) => {
-				obj.access_token = access_token;
-				// connectWebSocket(access_token);
-				return { ...obj };
-			});
-		}
-		webSocketStore.subscribe((obj) => {
-			// console.log('STORE STUFF >>> ', $webSocketStore.websocket, $webSocketStore.access_token);
-			// console.log($webSocketStore.access_token);
-			console.log('PROBLEM WITH INVALIDATE ');
-			if (access_token == undefined) {
-				invalidateAll();
-				return;
-			}
-			if (obj.access_token != undefined && obj.websocket == undefined) {
-				connectWebSocket(access_token);
-				return;
-			}
-		});
-	});
+	// 	if (access_token == undefined) {
+	// 		invalidateAll();
+	// 		// while (access_token == undefined) {}
+	// 		webSocketStore.set({ websocket: undefined, access_token: undefined });
+	// 	} else {
+	// 	}
+	// 	if (access_token != undefined) {
+	// 		webSocketStore.update((obj) => {
+	// 			obj.access_token = access_token;
+	// 			// connectWebSocket(access_token);
+	// 			return { ...obj };
+	// 		});
+	// 	}
+	// 	webSocketStore.subscribe((obj) => {
+	// 		// console.log('STORE STUFF >>> ', $webSocketStore.websocket, $webSocketStore.access_token);
+	// 		// console.log($webSocketStore.access_token);
+	// 		console.log('PROBLEM WITH INVALIDATE ');
+	// 		if (access_token == undefined) {
+	// 			invalidateAll();
+	// 			return;
+	// 		}
+	// 		if (obj.access_token != undefined && obj.websocket == undefined) {
+	// 			connectWebSocket(access_token);
+	// 			return;
+	// 		}
+	// 	});
+	// });
 
-	onDestroy(() => {
-		closeWebSocket();
-	});
+	// onDestroy(() => {
+	// 	closeWebSocket();
+	// });
 
 
-	const { username, email, first_name, last_name, avatar } = $currentUserStore;
+	// const { username, email, first_name, last_name, avatar } = $currentUserStore;
 
 	
 </script>
@@ -104,7 +104,7 @@
 						<Button builders={[builder]} variant="ghost" class="w-[58px] h-[58px] p-0">
 							<div class="flex flex-col items-center justify-center h-[32px] w-[32px] p-0">
 								<img
-									src={avatar}
+									src="avatar"
 									alt="avatar"
 									class="rounded-full object-cover hover:rounded-[10px] h-[32px] w-[32px]"
 								/>
@@ -127,7 +127,7 @@
 						<DropdownMenu.Separator />
 						<DropdownMenu.Group>
 							<DropdownMenu.Item>
-								<a href="/app/u/{username}" class="flex w-full">
+								<a href="/app/u/username" class="flex w-full">
 									<span class="mr-2">
 										<Avatar class="h-[1rem] w-[1rem]" />
 									</span>
@@ -172,9 +172,9 @@
 							<DropdownMenu.Sub>
 								<DropdownMenu.SubTrigger>About</DropdownMenu.SubTrigger>
 								<DropdownMenu.SubContent>
-									<DropdownMenu.Item>{first_name}</DropdownMenu.Item>
-									<DropdownMenu.Item>{last_name}</DropdownMenu.Item>
-									<DropdownMenu.Item>{email}</DropdownMenu.Item>
+									<DropdownMenu.Item>first_name</DropdownMenu.Item>
+									<DropdownMenu.Item>last_name</DropdownMenu.Item>
+									<DropdownMenu.Item>email</DropdownMenu.Item>
 								</DropdownMenu.SubContent>
 							</DropdownMenu.Sub>
 						</DropdownMenu.Group>

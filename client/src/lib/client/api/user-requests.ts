@@ -39,6 +39,40 @@ export async function RegisterUser(user: UserModel) {
 }
 
 
+export async function CurrentUser() {
+  try {
+    const resp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/current`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include",
+    })
+
+
+
+    return resp
+
+
+
+
+
+  } catch (err) {
+    console.log("ERRRRRR", err)
+    if (err instanceof Error) {
+
+      console.log(err)
+      return { ok: false, error: err, message: err.message }
+    } else {
+
+      console.log(err)
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
+
+
 export async function LoginUser(credentials: SignIn) {
 
   try {
