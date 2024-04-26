@@ -251,3 +251,4 @@ func (u *UserRepository) Get(user_id string) (*model.User, error) {
 
 	return &user, nil
 }
+

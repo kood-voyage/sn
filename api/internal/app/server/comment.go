@@ -123,16 +123,7 @@ func (s *Server) getComments() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		postID := r.PathValue("id")
 
-
 		comments, err := s.store.Comment().GetAll(postID)
-
-
-
-
-		// comments gives me wrong data
-
-
-
 		if err != nil {
 			s.error(w, http.StatusInternalServerError, err)
 			return

@@ -87,7 +87,6 @@ func configureRouter(s *Server) {
 	))
 	//---------USER---------//
 	s.router.POST("/api/v1/user/create", s.userCreate())
-	s.router.OPTION("/", s.corsQuickFix())
 	s.router.POST("/api/v1/user/login", s.userLogin())
 	s.router.GET("/api/v1/auth/user/logout", s.userLogout())
 	s.router.GET("/api/v1/auth/user/privacy/{privacy_state}", s.userPrivacy())
@@ -98,6 +97,7 @@ func configureRouter(s *Server) {
 	s.router.GET("/api/v1/auth/user/following/{id}", s.userFollowing())
 	s.router.GET("/api/v1/auth/user/posts/{id}", s.userPosts())
 	s.router.GET("/api/v1/auth/user/notifications", s.userNotifications())
+	s.router.GET("/api/v1/auth/user/all", s.userGetAll())
 	//---------NOTIFICATION---------//
 	s.router.POST("/api/v1/auth/notification/create", s.notificationCreate())
 	s.router.DELETE("/api/v1/auth/notification/delete/{id}", s.notificationDelete())
@@ -161,19 +161,6 @@ func (s *Server) wsHandler() http.HandlerFunc {
 
 func (s *Server) error(w http.ResponseWriter, code int, err error) {
 	s.respond(w, code, Error{err.Error()})
-}
-
-func (s *Server) corsQuickFix() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		origin := r.Header.Get("Origin")
-		if origin != "" {
-			w.Header().Set("Access-Control-Allow-Origin", origin)
-			w.Header().Set("Access-Control-Allow-Credentials", "true")
-		}
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
-		w.WriteHeader(http.StatusOK)
-	}
 }
 
 func (s *Server) respond(w http.ResponseWriter, code int, data interface{}) {

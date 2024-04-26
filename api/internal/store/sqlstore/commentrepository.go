@@ -71,42 +71,45 @@ func (c CommentRepository) Delete(commentID, userID string) error {
 func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
 	q := `
     WITH RECURSIVE CommentHierarchy AS (
-        SELECT
-            c.id,
-            c.user_id,
-            c.post_id,
-            COALESCE(c.parent_id, '') AS parent_id,
-            c.content,
-            c.created_at,
-            c.user_name,
-            c.user_avatar,
-            (SELECT COUNT(*) FROM comment subc WHERE subc.parent_id = c.id) AS count
-        FROM
-            comment c
-        WHERE
-            c.post_id = ? AND (c.parent_id IS NULL OR c.parent_id = '')
-    
-        UNION ALL
-
-        SELECT
-            c.id,
-            c.user_id,
-            c.post_id,
-            COALESCE(c.parent_id, '') AS parent_id,
-            c.content,
-            c.created_at,
-            c.user_name,
-            c.user_avatar,
-            (SELECT COUNT(*) FROM comment subc WHERE subc.parent_id = c.id) AS count
-        FROM
-            comment c
-        JOIN
-            CommentHierarchy ch ON c.parent_id = ch.id
-    )
-    SELECT
-        ch.*
-    FROM
-        CommentHierarchy ch
+		SELECT
+			c.id,
+			c.user_id,
+			c.post_id,
+			COALESCE(c.parent_id, '') AS parent_id,
+			c.content,
+			c.created_at,
+			c.user_name,
+			c.user_avatar,
+			(SELECT COUNT(*) FROM comment subc WHERE subc.parent_id = c.id) AS count
+		FROM
+			comment c
+		WHERE
+			c.post_id = ? AND (c.parent_id IS NULL OR c.parent_id = '')
+		
+		UNION ALL
+	
+		SELECT
+			c.id,
+			c.user_id,
+			c.post_id,
+			COALESCE(c.parent_id, '') AS parent_id,
+			c.content,
+			c.created_at,
+			c.user_name,
+			c.user_avatar,
+			(SELECT COUNT(*) FROM comment subc WHERE subc.parent_id = c.id) AS count
+		FROM
+			comment c
+		JOIN
+			CommentHierarchy ch ON c.parent_id = ch.id
+	)
+	SELECT
+		ch.*,
+		u.*
+	FROM
+		CommentHierarchy ch
+	LEFT JOIN
+		user u ON ch.user_id = u.id;
     `
 
 	rows, err := c.store.Db.Query(q, id)
@@ -127,9 +130,21 @@ func (c CommentRepository) GetAll(id string) (*[]model.Comment, error) {
 			&comment.UserName,
 			&comment.UserAvatar,
 			&comment.Count,
+			&comment.UserInformation.ID,
+			&comment.UserInformation.Username,
+			&comment.UserInformation.Email,
+			&comment.UserInformation.Password,
+			&comment.UserInformation.CreatedAt,
+			&comment.UserInformation.DateOfBirth,
+			&comment.UserInformation.FirstName,
+			&comment.UserInformation.LastName,
+			&comment.UserInformation.Description,
+			&comment.UserInformation.Avatar,
+			&comment.UserInformation.Cover,
 		); err != nil {
 			return nil, err
 		}
+		comment.UserInformation.Sanitize()
 		comments = append(comments, comment)
 	}
 
