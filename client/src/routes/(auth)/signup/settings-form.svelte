@@ -39,14 +39,14 @@
 
 	const form = superForm(data, {
 		validators: zodClient(signUpSchema),
-		onSubmit: ({ formData, cancel }) => {
+		onSubmit: async ({ formData, cancel }) => {
 			const { username, email, dateOfBirth, password, repeatPassword, firstName, lastName } =
 				$formData;
 
 			const user = new CreateUser({ username, email, dateOfBirth, password, firstName, lastName });
 			console.log(JSON.stringify(user));
 
-			console.log(apiCreateUser(user));
+			console.log(await apiCreateUser(user));
 
 			cancel();
 		},

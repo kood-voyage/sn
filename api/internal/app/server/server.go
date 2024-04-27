@@ -72,10 +72,24 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.router.ServeHTTP(w, r)
 }
 
+func (s *Server) corsQuickFix() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		origin := r.Header.Get("Origin")
+		if origin != "" {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
+		}
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
 func configureRouter(s *Server) {
 	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware)
 	s.router.UseWithPrefix("auth", s.jwtMiddleware)
 	s.router.UseWithPrefix("cookie", s.jwtMiddlewareForQuery)
+	s.router.OPTION("/", s.corsQuickFix())
 
 	s.router.GET("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://ec2-3-84-51-36.compute-1.amazonaws.com:8080/swagger/doc.json"),
