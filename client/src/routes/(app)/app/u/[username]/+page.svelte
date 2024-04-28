@@ -1,27 +1,109 @@
 <script lang="ts">
-	import Post from '$lib/components/Post.svelte';
-	import type { PageData } from './$types';
-	import { currentUserFollowing, currentUserStore } from '$lib/store/user-store';
-	export let data: PageData;
+	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
+	import { onMount } from 'svelte';
+	import type { PageLoad } from '../$types';
 
-	let isCurrentUserFollowing = false;
+	// import Post from '$lib/components/Post.svelte';
+	// import type { PageData } from './$types';
+	// import { currentUserFollowing, currentUserStore } from '$lib/store/user-store';
+	// export let data: PageData;
 
-	if ($currentUserFollowing.data !== null && $currentUserFollowing.data !== undefined) {
-		for (const following of $currentUserFollowing.data) {
-			if (following.id === data.user.id) {
-				isCurrentUserFollowing = true;
-			}
+	// let isCurrentUserFollowing = false;
+
+	// if ($currentUserFollowing.data !== null && $currentUserFollowing.data !== undefined) {
+	// 	for (const following of $currentUserFollowing.data) {
+	// 		if (following.id === data.user.id) {
+	// 			isCurrentUserFollowing = true;
+	// 		}
+	// 	}
+	// }
+
+	// const followersCount = data.followers ? data.followers.length : 0;
+	// const followingCount = data.following ? data.following.length : 0;
+
+	// const { posts } = data;
+
+	export let data;
+
+	let user;
+
+	async function getUser(username: string) {
+		const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/get/${username}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Access-Control-Request-Method': 'GET'
+			},
+			credentials: 'include'
+		});
+
+		if (response.ok) {
+			return await response.json();
+		} else {
+			throw new Error('Failed to fetch users');
 		}
 	}
 
-	const followersCount = data.followers ? data.followers.length : 0;
-	const followingCount = data.following ? data.following.length : 0;
+	async function getFollowers(userId: string) {
+		if (userId === undefined) {
+			return 0;
+		}
 
-	const { posts } = data;
+		const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/followers/${userId}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Access-Control-Request-Method': 'GET'
+			},
+			credentials: 'include'
+		});
+
+		console.log(await response.json());
+
+		if (response) {
+			return await response.json();
+		} else {
+			throw new Error('Failed to fetch users');
+		}
+	}
+
+	async function getFollowing(userId: string) {
+		if (userId === undefined) {
+			return 0;
+		}
+
+		const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/following/${userId}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Access-Control-Request-Method': 'GET'
+			},
+			credentials: 'include'
+		});
+
+		console.log(await response.json());
+
+		if (response) {
+			return await response.json();
+		} else {
+			throw new Error('Failed to fetch folowing');
+		}
+	}
+
+	onMount(async () => {
+		try {
+			user = await getUser(data.username);
+		} catch (error) {
+			console.error(error);
+		}
+	});
+
+	$: followers = getFollowers(user === undefined ? undefined : user.data.id);
+	$: following = getFollowing(user === undefined ? undefined : user.data.id);
 </script>
 
 <svelte:head>
-	<title>u/{data.data.username}</title>
+	<title>u/{data.username}</title>
 </svelte:head>
 
 <!-- user profile page -->
@@ -36,14 +118,14 @@
 				<img
 					class="h-full w-full rounded-none sm:rounded-xl object-cover relative"
 					style="object-position: 0% 0%"
-					src={data.user.cover}
+					src={user === undefined ? '' : user.data.cover}
 					alt="cover"
 				/>
 			</div>
 
 			<div class="h-8 relative mx-0 sm:mx-4">
 				<img
-					src={data.user.avatar}
+					src={user === undefined ? '' : user.data.avatar}
 					alt="avatar"
 					class="absolute bottom-[1px] left-12 h-20 w-20 rounded-full border-4 border-white object-cover dark:border-slate-950"
 				/>
@@ -51,9 +133,15 @@
 				<div
 					class="absolute bottom-1 sm:bottom-3 left-[140px] bg-white dark:bg-neutral-950 rounded-2xl flex"
 				>
-					<p class=" md:text-2xl font-bold mr-2">{data.user.username}</p>
+					{#if user === undefined}
+						<p>Loading...</p>
+					{:else}
+						<p class=" md:text-2xl font-bold mr-2">{user.data.username}</p>
+					{/if}
+
 					<!-- <p class=" text-xs font-bold mr-2">{data.user.id}</p> -->
 
+					<!-- 
 					{#if $currentUserStore.id !== data.user.id}
 						{#if isCurrentUserFollowing}
 							<form action="?/unfollow" method="post">
@@ -70,9 +158,12 @@
 								<button class="text-sm px-5 rounded-md bg-primary" type="submit"> follow </button>
 							</form>
 						{/if}
+ -->
 
-						<!-- 
+					<!-- 
 					or unfollow button -->
+
+					<!-- 					
 					{:else}
 						<a href="/app/create-post"
 							><button class="text-sm px-5 rounded-md border"> Create Post</button></a
@@ -81,6 +172,7 @@
 							<button class="text-sm px-5 rounded-md border"> Settings</button></a
 						>
 					{/if}
+ -->
 				</div>
 
 				<div class="hidden md:block">
@@ -93,12 +185,12 @@
 						<div
 							class="text-xs w-1/3 border-r text-center hover:bg-neutral-200 dark:hover:bg-neutral-800 p-1"
 						>
-							<span class="font-bold">{followersCount}</span> followers
+							<span class="font-bold">count</span> followers
 						</div>
 						<div
 							class="text-xs w-1/3 text-center hover:bg-neutral-200 dark:hover:bg-neutral-800 p-1"
 						>
-							<span class="font-bold">{followingCount}</span> following
+							<span class="font-bold">count</span> following
 						</div>
 					</div>
 				</div>
@@ -115,12 +207,12 @@
 						<div
 							class="text-xs w-1/3 border-r text-center p-4 hover:bg-neutral-200 dark:hover:bg-neutral-800"
 						>
-							<span class="font-bold">{followersCount}</span> followers
+							<span class="font-bold">followersCount</span> followers
 						</div>
 						<div
 							class="text-xs w-1/3 text-center p-4 hover:rounded-r-lg hover:bg-neutral-200 dark:hover:bg-neutral-800"
 						>
-							<span class="font-bold">{followingCount}</span> following
+							<span class="font-bold">followingCount</span> following
 						</div>
 					</div>
 				</div>
@@ -141,13 +233,14 @@
 
 		<!-- profile activity / posts -->
 
+		<!-- 
 		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-1 p-0 sm:p-4 mt-5 md:mt-0">
 			{#if posts !== null}
 				{#each posts as data}
 					<Post {data} />
 				{/each}
 			{/if}
-		</div>
+		</div> -->
 	</div>
 </main>
 

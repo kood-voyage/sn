@@ -242,12 +242,13 @@ func (u *UserRepository) SetAvatar(user_id, avatar string) error {
 }
 
 func (u *UserRepository) Get(user_id string) (*model.User, error) {
-	query := `SELECT * FROM user WHERE username = ? OR email = ?`
+	query := `SELECT * FROM user WHERE username = ? OR email = ? OR id = ?`
 
 	var user model.User
-	if err := u.store.Db.QueryRow(query, user_id, user_id).Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.CreatedAt, &user.DateOfBirth, &user.FirstName, &user.LastName, &user.Description, &user.Avatar, &user.Cover); err != nil {
+	if err := u.store.Db.QueryRow(query, user_id, user_id, user_id).Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.CreatedAt, &user.DateOfBirth, &user.FirstName, &user.LastName, &user.Description, &user.Avatar, &user.Cover); err != nil {
 		return nil, err
 	}
 
 	return &user, nil
 }
+

@@ -3,6 +3,7 @@ package server
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
 	"social-network/internal/model"
 	"social-network/pkg/validator"
@@ -39,13 +40,17 @@ func (s *Server) userCreate() http.HandlerFunc {
 		}
 
 		privacy, ok := s.types.Privacy.Values[user.Privacy]
+
+		fmt.Println(user)
 		if !ok {
 			s.error(w, http.StatusUnprocessableEntity, errors.New("public, private, selected states are allowed"))
 			return
 		}
 
 		u, err := s.store.User().Create(user, privacy)
+
 		if err != nil {
+
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
@@ -102,11 +107,26 @@ func (s *Server) userLogin() http.HandlerFunc {
 			UserID:    user.ID,
 			CreatedAT: time.Now().Add(24 * 7 * time.Hour),
 		}
-		_, err = s.store.Session().Create(session)
+
+		oldSession, err := s.store.Session().CheckByUserId(user.ID)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				_, err = s.store.Session().Create(session)
+				if err != nil {
+					s.error(w, http.StatusUnprocessableEntity, err)
+					return
+				}
+			}
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		_, err = s.store.Session().Update(oldSession.AcessID, session)
 		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
+
 		http.SetCookie(w, accessToken)
 		http.SetCookie(w, refreshToken)
 		user.Sanitize()
@@ -367,5 +387,47 @@ func (s *Server) userAvatar() http.HandlerFunc {
 			s.error(w, http.StatusUnprocessableEntity, err)
 		}
 		s.respond(w, http.StatusOK, Response{Data: "Successfully updated avatar"})
+	}
+}
+
+func (s *Server) userGetAll() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		users, err := s.store.User().GetAll()
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, http.StatusOK, Response{Data: users})
+	}
+}
+
+func (s *Server) userGet() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user, err := s.store.User().Get(r.PathValue("id"))
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		user.Sanitize()
+		s.respond(w, http.StatusOK, Response{Data: user})
+	}
+}
+
+func (s *Server) currentUser() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+			return
+		}
+		user, err := s.store.User().Get(userID)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+		user.Sanitize()
+		s.respond(w, http.StatusOK, Response{Data: user})
 	}
 }

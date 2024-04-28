@@ -20,6 +20,18 @@ func (s *SessionRepository) Create(session model.Session) (*model.Session, error
 	return &session, nil
 }
 
+func (s *SessionRepository) CheckByUserId(user_id string) (*model.Session, error) {
+	query := `SELECT * FROM session WHERE user_id = ?`
+
+	var session model.Session
+
+	if err := s.store.Db.QueryRow(query, user_id).Scan(&session.AcessID, &session.UserID, &session.CreatedAT); err != nil {
+		return nil, err
+	}
+
+	return &session, nil
+}
+
 func (s *SessionRepository) Update(access_id string, session model.Session) (*model.Session, error) {
 	query := `UPDATE session SET access_id = ?, user_id = ?, timestamp = ? WHERE access_id = ?`
 

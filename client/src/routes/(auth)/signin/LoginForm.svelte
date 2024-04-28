@@ -7,10 +7,25 @@
 
 	export let data: SuperValidated<Infer<SignInSchema>>;
 
-	const form = superForm(data, {
-		validators: zodClient(signInSchema)
-	});
+	import type { SignIn } from './type';
+	import { LoginUser } from '$lib/client/api/user-requests';
 
+	const form = superForm(data, {
+		validators: zodClient(signInSchema),
+		onSubmit: ({ formData, cancel }) => {
+			const { login, password } = $formData;
+
+			const credentials: SignIn = {
+				login,
+				password
+			};
+
+			LoginUser(credentials);
+		},
+		onError: (event) => {
+			console.log(event);
+		}
+	});
 	const { form: formData, enhance } = form;
 </script>
 

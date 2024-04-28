@@ -21,6 +21,7 @@ type SessionRepository interface {
 	Update(access_id string, session model.Session) (*model.Session, error)
 	Create(session model.Session) (*model.Session, error)
 	DeleteByUser(user_id string) error 
+	CheckByUserId(user_id string) (*model.Session, error)
 }
 
 type FollowRepository interface {

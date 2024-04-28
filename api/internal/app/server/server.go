@@ -86,6 +86,11 @@ func (s *Server) corsQuickFix() http.HandlerFunc {
 }
 
 func configureRouter(s *Server) {
+
+	//Temporary
+	s.router.OPTION("/", s.corsQuickFix())
+
+	///
 	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware)
 	s.router.UseWithPrefix("auth", s.jwtMiddleware)
 	s.router.UseWithPrefix("cookie", s.jwtMiddlewareForQuery)
@@ -106,6 +111,9 @@ func configureRouter(s *Server) {
 	s.router.GET("/api/v1/auth/user/following/{id}", s.userFollowing())
 	s.router.GET("/api/v1/auth/user/posts/{id}", s.userPosts())
 	s.router.GET("/api/v1/auth/user/notifications", s.userNotifications())
+	s.router.GET("/api/v1/auth/user/all", s.userGetAll())
+	s.router.GET("/api/v1/auth/user/get/{id}", s.userGet())
+	s.router.GET("/api/v1/auth/user/current", s.currentUser())
 	//---------NOTIFICATION---------//
 	s.router.POST("/api/v1/auth/notification/create", s.notificationCreate())
 	s.router.DELETE("/api/v1/auth/notification/delete/{id}", s.notificationDelete())
@@ -154,6 +162,7 @@ func configureRouter(s *Server) {
 	s.router.GET("/cookie/ws", s.wsService.HandleWS)
 
 	s.router.GET("/login/{id}", s.login())
+
 }
 
 func (s *Server) wsHandler() http.HandlerFunc {

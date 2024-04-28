@@ -1,10 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import SettingsForm from './settings-form.svelte';
+	import SettingsForm from './RegisterForm.svelte';
 	export let data: PageData;
-
-	console.log(data);
-	console.log('HI');
 </script>
 
 <div>

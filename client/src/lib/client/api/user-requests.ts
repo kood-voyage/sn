@@ -1,10 +1,10 @@
 import { PUBLIC_LOCAL_PATH } from "$env/static/public"
-import type { CreateUser } from "$lib/types/user"
-import type { RequestEvent } from "@sveltejs/kit"
+import type { UserModel } from "$lib/types/user"
+import type { SignIn } from "../../../routes/(auth)/signin/type"
 
 
 
-export async function apiCreateUser(user: CreateUser) {
+export async function RegisterUser(user: UserModel) {
   try {
     const resp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/user/create`, {
       method: "POST",
@@ -15,6 +15,9 @@ export async function apiCreateUser(user: CreateUser) {
       credentials: "include",
       body: JSON.stringify(user)
     })
+
+
+
     if (resp.ok) {
       return { ok: resp.ok, status: resp.statusText }
     } else {
@@ -24,8 +27,80 @@ export async function apiCreateUser(user: CreateUser) {
   } catch (err) {
     console.log("ERRRRRR", err)
     if (err instanceof Error) {
+
+      console.log(err)
       return { ok: false, error: err, message: err.message }
     } else {
+
+      console.log(err)
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
+
+
+export async function CurrentUser() {
+  try {
+    const resp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/current`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include",
+    })
+
+
+
+    return resp
+
+
+
+
+
+  } catch (err) {
+    console.log("ERRRRRR", err)
+    if (err instanceof Error) {
+
+      console.log(err)
+      return { ok: false, error: err, message: err.message }
+    } else {
+
+      console.log(err)
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
+
+
+export async function LoginUser(credentials: SignIn) {
+
+  try {
+    const resp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/user/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "POST",
+      },
+      credentials: "include",
+      body: JSON.stringify(credentials)
+    })
+
+
+    if (resp.ok) {
+      return { ok: resp.ok, status: resp.statusText }
+    } else {
+      return { ok: resp.ok, status: resp.statusText }
+    }
+
+  } catch (err) {
+    console.log("ERRRRRR", err)
+
+    if (err instanceof Error) {
+
+      return { ok: false, error: err, message: err.message }
+    } else {
+
       return { ok: false, error: err, message: "Unknown Error" }
     }
   }
