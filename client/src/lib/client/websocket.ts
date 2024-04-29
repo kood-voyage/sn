@@ -7,7 +7,7 @@ let webSocket: WebSocket
 webSocketStore.subscribe((obj) => {
   if (obj.access_token == undefined) return
   if (obj.websocket != undefined) return
-  if (obj.access_token != undefined && obj.websocket == undefined) connectWebSocket(obj.access_token)
+  if (obj.access_token != undefined && obj.websocket == undefined) connectWebSocket()
 })
 
 export const ssr = false
@@ -19,7 +19,7 @@ export async function connectWebSocket() {
       obj.websocket = webSocket
       return { ...obj }
     })
-  // console.log("THIS IS WEBSOCKET >>>", webSocket)
+  console.log("THIS IS WEBSOCKET >>>", webSocket)
 
   webSocket.onmessage = function (event) {
     console.log('Received message:', event.data);

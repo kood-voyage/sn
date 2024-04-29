@@ -23,17 +23,16 @@
 	import { setMode, resetMode } from 'mode-watcher';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import NavigationItem from './navigation-item.svelte';
-	// import { onDestroy, onMount } from 'svelte';
-	// import { closeWebSocket, connectWebSocket } from '$lib/client/websocket.js';
 	import type { User } from '$lib/types/user.js';
 	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
 	import { onMount } from 'svelte';
+	import { connectWebSocket } from '$lib/client/websocket';
 	// import { invalidateAll } from '$app/navigation';
 	// import { webSocketStore } from '$lib/store/websocket-store.js';
 
-	// currentUserStore.set(data.data);
-	// currentUserFollowers.set(data.followers);
-	// currentUserFollowing.set(data.following);
+	currentUserStore.set(data.data);
+	currentUserFollowers.set(data.followers);
+	currentUserFollowing.set(data.following);
 
 	// let currentUser = $currentUserStore as User;
 	// const access_token = data.access_token as string;
@@ -89,7 +88,6 @@
 			});
 
 			const data = await response.json();
-			console.log(data);
 
 			currentUserStore.set(data.data);
 
@@ -99,6 +97,9 @@
 				throw new Error('Failed to get current user');
 			}
 		}
+
+		connectWebSocket();
+
 		currentUser = await getCurrentUser();
 	});
 </script>

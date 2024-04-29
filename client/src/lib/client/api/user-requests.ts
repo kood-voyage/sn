@@ -1,4 +1,5 @@
 import { PUBLIC_LOCAL_PATH } from "$env/static/public"
+import type { ReturnType } from "$lib/types/requests";
 import type { UserModel, UserType } from "$lib/types/user"
 import type { SignIn } from "../../../routes/(auth)/signin/type"
 
@@ -8,9 +9,13 @@ type Fetch = {
   (input: string | Request | URL, init?: RequestInit | undefined): Promise<Response>;
 }
 
-export async function GetAllUsers() {
+export async function GetAllUsers(customFetch?: Fetch) {
+  if (!customFetch) {
+    customFetch = fetch
+  }
+
   try {
-    const resp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/all`, {
+    const resp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/all`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -27,7 +32,6 @@ export async function GetAllUsers() {
     }
 
   } catch (err) {
-    console.log("ERRRRRR", err)
     if (err instanceof Error) {
 
       console.log(err)
@@ -75,10 +79,15 @@ export async function RegisterUser(user: UserModel) {
   }
 }
 
+type CurrentUser = ReturnType<UserType>
 
-export async function CurrentUser() {
+export async function currentUser(customFetch?: Fetch): Promise<CurrentUser> {
+  if (!customFetch) {
+    customFetch = fetch
+  }
+
   try {
-    const resp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/current`, {
+    const resp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/current`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -89,10 +98,14 @@ export async function CurrentUser() {
 
 
 
-    return await resp.json()
+    const data = (await resp.json()).data
 
 
-
+    if (resp.ok) {
+      return { ok: resp.ok, data }
+    } else {
+      throw new Error(data)
+    }
 
 
   } catch (err) {
@@ -143,12 +156,18 @@ export async function LoginUser(credentials: SignIn) {
   }
 }
 
-export async function getUserFollowing(event: RequestEvent, user_id: string) {
+export async function getUserFollowing(user_id: string, customFetch?: Fetch) {
+  if (!customFetch) {
+    customFetch = fetch
+  }
   try {
-    const fetchResp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/following/${user_id}`, {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/following/${user_id}`, {
+      method: "GET",
       headers: {
-        "Authorization": `Bearer ${event.cookies.get('at')}`
-      }
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include",
 
     })
     const json = (await fetchResp.json()).data
@@ -165,14 +184,19 @@ export async function getUserFollowing(event: RequestEvent, user_id: string) {
 
 }
 
-export async function getUserFollowers(event: RequestEvent, user_id: string) {
+export async function getUserFollowers(user_id: string, customFetch?: Fetch) {
+  if (!customFetch) {
+    customFetch = fetch
+  }
 
   try {
-    const fetchResp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/followers/${user_id}`, {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/followers/${user_id}`, {
+      method: "GET",
       headers: {
-        "Authorization": `Bearer ${event.cookies.get('at')?.valueOf()}`
-      }
-
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include",
     })
     const json = (await fetchResp.json()).data
 

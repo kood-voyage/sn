@@ -20,12 +20,12 @@ export const handle: Handle = async ({ event, resolve }) => {
       deleteTokens(event)
       if (!(pathname.startsWith('/signin')) && !(pathname.startsWith('/signup'))) {
         console.log("REDIRECT >> /signin")
-        // redirect(303, "/signin")
+        redirect(303, "/signin")
       }
     } else {
       if (pathname.startsWith("/signin") || pathname.startsWith("/signup")) {
-        // redirect(303, "/app")
-        console.log("REDIRECT 2 >> /app")
+        redirect(303, "/app")
+        console.log("REDIRECT >> /app")
       }
     }
 

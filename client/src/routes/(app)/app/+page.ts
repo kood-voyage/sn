@@ -5,7 +5,7 @@ import type { PageLoad } from './$types';
 export const load: PageLoad = async ({ fetch }) => {
 
   // console.log()
-  const resp = await GetAllUsers()
+  const resp = await GetAllUsers(fetch)
   if (!resp.ok) {
     return { allUsers: [] }
   }

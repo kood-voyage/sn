@@ -9,10 +9,11 @@
 
 	import type { SignIn } from './type';
 	import { LoginUser } from '$lib/client/api/user-requests';
+	import { goto } from '$app/navigation';
 
 	const form = superForm(data, {
 		validators: zodClient(signInSchema),
-		onSubmit: ({ formData, cancel }) => {
+		onSubmit: async ({ formData, cancel }) => {
 			const { login, password } = $formData;
 
 			const credentials: SignIn = {
@@ -20,7 +21,12 @@
 				password
 			};
 
-			LoginUser(credentials);
+			const resp = await LoginUser(credentials);
+			if (!resp.ok) {
+				alert('Username or password incorrect!');
+				return;
+			}
+			goto('/app');
 
 			cancel();
 		},
