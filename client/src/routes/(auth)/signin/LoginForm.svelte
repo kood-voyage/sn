@@ -21,6 +21,8 @@
 			};
 
 			LoginUser(credentials);
+
+			cancel();
 		},
 		onError: (event) => {
 			console.log(event);
@@ -29,7 +31,7 @@
 	const { form: formData, enhance } = form;
 </script>
 
-<form method="POST" action="?/signin" use:enhance>
+<form method="POST" use:enhance>
 	<Form.Field {form} name="login">
 		<Form.Control let:attrs>
 			<Form.Label>Login</Form.Label>

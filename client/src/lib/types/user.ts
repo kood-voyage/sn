@@ -153,11 +153,6 @@ export class User implements UserStyle {
     this.avatar = `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=` + this.username
     this.cover = "https://media.wired.com/photos/61f48f02d0e55ccbebd52d15/3:2/w_2400,h_1600,c_limit/Gear-Rant-Game-Family-Plans-1334436001.jpg"
     this.description = ""
-
-    const salt = bcrypt.genSaltSync(10);
-
-    const hash = bcrypt.hashSync(this.password, salt);
-    this.password = hash
   }
 
   private capitalizeFirstLetter(string: string) {

@@ -11,9 +11,9 @@ webSocketStore.subscribe((obj) => {
 })
 
 export const ssr = false
-export async function connectWebSocket(access_token: string) {
+export async function connectWebSocket() {
 
-  webSocket = new WebSocket(`ws://localhost:8080/cookie/ws?at=${access_token}`);
+  webSocket = new WebSocket(`ws://localhost:8080/cookie/ws`);
   if (webSocket)
     webSocketStore.update((obj) => {
       obj.websocket = webSocket

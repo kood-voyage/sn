@@ -5,9 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
+
 	"social-network/internal/model"
 	"social-network/pkg/validator"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -48,7 +49,6 @@ func (s *Server) userCreate() http.HandlerFunc {
 		}
 
 		u, err := s.store.User().Create(user, privacy)
-
 		if err != nil {
 
 			s.error(w, http.StatusUnprocessableEntity, err)
@@ -235,7 +235,7 @@ func (s *Server) userFollowing() http.HandlerFunc {
 	}
 }
 
-//NEED TO WRITE TEST FOR THAT FUNCTION AFTER FINISHING WITH POST PRIVACY CHECKING
+// NEED TO WRITE TEST FOR THAT FUNCTION AFTER FINISHING WITH POST PRIVACY CHECKING
 
 // userPosts Handles getting user profile posts.
 //

@@ -7,9 +7,10 @@
 		type UserStatusStore
 	} from '$lib/store/websocket-store';
 	import { currentUserStore } from '$lib/store/user-store';
-	import type { User } from '$lib/types/user';
+	import type { User, UserType } from '$lib/types/user';
 	import { onDestroy } from 'svelte';
 	import type { PageData } from './$types';
+	import { GetAllUsers } from '$lib/client/api/user-requests';
 
 	export let data: PageData;
 
@@ -24,11 +25,11 @@
 	userStatusStore.subscribe((value) => {
 		statuses = value;
 	});
-	// Establish connection when component mounts
+	let allUsers: UserType[] = data.allUsers;
 
+	console.log(allUsers);
 	const getName = (user_id: string) => {
-		const user = data.allUsers.data?.find((val) => {
-			// console.log(val);
+		const user = allUsers.find((val) => {
 			if (val.id == user_id) return true;
 			return false;
 		});
@@ -61,9 +62,11 @@
 </form>
 
 <ul>
-	{#each Object.entries(statuses) as status (status)}
-		<li class="text-sm rounded-md w-fit border bg-sky-500 p-1 m-0.5">{getName(status[0])}</li>
-	{/each}
+	{#if allUsers != undefined && allUsers.length != 0}
+		{#each Object.entries(statuses) as status (status)}
+			<li class="text-sm rounded-md w-fit border bg-sky-500 p-1 m-0.5">{getName(status[0])}</li>
+		{/each}
+	{/if}
 </ul>
 
 <!-- <h1>HERE WILL BE HOME PAGE</h1>

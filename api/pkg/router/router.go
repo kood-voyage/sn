@@ -26,10 +26,6 @@ func (mw MiddlewareFunc) Middleware(handler http.Handler) http.Handler {
 	return mw(handler)
 }
 
-func (r *Router) OPTION(pattern string, fn http.HandlerFunc) {
-	r.Handle(http.MethodOptions+" "+pattern, fn)
-}
-
 func (r *Router) Use(mwf ...MiddlewareFunc) {
 	for _, fn := range mwf {
 		r.middlewares = append(r.middlewares, fn)
