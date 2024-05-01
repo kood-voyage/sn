@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import type { GroupJson } from '$lib/server/api/group-requests';
+	// import type { GroupJson } from '$lib/server/api/group-requests';
 	import { currentUserStore } from '$lib/store/user-store';
 	import type { PageData } from './$types';
 	import GroupPostForm from './groupPostForm.svelte';
@@ -9,42 +9,42 @@
 
 	export let data: PageData;
 	let id: string, name: string, description: string, image_path: string;
-	const groupResp = data.group;
+	// const groupResp = data.group;
 	const currentUser = $currentUserStore;
 	let errorMessage = '';
 	const groupPosts = data.posts;
 	let isMember = false;
 
-	console.log('GROUP RESPOSNWTF!@!!!', groupPosts);
-	if (currentUser && 'id' in currentUser) {
-		if (groupResp.ok && groupResp.data.creator_id == currentUser.id) {
-			isMember = true;
-		}
-		if (groupResp.ok)
-			groupResp.data.members?.forEach((user) => {
-				if (user && user.id == currentUser.id) {
-					isMember = true;
-				}
-			});
-	}
+	// console.log('GROUP RESPOSNWTF!@!!!', groupPosts);
+	// if (currentUser && 'id' in currentUser) {
+	// 	if (groupResp.ok && groupResp.data.creator_id == currentUser.id) {
+	// 		isMember = true;
+	// 	}
+	// 	if (groupResp.ok)
+	// 		groupResp.data.members?.forEach((user) => {
+	// 			if (user && user.id == currentUser.id) {
+	// 				isMember = true;
+	// 			}
+	// 		});
+	// }
 
-	if (groupResp.ok) {
-		const data = groupResp.data as GroupJson;
-		id = data.id;
-		name = data.name;
-		description = data.description;
-		if (data.image_path) {
-			image_path = data.image_path[0];
-		} else {
-			image_path =
-				'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg';
-		}
-	} else {
-		name = '404 Not Found';
-		description = '';
-		image_path =
-			'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg';
-	}
+	// if (groupResp.ok) {
+	// 	const data = groupResp.data as GroupJson;
+	// 	id = data.id;
+	// 	name = data.name;
+	// 	description = data.description;
+	// 	if (data.image_path) {
+	// 		image_path = data.image_path[0];
+	// 	} else {
+	// 		image_path =
+	// 			'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg';
+	// 	}
+	// } else {
+	// 	name = '404 Not Found';
+	// 	description = '';
+	// 	image_path =
+	// 		'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg';
+	// }
 </script>
 
 <svelte:head>

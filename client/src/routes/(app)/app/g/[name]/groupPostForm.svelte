@@ -7,7 +7,7 @@
 
 	import * as Carousel from '$lib/components/ui/carousel/index.js';
 
-	import { createPostImagesStore } from '$lib/store/create-post-store';
+	// import { createPostImagesStore } from '$lib/store/create-post-store';
 	import { z } from 'zod';
 	import { groupPostSchema } from '$lib/types/group-schema';
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
