@@ -1,5 +1,5 @@
 import { PUBLIC_LOCAL_PATH } from "$env/static/public"
-import type { ReturnType } from "$lib/types/requests";
+import type { ReturnEntryType, ReturnType } from "$lib/types/requests";
 import type { UserModel, UserType } from "$lib/types/user"
 import type { SignIn } from "../../../routes/(auth)/signin/type"
 
@@ -9,11 +9,9 @@ type Fetch = {
   (input: string | Request | URL, init?: RequestInit | undefined): Promise<Response>;
 }
 
-export async function GetAllUsers(customFetch?: Fetch) {
-  if (!customFetch) {
-    customFetch = fetch
-  }
+type AllUsers = ReturnEntryType<"allUsers", UserType[]>
 
+export async function GetAllUsers(customFetch: Fetch = fetch): Promise<AllUsers> {
   try {
     const resp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/all`, {
       method: "GET",
@@ -24,11 +22,12 @@ export async function GetAllUsers(customFetch?: Fetch) {
       credentials: "include"
     })
 
+    const data = (await resp.json()).data as UserType[]
 
-    if (resp.ok) {
-      return { ok: resp.ok, allUsers: (await resp.json()).data as UserType[] }
+    if (resp.ok || typeof data != "string") {
+      return { ok: true, allUsers: data }
     } else {
-      return { ok: resp.ok, allUsers: (await resp.json()).data as UserType[] }
+      return { ok: false, error: new Error("Error Thrown by server"), message: data }
     }
 
   } catch (err) {
@@ -81,7 +80,7 @@ export async function RegisterUser(user: UserModel) {
 
 type CurrentUser = ReturnType<UserType>
 
-export async function currentUser(customFetch?: Fetch): Promise<CurrentUser> {
+export async function currentUser(customFetch: Fetch = fetch): Promise<CurrentUser> {
   if (!customFetch) {
     customFetch = fetch
   }
@@ -98,11 +97,11 @@ export async function currentUser(customFetch?: Fetch): Promise<CurrentUser> {
 
 
 
-    const data = (await resp.json()).data
+    const data = (await resp.json())
 
 
     if (resp.ok) {
-      return { ok: resp.ok, data }
+      return { ok: resp.ok, data: data.data }
     } else {
       throw new Error(data)
     }
@@ -156,7 +155,7 @@ export async function LoginUser(credentials: SignIn) {
   }
 }
 
-export async function getUserFollowing(user_id: string, customFetch?: Fetch) {
+export async function getUserFollowing(user_id: string, customFetch: Fetch = fetch) {
   if (!customFetch) {
     customFetch = fetch
   }
@@ -184,7 +183,7 @@ export async function getUserFollowing(user_id: string, customFetch?: Fetch) {
 
 }
 
-export async function getUserFollowers(user_id: string, customFetch?: Fetch) {
+export async function getUserFollowers(user_id: string, customFetch: Fetch = fetch) {
   if (!customFetch) {
     customFetch = fetch
   }

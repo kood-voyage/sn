@@ -13,7 +13,7 @@ webSocketStore.subscribe((obj) => {
 export const ssr = false
 export async function connectWebSocket() {
 
-  webSocket = new WebSocket(`ws://localhost:8080/cookie/ws`);
+  webSocket = new WebSocket(`ws://localhost:8080/auth/ws`);
   if (webSocket)
     webSocketStore.update((obj) => {
       obj.websocket = webSocket
@@ -37,8 +37,8 @@ export async function connectWebSocket() {
     const data = eventData.data as Array<{ id: string }>
     switch (eventData.type) {
       case "status":
-        console.log("data", data)
-        console.log("data is boolean", typeof data)
+        // console.log("data", data)
+        // console.log("data is boolean", typeof data)
         if (data instanceof Object) {
           for (const val of data) {
             console.log(val.id)

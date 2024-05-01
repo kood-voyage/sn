@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { UserRowType } from '$lib/server/db/user';
 	import type { User } from '$lib/types/user';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { enhance } from '$app/forms';
 	import { createEventDispatcher } from 'svelte';
+	import { newChatCreate } from './new-chat';
 
 	type SampleData = {
 		id: string;
@@ -60,14 +60,18 @@
 
 					<form
 						method="post"
-						use:enhance={({ formData }) => {
+						use:enhance={({ formData, controller, cancel }) => {
 							dispatch('submit', { detail: 'Data or message from PeopleSearch' });
 							// console.log('FormData >>', formData);
 							formData.set('target', person.id);
 							// console.log(person.id);
 							dialogOpen = false;
+
+							newChatCreate(formData);
+
+							controller.abort();
+							cancel();
 						}}
-						action="/app/chat?/NewChat"
 					>
 						<button type="submit" class="h-full w-full">
 							<!-- {person.username} -->

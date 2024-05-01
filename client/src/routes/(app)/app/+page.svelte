@@ -27,7 +27,6 @@
 	});
 	let allUsers: UserType[] = data.allUsers;
 
-	// console.log(allUsers);
 	const getName = (user_id: string) => {
 		const user = allUsers.find((val) => {
 			if (val.id == user_id) return true;

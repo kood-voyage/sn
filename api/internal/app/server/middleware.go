@@ -142,27 +142,6 @@ func (s *Server) jwtMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func (s *Server) jwtMiddlewareForQuery(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		accessToken := r.URL.Query().Get("at")
-		// Parse the token
-		alg := jwttoken.HmacSha256(os.Getenv(jwtKey))
-		claims, err := alg.DecodeAndValidate(accessToken)
-		if err != nil {
-			s.error(w, http.StatusUnauthorized, err)
-			return
-		}
-
-		user_id, err := claims.Get("user_id")
-		if err != nil {
-			s.error(w, http.StatusUnauthorized, err)
-			return
-		}
-
-		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxUserID, user_id)))
-	})
-}
-
 func (s *Server) corsQuickFix() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		origin := r.Header.Get("Origin")

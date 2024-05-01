@@ -13,9 +13,13 @@
 
 	const form = superForm(data, {
 		validators: zodClient(signInSchema),
-		onSubmit: async ({ formData, cancel }) => {
+		onSubmit: async ({ formData, cancel, controller }) => {
 			const { login, password } = $formData;
 
+			if ((await validate('password')) != undefined) {
+				cancel();
+				return;
+			}
 			const credentials: SignIn = {
 				login,
 				password
@@ -24,6 +28,7 @@
 			const resp = await LoginUser(credentials);
 			if (!resp.ok) {
 				alert('Username or password incorrect!');
+				controller.abort('User logging unsuccessful');
 				return;
 			}
 			goto('/app');
@@ -31,10 +36,10 @@
 			cancel();
 		},
 		onError: (event) => {
-			console.log(event);
+			// console.log(event);
 		}
 	});
-	const { form: formData, enhance } = form;
+	const { form: formData, enhance, validate } = form;
 </script>
 
 <form method="POST" use:enhance>

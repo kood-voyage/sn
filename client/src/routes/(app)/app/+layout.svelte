@@ -29,49 +29,13 @@
 	import { connectWebSocket } from '$lib/client/websocket';
 	// import { invalidateAll } from '$app/navigation';
 	// import { webSocketStore } from '$lib/store/websocket-store.js';
+	// console.log(data);
 
 	currentUserStore.set(data.data);
 	currentUserFollowers.set(data.followers);
 	currentUserFollowing.set(data.following);
 
 	// let currentUser = $currentUserStore as User;
-	// const access_token = data.access_token as string;
-
-	// onMount(() => {
-	// 	// console.log(access_token);
-
-	// 	if (access_token == undefined) {
-	// 		invalidateAll();
-	// 		// while (access_token == undefined) {}
-	// 		webSocketStore.set({ websocket: undefined, access_token: undefined });
-	// 	} else {
-	// 	}
-	// 	if (access_token != undefined) {
-	// 		webSocketStore.update((obj) => {
-	// 			obj.access_token = access_token;
-	// 			// connectWebSocket(access_token);
-	// 			return { ...obj };
-	// 		});
-	// 	}
-	// 	webSocketStore.subscribe((obj) => {
-	// 		// console.log('STORE STUFF >>> ', $webSocketStore.websocket, $webSocketStore.access_token);
-	// 		// console.log($webSocketStore.access_token);
-	// 		console.log('PROBLEM WITH INVALIDATE ');
-	// 		if (access_token == undefined) {
-	// 			invalidateAll();
-	// 			return;
-	// 		}
-	// 		if (obj.access_token != undefined && obj.websocket == undefined) {
-	// 			connectWebSocket(access_token);
-	// 			return;
-	// 		}
-	// 	});
-	// });
-
-	// onDestroy(() => {
-	// 	closeWebSocket();
-	// });
-
 	// const { username, email, first_name, last_name, avatar } = $currentUserStore;
 
 	let currentUser;
@@ -88,7 +52,6 @@
 			});
 
 			const data = await response.json();
-
 			currentUserStore.set(data.data);
 
 			if (response) {
@@ -97,10 +60,9 @@
 				throw new Error('Failed to get current user');
 			}
 		}
+		currentUser = await getCurrentUser();
 
 		connectWebSocket();
-
-		currentUser = await getCurrentUser();
 	});
 </script>
 

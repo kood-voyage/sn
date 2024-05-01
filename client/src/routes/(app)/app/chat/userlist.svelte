@@ -1,4 +1,70 @@
 <script lang="ts">
+	// let people: UserRowType[] = [];
+	// let chats: ChatsWithUsers = {};
+	// if (data.ok) {
+	// 	people = data.data.usersData;
+	// 	chats = data.data.chatsData;
+	// }
+
+	// let filteredPeople: UserModel[] = [];
+
+	// $: chats_arr = Object.values(chats);
+
+	// // console.log(chats);
+	// $: if (chats_arr.length != 0 && chats_arr != undefined) {
+	// 	filteredPeople = Object.entries(chats).map((chat) => {
+	// 		// console.log('CHAT >>>', chat);
+	// 		const key = chat[0];
+	// 		const value = chat[1];
+
+	// 		const users = value.users;
+	// 		const group_id = value.group;
+	// 		// console.log(value);
+
+	// 		for (const user of users) {
+	// 			// console.log(user);
+	// 		}
+
+	// 		// console.log(value.group_id != '' && value.group_id != undefined);
+	// 		// if (group_id != '' && group_id != undefined) {
+	// 		// }
+
+	// 		// console.log('Key >>>', key);
+	// 		// console.log('Value >>>', value);
+	// 		// if (chat.length == 0) return false
+	// 		// if (chat.length == 1) return true
+	// 		// const out = chat.filter
+	// 		// return chat[0].username.toLowerCase().includes(searchQuery.toLowerCase());
+	// 		return;
+	// 	});
+	// 	filteredPeople = [];
+	// 	// .filter((chat) => {
+	// 	// 	// console.log('CHAT >>>', chat);
+	// 	// 	// const key = chat[0];
+	// 	// 	// const value = chat[1];
+	// 	// 	// const users = value.users;
+	// 	// 	// const group_id = value.group_id;
+	// 	// 	// for (const user of users) {
+	// 	// 	// 	console.log(user);
+	// 	// 	// }
+	// 	// 	// // console.log(value.group_id != '' && value.group_id != undefined);
+	// 	// 	// if (value.group_id != '' && value.group_id != undefined) {
+	// 	// 	// }
+	// 	// 	// console.log('Key >>>', key);
+	// 	// 	// console.log('Value >>>', value);
+	// 	// 	// if (chat.length == 0) return false
+	// 	// 	// if (chat.length == 1) return true
+	// 	// 	// const out = chat.filter
+	// 	// 	// return chat[0].username.toLowerCase().includes(searchQuery.toLowerCase());
+	// 	// })
+	// 	// .map((val) => {
+	// 	// 	// console.log(val);
+	// 	// 	return val[0];
+	// 	// });
+	// 	// .slice(0, 6);
+
+	// 	// console.log(filteredPeople);
+	// }
 </script>
 
 <div class="w-14 sm:w-60 bg-neutral-50 dark:bg-neutral-900 h-full relative flex flex-col">

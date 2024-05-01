@@ -8,7 +8,7 @@
 	import PeopleSearch from './people-search.svelte';
 
 	export let data: PageData;
-	// console.log(data.data);
+	console.log(data);
 
 	// $: console.log(data);
 	let searchQuery = '';

@@ -79,7 +79,6 @@ func configureRouter(s *Server) {
 	///
 	s.router.Use(s.setRequestID, s.logRequest, s.CORSMiddleware)
 	s.router.UseWithPrefix("auth", s.jwtMiddleware)
-	s.router.UseWithPrefix("cookie", s.jwtMiddlewareForQuery)
 
 	s.router.GET("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://ec2-3-84-51-36.compute-1.amazonaws.com:8080/swagger/doc.json"),
@@ -144,7 +143,7 @@ func configureRouter(s *Server) {
 	s.router.GET("/api/v1/auth/chats/{id}", s.getChatLines())
 	//--WEBSOCKET--//
 	s.router.GET("/ws", s.wsHandler())
-	s.router.GET("/cookie/ws", s.wsService.HandleWS)
+	s.router.GET("/auth/ws", s.wsService.HandleWS)
 
 	s.router.GET("/login/{id}", s.login())
 }
