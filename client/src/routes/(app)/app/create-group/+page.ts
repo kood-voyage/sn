@@ -3,7 +3,6 @@ import { superValidate } from 'sveltekit-superforms';
 import { v4 as uuidv4 } from 'uuid';
 import { zod } from 'sveltekit-superforms/adapters';
 import { groupSchema } from '$lib/types/group-schema';
-import { saveToS3 } from '$lib/client/images/upload';
 import { LOCAL_PATH, S3_BUCKET } from '$env/static/private';
 import { redirect } from '@sveltejs/kit';
 

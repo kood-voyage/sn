@@ -1,50 +1,60 @@
 <script lang="ts">
+	import { JoinGroup } from '$lib/client/api/group-requests';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	// import type { GroupJson } from '$lib/server/api/group-requests';
-	import { currentUserStore } from '$lib/store/user-store';
+	import { currentUserFollowers, currentUserStore } from '$lib/store/user-store';
+	import type { User, UserType } from '$lib/types/user';
 	import type { PageData } from './$types';
 	import GroupPostForm from './groupPostForm.svelte';
 	import Namelayout from './namelayout.svelte';
 
 	export let data: PageData;
+
 	let id: string, name: string, description: string, image_path: string;
-	// const groupResp = data.group;
-	const currentUser = $currentUserStore;
+	const currentUser = $currentUserStore as User;
+
+	const group = data.group
+
 	let errorMessage = '';
 	const groupPosts = data.posts;
 	let isMember = false;
 
-	// console.log('GROUP RESPOSNWTF!@!!!', groupPosts);
-	// if (currentUser && 'id' in currentUser) {
-	// 	if (groupResp.ok && groupResp.data.creator_id == currentUser.id) {
-	// 		isMember = true;
-	// 	}
-	// 	if (groupResp.ok)
-	// 		groupResp.data.members?.forEach((user) => {
-	// 			if (user && user.id == currentUser.id) {
-	// 				isMember = true;
-	// 			}
-	// 		});
-	// }
+	if (currentUser && 'id' in currentUser && group?.ok) {
+		if (data.group?.ok && data.group.group.creator_id == currentUser.id) {
+			isMember = true;
+		}
+		if (data.group?.ok)
+			data.group.group.members?.forEach((user) => {
+				if (user && user.id == currentUser.id) {
+					isMember = true;
+				}
+			});
+	}
 
-	// if (groupResp.ok) {
-	// 	const data = groupResp.data as GroupJson;
-	// 	id = data.id;
-	// 	name = data.name;
-	// 	description = data.description;
-	// 	if (data.image_path) {
-	// 		image_path = data.image_path[0];
-	// 	} else {
-	// 		image_path =
-	// 			'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg';
-	// 	}
-	// } else {
-	// 	name = '404 Not Found';
-	// 	description = '';
-	// 	image_path =
-	// 		'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg';
-	// }
+	if (group?.ok) {
+		const data = group.group
+		id = data.id;
+		name = data.name;
+		description = data.description;
+		if (data.image_path) {
+			image_path = data.image_path[0];
+		} else {
+			image_path =
+				'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg';
+		}
+	} else {
+		name = '404 Not Found';
+		description = '';
+		image_path =
+			'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg';
+	}
+
+	async function joinGroup() {
+		if (group?.ok){
+			const result = await JoinGroup(group.group.name, fetch)
+		}
+	}
 </script>
 
 <svelte:head>
@@ -84,8 +94,10 @@
 								>
 
 								<Dialog.Content>
-									{#if groupResp.ok}
-										<Namelayout data={data.form} />
+									{#if data.group?.ok}
+										{#if data.group.group.members}
+											<Namelayout userList={data.group.group.members} />
+											{/if}
 									{:else}
 										<p class="m-2">Group Info Not found, try reloading the page!</p>
 									{/if}
@@ -103,15 +115,15 @@
 									<!-- I tried to put 2 PROPS to this component  -->
 									<!-- data : Took from previous Form, and i dont remember why it's required  -->
 									<!-- groupId - this PROP i put intentionally because i think we need PARENT_ID for post in groups -->
-									{#if groupResp.ok}
-										<GroupPostForm data={data.form} groupId={groupResp.data.id} />
+									{#if data.group?.ok}
+										<GroupPostForm data={data.form} groupId={data.group?.group.id} />
 									{:else}
 										<p class="m-2">Group Info Not found, try reloading the page!</p>
 									{/if}
 								</Dialog.Content>
 							</Dialog.Root>
 						{:else}
-							<form action="?/groupJoinSubmit" method="post" class=" text-center">
+							<form on:submit={joinGroup} method="post" class=" text-center">
 								<p>
 									{#if errorMessage}
 										{errorMessage}
@@ -123,8 +135,6 @@
 								</button>
 							</form>
 						{/if}
-						<!-- 
-						-->
 					</div>
 				</div>
 			</div>

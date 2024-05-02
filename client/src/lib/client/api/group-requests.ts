@@ -2,6 +2,7 @@
 import { type RequestEvent } from "@sveltejs/kit";
 import { type ReturnEntryType, type ReturnType } from "$lib/types/requests";
 import { PUBLIC_LOCAL_PATH } from "$env/static/public";
+import type { UserType } from "$lib/types/user";
 
 
 export type GroupJson = {
@@ -11,7 +12,7 @@ export type GroupJson = {
   description: string,
   image_path: Array<string>,
   privacy: string,
-  members: null | Array<{ id: string, member_type: number }>
+  members: null | Array<UserType>
 }
 
 export type GroupPostJson = {
@@ -30,14 +31,14 @@ type Fetch = {
   (input: string | Request | URL, init?: RequestInit | undefined): Promise<Response>;
 }
 
-type Group = ReturnEntryType<"group", GroupJson>
+export type Group = ReturnEntryType<"group", GroupJson>
 
 
 export async function GetGroup(group_name: string, customFetch: Fetch = fetch): Promise<Group> {
 
   try {
 
-    const fetchResp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/${group_name}`, {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/${group_name}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -63,7 +64,7 @@ export async function GetGroup(group_name: string, customFetch: Fetch = fetch): 
 
 }
 
-type AllGroups = ReturnEntryType<"allGroups", GroupJson[]>
+export type AllGroups = ReturnEntryType<"allGroups", GroupJson[]>
 
 export async function GetAllGroups(customFetch: Fetch = fetch): Promise<AllGroups> {
   try {
@@ -87,7 +88,7 @@ export async function GetAllGroups(customFetch: Fetch = fetch): Promise<AllGroup
   }
 }
 
-type AllGroupPosts = ReturnEntryType<"allGroupPosts", GroupPostJson[]>
+export type AllGroupPosts = ReturnEntryType<"allGroupPosts", GroupPostJson[]>
 
 export async function GetGroupPosts(group_name: string, customFetch: Fetch = fetch): Promise<AllGroupPosts> {
 
@@ -114,13 +115,16 @@ export async function GetGroupPosts(group_name: string, customFetch: Fetch = fet
   }
 }
 
-export async function joinGroup(event: RequestEvent, group_name: string) {
+
+export async function JoinGroup(group_name: string, customFetch: Fetch = fetch) {
   try {
     const fetchResp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/join/${group_name.replace("_", " ")}`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${event.cookies.get('at')?.valueOf()}`
-      }
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include"
     });
 
     if (!fetchResp.ok) {
@@ -129,6 +133,7 @@ export async function joinGroup(event: RequestEvent, group_name: string) {
     }
 
     const json = (await fetchResp.json()).data
+    console.log("THIS IS TEST", json)
     return { ok: true, data: json }
 
   } catch (err) {
