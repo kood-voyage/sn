@@ -52,6 +52,7 @@ export async function createChat(id: string, group_id: string = ""): Promise<Cre
         group_id: group_id
       })
     })
+    console.log(await fetchResp.json())
 
     if (fetchResp.ok) {
       return { ok: true, status: fetchResp.status }
@@ -69,22 +70,23 @@ export async function createChat(id: string, group_id: string = ""): Promise<Cre
   }
 }
 
-type AddUserToChat = ReturnType<number>
-export async function addUserToChat(event: RequestEvent, target_user_id: string, chat_id: string): Promise<AddUserToChat> {
+type AddUserToChat = ReturnEntryType<"status", number>
+export async function addUserToChat(target_user_id: string, chat_id: string): Promise<AddUserToChat> {
   try {
     const fetchResp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/chats/add/user`, {
-      method: "post",
+      method: "POST",
       headers: {
-        "Authorization": `Bearer ${event.cookies.get('at')?.valueOf()}`,
-        'Content-Type': 'application/json' // Specify JSON content type
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "POST",
       },
+      credentials: "include",
       body: JSON.stringify({
         user_id: target_user_id,
         chat_id: chat_id
       })
     })
 
-    return { ok: true, data: fetchResp.status }
+    return { ok: true, status: fetchResp.status }
 
   } catch (err) {
     if (err instanceof Error) {

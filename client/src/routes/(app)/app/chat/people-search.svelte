@@ -60,14 +60,19 @@
 
 					<form
 						method="post"
-						use:enhance={({ formData, controller, cancel }) => {
-							dispatch('submit', { detail: 'Data or message from PeopleSearch' });
+						use:enhance={async ({ formData, controller, cancel }) => {
 							// console.log('FormData >>', formData);
 							formData.set('target', person.id);
 							// console.log(person.id);
-							dialogOpen = false;
 
-							newChatCreate(formData);
+							const createResp = await newChatCreate(formData);
+							if (!createResp.ok) {
+								controller.abort();
+								cancel();
+								return;
+							}
+							dispatch('submit', { detail: 'Data or message from PeopleSearch' });
+							dialogOpen = false;
 
 							controller.abort();
 							cancel();
