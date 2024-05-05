@@ -182,3 +182,32 @@ export async function CreateGroupEvent(event:GroupEventJson, customFetch: Fetch 
     }
   }
 }
+
+export async function GetGroupEvents(group_id:GroupEventJson[], customFetch: Fetch = fetch) {
+  try {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/${group_id}/event/all`, {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include",
+    })
+  
+      if (!fetchResp.ok) {
+        const errorMessage = await fetchResp.json();
+        return { ok: false, error: errorMessage, message: "error " }
+      }
+  
+      const json = (await fetchResp.json()).data as GroupEventJson[]
+      console.log("this is group event", json)
+      return { ok: true, groupEvent: json }
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
