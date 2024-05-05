@@ -45,7 +45,11 @@ func (c *ChatRepository) AddUser(user model.User, chat model.Chat) error {
 }
 
 func (c *ChatRepository) GetUsers(chat model.Chat) ([]model.User, error) {
-	query := `SELECT user_id FROM chat_users WHERE chat_id = ?`
+	query := `SELECT u.id, u.username, u.email, u.password, u.timestamp, u.date_of_birth, u.first_name, u.last_name, u.description, u.avatar, u.cover
+	FROM chat_users cu
+	JOIN user u ON cu.user_id = u.id
+	WHERE cu.chat_id = ?;
+	`
 
 	row, err := c.store.Db.Query(query, chat.ID)
 	if err != nil {
@@ -55,9 +59,21 @@ func (c *ChatRepository) GetUsers(chat model.Chat) ([]model.User, error) {
 	var users []model.User
 	for row.Next() {
 		var user model.User
-		if err := row.Scan(&user.ID); err != nil {
-			return nil, err
-		}
+		if err := row.Scan(
+            &user.ID,
+            &user.Username,
+            &user.Email,
+            &user.Password,
+            &user.CreatedAt,
+            &user.DateOfBirth,
+            &user.FirstName,
+            &user.LastName,
+            &user.Description,
+            &user.Avatar,
+            &user.Cover,
+        ); err != nil {
+            return nil, err
+        }
 		users = append(users, user)
 	}
 

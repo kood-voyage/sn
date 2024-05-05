@@ -21,6 +21,10 @@ import (
 
 const (
 	jwtKey                 = "JWT_KEY"
+	region          = "us-east-1"
+	bucketName      = "profilemediabucket-voyage"
+	awsAccessKey    = "AWS_ACCESS_KEY"
+	awsSecretKey    = "AWS_SECRET_KEY"
 	ctxKeyRequestID ctxKey = iota
 	ctxUserID
 )
@@ -134,6 +138,7 @@ func configureRouter(s *Server) {
 	s.router.DELETE("/api/v1/auth/group/event/delete/{id}", s.deleteEvent())
 	s.router.GET("/api/v1/auth/group/event/{id}", s.getEvent())
 	s.router.GET("/api/v1/auth/group/event/{id}/register/{opt}", s.registerEvent())
+	s.router.GET("/api/v1/auth/group/{id}/event/all", s.getGroupEvents())
 	//---------CHATS--------------//
 	s.router.POST("/api/v1/auth/chats/create", s.createChat())
 	s.router.POST("/api/v1/auth/chats/add/user", s.addUserChat())
@@ -141,6 +146,8 @@ func configureRouter(s *Server) {
 	s.router.GET("/api/v1/auth/chats", s.getAllChats())
 	s.router.GET("/api/v1/auth/chats/get/users/{id}", s.getAllChatUsers())
 	s.router.GET("/api/v1/auth/chats/{id}", s.getChatLines())
+	//----------IMAGES-S3-------------//
+	s.router.POST("/api/v1/auth/images/{parent_id}", s.imageUpload())
 	//--WEBSOCKET--//
 	s.router.GET("/ws", s.wsHandler())
 	s.router.GET("/auth/ws", s.wsService.HandleWS)

@@ -66,6 +66,7 @@ type GroupRepository interface {
 	AddMember(groupId, userId string) error
 	GetAll(model.Type) (*[]model.Group, error)
 	GetPosts(group_id string) ([]*model.Post, error)
+	GetAllEvents(group_id string) ([]*model.Event, error)
 }
 
 type PrivacyRepository interface {
@@ -81,6 +82,7 @@ type EventRepository interface {
 	Delete(eventId string) error
 	Get(eventId string) (*model.Event, error)
 	Register(userid, eventId string, opt int) error
+	AllParticipants(eventId string) ([]*model.User, error)
 }
 
 type ImageRepository interface {

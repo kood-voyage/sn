@@ -1,6 +1,7 @@
 package sqlstore
 
 import (
+	"database/sql"
 	"fmt"
 	"social-network/internal/model"
 
@@ -66,7 +67,13 @@ func (e EventRepository) Delete(eventId string) error {
 
 func (e EventRepository) Get(eventId string) (*model.Event, error) {
 	event := &model.Event{}
-	query := `SELECT * FROM event WHERE id = ?`
+	query := `
+	SELECT e.id, e.user_id, e.group_id, e.name, e.description, e.created_at, e.date,
+		   u.id, u.username, u.email, u.timestamp, u.date_of_birth, u.first_name, u.last_name, u.description, u.avatar, u.cover
+	FROM event e
+	JOIN user u ON e.user_id = u.id
+	WHERE e.id = ?
+`
 
 	err := e.store.Db.QueryRow(query, eventId).Scan(
 		&event.ID,
@@ -75,16 +82,76 @@ func (e EventRepository) Get(eventId string) (*model.Event, error) {
 		&event.Name,
 		&event.Description,
 		&event.CreatedAt,
-		&event.Date)
+		&event.Date,
+		&event.UserInformation.ID,
+		&event.UserInformation.Username,
+		&event.UserInformation.Email,
+		&event.UserInformation.CreatedAt,
+		&event.UserInformation.DateOfBirth,
+		&event.UserInformation.FirstName,
+		&event.UserInformation.LastName,
+		&event.UserInformation.Description,
+		&event.UserInformation.Avatar,
+		&event.UserInformation.Cover,
+	)
 	if err != nil {
 		return nil, err
 	}
 
+	participants, err := e.AllParticipants(eventId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return event, nil
+		}
+		return nil, err
+	}
+
+	event.Participants = participants
+
 	return event, nil
 }
 
+func (e *EventRepository) AllParticipants(eventId string) ([]*model.User, error) {
+	participantsQuery := `
+	SELECT u.id, u.username, u.email, u.timestamp, u.date_of_birth, u.first_name, u.last_name, u.description, u.avatar, u.cover
+	FROM event_registered_users eru
+	JOIN user u ON eru.user_id = u.id
+	WHERE eru.event_id = ?
+`
+
+	rows, err := e.store.Db.Query(participantsQuery, eventId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var participants []*model.User
+	for rows.Next() {
+		var participant model.User
+		if err := rows.Scan(
+			&participant.ID,
+			&participant.Username,
+			&participant.Email,
+			&participant.CreatedAt,
+			&participant.DateOfBirth,
+			&participant.FirstName,
+			&participant.LastName,
+			&participant.Description,
+			&participant.Avatar,
+			&participant.Cover,
+		); err != nil {
+			return nil, err
+		}
+		participants = append(participants, &participant)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return participants, nil
+}
+
 func (e EventRepository) Register(userId, eventId string, opt int) error {
-    query := `
+	query := `
         INSERT INTO event_registered_users (id, type_id, user_id, event_id)
         SELECT ?, ?, ?, ?
         WHERE NOT EXISTS (

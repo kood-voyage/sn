@@ -249,3 +249,17 @@ func (s *Server) registerEvent() http.HandlerFunc {
 
 	}
 }
+
+func (s *Server) getGroupEvents() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		group_id := r.PathValue("id")
+		
+		events, err := s.store.Group().GetAllEvents(group_id)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, http.StatusOK, events)
+	}
+}
