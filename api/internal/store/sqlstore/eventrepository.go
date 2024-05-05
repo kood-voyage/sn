@@ -113,9 +113,10 @@ func (e EventRepository) Get(eventId string) (*model.Event, error) {
 
 func (e *EventRepository) AllParticipants(eventId string) ([]*model.User, error) {
 	participantsQuery := `
-	SELECT u.id, u.username, u.email, u.timestamp, u.date_of_birth, u.first_name, u.last_name, u.description, u.avatar, u.cover
+	SELECT u.id, u.username, u.email, u.timestamp, u.date_of_birth, u.first_name, u.last_name, u.description, u.avatar, u.cover, eot.description
 	FROM event_registered_users eru
 	JOIN user u ON eru.user_id = u.id
+	JOIN event_option_type eot ON eru.type_id = eot.id 
 	WHERE eru.event_id = ?
 `
 
@@ -139,6 +140,7 @@ func (e *EventRepository) AllParticipants(eventId string) ([]*model.User, error)
 			&participant.Description,
 			&participant.Avatar,
 			&participant.Cover,
+			&participant.EventStatus,
 		); err != nil {
 			return nil, err
 		}

@@ -2,7 +2,7 @@
 import { type RequestEvent } from "@sveltejs/kit";
 import { type ReturnEntryType, type ReturnType } from "$lib/types/requests";
 import { PUBLIC_LOCAL_PATH } from "$env/static/public";
-import type { UserType } from "$lib/types/user";
+import type { User, UserType } from "$lib/types/user";
 
 
 export type GroupJson = {
@@ -34,6 +34,10 @@ export type GroupEventJson = {
   description: string,
   created_at: Date,
   date: Date,
+  user_information: User,
+  participants: User[],
+  is_participant: boolean,
+  event_status: string,
 }
 
 type Fetch = {
@@ -163,6 +167,7 @@ export async function CreateGroupEvent(event:GroupEventJson, customFetch: Fetch 
           "Access-Control-Request-Method": "POST",
       },
       credentials: "include",
+      body: JSON.stringify(event),
     })
   
       if (!fetchResp.ok) {
@@ -171,6 +176,8 @@ export async function CreateGroupEvent(event:GroupEventJson, customFetch: Fetch 
       }
   
       const json = (await fetchResp.json()).data as GroupEventJson
+      json.is_participant = false
+      event.event_status = ""
       console.log("this is group event", json)
       return { ok: true, groupEvent: json }
 
@@ -183,7 +190,10 @@ export async function CreateGroupEvent(event:GroupEventJson, customFetch: Fetch 
   }
 }
 
-export async function GetGroupEvents(group_id:GroupEventJson[], customFetch: Fetch = fetch) {
+export type AllGroupEvents = ReturnEntryType<"allGroupEvents", GroupEventJson[]>
+
+
+export async function GetGroupEvents(group_id:string, customFetch: Fetch = fetch) {
   try {
     const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/${group_id}/event/all`, {
       method: "GET",
@@ -200,8 +210,14 @@ export async function GetGroupEvents(group_id:GroupEventJson[], customFetch: Fet
       }
   
       const json = (await fetchResp.json()).data as GroupEventJson[]
-      console.log("this is group event", json)
-      return { ok: true, groupEvent: json }
+      console.log("These are all group events", json)
+      if (json) {
+        json.forEach((event) => {
+          event.is_participant = false
+          event.event_status = ""
+        })
+      }
+      return { ok: true, allGroupEvents: json }
 
   } catch (err) {
     if (err instanceof Error) {

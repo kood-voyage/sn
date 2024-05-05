@@ -13,7 +13,8 @@ export type UserStyle = {
   lastName: string,
   avatar: string,
   cover: string,
-  description: string
+  description: string,
+  event_status: string,
 }
 
 export type UserModel = {
@@ -128,6 +129,7 @@ export class User implements UserStyle {
   avatar: string;
   cover: string;
   description: string;
+  event_status: string;
 
 
   constructor(user: UserStyle) {
@@ -142,6 +144,7 @@ export class User implements UserStyle {
     this.avatar = user.avatar;
     this.cover = user.cover;
     this.description = user.description;
+    this.event_status = user.event_status
 
     this.initialize()
   }

@@ -19,7 +19,8 @@ type User struct {
 	Avatar      string    `db:"avatar" json:"avatar"`
 	Cover       string    `db:"cover" json:"cover"`
 	Privacy     string    `json:"privacy" validate:"required|contains:public,private"`
-	MemberType  int       `json:"member_type" `
+	MemberType  int       `json:"member_type"`
+	EventStatus string    `json:"event_status"`
 }
 
 func (u *User) Sanitize() {

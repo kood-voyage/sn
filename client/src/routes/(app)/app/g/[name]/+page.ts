@@ -7,7 +7,7 @@ import { type User, type UserType } from "$lib/types/user";
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageLoad } from '../$types';
 import { groupPostSchema } from '$lib/types/group-schema';
-import { GetGroup, GetGroupPosts, JoinGroup, type AllGroupPosts, type Group, type GroupPostJson } from '$lib/client/api/group-requests';
+import { GetGroup, GetGroupEvents, GetGroupPosts, JoinGroup, type AllGroupPosts, type Group, type GroupEventJson, type GroupPostJson } from '$lib/client/api/group-requests';
 import { GetAllUsers, currentUser, getUserFollowers, type AllUsers } from '$lib/client/api/user-requests';
 import { currentUserFollowers } from '$lib/store/user-store';
 
@@ -30,7 +30,8 @@ type LoadType = {
     images?: any[] | undefined;
 }>,
   posts: GroupPostJson[] | undefined,
-  allusers: UserType[] | undefined
+  allusers: UserType[] | undefined,
+  allevents: GroupEventJson[] | undefined,
 }
 
 
@@ -39,7 +40,7 @@ export const load: PageLoad = async ({ fetch, url }) => {
     const u = new URL(url).pathname.split('/');
     const groupId = u[u.length - 1].replace("_", " ")
     
-    let info: LoadType = {group: undefined, form: form, posts: undefined, allusers: undefined
+    let info: LoadType = {group: undefined, form: form, posts: undefined, allusers: undefined, allevents: undefined
     }
     const groupInfo = (await GetGroup(groupId, fetch))
     if (!groupInfo.ok) {
@@ -62,6 +63,15 @@ export const load: PageLoad = async ({ fetch, url }) => {
       }
     if (allUsers.ok) {
       info.allusers = allUsers.allUsers
+    }
+
+    const allEvents = (await GetGroupEvents(groupInfo.group.id, fetch))
+    if (!allEvents.ok) {
+      console.error("something wrong with getting all the events")
+      return info
+    }
+    if (allEvents.ok){
+      info.allevents = allEvents.allGroupEvents
     }
 
     return info

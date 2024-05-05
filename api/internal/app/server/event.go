@@ -260,6 +260,8 @@ func (s *Server) getGroupEvents() http.HandlerFunc {
 			return
 		}
 
-		s.respond(w, http.StatusOK, events)
+		s.respond(w, http.StatusOK, Response{
+			Data: events,
+		})
 	}
 }

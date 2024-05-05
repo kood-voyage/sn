@@ -5,22 +5,35 @@
 	// import type { GroupJson } from '$lib/server/api/group-requests';
 	import { currentUserFollowers, currentUserStore } from '$lib/store/user-store';
 	import type { User, UserType } from '$lib/types/user';
+	import { set } from 'zod';
 	import Content from '../../post/[id]/content.svelte';
 	import type { PageData } from './$types';
 	import Createeventform from './createeventform.svelte';
 	import GroupPostForm from './groupPostForm.svelte';
 	import Namelayout from './namelayout.svelte';
+	import Reactform from './reactform.svelte';
 
 	export let data: PageData;
 
 	let id: string, name: string, description: string, image_path: string;
 	const currentUser = $currentUserStore as User;
 
-	const group = data.group
-
+	const group = data.group;
+	console.log('ALL EVENTS', data);
 	let errorMessage = '';
 	const groupPosts = data.posts;
 	let isMember = false;
+
+	data.allevents?.forEach((event) => {
+		if (event.participants) {
+			event.participants.forEach((participant) => {
+				if (participant.id == currentUser.id) {
+					event.is_participant = true;
+					event.event_status = participant.event_status
+				}
+			});
+		}
+	});
 
 	if (currentUser && 'id' in currentUser && group?.ok) {
 		if (data.group?.ok && data.group.group.creator_id == currentUser.id) {
@@ -35,7 +48,7 @@
 	}
 
 	if (group?.ok) {
-		const data = group.group
+		const data = group.group;
 		id = data.id;
 		name = data.name;
 		description = data.description;
@@ -53,8 +66,8 @@
 	}
 
 	async function joinGroup() {
-		if (group?.ok){
-			const result = await JoinGroup(group.group.name, fetch)
+		if (group?.ok) {
+			const result = await JoinGroup(group.group.name, fetch);
 		}
 	}
 </script>
@@ -79,6 +92,37 @@
 			</div>
 
 			<div class="max-w-[1096px] sm:px-2 h-16">
+				{#if data.allevents}
+					{#each data.allevents as event}
+						<div
+							class="w-full bg-slate-200/30 p-1 mt-1 h-full flex justify-between items-center sm:rounded-xl"
+						>
+							<p>TITLE {event.name}</p>
+							<p>Description {event.description}</p>
+							<p>Created at {event.created_at}</p>
+							<p>User information {event.user_information}</p>
+							{#if event.participants}
+								<p>Participants: {event.participants.length}</p>
+							{:else}
+								<p>Participants: 0</p>
+							{/if}
+							{#if event.is_participant}
+								<p class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
+									>I am {event.event_status}</p
+								>
+							{:else}
+								<Dialog.Root>
+									<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
+										React
+										<Dialog.Content>
+											<Reactform />
+										</Dialog.Content>
+									</Dialog.Trigger>
+								</Dialog.Root>
+							{/if}
+						</div>
+					{/each}
+				{/if}
 				<div
 					class="w-full bg-slate-200/30 p-1 mt-1 h-full flex justify-between items-center sm:rounded-xl"
 				>
@@ -99,7 +143,7 @@
 									{#if data.group?.ok}
 										{#if data.group.group.members}
 											<Namelayout userList={data.group.group.members} />
-											{/if}
+										{/if}
 									{:else}
 										<p class="m-2">Group Info Not found, try reloading the page!</p>
 									{/if}
@@ -129,7 +173,7 @@
 								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
 									Create event
 									<Dialog.Content>
-										<Createeventform data={data.form}/>
+										<Createeventform data={data.form} />
 									</Dialog.Content>
 								</Dialog.Trigger>
 							</Dialog.Root>
@@ -153,7 +197,7 @@
 
 		<!-- group activity / posts -->
 
-		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-0 sm:p-4 mt-5 md:mt-0">
+		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-0 sm:p-4 md:mt-80">
 			{#if groupPosts}
 				{#each groupPosts as post}
 					<div class="bg-white rounded-lg p-4 mb-4">
