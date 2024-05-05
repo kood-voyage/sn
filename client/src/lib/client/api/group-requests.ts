@@ -26,6 +26,16 @@ export type GroupPostJson = {
   privacy: string | null
 }
 
+export type GroupEventJson = {
+  id: string,
+  user_id: string,
+  group_id: string,
+  name: string,
+  description: string,
+  created_at: Date,
+  date: Date,
+}
+
 type Fetch = {
   (input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response>;
   (input: string | Request | URL, init?: RequestInit | undefined): Promise<Response>;
@@ -47,10 +57,6 @@ export async function GetGroup(group_name: string, customFetch: Fetch = fetch): 
       credentials: "include"
     })
     const json = (await fetchResp.json()).data as GroupJson
-
-
-    console.log(fetchResp.status)
-    console.log(json)
 
     return { ok: true, group: json }
 
@@ -118,7 +124,7 @@ export async function GetGroupPosts(group_name: string, customFetch: Fetch = fet
 
 export async function JoinGroup(group_name: string, customFetch: Fetch = fetch) {
   try {
-    const fetchResp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/join/${group_name.replace("_", " ")}`, {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/join/${group_name.replace("_", " ")}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -133,8 +139,40 @@ export async function JoinGroup(group_name: string, customFetch: Fetch = fetch) 
     }
 
     const json = (await fetchResp.json()).data
-    console.log("THIS IS TEST", json)
+    console.log("this is join group resp", json)
     return { ok: true, data: json }
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
+
+
+export type GroupEvent = ReturnEntryType<"groupEvent", GroupEventJson>
+
+export async function CreateGroupEvent(event:GroupEventJson, customFetch: Fetch = fetch) {
+  try {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/event/create`, {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Request-Method": "POST",
+      },
+      credentials: "include",
+    })
+  
+      if (!fetchResp.ok) {
+        const errorMessage = await fetchResp.json();
+        return { ok: false, error: errorMessage, message: "error " }
+      }
+  
+      const json = (await fetchResp.json()).data as GroupEventJson
+      console.log("this is group event", json)
+      return { ok: true, groupEvent: json }
 
   } catch (err) {
     if (err instanceof Error) {

@@ -5,10 +5,14 @@
 
 	const allUsers = $page.data.allusers as UserType[];
 	export let userList: UserType[];
-	function inviteUser() {
+	function inviteUser(event: Event) {
 		// const resp = fetch(`${LOCAL_PATH}/api/v1/auth/group/invite`, {
 		//     headers:
 		// })
+		// if(event.target){
+		// 	console.log("THis is an evet", event.target.innerHTML)
+		// }
+		console.log("Need to make API Stuff first")
 	}
 
 	function isInGroup(user: UserType) {

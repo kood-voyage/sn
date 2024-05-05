@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { date, z } from 'zod';
 
 const fileSchema = z.instanceof(File)
 
@@ -13,9 +13,6 @@ export const groupPostSchema = z.object({
     .optional()
 });
 
-export type GroupSchema = typeof groupSchema
-
-
 export const groupSchema = z.object({
   title: z.string().min(1),
   content: z.string().min(8),
@@ -23,3 +20,12 @@ export const groupSchema = z.object({
 });
 
 export type GroupSchema = typeof groupSchema
+
+export const groupEventSchema = z.object({
+  eventId: z.string(),
+  userId: z.string(),
+  groupId: z.string(),
+  name: z.string().min(4).max(25),
+  description: z.string().min(4).max(25),
+  date: z.date(),
+})

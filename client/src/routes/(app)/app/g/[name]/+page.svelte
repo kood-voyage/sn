@@ -5,7 +5,9 @@
 	// import type { GroupJson } from '$lib/server/api/group-requests';
 	import { currentUserFollowers, currentUserStore } from '$lib/store/user-store';
 	import type { User, UserType } from '$lib/types/user';
+	import Content from '../../post/[id]/content.svelte';
 	import type { PageData } from './$types';
+	import Createeventform from './createeventform.svelte';
 	import GroupPostForm from './groupPostForm.svelte';
 	import Namelayout from './namelayout.svelte';
 
@@ -121,6 +123,15 @@
 										<p class="m-2">Group Info Not found, try reloading the page!</p>
 									{/if}
 								</Dialog.Content>
+							</Dialog.Root>
+
+							<Dialog.Root>
+								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
+									Create event
+									<Dialog.Content>
+										<Createeventform data={data.form}/>
+									</Dialog.Content>
+								</Dialog.Trigger>
 							</Dialog.Root>
 						{:else}
 							<form on:submit={joinGroup} method="post" class=" text-center">
