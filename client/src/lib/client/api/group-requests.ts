@@ -27,14 +27,22 @@ export type GroupPostJson = {
 
 export type GetGroup = ReturnType<GroupJson>
 
-export async function getGroup(event: RequestEvent, group_name: string): Promise<GetGroup> {
+type Fetch = {
+  (input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response>;
+  (input: string | Request | URL, init?: RequestInit | undefined): Promise<Response>;
+}
+
+export async function getGroup(group_name: string, customFetch: Fetch = fetch): Promise<GetGroup> {
 
   try {
 
-    const fetchResp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/${group_name}`, {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/${group_name}`, {
+      method: "Get",
       headers: {
-        "Authorization": `Bearer ${event.cookies.get('at')?.valueOf()}`
-      }
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "Get",
+      },
+      credentials: "include",
     })
     const json = (await fetchResp.json()).data
 

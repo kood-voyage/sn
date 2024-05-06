@@ -1,10 +1,11 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog';
-	import type { UserRowType } from '$lib/server/db/user';
+	// import type { UserRowType } from '$lib/server/db/user';
 	import { currentUserStore } from '$lib/store/user-store';
-	import type { UserModel } from '$lib/types/user';
+	import type { UserModel, UserType } from '$lib/types/user';
 	import type { PageData } from './$types';
-	import type { ChatsWithUsers } from './+page.server';
+	import type { ChatsWithUsers } from './+page';
+	// import type { ChatsWithUsers } from './+page.server';
 	import PeopleSearch from './people-search.svelte';
 
 	export let data: PageData;
@@ -14,11 +15,11 @@
 	let searchQuery = '';
 
 	let userData = $currentUserStore;
-	let people: UserRowType[] = [];
+	let people: UserType[] = [];
 	let chats: ChatsWithUsers = {};
 	if (data.ok) {
-		people = data.data.usersData;
-		chats = data.data.chatsData;
+		people = data.chatLoadData.usersData;
+		chats = data.chatLoadData.chatsData;
 	}
 
 	let filteredPeople: UserModel[] = [];

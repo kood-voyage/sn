@@ -1,7 +1,5 @@
 import { PUBLIC_LOCAL_PATH } from "$env/static/public"
 import type { ReturnEntryType, ReturnType } from "$lib/types/requests"
-import type { RequestEvent } from "@sveltejs/kit"
-
 
 type Fetch = {
   (input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response>;
@@ -52,7 +50,6 @@ export async function createChat(id: string, group_id: string = ""): Promise<Cre
         group_id: group_id
       })
     })
-    console.log(await fetchResp.json())
 
     if (fetchResp.ok) {
       return { ok: true, status: fetchResp.status }
@@ -85,6 +82,8 @@ export async function addUserToChat(target_user_id: string, chat_id: string): Pr
         chat_id: chat_id
       })
     })
+
+    console.log(await fetchResp.json())
 
     return { ok: true, status: fetchResp.status }
 

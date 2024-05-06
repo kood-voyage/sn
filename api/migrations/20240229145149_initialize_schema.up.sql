@@ -471,7 +471,10 @@ VALUES
 
 -- Going
 CREATE TABLE
-    chat (id text PRIMARY KEY UNIQUE NOT NULL);
+    chat (
+        id text PRIMARY KEY UNIQUE NOT NULL,
+        group_id text
+    );
 
 CREATE TABLE
     chat_users (

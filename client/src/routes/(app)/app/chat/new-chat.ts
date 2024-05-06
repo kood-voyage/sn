@@ -41,27 +41,14 @@ export const newChatCreate = async (formData: FormData): Promise<ChatCreate> => 
     return { ok: false, error: userResp.error, message: userResp.message }
   }
 
-
-
-  // Add User to the created Chat
-  let addUserResp = await addUserToChat(target_user, id)
-  if (!addUserResp.ok) {
-    console.error(addUserResp.error)
-    return { ok: false, error: addUserResp.error, message: addUserResp.message }
-  }
-  if (addUserResp.status <= 200, addUserResp.status >= 299) {
-    const err = new Error("Adding User To Chat failed with Status Code >>> " + addUserResp.status.toString())
-    console.error(err)
-    return { ok: false, error: err, message: err.message }
-  }
-
-  // If the users are the same then just return and don't try to add a second one
+  console.log("CUREENT USER ID >>>", userResp.data.id)
+  console.log("TARGET USER ID >>>", target_user)
   if (userResp.data.id == target_user) {
     return { ok: true, chatCreated: true }
   }
 
-  // Otherwise add the second user
-  addUserResp = await addUserToChat(target_user, id)
+  // Add User to the created Chat
+  const addUserResp = await addUserToChat(target_user, id)
   if (!addUserResp.ok) {
     console.error(addUserResp.error)
     return { ok: false, error: addUserResp.error, message: addUserResp.message }
@@ -71,7 +58,6 @@ export const newChatCreate = async (formData: FormData): Promise<ChatCreate> => 
     console.error(err)
     return { ok: false, error: err, message: err.message }
   }
-
 
   return { ok: true, chatCreated: true }
 }
