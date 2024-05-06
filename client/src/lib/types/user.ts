@@ -43,7 +43,8 @@ export type UserType = {
   lastName: string,
   avatar?: string,
   cover?: string,
-  description?: string
+  description?: string,
+  event_status: string
 }
 
 export class CreateUser implements UserType {
@@ -57,6 +58,7 @@ export class CreateUser implements UserType {
   avatar?: string;
   cover?: string;
   description?: string;
+  event_status: string;
 
 
   constructor(user: UserType) {
@@ -70,6 +72,7 @@ export class CreateUser implements UserType {
     this.avatar = user.avatar;
     this.cover = user.cover;
     this.description = user.description;
+    this.event_status = user.event_status
 
     this.initialize()
   }
@@ -101,6 +104,7 @@ export class CreateUser implements UserType {
     yield this.avatar;
     yield this.cover;
     yield this.description
+    yield this.event_status
 
   }
 }

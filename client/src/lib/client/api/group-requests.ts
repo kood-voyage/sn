@@ -1,7 +1,7 @@
 
-import { type RequestEvent } from "@sveltejs/kit";
-import { type ReturnType } from "$lib/types/requests";
+import { type ReturnEntryType, type ReturnType } from "$lib/types/requests";
 import { PUBLIC_LOCAL_PATH } from "$env/static/public";
+import type { User, UserType } from "$lib/types/user";
 
 
 export type GroupJson = {
@@ -11,7 +11,7 @@ export type GroupJson = {
   description: string,
   image_path: Array<string>,
   privacy: string,
-  members: null | Array<{ id: string, member_type: number }>
+  members: null | Array<UserType>
 }
 
 export type GroupPostJson = {
@@ -25,32 +25,52 @@ export type GroupPostJson = {
   privacy: string | null
 }
 
-export type GetGroup = ReturnType<GroupJson>
+export type GroupEventJson = {
+  id: string,
+  user_id: string,
+  group_id: string,
+  name: string,
+  description: string,
+  created_at: Date,
+  date: Date,
+  user_information: User,
+  participants: User[],
+  is_participant: boolean,
+  event_status: string,
+}
+
+export type EventJson = {
+  id: string,
+  user_id: string,
+  group_id: string,
+  name: string,
+  description: string,
+  date: Date,
+}
 
 type Fetch = {
   (input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response>;
   (input: string | Request | URL, init?: RequestInit | undefined): Promise<Response>;
 }
 
-export async function getGroup(group_name: string, customFetch: Fetch = fetch): Promise<GetGroup> {
+export type Group = ReturnEntryType<"group", GroupJson>
+
+
+export async function GetGroup(group_name: string, customFetch: Fetch = fetch): Promise<Group> {
 
   try {
 
     const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/${group_name}`, {
-      method: "Get",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Request-Method": "Get",
+        "Access-Control-Request-Method": "GET",
       },
-      credentials: "include",
+      credentials: "include"
     })
-    const json = (await fetchResp.json()).data
+    const json = (await fetchResp.json()).data as GroupJson
 
-
-    console.log(fetchResp.status)
-    console.log(json)
-
-    return { ok: true, data: json }
+    return { ok: true, group: json }
 
   } catch (err) {
     if (err instanceof Error) {
@@ -62,18 +82,21 @@ export async function getGroup(group_name: string, customFetch: Fetch = fetch): 
 
 }
 
-export async function getGroups(event: RequestEvent) {
+export type AllGroups = ReturnEntryType<"allGroups", GroupJson[]>
 
+export async function GetAllGroups(customFetch: Fetch = fetch): Promise<AllGroups> {
   try {
-    const fetchResp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group`, {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group`, {
+      method: "GET",
       headers: {
-        "Authorization": `Bearer ${event.cookies.get('at')?.valueOf()}`
-      }
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include"
     })
     const json = (await fetchResp.json()).data as GroupJson[]
 
-    return { ok: true, data: json }
-
+    return { ok: true, allGroups: json }
   } catch (err) {
     if (err instanceof Error) {
       return { ok: false, error: err, message: err.message }
@@ -83,18 +106,23 @@ export async function getGroups(event: RequestEvent) {
   }
 }
 
-export async function getGroupPosts(event: RequestEvent, group_name: string): Promise<ReturnType<GroupPostJson[]>> {
+export type AllGroupPosts = ReturnEntryType<"allGroupPosts", GroupPostJson[]>
+
+export async function GetGroupPosts(group_name: string, customFetch: Fetch = fetch): Promise<AllGroupPosts> {
 
   try {
-    const fetchResp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/posts/${group_name.replace("_", " ")}`, {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/posts/${group_name.replace("_", " ")}`, {
+      method: "GET",
       headers: {
-        "Authorization": `Bearer ${event.cookies.get('at')?.valueOf()}`
-      }
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include"
     })
     const json = (await fetchResp.json()).data as GroupPostJson[]
 
     console.log("posts", json)
-    return { ok: true, data: json }
+    return { ok: true, allGroupPosts: json }
 
   } catch (err) {
     if (err instanceof Error) {
@@ -105,13 +133,16 @@ export async function getGroupPosts(event: RequestEvent, group_name: string): Pr
   }
 }
 
-export async function joinGroup(event: RequestEvent, group_name: string) {
+
+export async function JoinGroup(group_name: string, customFetch: Fetch = fetch) {
   try {
-    const fetchResp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/join/${group_name.replace("_", " ")}`, {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/join/${group_name.replace("_", " ")}`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${event.cookies.get('at')?.valueOf()}`
-      }
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include"
     });
 
     if (!fetchResp.ok) {
@@ -120,7 +151,79 @@ export async function joinGroup(event: RequestEvent, group_name: string) {
     }
 
     const json = (await fetchResp.json()).data
+    console.log("this is join group resp", json)
     return { ok: true, data: json }
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
+
+
+export type GroupEvent = ReturnEntryType<"groupEvent", GroupEventJson>
+
+export async function CreateGroupEvent(event: EventJson, customFetch: Fetch = fetch) {
+  try {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/event/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "POST",
+      },
+      credentials: "include",
+      body: JSON.stringify(event),
+    })
+
+    if (!fetchResp.ok) {
+      const errorMessage = await fetchResp.json();
+      return { ok: false, error: errorMessage, message: "error " }
+    }
+
+    const json = (await fetchResp.json()).data as GroupEventJson
+    console.log("this is group event", json)
+    return { ok: true, groupEvent: json }
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
+
+export type AllGroupEvents = ReturnEntryType<"allGroupEvents", GroupEventJson[]>
+
+
+export async function GetGroupEvents(group_id: string, customFetch: Fetch = fetch) {
+  try {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/${group_id}/event/all`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include",
+    })
+
+    if (!fetchResp.ok) {
+      const errorMessage = await fetchResp.json();
+      return { ok: false, error: errorMessage, message: "error " }
+    }
+
+    const json = (await fetchResp.json()).data as GroupEventJson[]
+    console.log("These are all group events", json)
+    if (json) {
+      json.forEach((event) => {
+        event.is_participant = false
+        event.event_status = ""
+      })
+    }
+    return { ok: true, allGroupEvents: json }
 
   } catch (err) {
     if (err instanceof Error) {

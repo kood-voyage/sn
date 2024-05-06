@@ -7,7 +7,7 @@
 
 	import * as Carousel from '$lib/components/ui/carousel/index.js';
 
-	import { createPostImagesStore } from '$lib/store/create-post-store';
+	// import { createPostStore } from '$lib/store/create-post-store';
 	import { z } from 'zod';
 	import { groupPostSchema } from '$lib/types/group-schema';
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
@@ -19,16 +19,16 @@
 	export let groupId: string;
 	console.log('THIS IS THE DATA', groupId);
 
-	let images = [];
+	let images:string[] = [];
 
 	const form = superForm(data, {
 		validators: zodClient(groupPostSchema),
 		onSubmit: async ({ action, submitter }) => {
-			// console.log('RAN >>>', action);
-			// console.log('RAN >>>', submitter);
+			console.log('RAN >>>', action);
+			console.log('RAN >>>', submitter);
 		},
 		onResult: async ({ result }) => {
-			// console.log('RESULT >>>', result);
+			console.log('RESULT >>>', result);
 		}
 
 		// all of this looks to coomplicated for me :(
@@ -38,12 +38,12 @@
 
 		// 	input.formData.set('groupId', groupId); /// i dont't know about this but i want to store current groupId to a groupPostSchema
 
-		// 	// const imgResp = await handleImageCopression(image);
-		// 	// if (!imgResp.ok) {
-		// 	// 	input.cancel();
-		// 	// 	return;
-		// 	// }
-		// 	// const file = imgResp.file as File;
+		// 	const imgResp = await handleImageCopression(image);
+		// 	if (!imgResp.ok) {
+		// 		input.cancel();
+		// 		return;
+		// 	}
+		// 	const file = imgResp.file as File;
 
 		// 	input.formData.set('image', image);
 		// 	// console.log(`compressedFile size ${file.size / 1024 / 1024} MB`);
@@ -52,33 +52,36 @@
 
 	const { form: formData, enhance, submit } = form;
 
-	function limitFiles(files, maxFiles) {
+	function limitFiles(files:string, maxFiles: number) {
 		images = Array.from(files);
 
 		if (images.length > maxFiles) {
 			alert('You can only select up to 3 images.');
 			images = images.slice(0, maxFiles); // Limit the images array to the first 3 images
 		} else {
-			displayImagePreviews();
+			// displayImagePreviews();
+			console.log("Displayimagepreveiws")
 		}
 	}
 
-	function displayImagePreviews() {
-		const updatedImages = [];
+	// function displayImagePreviews() {
+	// 	const updatedImages:string[] = [];
 
-		images.forEach((image) => {
-			const reader = new FileReader();
-			reader.onload = (e) => {
-				updatedImages.push(e.target.result);
-			};
-			reader.readAsDataURL(image);
-		});
+	// 	images.forEach((image) => {
+	// 		const reader = new FileReader();
+	// 		reader.onload = (e) => {
+	// 			if(e.target && e.target.result){
+	// 				updatedImages.push(e.target.result);
+	// 			}
+	// 		};
+	// 		reader.readAsDataURL(image);
+	// 	});
 
-		createPostImagesStore.set(updatedImages);
-	}
+		// createPostImagesStore.set(updatedImages);
+	// }
 </script>
 
-{#if $createPostImagesStore.length > 0}
+<!-- {#if $createPostImagesStore.length > 0}
 	<Carousel.Root class="w-full max-w-xs m-auto">
 		<Carousel.Content>
 			{#each $createPostImagesStore as $image}
@@ -90,7 +93,7 @@
 		<Carousel.Previous />
 		<Carousel.Next />
 	</Carousel.Root>
-{/if}
+{/if} -->
 
 <form
 	method="post"

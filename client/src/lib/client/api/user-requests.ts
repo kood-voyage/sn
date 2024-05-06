@@ -9,7 +9,7 @@ type Fetch = {
   (input: string | Request | URL, init?: RequestInit | undefined): Promise<Response>;
 }
 
-type AllUsers = ReturnEntryType<"allUsers", UserType[]>
+export type AllUsers = ReturnEntryType<"allUsers", UserType[]>
 
 export async function getUsersFromArray() { }
 
@@ -186,10 +186,6 @@ export async function getUserFollowing(user_id: string, customFetch: Fetch = fet
 }
 
 export async function getUserFollowers(user_id: string, customFetch: Fetch = fetch) {
-  if (!customFetch) {
-    customFetch = fetch
-  }
-
   try {
     const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/followers/${user_id}`, {
       method: "GET",

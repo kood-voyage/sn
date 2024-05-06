@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { GroupJson } from '$lib/server/api/group-requests';
 	import Plus from 'svelte-radix/Plus.svelte';
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
@@ -10,22 +9,24 @@
 	export let data: PageData;
 
 	const currentUser = $currentUserStore as User;
-	const groups = data.groups.data;
+	const groups = data.groups;
 	let renderedGroupIds: string[] = [];
 
-	groups?.forEach((group) => {
-		if (currentUser && 'id' in currentUser) {
-			group.members?.forEach((member) => {
-				if (member.id == currentUser.id) {
-					renderedGroupIds.push(group.id);
-				} else {
-					if (group.creator_id == currentUser.id) {
+	if (groups){
+		groups.forEach((group) => {
+			if (currentUser && 'id' in currentUser) {
+				group.members?.forEach((member) => {
+					if (member.id == currentUser.id) {
 						renderedGroupIds.push(group.id);
+					} else {
+						if (group.creator_id == currentUser.id) {
+							renderedGroupIds.push(group.id);
+						}
 					}
-				}
-			});
-		}
-	});
+				});
+			}
+		});
+	}
 </script>
 
 <svelte:head>

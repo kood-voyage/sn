@@ -245,3 +245,46 @@ func (g *GroupRepository) GetPosts(group_id string) ([]*model.Post, error) {
 
 	return posts, nil
 }
+
+func (g *GroupRepository) GetAllEvents(group_id string) ([]*model.Event, error) {
+	query := `SELECT event.id, event.user_id, event.group_id, event.name, event.description, event.created_at,
+	user.id, user.username, user.email, user.timestamp,
+	user.date_of_birth, user.first_name, user.last_name,
+	user.description, user.avatar, user.cover
+FROM event
+JOIN user ON event.user_id = user.id
+WHERE event.group_id = ?;
+`
+
+	rows, err := g.store.Db.Query(query, group_id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var events []*model.Event
+	for rows.Next() {
+		var event model.Event
+		if err := rows.Scan(
+			&event.ID, &event.UserID, &event.GroupID, &event.Name, &event.Description, &event.CreatedAt,
+			&event.UserInformation.ID, &event.UserInformation.Username, &event.UserInformation.Email, &event.UserInformation.CreatedAt,
+			&event.UserInformation.DateOfBirth, &event.UserInformation.FirstName, &event.UserInformation.LastName,
+			&event.UserInformation.Description, &event.UserInformation.Avatar, &event.UserInformation.Cover,
+		); err != nil {
+			return nil, err
+		}
+
+		participants, err := g.store.Event().AllParticipants(event.ID)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				continue
+			}else {
+				return nil, err
+			}
+		}
+		event.Participants = participants
+		events = append(events, &event)
+		
+	}
+
+	return events, nil
+}
