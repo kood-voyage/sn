@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { JoinGroup } from '$lib/client/api/group-requests';
+	import { JoinGroup, type GroupJson } from '$lib/client/api/group-requests';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	// import type { GroupJson } from '$lib/server/api/group-requests';
@@ -47,8 +47,10 @@
 			});
 	}
 
+	let groupInf: GroupJson
 	if (group?.ok) {
 		const data = group.group;
+		groupInf = group.group
 		id = data.id;
 		name = data.name;
 		description = data.description;
@@ -173,7 +175,7 @@
 								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
 									Create event
 									<Dialog.Content>
-										<Createeventform data={data.form} />
+										<Createeventform data={data.form} currUser={currentUser} group={groupInf} />
 									</Dialog.Content>
 								</Dialog.Trigger>
 							</Dialog.Root>

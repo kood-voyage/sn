@@ -1,5 +1,4 @@
 
-import { type RequestEvent } from "@sveltejs/kit";
 import { type ReturnEntryType, type ReturnType } from "$lib/types/requests";
 import { PUBLIC_LOCAL_PATH } from "$env/static/public";
 import type { User, UserType } from "$lib/types/user";
@@ -38,6 +37,15 @@ export type GroupEventJson = {
   participants: User[],
   is_participant: boolean,
   event_status: string,
+}
+
+export type EventJson = {
+  id: string,
+  user_id: string,
+  group_id: string,
+  name: string,
+  description: string,
+  date: Date,
 }
 
 type Fetch = {
@@ -158,7 +166,7 @@ export async function JoinGroup(group_name: string, customFetch: Fetch = fetch) 
 
 export type GroupEvent = ReturnEntryType<"groupEvent", GroupEventJson>
 
-export async function CreateGroupEvent(event:GroupEventJson, customFetch: Fetch = fetch) {
+export async function CreateGroupEvent(event:EventJson, customFetch: Fetch = fetch) {
   try {
     const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/event/create`, {
       method: "POST",
@@ -176,8 +184,6 @@ export async function CreateGroupEvent(event:GroupEventJson, customFetch: Fetch 
       }
   
       const json = (await fetchResp.json()).data as GroupEventJson
-      json.is_participant = false
-      event.event_status = ""
       console.log("this is group event", json)
       return { ok: true, groupEvent: json }
 

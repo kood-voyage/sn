@@ -29,3 +29,19 @@ export const groupEventSchema = z.object({
   description: z.string().min(4).max(25),
   date: z.date(),
 })
+
+
+
+
+export const eventSchema = z.object({
+	id: z.string(),
+	userId: z.string(),
+	groupId: z.string(),
+  name: z.string().min(4).max(25),
+  description: z.string().min(4).max(100)
+});
+
+
+
+
+export type EventSchema = typeof eventSchema;

@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -75,7 +74,6 @@ func (s *Server) jwtMiddleware(next http.Handler) http.Handler {
 		accessToken, err := r.Cookie("at")
 		if err != nil {
 			refreshToken, err := r.Cookie("rt")
-			fmt.Println("ABCDEFGHIJKLMNOPQRSTUVWXYZ >>> ", refreshToken, err)
 			if err != nil {
 				s.error(w, http.StatusUnauthorized, err)
 				return
@@ -91,10 +89,11 @@ func (s *Server) jwtMiddleware(next http.Handler) http.Handler {
 				s.error(w, http.StatusUnauthorized, err)
 				return
 			}
-			fmt.Printf("THIS IS THE REFRESHTOKEN %+v \n", claims)
-			fmt.Println("THIS IS THE ID ", id)
+
 			session, err := s.store.Session().Check(id.(string))
 			if err != nil {
+				http.SetCookie(w, DeleteAccessToken())
+				http.SetCookie(w, DeleteRefreshToken())
 				if err == sql.ErrNoRows {
 					s.error(w, http.StatusUnauthorized, errors.New("no valid session"))
 					return

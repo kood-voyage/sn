@@ -4,42 +4,67 @@
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 	import * as Form from '$lib/components/ui/form';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import { groupEventSchema } from '$lib/types/group-schema';
+	import { type SuperValidated, type Infer, superForm, superValidate } from 'sveltekit-superforms';
+	import { eventSchema, type EventSchema } from '$lib/types/group-schema';
+	import { CreateGroupEvent, type EventJson, type Group, type GroupEventJson, type GroupJson } from '$lib/client/api/group-requests';
 
-	export let data;
+	import { v4 as uuidv4 } from "uuid";
+	import type { User } from '$lib/types/user';
+	import { date } from 'zod';
+
+	export let data: SuperValidated<Infer<EventSchema>>;
+	export let currUser: User
+	export let group: GroupEventJson
+
 	const form = superForm(data, {
-		validators: zodClient(groupEventSchema),
-		onSubmit: async ({ action, submitter }) => {
-			console.log('RAN >>>', action);
-			console.log('RAN >>>', submitter);
-            console.log("THIS IS THEDATA", data)
+		validators: zodClient(eventSchema),
+		onSubmit: async ({ formData, cancel, controller }) => {
+			const { name, description } = $formData;
+
+			const event: EventJson = {
+				id: uuidv4(),
+				user_id: currUser.id,
+				group_id: group.id,
+				name: name,
+				description: description,
+				date: new Date(Date.now()),
+			};
+
+			const resp = await CreateGroupEvent(event);
+			if (!resp.ok) {
+				console.log(resp)
+				alert('Invalid event create stuff');
+				controller.abort('Creating and event was unsuccessful');
+				return;
+			}
+			// goto('/app');
+
+			cancel();
+		},
+		onError: (event) => {
+			// console.log(event);
 		}
 	});
 
 	const { form: formData, enhance, submit } = form;
 </script>
 
-<form
-	method="post"
-	action="?/groupEventCreate"
-	use:enhance
-    >
-	<Form.Field {form} name="title">
+<form method="POST" use:enhance>
+	<Form.Field {form} name="name">
 		<Form.Control let:attrs>
 			<Form.Label>Title</Form.Label>
-			<Input {...attrs} placeholder="title" />
+			<Input {...attrs} bind:value={$formData.name} placeholder="Event name" />
 		</Form.Control>
 
 		<Form.FieldErrors />
 	</Form.Field>
-	<Form.Field {form} name="content">
+	<Form.Field {form} name="description">
 		<Form.Control let:attrs>
 			<Form.Label>Body</Form.Label>
+			<Input {...attrs} bind:value={$formData.description} placeholder="Description" />
 
-			<Textarea {...attrs} placeholder="body" />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
-	<Form.Button type="submit" class="w-full">Submit</Form.Button>
+	<Form.Button type="submit" class="w-full">Create</Form.Button>
 </form>
