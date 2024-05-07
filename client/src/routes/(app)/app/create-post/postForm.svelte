@@ -30,28 +30,30 @@
 
 			const post_id = 'pseudoID';
 
-			imageFormData.append('images', files);
-
-			console.log($formData.privacy);
-
+			for (const image of files) {
+				imageFormData.append('images', image)
+			}
 
 			imageFormData.append('path', `/post/${post_id}`);
 
-			async function imageStore() {
+			console.log(imageFormData.getAll('path'))
+			console.log(imageFormData.getAll('images'))
+			async function imageStore(formData) {
+				console.log("IMAGE ", formData)
 				const fetchResp = await fetch(PUBLIC_LOCAL_PATH + `/api/v1/auth/images/${post_id}`, {
 					method: 'POST',
 					headers: {
 						'Access-Control-Request-Method': 'POST'
 					},
 					credentials: 'include',
-					body: imageFormData
+					body: formData
 				});
 				const json = await fetchResp.json();
 
 				console.log(json);
 			}
 
-			imageStore();
+			imageStore(imageFormData);
 		}
 	});
 

@@ -24,10 +24,8 @@ func (s *Server) imageUpload() http.HandlerFunc {
 		// Get the image file from the form data
 		fileHeaders := r.MultipartForm.File["images"]
 
-		fmt.Println(fileHeaders)
 		keys := r.MultipartForm.Value["path"][0]
 
-		fmt.Println(keys)
 
 		var paths []string
 		for _, fileHeader := range fileHeaders {
