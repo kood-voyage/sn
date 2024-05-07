@@ -6,13 +6,11 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
-	"path/filepath"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/google/uuid"
 )
 
 func (s *Server) imageUpload() http.HandlerFunc {
@@ -25,9 +23,10 @@ func (s *Server) imageUpload() http.HandlerFunc {
 
 		// Get the image file from the form data
 		fileHeaders := r.MultipartForm.File["images"]
+		keys := r.MultipartForm.Value["keys"]
 
 		var paths []string
-		for _, fileHeader := range fileHeaders {
+		for index, fileHeader := range fileHeaders {
 			// Open uploaded file
 			file, err := fileHeader.Open()
 			if err != nil {
@@ -36,7 +35,6 @@ func (s *Server) imageUpload() http.HandlerFunc {
 			}
 			defer file.Close()
 
-			extension := filepath.Ext(fileHeader.Filename)
 			// Check file content type
 			contentType := fileHeader.Header.Get("Content-Type")
 			if contentType != "image/jpeg" && contentType != "image/png" && contentType != "image/gif" {
@@ -44,15 +42,12 @@ func (s *Server) imageUpload() http.HandlerFunc {
 				return
 			}
 
-			// Generate a unique file name for the image
-			fileName := uuid.New().String() + extension
-
-			err = uploadToS3(file, fileName)
+			err = uploadToS3(file, keys[index])
 			if err != nil {
 				s.error(w, http.StatusBadRequest, fmt.Errorf("failed to upload file to S3 %v", err))
 				return
 			}
-			paths = append(paths, "https://profilemediabucket-voyage.s3.amazonaws.com/"+fileName)
+			paths = append(paths, "https://profilemediabucket-voyage.s3.amazonaws.com/"+keys[index])
 		}
 		parent_id := r.PathValue("parent_id")
 		err = s.store.Image().Add(parent_id, paths)

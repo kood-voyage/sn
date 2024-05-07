@@ -148,7 +148,7 @@ func configureRouter(s *Server) {
 	s.router.GET("/api/v1/auth/chats/get/users/{id}", s.getAllChatUsers())
 	s.router.GET("/api/v1/auth/chats/{id}", s.getChatLines())
 	//----------IMAGES-S3-------------//
-	s.router.POST("/api/v1/auth/images/{parent_id}", s.imageUpload())
+	s.router.POST("/api/v1/images/{parent_id}", s.imageUpload())
 	//--WEBSOCKET--//
 	// s.router.GET("/ws", s.wsHandler())
 	s.router.GET("/auth/ws", s.wsService.HandleWS)
