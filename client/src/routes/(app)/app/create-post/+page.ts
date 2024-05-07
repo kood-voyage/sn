@@ -1,14 +1,14 @@
-import type { PageServerLoad, Actions, } from './$types';
+// import type { PageServerLoad, Actions, } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { postSchema } from "../../../../lib/types/post-schema"
 
 import { zod } from 'sveltekit-superforms/adapters';
-import { getUserIdFromCookie } from '$lib/client/jwt-handle';
+// import { getUserIdFromCookie } from '$lib/client/jwt-handle';
 
 
 import { v4 as uuidv4 } from 'uuid';
-import { saveToS3 } from '$lib/client/images/upload';
-import { LOCAL_PATH, S3_BUCKET, WEBSITE_PATH } from '$env/static/private';
+// import { saveToS3 } from '$lib/client/images/upload';
+import { PUBLIC_LOCAL_PATH, S3_BUCKET, WEBSITE_PATH } from '$env/static/public';
 import { redirect } from '@sveltejs/kit';
 
 
@@ -42,7 +42,6 @@ export const actions: Actions = {
         // const form = await superValidate(event, zod(postSchema));
 
 
-        const { user_id } = getUserIdFromCookie(event)
         const formData = await event.request.formData();
 
 
@@ -59,10 +58,10 @@ export const actions: Actions = {
         const images = formData.getAll('images') as File[];
 
 
-        for (const [i, image] of images.entries()) {
-            const resp = await saveToS3(("post" + (i + 1)), post_id, image, "post")
-            imagesURL.push(S3_BUCKET + resp)
-        }
+        // for (const [i, image] of images.entries()) {
+        //     const resp = await saveToS3(("post" + (i + 1)), post_id, image, "post")
+        //     imagesURL.push(S3_BUCKET + resp)
+        // }
 
 
         const json: Post = {
@@ -78,7 +77,7 @@ export const actions: Actions = {
         console.log(json)
 
         try {
-            const response = await fetch(`${LOCAL_PATH}/api/v1/auth/posts/create`, {
+            const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/posts/create`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${event.cookies.get('at')}`,
