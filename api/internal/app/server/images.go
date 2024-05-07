@@ -23,10 +23,14 @@ func (s *Server) imageUpload() http.HandlerFunc {
 
 		// Get the image file from the form data
 		fileHeaders := r.MultipartForm.File["images"]
-		keys := r.MultipartForm.Value["keys"]
+
+		fmt.Println(fileHeaders)
+		keys := r.MultipartForm.Value["path"][0]
+
+		fmt.Println(keys)
 
 		var paths []string
-		for index, fileHeader := range fileHeaders {
+		for _, fileHeader := range fileHeaders {
 			// Open uploaded file
 			file, err := fileHeader.Open()
 			if err != nil {
@@ -42,14 +46,19 @@ func (s *Server) imageUpload() http.HandlerFunc {
 				return
 			}
 
-			err = uploadToS3(file, keys[index])
+			err = uploadToS3(file, keys+fileHeader.Filename)
 			if err != nil {
 				s.error(w, http.StatusBadRequest, fmt.Errorf("failed to upload file to S3 %v", err))
 				return
 			}
-			paths = append(paths, "https://profilemediabucket-voyage.s3.amazonaws.com/"+keys[index])
+			paths = append(paths, "https://profilemediabucket-voyage.s3.amazonaws.com/"+keys+fileHeader.Filename)
+
 		}
 		parent_id := r.PathValue("parent_id")
+
+		fmt.Println(paths)
+		fmt.Println(parent_id)
+
 		err = s.store.Image().Add(parent_id, paths)
 		if err != nil {
 			s.error(w, http.StatusBadRequest, err)
