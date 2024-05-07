@@ -36,7 +36,7 @@
 			cancel();
 		},
 		onError: (event) => {
-			// console.log(event);
+			console.log(event);
 		}
 	});
 	const { form: formData, enhance, validate } = form;

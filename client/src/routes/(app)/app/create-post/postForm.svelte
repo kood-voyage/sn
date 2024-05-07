@@ -8,38 +8,32 @@
 	import Editor from '$lib/components/Editor.svelte';
 
 	import { postSchema, type PostSchema } from '../post-schema';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import SuperDebug, { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { FilterRuleName } from '@aws-sdk/client-s3';
-
 	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
-	import { fromTheme } from 'tailwind-merge';
+
+	import { v4 as uuidv4 } from 'uuid';
+	import { Title } from '$lib/components/ui/dialog';
+	import { browser } from '$app/environment';
 
 	export let data: SuperValidated<Infer<PostSchema>>;
-
-	let editorContent = '';
 
 	let files;
 
 	const form = superForm(data, {
 		validators: zodClient(postSchema),
 		onSubmit: ({ formData }) => {
-			formData.set('content', editorContent);
-
 			const imageFormData = new FormData();
 
-			const post_id = 'pseudoID';
+			const post_id = uuidv4();
 
 			for (const image of files) {
-				imageFormData.append('images', image)
+				imageFormData.append('images', image);
 			}
 
-			imageFormData.append('path', `/post/${post_id}`);
+			imageFormData.append('path', `post/${post_id}`);
 
-			console.log(imageFormData.getAll('path'))
-			console.log(imageFormData.getAll('images'))
 			async function imageStore(formData) {
-				console.log("IMAGE ", formData)
 				const fetchResp = await fetch(PUBLIC_LOCAL_PATH + `/api/v1/auth/images/${post_id}`, {
 					method: 'POST',
 					headers: {
@@ -54,6 +48,37 @@
 			}
 
 			imageStore(imageFormData);
+
+			async function createPost() {
+				const json = {
+					id: post_id,
+					title: $formData.title,
+					content: $formData.content,
+					privacy: $formData.privacy,
+					commnity_id: ''
+				};
+
+				const resp = await fetch(PUBLIC_LOCAL_PATH + '/api/v1/auth/posts/create', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Request-Method': 'POST'
+					},
+					credentials: 'include',
+					body: JSON.stringify(json)
+				});
+
+				console.log(resp)
+
+				console.log(JSON.stringify(json))
+			}
+
+			createPost();
+		},
+
+		onError: (event) => {
+			console.log('Hello');
+			console.log(event);
 		}
 	});
 
@@ -61,6 +86,7 @@
 
 	function handleFileChange(event) {
 		files = event.target.files;
+		$formData.images = files;
 	}
 
 	function generateImagePreviews(files) {
@@ -75,6 +101,8 @@
 	}
 
 	$: imagePreviews = files ? generateImagePreviews(files) : [];
+
+	$: console.log($formData);
 </script>
 
 {#if imagePreviews}
@@ -93,7 +121,7 @@
 {/if}
 
 <form method="POST" enctype="multipart/form-data" use:enhance>
-	<RadioGroup.Root value="public">
+	<RadioGroup.Root bind:value={$formData.privacy}>
 		<div class="flex items-center space-x-2">
 			<RadioGroup.Item value="public" id="r1" />
 			<Label for="r1">Public</Label>
@@ -119,7 +147,7 @@
 	</Form.Field>
 	<Form.Field {form} name="content">
 		<div class="border border-neutral-800 p-2 rounded-lg">
-			<Editor bind:editorContent />
+			<Editor bind:editorContent={$formData.content} />
 		</div>
 	</Form.Field>
 
@@ -138,4 +166,8 @@
 	</Form.Field>
 
 	<Form.Button class="w-full">Submit</Form.Button>
+
+	{#if browser}
+		<SuperDebug data={$formData} />
+	{/if}
 </form>
