@@ -10,21 +10,52 @@
 	import { postSchema, type PostSchema } from '../post-schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { FilterRuleName } from '@aws-sdk/client-s3';
+
+	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
+	import { fromTheme } from 'tailwind-merge';
 
 	export let data: SuperValidated<Infer<PostSchema>>;
 
 	let editorContent = '';
 
+	let files;
+
 	const form = superForm(data, {
 		validators: zodClient(postSchema),
 		onSubmit: ({ formData }) => {
 			formData.set('content', editorContent);
+
+			const imageFormData = new FormData();
+
+			const post_id = 'pseudoID';
+
+			imageFormData.append('images', files);
+
+			console.log($formData.privacy);
+
+
+			imageFormData.append('path', `/post/${post_id}`);
+
+			async function imageStore() {
+				const fetchResp = await fetch(PUBLIC_LOCAL_PATH + `/api/v1/auth/images/${post_id}`, {
+					method: 'POST',
+					headers: {
+						'Access-Control-Request-Method': 'POST'
+					},
+					credentials: 'include',
+					body: imageFormData
+				});
+				const json = await fetchResp.json();
+
+				console.log(json);
+			}
+
+			imageStore();
 		}
 	});
 
 	const { form: formData, enhance } = form;
-
-	let files;
 
 	function handleFileChange(event) {
 		files = event.target.files;
@@ -59,7 +90,7 @@
 	</Carousel.Root>
 {/if}
 
-<form method="POST" action="?/postSubmit" enctype="multipart/form-data" use:enhance>
+<form method="POST" enctype="multipart/form-data" use:enhance>
 	<RadioGroup.Root value="public">
 		<div class="flex items-center space-x-2">
 			<RadioGroup.Item value="public" id="r1" />
