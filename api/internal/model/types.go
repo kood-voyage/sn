@@ -33,6 +33,7 @@ type EventType struct {
 	Going      int
 	NotGoing   int
 	Interested int
+	Maybe      int
 	Values     map[string]int
 }
 
@@ -70,10 +71,12 @@ func InitializeTypes() Type {
 			Going:      1,
 			NotGoing:   2,
 			Interested: 3,
+			Maybe:      4,
 			Values: map[string]int{
 				"going":      1,
 				"notgoing":   2,
-				"interested": 2,
+				"interested": 3,
+				"maybe":      4,
 			},
 		},
 	}

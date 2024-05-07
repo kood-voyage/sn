@@ -41,26 +41,26 @@
 	let currentUser;
 
 	onMount(async () => {
-		async function getCurrentUser() {
-			const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/current`, {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					'Access-Control-Request-Method': 'GET'
-				},
-				credentials: 'include'
-			});
+		// async function getCurrentUser() {
+		// 	const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/current`, {
+		// 		method: 'GET',
+		// 		headers: {
+		// 			'Content-Type': 'application/json',
+		// 			'Access-Control-Request-Method': 'GET'
+		// 		},
+		// 		credentials: 'include'
+		// 	});
 
-			const data = await response.json();
-			currentUserStore.set(data.data);
+		// 	const data = await response.json();
+		// 	currentUserStore.set(data.data);
 
-			if (response) {
-				return data.data;
-			} else {
-				throw new Error('Failed to get current user');
-			}
-		}
-		currentUser = await getCurrentUser();
+		// 	if (response) {
+		// 		return data.data;
+		// 	} else {
+		// 		throw new Error('Failed to get current user');
+		// 	}
+		// }
+		// currentUser = await getCurrentUser();
 
 		connectWebSocket();
 	});

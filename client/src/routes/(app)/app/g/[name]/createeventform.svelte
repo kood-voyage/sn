@@ -11,10 +11,11 @@
 	import { v4 as uuidv4 } from "uuid";
 	import type { User } from '$lib/types/user';
 	import { date } from 'zod';
+	import { goto } from '$app/navigation';
 
 	export let data: SuperValidated<Infer<EventSchema>>;
 	export let currUser: User
-	export let group: GroupEventJson
+	export let group: GroupJson
 
 	const form = superForm(data, {
 		validators: zodClient(eventSchema),
@@ -37,7 +38,7 @@
 				controller.abort('Creating and event was unsuccessful');
 				return;
 			}
-			// goto('/app');
+			goto(`/app/g/${group.name.replace(" ", "_")}`);
 
 			cancel();
 		},

@@ -15,7 +15,7 @@ type Event struct {
 	CreatedAt       time.Time `db:"created_at" json:"created_at"`
 	Date            time.Time `db:"date" json:"date"`
 	UserInformation User      `json:"user_information"`
-	Participants    []*User    `json:"participants"`
+	Participants    []*User   `json:"participants"`
 }
 
 func NewEvent() *Event {

@@ -6,8 +6,8 @@ import { type ReturnType } from "$lib/types/requests";
 import { type User, type UserType } from "$lib/types/user";
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageLoad } from '../$types';
-import { groupPostSchema } from '$lib/types/group-schema';
-import { GetGroup, GetGroupEvents, GetGroupPosts, JoinGroup, type AllGroupPosts, type Group, type GroupEventJson, type GroupPostJson } from '$lib/client/api/group-requests';
+import { eventSchema, groupPostSchema } from '$lib/types/group-schema';
+import { GetAllInvitedUsers, GetGroup, GetGroupEvents, GetGroupPosts, JoinGroup, type AllGroupPosts, type Group, type GroupEventJson, type GroupPostJson } from '$lib/client/api/group-requests';
 import { GetAllUsers, currentUser, getUserFollowers, type AllUsers } from '$lib/client/api/user-requests';
 import { currentUserFollowers } from '$lib/store/user-store';
 
@@ -18,29 +18,27 @@ export const ssr = false;
 
 type LoadType = {
   group: Group | undefined,
-  form: SuperValidated<{
-    title: string;
-    content: string;
-    groupId: string;
-    images?: any[] | undefined;
-}, any, {
-    title: string;
-    content: string;
-    groupId: string;
-    images?: any[] | undefined;
+  eventForm: SuperValidated<{
+    id: string,
+    userId: string,
+    groupId: string,
+    name: string,
+    description: string,
 }>,
   posts: GroupPostJson[] | undefined,
   allusers: UserType[] | undefined,
   allevents: GroupEventJson[] | undefined,
+  allInvitedUsers: string[] 
 }
 
 
 export const load: PageLoad = async ({ fetch, url }) => {
-    const form = await superValidate(zod(groupPostSchema));
+    // const form = await superValidate(zod(groupPostSchema));
+    const eventForm = await superValidate(zod(eventSchema))
     const u = new URL(url).pathname.split('/');
     const groupId = u[u.length - 1].replace("_", " ")
     
-    let info: LoadType = {group: undefined, form: form, posts: undefined, allusers: undefined, allevents: undefined
+    let info: LoadType = {group: undefined, eventForm: eventForm, posts: undefined, allusers: undefined, allevents: undefined, allInvitedUsers: []
     }
     const groupInfo = (await GetGroup(groupId, fetch))
     if (!groupInfo.ok) {
@@ -72,6 +70,15 @@ export const load: PageLoad = async ({ fetch, url }) => {
     }
     if (allEvents.ok){
       info.allevents = allEvents.allGroupEvents
+    }
+    
+    const allInvitedUsers = (await GetAllInvitedUsers(groupInfo.group.id, fetch))
+    if (!allInvitedUsers.ok) {
+      console.error("something wront with getting all the invited users", allInvitedUsers.message)
+      return info
+    }
+    if (allInvitedUsers.allInvitedUsers) {
+      info.allInvitedUsers = allInvitedUsers.allInvitedUsers
     }
 
     return info

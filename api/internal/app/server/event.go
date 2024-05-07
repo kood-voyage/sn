@@ -220,8 +220,8 @@ func (s *Server) registerEvent() http.HandlerFunc {
 		}
 		eventID := r.PathValue("id")
 		option := r.PathValue("opt")
-		if option != "interested" && option != "going" && option != "notgoing" {
-			s.error(w, http.StatusUnprocessableEntity, errors.New("only options allowed - interested, going, notgoing"))
+		if option != "interested" && option != "going" && option != "notgoing" && option != "maybe" {
+			s.error(w, http.StatusUnprocessableEntity, errors.New("only options allowed - interested, going, notgoing, maybe"))
 			return
 		}
 		event, err := s.store.Event().Get(eventID)

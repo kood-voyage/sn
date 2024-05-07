@@ -117,7 +117,7 @@
 									<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
 										React
 										<Dialog.Content>
-											<Reactform />
+											<Reactform eventInfo={event} />
 										</Dialog.Content>
 									</Dialog.Trigger>
 								</Dialog.Root>
@@ -144,7 +144,7 @@
 								<Dialog.Content>
 									{#if data.group?.ok}
 										{#if data.group.group.members}
-											<Namelayout userList={data.group.group.members} />
+											<Namelayout groupid={groupInf.id} invitedUsers={data.allInvitedUsers} userList={data.group.group.members} />
 										{/if}
 									{:else}
 										<p class="m-2">Group Info Not found, try reloading the page!</p>
@@ -175,7 +175,8 @@
 								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
 									Create event
 									<Dialog.Content>
-										<Createeventform data={data.form} currUser={currentUser} group={groupInf} />
+										<Createeventform
+										data={data.eventForm} currUser={currentUser} group={groupInf} />
 									</Dialog.Content>
 								</Dialog.Trigger>
 							</Dialog.Root>

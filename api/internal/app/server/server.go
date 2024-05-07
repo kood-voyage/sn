@@ -132,6 +132,7 @@ func configureRouter(s *Server) {
 	s.router.POST("/api/v1/auth/group/invite", s.groupInvite())
 	s.router.POST("/api/v1/auth/group/request", s.groupInviteRequest())
 	s.router.GET("/api/v1/auth/group/join/{id}", s.joinGroup())
+	s.router.GET("/api/v1/auth/group/{id}/invited/all", s.groupInvitedUsers())
 	//---------EVENT--------------//
 	s.router.POST("/api/v1/auth/group/event/create", s.createEvent())
 	s.router.PUT("/api/v1/auth/group/event/update", s.updateEvent())
@@ -149,21 +150,21 @@ func configureRouter(s *Server) {
 	//----------IMAGES-S3-------------//
 	s.router.POST("/api/v1/auth/images/{parent_id}", s.imageUpload())
 	//--WEBSOCKET--//
-	s.router.GET("/ws", s.wsHandler())
+	// s.router.GET("/ws", s.wsHandler())
 	s.router.GET("/auth/ws", s.wsService.HandleWS)
 
 	s.router.GET("/login/{id}", s.login())
 }
 
-func (s *Server) wsHandler() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if err := s.wsClient.Connect(w, r); err != nil {
-			s.error(w, http.StatusBadRequest, err)
-			return
-		}
-		s.respond(w, http.StatusOK, nil)
-	}
-}
+// func (s *Server) wsHandler() http.HandlerFunc {
+// 	return func(w http.ResponseWriter, r *http.Request) {
+// 		if err := s.wsClient.Connect(w, r); err != nil {
+// 			s.error(w, http.StatusBadRequest, err)
+// 			return
+// 		}
+// 		s.respond(w, http.StatusOK, nil)
+// 	}
+// }
 
 func (s *Server) error(w http.ResponseWriter, code int, err error) {
 	s.respond(w, code, Error{err.Error()})
