@@ -18,6 +18,8 @@
 
 	export let data;
 
+
+
 	const { image_path, title, content, id, created_at } = data;
 
 	function formatDate(isoDateString: string): string {

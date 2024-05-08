@@ -8,8 +8,6 @@ export const ssr = false
 
 export const load: PageServerLoad = async () => {
     const form = await superValidate(zod(postSchema));
-
-
     return { form };
 };
 

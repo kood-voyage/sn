@@ -1,109 +1,120 @@
 <script lang="ts">
 	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
-	import { onMount } from 'svelte';
-	import type { PageLoad } from '../$types';
 
-	// import Post from '$lib/components/Post.svelte';
-	// import type { PageData } from './$types';
-	// import { currentUserFollowing, currentUserStore } from '$lib/store/user-store';
-	// export let data: PageData;
 
-	// let isCurrentUserFollowing = false;
-
-	// if ($currentUserFollowing.data !== null && $currentUserFollowing.data !== undefined) {
-	// 	for (const following of $currentUserFollowing.data) {
-	// 		if (following.id === data.user.id) {
-	// 			isCurrentUserFollowing = true;
-	// 		}
-	// 	}
-	// }
-
-	// const followersCount = data.followers ? data.followers.length : 0;
-	// const followingCount = data.following ? data.following.length : 0;
-
-	// const { posts } = data;
+	import Post from '$lib/components/Post.svelte';
 
 	export let data;
 
-	let user;
+	const { user, posts, params } = data;
 
-	async function getUser(username: string) {
-		const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/get/${username}`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Request-Method': 'GET'
-			},
-			credentials: 'include'
-		});
 
-		if (response.ok) {
-			return await response.json();
-		} else {
-			throw new Error('Failed to fetch users');
-		}
-	}
 
-	async function getFollowers(userId: string) {
-		if (userId === undefined) {
-			return 0;
-		}
+	// async function getUser(username: string) {
+	// 	const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/get/${username}`, {
+	// 		method: 'GET',
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			'Access-Control-Request-Method': 'GET'
+	// 		},
+	// 		credentials: 'include'
+	// 	});
 
-		const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/followers/${userId}`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Request-Method': 'GET'
-			},
-			credentials: 'include'
-		});
+	// 	if (response.ok) {
+	// 		return await response.json();
+	// 	} else {
+	// 		throw new Error('Failed to fetch users');
+	// 	}
+	// }
 
-		console.log(await response.json());
+	// async function getFollowers(userId: string) {
+	// 	if (userId === undefined) {
+	// 		return 0;
+	// 	}
 
-		if (response) {
-			return await response.json();
-		} else {
-			throw new Error('Failed to fetch users');
-		}
-	}
+	// 	const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/followers/${userId}`, {
+	// 		method: 'GET',
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			'Access-Control-Request-Method': 'GET'
+	// 		},
+	// 		credentials: 'include'
+	// 	});
 
-	async function getFollowing(userId: string) {
-		if (userId === undefined) {
-			return 0;
-		}
+	// 	console.log(await response.json());
 
-		const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/following/${userId}`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Request-Method': 'GET'
-			},
-			credentials: 'include'
-		});
+	// 	if (response) {
+	// 		return await response.json();
+	// 	} else {
+	// 		throw new Error('Failed to fetch users');
+	// 	}
+	// }
 
-		console.log(await response.json());
+	// async function getFollowing(userId: string) {
+	// 	if (userId === undefined) {
+	// 		return 0;
+	// 	}
 
-		if (response) {
-			return await response.json();
-		} else {
-			throw new Error('Failed to fetch folowing');
-		}
-	}
+	// 	const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/following/${userId}`, {
+	// 		method: 'GET',
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			'Access-Control-Request-Method': 'GET'
+	// 		},
+	// 		credentials: 'include'
+	// 	});
 
-	onMount(async () => {
-		try {
-			user = await getUser(data.username);
-		} catch (error) {
-			console.error(error);
-		}
-	});
+	// 	console.log(await response.json());
 
-	$: followers = getFollowers(user === undefined ? undefined : user.data.id);
-	$: following = getFollowing(user === undefined ? undefined : user.data.id);
+	// 	if (response) {
+	// 		return await response.json();
+	// 	} else {
+	// 		throw new Error('Failed to fetch folowing');
+	// 	}
+	// }
+
+	// async function getPosts(userId: string) {
+	// 	if (userId === undefined) {
+	// 		return 0;
+	// 	}
+
+	// 	const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/posts/${userId}`, {
+	// 		method: 'GET',
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			'Access-Control-Request-Method': 'GET'
+	// 		},
+	// 		credentials: 'include'
+	// 	});
+
+	// 	await response.json();
+
+	// 	if (response) {
+	// 		return await response.json();
+	// 	} else {
+	// 		throw new Error('Failed to fetch posts');
+	// 	}
+	// }
+
+	// onMount(async () => {
+	// 	try {
+	// 		user = await getUser(data.username);
+	// 	} catch (error) {
+	// 		console.error(error);
+	// 	}
+
+	// 	try {
+	// 		postsData = await getPosts(user.data.id);
+
+	// 		console.log(postsData);
+	// 	} catch (error) {
+	// 		console.error(error);
+	// 	}
+	// });
 </script>
 
 <svelte:head>
-	<title>u/{data.username}</title>
+	<title>u/{user.data.username}</title>
 </svelte:head>
 
 <!-- user profile page -->
@@ -233,14 +244,16 @@
 
 		<!-- profile activity / posts -->
 
-		<!-- 
 		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-1 p-0 sm:p-4 mt-5 md:mt-0">
-			{#if posts !== null}
-				{#each posts as data}
+			{#if posts !== undefined}
+				<p>"qweq"</p>
+				{#each posts.data as data}
 					<Post {data} />
 				{/each}
+			{:else}
+				<p>Loading...</p>
 			{/if}
-		</div> -->
+		</div>
 	</div>
 </main>
 
