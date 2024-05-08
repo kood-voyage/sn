@@ -1,31 +1,23 @@
 <script lang="ts">
-	import type { User } from '$lib/types/user';
+	import type { UserType } from '$lib/types/user';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { enhance } from '$app/forms';
 	import { createEventDispatcher } from 'svelte';
 	import { newChatCreate } from './new-chat';
-
-	type SampleData = {
-		id: string;
-		username: string;
-		first_name: string;
-		last_name: string;
-		avatar: string;
-		cover: string;
-		description: string;
-	};
+	import { currentUserStore } from '$lib/store/user-store';
 
 	const dispatch = createEventDispatcher();
 
 	let dialogOpen = false;
-	let people: SampleData[] = [];
+	let people: UserType[] = [];
 	let searchQuery = '';
-	let filteredPeople: SampleData[] = [];
+	let filteredPeople: UserType[] = [];
 
-	export let userInfo: SampleData[] | undefined;
+	export let userInfo: UserType[] | undefined;
 
 	if (userInfo != undefined) {
 		people = userInfo;
+		people = people.filter((person) => $currentUserStore.id != person.id);
 	}
 
 	$: if (people != undefined && people.length != 0) {

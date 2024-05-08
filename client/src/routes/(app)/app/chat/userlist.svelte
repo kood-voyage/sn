@@ -1,495 +1,130 @@
 <script lang="ts">
-	// let people: UserRowType[] = [];
-	// let chats: ChatsWithUsers = {};
-	// if (data.ok) {
-	// 	people = data.data.usersData;
-	// 	chats = data.data.chatsData;
-	// }
+	import { invalidate, invalidateAll } from '$app/navigation';
+	import { currentUserStore } from '$lib/store/user-store';
+	import type { UserModel, UserType } from '$lib/types/user';
+	import type { ChatsWithUsers } from './+layout';
+	import PeopleSearch from './people-search.svelte';
 
-	// let filteredPeople: UserModel[] = [];
+	let searchQuery = '';
+	let userData = $currentUserStore;
+	export let people: UserType[] = [];
+	export let chats: ChatsWithUsers = {};
 
-	// $: chats_arr = Object.values(chats);
+	// console.log(people);
+	// console.log(chats);
 
-	// // console.log(chats);
-	// $: if (chats_arr.length != 0 && chats_arr != undefined) {
-	// 	filteredPeople = Object.entries(chats).map((chat) => {
-	// 		// console.log('CHAT >>>', chat);
-	// 		const key = chat[0];
-	// 		const value = chat[1];
+	let filteredPeople: displayData[] = [];
 
-	// 		const users = value.users;
-	// 		const group_id = value.group;
-	// 		// console.log(value);
+	$: display_data = getDisplayData(chats);
+	$: chats_arr = display_data;
 
-	// 		for (const user of users) {
-	// 			// console.log(user);
-	// 		}
+	$: people = people.filter((person) => {
+		if (display_data.find((value) => value.user.id == person.id)) {
+			return false;
+		}
+		return true;
+	});
 
-	// 		// console.log(value.group_id != '' && value.group_id != undefined);
-	// 		// if (group_id != '' && group_id != undefined) {
-	// 		// }
+	// console.log(chats);
+	$: if (chats_arr.length != 0 && chats_arr != undefined) {
+		filteredPeople = display_data.filter((val) => {
+			return val.user.username.toLowerCase().includes(searchQuery.toLowerCase());
+		});
+	}
 
-	// 		// console.log('Key >>>', key);
-	// 		// console.log('Value >>>', value);
-	// 		// if (chat.length == 0) return false
-	// 		// if (chat.length == 1) return true
-	// 		// const out = chat.filter
-	// 		// return chat[0].username.toLowerCase().includes(searchQuery.toLowerCase());
-	// 		return;
-	// 	});
-	// 	filteredPeople = [];
-	// 	// .filter((chat) => {
-	// 	// 	// console.log('CHAT >>>', chat);
-	// 	// 	// const key = chat[0];
-	// 	// 	// const value = chat[1];
-	// 	// 	// const users = value.users;
-	// 	// 	// const group_id = value.group_id;
-	// 	// 	// for (const user of users) {
-	// 	// 	// 	console.log(user);
-	// 	// 	// }
-	// 	// 	// // console.log(value.group_id != '' && value.group_id != undefined);
-	// 	// 	// if (value.group_id != '' && value.group_id != undefined) {
-	// 	// 	// }
-	// 	// 	// console.log('Key >>>', key);
-	// 	// 	// console.log('Value >>>', value);
-	// 	// 	// if (chat.length == 0) return false
-	// 	// 	// if (chat.length == 1) return true
-	// 	// 	// const out = chat.filter
-	// 	// 	// return chat[0].username.toLowerCase().includes(searchQuery.toLowerCase());
-	// 	// })
-	// 	// .map((val) => {
-	// 	// 	// console.log(val);
-	// 	// 	return val[0];
-	// 	// });
-	// 	// .slice(0, 6);
+	type displayData = {
+		chat_id: string;
+		user: UserType;
+		group?: any;
+	};
 
-	// 	// console.log(filteredPeople);
-	// }
+	function getDisplayData(chats: ChatsWithUsers): displayData[] {
+		// console.log(chats);
+
+		const users: displayData[] = Object.entries(chats).map(([chat_id, group_data]) => {
+			// console.log(chat_id);
+			// console.log(group_data);
+			const users = group_data.users;
+			const group = group_data.group;
+
+			// BEFORE ALL THIS SHOULD GO GROUP CHECK AS WELL
+
+			const output: displayData = {
+				chat_id,
+				user: userData
+			};
+
+			if (users.length == 1) {
+				const other_user = users[0];
+				output.user = other_user;
+			}
+
+			return output;
+		});
+
+		// console.log(users);
+		return users;
+	}
+
+	async function handleSubmission() {
+		invalidate((url) => url.pathname == '/api/v1/auth/chats');
+	}
 </script>
 
-<div class="w-14 sm:w-60 bg-neutral-50 dark:bg-neutral-900 h-full relative flex flex-col">
+<div class="overflow-scroll h-screen w-14 sm:w-60 bg-slate-50 dark:bg-slate-900">
 	<!-- search group / friends -->
-	<div
-		class="border-b-2 border-slate-300 dark:border-slate-950 h-12 hidden sm:block sticky top-0 w-full"
-	>
-		<div class="p-2">
-			<p class="bg-neutral-300 dark:bg-neutral-950 rounded py-1 px-2">find friend</p>
+	<div class="border-b-2 border-slate-300 dark:border-slate-950 h-22 hidden sm:block">
+		{#if people.length != 0}
+			<PeopleSearch userInfo={people} on:submit={handleSubmission} />
+		{:else}
+			<div class="p-2 pb-1">
+				<p
+					class="text-sm rounded-md h-fit w-full p-1 border select-none bg-slate-300 dark:bg-slate-950"
+				>
+					Not Found
+				</p>
+			</div>
+		{/if}
+
+		<div class="p-2 pt-1">
+			<input
+				type="text"
+				placeholder="Find friend..."
+				class="bg-slate-300 dark:bg-slate-950 w-full rounded py-1 px-2 cursor-pointer"
+				bind:value={searchQuery}
+			/>
 		</div>
 	</div>
 
 	<!-- user list -->
-	<div class="sm:p-2 overflow-y-scroll">
+	<div class="sm:p-2">
 		<!-- header h1 -->
-
 		<div class="hidden sm:block p-2">
-			<p class="text-xs">DIRECT MESSAGES</p>
+			<p class="text-xs select-none">DIRECT MESSAGES</p>
 		</div>
 
-		<div class="block sm:hidden h-12"></div>
-
 		<ol class="">
-			<!-- user Component  -->
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 active rounded">
-				<a href="/app/chat/dsadsd">
-					<div class="flex p-1">
-						<img
-							src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-							alt="avatar"
-							class="m-auto w-8 h-8 rounded-full sm:mx-2"
-						/>
-						<div>
-							<p class="text-sm font-[600]">Nikita</p>
-						</div>
-					</div>
-				</a>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
-
-			<li class="user group hover:bg-neutral-300 dark:hover:bg-neutral-800 rounded">
-				<div class="flex p-1">
-					<img
-						src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nikita"
-						alt="avatar"
-						class="m-auto w-8 h-8 rounded-full sm:mx-2"
-					/>
-					<div>
-						<p class="text-sm font-[600]">Nikita</p>
-					</div>
-				</div>
-			</li>
+			{#if filteredPeople.length != 0}
+				{#each filteredPeople as chat (chat)}
+					<li>
+						<a
+							href={'/app/chat/' + chat.chat_id + '/'}
+							class="user hover:bg-slate-300 dark:hover:bg-slate-800 text-center select-none"
+							style="display: flex; align-items: center; height: 3rem; cursor: pointer; align-self: center; border-radius: 0.125rem;"
+						>
+							<img
+								src={chat.user.avatar}
+								alt="avatar"
+								class="m-auto sm:mx-2"
+								style="height: 2rem; width: 2rem; align-items: center; justify-content: center; border-radius: 50%;"
+							/>
+							<p class=" h-fit align-middle justify-center text-center">
+								{chat.user.username}
+							</p>
+						</a>
+					</li>
+				{/each}
+			{/if}
 		</ol>
 	</div>
 </div>
-
-<style>
-	.active {
-		@apply bg-neutral-400 dark:bg-neutral-700;
-	}
-
-	.user .active p {
-		@apply text-slate-900 dark:text-slate-100;
-	}
-</style>

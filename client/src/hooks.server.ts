@@ -24,8 +24,8 @@ export const handle: Handle = async ({ event, resolve }) => {
       }
     } else {
       if (pathname.startsWith("/signin") || pathname.startsWith("/signup")) {
-        redirect(303, "/app")
         console.log("REDIRECT >> /app")
+        redirect(303, "/app")
       }
     }
 

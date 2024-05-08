@@ -17,10 +17,12 @@
 	import { v4 as uuidv4 } from 'uuid';
 	import type { UserType } from '$lib/types/user';
 	import { date } from 'zod';
+	import { createEventDispatcher } from 'svelte';
 
 	export let data: SuperValidated<Infer<EventSchema>>;
 	export let currUser: UserType;
 	export let group: GroupEventJson;
+	const dispatch = createEventDispatcher();
 
 	const form = superForm(data, {
 		validators: zodClient(eventSchema),
@@ -43,6 +45,8 @@
 				controller.abort('Creating and event was unsuccessful');
 				return;
 			}
+
+			dispatch('submit', { detail: 'Created an event!' });
 			// goto('/app');
 
 			cancel();

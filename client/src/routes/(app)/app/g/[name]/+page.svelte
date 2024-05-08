@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { invalidate } from '$app/navigation';
 	import { JoinGroup, type GroupJson } from '$lib/client/api/group-requests';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { currentUserStore } from '$lib/store/user-store';
@@ -67,6 +68,12 @@
 		if (group?.ok) {
 			const result = await JoinGroup(group.group.name, fetch);
 		}
+	}
+
+	let eventDialog: boolean;
+	function handleEventSubmit() {
+		invalidate((url) => url.pathname == `/api/v1/auth/group/${groupInf.id}/event/all`);
+		eventDialog = false;
 	}
 </script>
 
@@ -167,11 +174,16 @@
 								</Dialog.Content>
 							</Dialog.Root>
 
-							<Dialog.Root>
+							<Dialog.Root bind:open={eventDialog}>
 								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
 									Create event
 									<Dialog.Content>
-										<Createeventform data={data.form} currUser={currentUser} group={groupInf} />
+										<Createeventform
+											data={data.form}
+											currUser={currentUser}
+											group={groupInf}
+											on:submit={handleEventSubmit}
+										/>
 									</Dialog.Content>
 								</Dialog.Trigger>
 							</Dialog.Root>
