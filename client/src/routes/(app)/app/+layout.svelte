@@ -23,6 +23,7 @@
 	import { setMode, resetMode } from 'mode-watcher';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import NavigationItem from './navigation-item.svelte';
+	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
 	import { onMount } from 'svelte';
 	import { connectWebSocket } from '$lib/client/websocket';
 	// import { invalidateAll } from '$app/navigation';

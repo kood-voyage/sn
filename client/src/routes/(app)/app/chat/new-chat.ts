@@ -4,7 +4,7 @@ import type { ReturnEntryType } from "$lib/types/requests"
 import { v4 as uuidv4 } from 'uuid';
 
 
-type ChatCreate = ReturnEntryType<"", void>
+type ChatCreate = ReturnEntryType<"chatCreated", boolean>
 
 export const newChatCreate = async (formData: FormData): Promise<ChatCreate> => {
 
@@ -35,45 +35,31 @@ export const newChatCreate = async (formData: FormData): Promise<ChatCreate> => 
   }
 
   // Get the user creating the post 
-  const userResp = currentUser()
+  const userResp = await currentUser()
   if (!userResp.ok) {
     console.error(userResp.error)
-    return
+    return { ok: false, error: userResp.error, message: userResp.message }
   }
 
+  console.log("CUREENT USER ID >>>", userResp.data.id)
+  console.log("TARGET USER ID >>>", target_user)
+  if (userResp.data.id == target_user) {
+    return { ok: true, chatCreated: true }
+  }
 
+  // Add User to the created Chat
+  const addUserResp = await addUserToChat(target_user, id)
+  if (!addUserResp.ok) {
+    console.error(addUserResp.error)
+    return { ok: false, error: addUserResp.error, message: addUserResp.message }
+  }
+  if (addUserResp.status <= 200, addUserResp.status >= 299) {
+    const err = new Error("Adding User To Chat failed with Status Code >>> " + addUserResp.status.toString())
+    console.error(err)
+    return { ok: false, error: err, message: err.message }
+  }
 
-  // // Add User to the created Chat
-  // let addUserResp = await addUserToChat(event, target_user, id)
-  // if (!addUserResp.ok) {
-  //   console.error(addUserResp.error)
-  //   return
-  // }
-  // if (addUserResp.data <= 200, addUserResp.data >= 299) {
-  //   const err = new Error("Adding User To Chat failed with Status Code >>> " + addUserResp.data.toString())
-  //   console.error(err)
-  //   return
-  // }
-
-  // // If the users are the same then just return and don't try to add a second one
-  // if (userIDResp.user_id == target_user) {
-  //   return redirect(303, "/app/chat")
-  // }
-
-  // // Otherwise add the second user
-  // addUserResp = await addUserToChat(event, userIDResp.user_id as string, id)
-  // if (!addUserResp.ok) {
-  //   console.error(addUserResp.error)
-  //   return fail(400, { ok: false })
-  // }
-  // if (addUserResp.data <= 200, addUserResp.data >= 299) {
-  //   const err = new Error("Adding User To Chat failed with Status Code >>> " + addUserResp.data.toString())
-  //   console.error(err)
-  //   return fail(addUserResp.data, { ok: false })
-  // }
-
-
-  // return redirect(303, "/app/chat")
+  return { ok: true, chatCreated: true }
 }
 
 

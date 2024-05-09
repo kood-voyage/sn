@@ -1,38 +1,18 @@
 <script lang="ts">
 	import * as Command from '$lib/components/ui/command';
 	import { page } from '$app/stores';
-	import type { User, UserType } from '$lib/types/user';
-	import { InviteToGroup, type InviteJson } from '$lib/client/api/group-requests';
+	import type { UserType } from '$lib/types/user';
 
 	const allUsers = $page.data.allusers as UserType[];
 	export let userList: UserType[];
-	export let invitedUsers: string[];
-	export let groupid: string;
-
-	function getUser(userId: string) {
-		const foundUser = allUsers.find((user) => user.username === userId);
-		if (foundUser) {
-			return foundUser;
-		} else {
-			return undefined;
-		}
-	}
-	async function inviteUser(event: Event) {
-		const user = getUser(event.target.innerHTML);
-		console.log('THI IS THE USER', user);
-		const invite: InviteJson = {
-			group_id: groupid,
-			target_id: user?.id!,
-			message: 'I invited you to a group',
-		};
-
-		const resp = await InviteToGroup(invite);
-		if (!resp.ok) {
-			console.log(resp);
-			alert('Something went wrong');
-			return;
-		}
-		console.log('Invited user successfully');
+	function inviteUser(event: Event) {
+		// const resp = fetch(`${LOCAL_PATH}/api/v1/auth/group/invite`, {
+		//     headers:
+		// })
+		// if(event.target){
+		// 	console.log("THis is an evet", event.target.innerHTML)
+		// }
+		console.log('Need to make API Stuff first');
 	}
 
 	function isInGroup(user: UserType) {

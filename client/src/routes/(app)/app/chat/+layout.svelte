@@ -1,28 +1,21 @@
 <script lang="ts">
-	import Editor from './editor.svelte';
-	import Header from './header.svelte';
+	import type { UserType } from '$lib/types/user';
+	import type { LayoutData } from './$types';
+	import type { ChatsWithUsers } from './+layout';
 	import Userlist from './userlist.svelte';
 
-	const user = {
-		id: 'asdasdasd',
-		username: 'Nikita',
-		first_name: 'Aladin',
-		last_name: 'Khan'
-	};
+	export let data: LayoutData;
+
+	let people: UserType[] = [];
+	let chats: ChatsWithUsers = {};
+	$: if (data.ok) {
+		people = data.chatLoadData.usersData;
+		chats = data.chatLoadData.chatsData;
+	}
 </script>
 
 <div class="flex w-full h-screen">
-	<Userlist />
+	<Userlist {people} {chats} />
 
-	<div class="w-full flex flex-col h-screen">
-		<Header {user} />
-
-		<div class="h-full overflow-y-scroll">
-			<slot />
-		</div>
-
-		<div class="w-full">
-			<Editor />
-		</div>
-	</div>
+	<slot />
 </div>

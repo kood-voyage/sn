@@ -1,12 +1,9 @@
 <script lang="ts">
+	import { invalidate } from '$app/navigation';
 	import { JoinGroup, type GroupJson } from '$lib/client/api/group-requests';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	// import type { GroupJson } from '$lib/server/api/group-requests';
-	import { currentUserFollowers, currentUserStore } from '$lib/store/user-store';
-	import type { User, UserType } from '$lib/types/user';
-	import { set } from 'zod';
-	import Content from '../../post/[id]/content.svelte';
+	import { currentUserStore } from '$lib/store/user-store';
+	import type { UserType } from '$lib/types/user';
 	import type { PageData } from './$types';
 	import Createeventform from './createeventform.svelte';
 	import GroupPostForm from './groupPostForm.svelte';
@@ -16,7 +13,7 @@
 	export let data: PageData;
 
 	let id: string, name: string, description: string, image_path: string;
-	const currentUser = $currentUserStore as User;
+	const currentUser = $currentUserStore as UserType;
 
 	const group = data.group;
 	console.log('ALL EVENTS', data);
@@ -29,7 +26,7 @@
 			event.participants.forEach((participant) => {
 				if (participant.id == currentUser.id) {
 					event.is_participant = true;
-					event.event_status = participant.event_status
+					event.event_status = participant.event_status;
 				}
 			});
 		}
@@ -47,10 +44,10 @@
 			});
 	}
 
-	let groupInf: GroupJson
+	let groupInf: GroupJson;
 	if (group?.ok) {
 		const data = group.group;
-		groupInf = group.group
+		groupInf = group.group;
 		id = data.id;
 		name = data.name;
 		description = data.description;
@@ -71,6 +68,12 @@
 		if (group?.ok) {
 			const result = await JoinGroup(group.group.name, fetch);
 		}
+	}
+
+	let eventDialog: boolean;
+	function handleEventSubmit() {
+		invalidate((url) => url.pathname == `/api/v1/auth/group/${groupInf.id}/event/all`);
+		eventDialog = false;
 	}
 </script>
 
@@ -109,9 +112,9 @@
 								<p>Participants: 0</p>
 							{/if}
 							{#if event.is_participant}
-								<p class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
-									>I am {event.event_status}</p
-								>
+								<p class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
+									I am {event.event_status}
+								</p>
 							{:else}
 								<Dialog.Root>
 									<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
@@ -171,12 +174,16 @@
 								</Dialog.Content>
 							</Dialog.Root>
 
-							<Dialog.Root>
+							<Dialog.Root bind:open={eventDialog}>
 								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
 									Create event
 									<Dialog.Content>
 										<Createeventform
-										data={data.eventForm} currUser={currentUser} group={groupInf} />
+											data={data.form}
+											currUser={currentUser}
+											group={groupInf}
+											on:submit={handleEventSubmit}
+										/>
 									</Dialog.Content>
 								</Dialog.Trigger>
 							</Dialog.Root>

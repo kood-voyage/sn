@@ -20,6 +20,11 @@ import (
 // @Router /api/v1/auth/chats/create [post]
 func (s *Server) createChat() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		userID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
+			return
+		}
 		var chat model.Chat
 		if err := s.decode(r, &chat); err != nil {
 			s.error(w, http.StatusBadRequest, err)
@@ -32,6 +37,11 @@ func (s *Server) createChat() http.HandlerFunc {
 
 		c, err := s.store.Chat().Create(chat)
 		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		if err := s.store.Chat().AddUser(model.User{ID: userID}, chat); err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}

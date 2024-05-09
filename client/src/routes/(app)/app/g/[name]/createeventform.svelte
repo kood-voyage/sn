@@ -6,16 +6,23 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { type SuperValidated, type Infer, superForm, superValidate } from 'sveltekit-superforms';
 	import { eventSchema, type EventSchema } from '$lib/types/group-schema';
-	import { CreateGroupEvent, type EventJson, type Group, type GroupEventJson, type GroupJson } from '$lib/client/api/group-requests';
+	import {
+		CreateGroupEvent,
+		type EventJson,
+		type Group,
+		type GroupEventJson,
+		type GroupJson
+	} from '$lib/client/api/group-requests';
 
-	import { v4 as uuidv4 } from "uuid";
-	import type { User } from '$lib/types/user';
+	import { v4 as uuidv4 } from 'uuid';
+	import type { UserType } from '$lib/types/user';
 	import { date } from 'zod';
-	import { goto } from '$app/navigation';
+	import { createEventDispatcher } from 'svelte';
 
 	export let data: SuperValidated<Infer<EventSchema>>;
-	export let currUser: User
-	export let group: GroupJson
+	export let currUser: UserType;
+	export let group: GroupEventJson;
+	const dispatch = createEventDispatcher();
 
 	const form = superForm(data, {
 		validators: zodClient(eventSchema),
@@ -28,17 +35,19 @@
 				group_id: group.id,
 				name: name,
 				description: description,
-				date: new Date(Date.now()),
+				date: new Date(Date.now())
 			};
 
 			const resp = await CreateGroupEvent(event);
 			if (!resp.ok) {
-				console.log(resp)
+				console.log(resp);
 				alert('Invalid event create stuff');
 				controller.abort('Creating and event was unsuccessful');
 				return;
 			}
-			goto(`/app/g/${group.name.replace(" ", "_")}`);
+
+			dispatch('submit', { detail: 'Created an event!' });
+			// goto('/app');
 
 			cancel();
 		},
@@ -63,7 +72,6 @@
 		<Form.Control let:attrs>
 			<Form.Label>Body</Form.Label>
 			<Input {...attrs} bind:value={$formData.description} placeholder="Description" />
-
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>

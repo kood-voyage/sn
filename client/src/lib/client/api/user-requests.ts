@@ -11,6 +11,8 @@ type Fetch = {
 
 export type AllUsers = ReturnEntryType<"allUsers", UserType[]>
 
+export async function getUsersFromArray() { }
+
 export async function GetAllUsers(customFetch: Fetch = fetch): Promise<AllUsers> {
   try {
     const resp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/all`, {

@@ -1,7 +1,6 @@
 import { PUBLIC_LOCAL_PATH } from "$env/static/public"
 import type { ReturnEntryType, ReturnType } from "$lib/types/requests"
-import type { RequestEvent } from "@sveltejs/kit"
-
+import type { UserType } from "$lib/types/user";
 
 type Fetch = {
   (input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response>;
@@ -25,6 +24,8 @@ export async function getAllChats(customFetch: Fetch = fetch): Promise<ChatsResp
       credentials: "include"
     })
     const json = (await fetchResp.json()).data
+
+    if (!fetchResp.ok) throw new Error(await fetchResp.json())
 
     return { ok: true, data: json }
   } catch (err) {
@@ -53,13 +54,9 @@ export async function createChat(id: string, group_id: string = ""): Promise<Cre
       })
     })
 
-    if (fetchResp.ok) {
-      return { ok: true, status: fetchResp.status }
-    } else {
-      return { ok: false, error: new Error("Fetch Response went wrong trying to create chat"), message: await fetchResp.json() }
-    }
+    if (!fetchResp.ok) throw new Error(await fetchResp.json())
 
-
+    return { ok: true, status: fetchResp.status }
   } catch (err) {
     if (err instanceof Error) {
       return { ok: false, error: err, message: err.message }
@@ -69,22 +66,27 @@ export async function createChat(id: string, group_id: string = ""): Promise<Cre
   }
 }
 
-type AddUserToChat = ReturnType<number>
-export async function addUserToChat(event: RequestEvent, target_user_id: string, chat_id: string): Promise<AddUserToChat> {
+type AddUserToChat = ReturnEntryType<"status", number>
+export async function addUserToChat(target_user_id: string, chat_id: string): Promise<AddUserToChat> {
   try {
     const fetchResp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/chats/add/user`, {
-      method: "post",
+      method: "POST",
       headers: {
-        "Authorization": `Bearer ${event.cookies.get('at')?.valueOf()}`,
-        'Content-Type': 'application/json' // Specify JSON content type
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "POST",
       },
+      credentials: "include",
       body: JSON.stringify({
         user_id: target_user_id,
         chat_id: chat_id
       })
     })
 
-    return { ok: true, data: fetchResp.status }
+    console.log(await fetchResp.json())
+
+    if (!fetchResp.ok) throw new Error(await fetchResp.json())
+
+    return { ok: true, status: fetchResp.status }
 
   } catch (err) {
     if (err instanceof Error) {
@@ -95,12 +97,12 @@ export async function addUserToChat(event: RequestEvent, target_user_id: string,
   }
 }
 
-export type GetChatUsers = {
-  id: string,
-  member_type: number
-}
+// export type GetChatUsers = {
+//   id: string,
+//   member_type: number
+// }
 
-type GetChatResp = ReturnType<GetChatUsers[]>
+type GetChatResp = ReturnType<UserType[]>
 export async function getChatUsers(chat_id: string, customFetch: Fetch = fetch): Promise<GetChatResp> {
   try {
     const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/chats/get/users/${chat_id}`, {
@@ -116,6 +118,8 @@ export async function getChatUsers(chat_id: string, customFetch: Fetch = fetch):
 
     // console.log(json)
 
+    if (!fetchResp.ok) throw new Error(await fetchResp.json())
+
     return { ok: true, data: json }
   } catch (err) {
     if (err instanceof Error) {
@@ -124,4 +128,67 @@ export async function getChatUsers(chat_id: string, customFetch: Fetch = fetch):
       return { ok: false, error: err, message: "Unknown Error" }
     }
   }
+}
+
+type AddLineResp = ReturnEntryType<"status", number>
+export async function addChatLine(chat_id: string, user_id: string, message: string, customFetch: Fetch = fetch): Promise<AddLineResp> {
+  try {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/chats/add/line`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "POST",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        chat_id,
+        user_id,
+        message
+      })
+    })
+
+    if (!fetchResp.ok) throw new Error(await fetchResp.json())
+
+    return { ok: true, status: fetchResp.status }
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
+
+export type ChatLine = {
+  chat_id: string
+  created_at: string
+  id: string
+  message: string
+  user_id: string
+}
+
+
+type GetLineResp = ReturnEntryType<"chatLines", ChatLine[]>
+export async function getChatLines(chat_id: string, customFetch: Fetch = fetch): Promise<GetLineResp> {
+  try {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/chats/${chat_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include",
+    })
+
+    const json = (await fetchResp.json()).data as ChatLine[]
+
+    return { ok: true, chatLines: json }
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+
 }
