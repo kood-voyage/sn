@@ -60,71 +60,16 @@
 
 export const ssr = false 
 
-
-
-import { PUBLIC_LOCAL_PATH } from '$env/static/public';
+import { getUserPosts } from '$lib/client/api/post-requests';
+import { getUserById, getUserFollowers, getUserFollowing } from '$lib/client/api/user-requests';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async({ params }) => {
 
+	const user = await getUserById(params.username)
+	const posts = await getUserPosts(user.data.id)
+	const followers = await getUserFollowers(user.data.id)
+	const following = await getUserFollowing(user.data.id)
 
-
-
-	async function getUser(username: string) {
-		const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/get/${username}`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Request-Method': 'GET'
-			},
-			credentials: 'include'
-		});
-
-		if (response.ok) {
-			return response.json();
-		} else {
-			throw new Error('Failed to fetch users');
-		}
-	}
-
-
-	const user = await getUser(params.username)
-
-
-
-
-
-	async function getPosts(userId: string) {
-	if (userId === undefined) {
-		return 0;
-	}
-
-	const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/posts/${userId}`, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-			'Access-Control-Request-Method': 'GET'
-		},
-		credentials: 'include'
-	});
-
-	if (response) {
-		return await response.json();
-	} else {
-		throw new Error('Failed to fetch posts');
-	}
-}
-
-
-
-	const posts = await getPosts(user.data.id)
-
-
-
-
-
-
-	
-
-	return {params,posts,user};
+	return {params,posts,user,followers,following};
 };

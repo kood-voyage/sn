@@ -1,10 +1,9 @@
-
-
-
 import { commentSchema } from "../../comment-schema";
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { PUBLIC_LOCAL_PATH } from '$env/static/public';
+import { getUserById } from "$lib/client/api/user-requests";
+
 
 export interface Post {
   id: string;
@@ -32,8 +31,13 @@ export interface Comment {
 
 
 
+
+
 export const load: PageLoad = async ({params}) => {
   const post_id = params.id
+
+
+
   const postResponse = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/posts/${post_id}`, {
 			method: 'GET',
 			headers: {
@@ -45,7 +49,7 @@ export const load: PageLoad = async ({params}) => {
   })
 
   const commentsResponse = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/comment/${post_id}`, {
-method: 'GET',
+      method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
 				'Access-Control-Request-Method': 'GET'
@@ -53,25 +57,31 @@ method: 'GET',
 			credentials: 'include'
   })
 
+
+
+
   const form = await superValidate(zod(commentSchema));
 
   const postJson = await postResponse.json()
   const post: Post = postJson.data
 
 
-//   const postAuthorResponse = await getUser(post.user_id)
-//   const postAuthor = await postAuthorResponse.data
+  console.log(post)
+
+
+  const postAuthorResponse = await getUserById(post.user_id)
+  const postAuthor = await postAuthorResponse.data
 
  const   comments = await commentsResponse.json()
 // comments = commentsJson.data
 
 
 
-console.log(post)
+console.log(comments)
 
 
 
-  return { post, form, comments }
+  return { post, form, comments,postAuthor }
 
 }
 

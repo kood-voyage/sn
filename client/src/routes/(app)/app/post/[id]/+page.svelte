@@ -13,7 +13,7 @@
 
 	export let data;
 
-	const { post} = data;
+	const { post, postAuthor } = data;
 
 	// commentsStore.set(comments);
 
@@ -56,11 +56,11 @@
 	</div>
 
 	<div class="w-full lg:w-[480px] lg:overflow-y-scroll flex flex-col {toggle && 'hidden'}">
-		<!-- <Author {postAuthor} created_at={post.created_at} /> -->
+		<Author {postAuthor} created_at={post.created_at} />
 
 		<Content content={post.content} />
 
-		<!-- <Tooltip.Root>
+		<Tooltip.Root>
 			<Tooltip.Trigger class="justify-end h-8 w-full border-b flex pr-4">
 				<ChatBubble class="flex items-center text-muted-foreground w-4" />
 				<span class="flex items-center text-muted-foreground w-4 ml-2">{commentsLength}</span>
@@ -68,11 +68,11 @@
 			<Tooltip.Content align="center" alignOffset={800} class="flex items-center self-center">
 				<p>Comments {commentsLength}</p>
 			</Tooltip.Content>
-		</Tooltip.Root> -->
+		</Tooltip.Root>
 
-		<!-- <div class="h-full w-full lg:max-w-[480px] lg:overflow-y-scroll">
+		<div class="h-full w-full lg:max-w-[480px] lg:overflow-y-scroll">
 			<Comments />
-		</div> -->
+		</div>
 
 		<footer class="w-full p-4">
 			<CommentForm data={data.form} post_id={data.post.id} />
