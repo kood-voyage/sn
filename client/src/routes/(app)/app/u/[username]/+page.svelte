@@ -1,14 +1,11 @@
 <script lang="ts">
 	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
 
-
 	import Post from '$lib/components/Post.svelte';
 
 	export let data;
 
 	const { user, posts, params } = data;
-
-
 
 	// async function getUser(username: string) {
 	// 	const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/get/${username}`, {
@@ -246,7 +243,6 @@
 
 		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-1 p-0 sm:p-4 mt-5 md:mt-0">
 			{#if posts !== undefined}
-				<p>"qweq"</p>
 				{#each posts.data as data}
 					<Post {data} />
 				{/each}

@@ -1,73 +1,79 @@
-// import { LOCAL_PATH } from "$env/static/private"
-// import { getUser } from "$lib/server/db/profile";
-// import type { PageServerLoad, Actions, } from './$types';
-// import { commentSchema } from "../../comment-schema";
-// import { superValidate } from 'sveltekit-superforms';
-// import { zod } from 'sveltekit-superforms/adapters';
-// import { redirect } from "@sveltejs/kit";
-// import { getUserIdFromCookie } from "$lib/client/jwt-handle";
 
-// export interface Post {
-//   id: string;
-//   user_id: string;
-//   title: string;
-//   content: string;
-//   image_path: string[];
-//   community_id: string;
-//   created_at: Date;
-//   privacy: string;
-// }
 
-// export interface Comment {
-//   id: string
-//   user_id: string
-//   post_id: string
-//   parent_id: string
-//   content: string
-//   image_path?: string[]
-//   created_at: string
-//   count?: string
 
-// }
+import { commentSchema } from "../../comment-schema";
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { PUBLIC_LOCAL_PATH } from '$env/static/public';
 
-// export const load: PageServerLoad = async (event) => {
-//   const post_id = event.params.id
-//   const postResponse = await fetch(`${LOCAL_PATH}/api/v1/auth/posts/${post_id}`, {
-//     method: 'GET',
-//     headers: {
-//       'Authorization': `Bearer ${event.cookies.get('at')}`
-//     }
+export interface Post {
+  id: string;
+  user_id: string;
+  title: string;
+  content: string;
+  image_path: string[];
+  community_id: string;
+  created_at: Date;
+  privacy: string;
+}
 
-//   })
+export interface Comment {
+  id: string
+  user_id: string
+  post_id: string
+  parent_id: string
+  content: string
+  image_path?: string[]
+  created_at: string
+  count?: string
 
-//   const commentsResponse = await fetch(`${LOCAL_PATH}/api/v1/auth/comment/${post_id}`, {
-//     method: 'GET',
-//     headers: {
-//       'Authorization': `Bearer ${event.cookies.get('at')}`
-//     }
+}
 
-//   })
 
-//   const form = await superValidate(zod(commentSchema));
 
-//   const postJson = await postResponse.json()
-//   const post: Post = postJson.data
+
+export const load: PageLoad = async ({params}) => {
+  const post_id = params.id
+  const postResponse = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/posts/${post_id}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Access-Control-Request-Method': 'GET'
+			},
+			credentials: 'include'
+
+  })
+
+  const commentsResponse = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/comment/${post_id}`, {
+method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Access-Control-Request-Method': 'GET'
+			},
+			credentials: 'include'
+  })
+
+  const form = await superValidate(zod(commentSchema));
+
+  const postJson = await postResponse.json()
+  const post: Post = postJson.data
 
 
 //   const postAuthorResponse = await getUser(post.user_id)
 //   const postAuthor = await postAuthorResponse.data
 
-//   const comments = await commentsResponse.json()
-//   // const comments = commentsJson.data
+ const   comments = await commentsResponse.json()
+// comments = commentsJson.data
 
 
-//   console.log("HERE IS")
-//   console.log(comments)
+
+console.log(post)
 
 
-//   return { post, postAuthor, form, comments }
 
-// }
+  return { post, form, comments }
+
+}
 
 
 // export const actions: Actions = {
