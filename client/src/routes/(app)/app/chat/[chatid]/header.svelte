@@ -1,6 +1,5 @@
 <script lang="ts">
 	export let user;
-	$: console.log('USER', user);
 
 	// const { id, last_name, first_name, username } = user;
 </script>

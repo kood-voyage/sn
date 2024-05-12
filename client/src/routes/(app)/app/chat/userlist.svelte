@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { invalidate, invalidateAll } from '$app/navigation';
 	import { currentUserStore } from '$lib/store/user-store';
+	import { userStatusStore } from '$lib/store/websocket-store';
 	import type { UserModel, UserType } from '$lib/types/user';
+	import { onMount } from 'svelte';
 	import type { ChatsWithUsers } from './+layout';
 	import PeopleSearch from './people-search.svelte';
 
 	let searchQuery = '';
 	let userData = $currentUserStore;
+	let userStatus = $userStatusStore;
 	export let people: UserType[] = [];
 	export let chats: ChatsWithUsers = {};
 
@@ -69,6 +72,12 @@
 	async function handleSubmission() {
 		invalidate((url) => url.pathname == '/api/v1/auth/chats');
 	}
+
+	onMount(() => {
+		userStatusStore.subscribe((user_status) => {
+			userStatus = user_status;
+		});
+	});
 </script>
 
 <div class="overflow-scroll h-screen w-14 sm:w-60 bg-slate-50 dark:bg-slate-900">
@@ -107,21 +116,39 @@
 			{#if filteredPeople.length != 0}
 				{#each filteredPeople as chat (chat)}
 					<li>
-						<a
-							href={'/app/chat/' + chat.chat_id + '/'}
-							class="user hover:bg-slate-300 dark:hover:bg-slate-800 text-center select-none"
-							style="display: flex; align-items: center; height: 3rem; cursor: pointer; align-self: center; border-radius: 0.125rem;"
-						>
-							<img
-								src={chat.user.avatar}
-								alt="avatar"
-								class="m-auto sm:mx-2"
-								style="height: 2rem; width: 2rem; align-items: center; justify-content: center; border-radius: 50%;"
-							/>
-							<p class=" h-fit align-middle justify-center text-center">
-								{chat.user.username}
-							</p>
-						</a>
+						{#if userStatus[chat.user.id]}
+							<a
+								href={'/app/chat/' + chat.chat_id + '/'}
+								class="user hover:bg-slate-300 dark:hover:bg-slate-800 text-center select-none"
+								style=" background-color: rgb(0, 128, 0); display: flex; align-items: center; height: 3rem; cursor: pointer; align-self: center; border-radius: 0.125rem;"
+							>
+								<img
+									src={chat.user.avatar}
+									alt="avatar"
+									class="m-auto sm:mx-2"
+									style="height: 2rem; width: 2rem; align-items: center; justify-content: center; border-radius: 50%;"
+								/>
+								<p class=" h-fit align-middle justify-center text-center">
+									{chat.user.username}
+								</p>
+							</a>
+						{:else}
+							<a
+								href={'/app/chat/' + chat.chat_id + '/'}
+								class="user hover:bg-slate-300 dark:hover:bg-slate-800 text-center select-none"
+								style=" background-color: red; display: flex; align-items: center; height: 3rem; cursor: pointer; align-self: center; border-radius: 0.125rem;"
+							>
+								<img
+									src={chat.user.avatar}
+									alt="avatar"
+									class="m-auto sm:mx-2"
+									style="height: 2rem; width: 2rem; align-items: center; justify-content: center; border-radius: 50%;"
+								/>
+								<p class=" h-fit align-middle justify-center text-center">
+									{chat.user.username}
+								</p>
+							</a>
+						{/if}
 					</li>
 				{/each}
 			{/if}

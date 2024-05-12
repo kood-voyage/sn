@@ -1,21 +1,32 @@
-// FUNCTION FOR SENDING MESSAGE
-// 1. ADD MESSAGE TO DB
-// 2. ADD NOTIFICATION TO DB
-// 3. send WEBSOCKET MESSAGE TO TARGET USER/GROUP
-
-import { addChatLine } from "$lib/client/api/chat-requests"
 
 
+import { addChatLine, type ChatLine } from "$lib/client/api/chat-requests"
+import { sendMessage } from "$lib/client/websocket"
+import type { ReturnEntryType } from "$lib/types/requests"
 
-export const sendMessageTo = async (message: string, chat_id: string, user_id: string) => {
+type SendMessage = ReturnEntryType<"chatLine", ChatLine>
+
+export const sendMessageTo = async (message: string, chat_id: string, user_id: string): Promise<SendMessage> => {
   console.log("message >>>", message)
   console.log("chat_id >>>", chat_id)
   console.log("user_id >>>", user_id)
   const addLineResp = await addChatLine(chat_id, user_id, message)
   if (!addLineResp.ok) {
     console.error(addLineResp.error)
-    return { ok: false }
+    return { ...addLineResp }
   }
 
-  console.log(addLineResp)
+  return { ...addLineResp }
+}
+
+export const sendMessageByWebsocket = (target_id: string, source_id: string, message: ChatLine) => {
+  sendMessage(
+    JSON.stringify({
+      type: 'message',
+      address: 'direct',
+      id: target_id,
+      source_id: source_id,
+      data: message
+    })
+  );
 }

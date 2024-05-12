@@ -51,8 +51,9 @@ export const load: PageLoad = async ({ fetch, params }): Promise<LoadOut> => {
     console.error(linesResp.error)
     return { ...linesResp }
   }
+  let lines_data = linesResp.chatLines
+  if (lines_data == null) lines_data = []
 
-  const lines_data = linesResp.chatLines
   return { ok: true, chatData: { lines_data, display_data } }
 
 }

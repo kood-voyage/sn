@@ -130,7 +130,7 @@ export async function getChatUsers(chat_id: string, customFetch: Fetch = fetch):
   }
 }
 
-type AddLineResp = ReturnEntryType<"status", number>
+type AddLineResp = ReturnEntryType<"chatLine", ChatLine>
 export async function addChatLine(chat_id: string, user_id: string, message: string, customFetch: Fetch = fetch): Promise<AddLineResp> {
   try {
     const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/chats/add/line`, {
@@ -146,10 +146,10 @@ export async function addChatLine(chat_id: string, user_id: string, message: str
         message
       })
     })
+    const data = await fetchResp.json()
 
-    if (!fetchResp.ok) throw new Error(await fetchResp.json())
-
-    return { ok: true, status: fetchResp.status }
+    if (!fetchResp.ok) throw new Error(data)
+    return { ok: true, chatLine: data }
   } catch (err) {
     if (err instanceof Error) {
       return { ok: false, error: err, message: err.message }
@@ -165,6 +165,14 @@ export type ChatLine = {
   id: string
   message: string
   user_id: string
+}
+
+export function isChatLine(obj: any): obj is ChatLine {
+  return typeof obj.chat_id === 'string' &&
+    typeof obj.created_at === 'string' &&
+    typeof obj.id === 'string' &&
+    typeof obj.message === 'string' &&
+    typeof obj.user_id === 'string';
 }
 
 

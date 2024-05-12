@@ -1,3 +1,4 @@
+import type { ChatLine } from "$lib/client/api/chat-requests";
 import { writable } from "svelte/store";
 
 export type ServerMessage = {
@@ -11,7 +12,7 @@ export type ServerMessage = {
 export type WebSocketStore = { websocket: WebSocket | undefined, access_token: string | undefined }
 export const webSocketStore = writable<WebSocketStore>({ websocket: undefined, access_token: undefined })
 
-export type MessageStore = Array<ServerMessage>
+export type MessageStore = Array<ChatLine>
 export const messageStore = writable<MessageStore>([])
 
 export type UserStatusStore = { [key: string]: boolean }

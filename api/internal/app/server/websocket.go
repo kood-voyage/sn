@@ -92,7 +92,7 @@ func (cs *ChatService) AddClient(client *Client) {
 	cs.Lock()
 	defer cs.Unlock()
 	cs.getOnlineUsers(*client)
-	cs.sendUserStatus(*client)
+	cs.sendUserStatus(*client, true)
 	cs.Clients = append(cs.Clients, client)
 }
 
@@ -100,6 +100,7 @@ func (c *Client) wsRecieveLoop(cs *ChatService) {
 	fmt.Printf("New client %+v connected...\n", c)
 	defer func() {
 		fmt.Printf("Client %+v is leaving...\n", c)
+		cs.sendUserStatus(*c, false)
 		cs.RemoveClient(c)
 	}()
 	for {
@@ -165,7 +166,7 @@ func (cs *ChatService) writeToUsers(clients []*Client, p Payload) error {
 	return nil
 }
 
-func (cs *ChatService) sendUserStatus(client Client) {
+func (cs *ChatService) sendUserStatus(client Client, status bool) {
 	// get current user chats list
 	// check all the user id-s from the chats list if we have a connection with specific id send that user according status
 	userSendList, err := cs.store.Chat().GetChatsForUser(client.id)
@@ -181,7 +182,7 @@ func (cs *ChatService) sendUserStatus(client Client) {
 					Address:  "direct",
 					ID:       c.id,
 					SourceID: client.id,
-					Data:     true,
+					Data:     status,
 				})
 			}
 		}

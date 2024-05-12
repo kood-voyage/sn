@@ -5,6 +5,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { newChatCreate } from './new-chat';
 	import { currentUserStore } from '$lib/store/user-store';
+	import { sendMessage } from '$lib/client/websocket';
 
 	const dispatch = createEventDispatcher();
 
@@ -65,6 +66,15 @@
 							}
 							dispatch('submit', { detail: 'Data or message from PeopleSearch' });
 							dialogOpen = false;
+							sendMessage(
+								JSON.stringify({
+									type: 'status',
+									address: 'direct',
+									id: person.id,
+									source_id: $currentUserStore.id,
+									data: 2
+								})
+							);
 
 							controller.abort();
 							cancel();

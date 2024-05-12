@@ -1,27 +1,32 @@
 <script lang="ts">
 	import Message from './message.svelte';
 	import Header from './header.svelte';
-
 	import type { PageData } from './$types';
 	import Editor from './editor.svelte';
 	import { afterUpdate, onMount } from 'svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { PaperPlane } from 'svelte-radix';
-	import { sendMessageTo } from './send-message';
+	import { sendMessageByWebsocket, sendMessageTo } from './send-message';
 	import type { DisplayData } from './+page';
 	import { currentUserStore } from '$lib/store/user-store';
 	import type { ChatLine } from '$lib/client/api/chat-requests';
+	import { messageStore } from '$lib/store/websocket-store';
 
 	export let data: PageData;
 
 	let user: DisplayData;
-	let chat_lines: ChatLine[];
+	let chat_lines: ChatLine[] = [];
 	$: if (data.ok) {
-		console.log('USERs', user);
-		console.log('USERs', chat_lines);
 		user = data.chatData.display_data;
 		chat_lines = data.chatData.lines_data;
-		if (chat_lines && chat_lines.length != 0) chat_lines = chat_lines.sort(() => -1);
+		if (chat_lines && chat_lines.length != 0)
+			chat_lines = chat_lines.sort((linex, liney) => {
+				if (linex.created_at > liney.created_at) {
+					return 1;
+				} else if (linex.created_at == liney.created_at) return 0;
+				return -1;
+			});
+		messageStore.set(chat_lines);
 	}
 
 	type userAllocate = { [key: string]: DisplayData };
@@ -42,31 +47,17 @@
 	}
 
 	let editorContent: string;
-	// $: console.log(editorContent);
-
-	const user1 = {
-		username: 'Surinam',
-		avatar:
-			'https://pyxis.nymag.com/v1/imgs/630/6e0/eb215ad90cd826b9e57ff505f54c5c7228-07-avatar.1x.rsquare.w1400.jpg'
-	};
-
-	const user2 = {
-		username: 'Nikita',
-		avatar:
-			'https://static.vecteezy.com/system/resources/thumbnails/002/002/403/small/man-with-beard-avatar-character-isolated-icon-free-vector.jpg'
-	};
-
-	const time = '11/12/04 44:30';
-
-	const msg =
-		'What do you think about our current project crisis? dasdasda sd asd asd asd askjdkjasndjasn dask jdnaskjndjkas ndkanskdjnaskj nakjsnd kandjkanskj dnasjkd nkasnd kas';
-
 	let scrollContainer: HTMLDivElement;
 	function scrollToBottom() {
 		if (scrollContainer) scrollContainer.scrollTop = scrollContainer.scrollHeight;
 	}
 
-	onMount(scrollToBottom);
+	onMount(() => {
+		messageStore.subscribe((value) => {
+			chat_lines = value;
+		});
+		scrollToBottom();
+	});
 	afterUpdate(scrollToBottom);
 </script>
 
@@ -93,27 +84,6 @@
 					<Message user={user_allocation[line.user_id]} time={line.created_at} msg={line.message} />
 				{/each}
 			{/if}
-			<!-- <Message user={user1} {time} {msg} />
-			<Message user={user2} {time} {msg} />
-			<Message user={user1} {time} {msg} />
-			<Message user={user2} {time} {msg} />
-			<Message user={user1} {time} {msg} />
-			<Message user={user2} {time} {msg} />
-			<Message user={user1} {time} {msg} />
-			<Message user={user2} {time} {msg} />
-			<Message user={user1} {time} {msg} />
-			<Message user={user2} {time} {msg} />
-			<Message user={user1} {time} {msg} />
-			<Message user={user2} {time} {msg} />
-			<Message user={user1} {time} {msg} />
-			<Message user={user2} {time} {msg} />
-			<Message user={user1} {time} {msg} />
-			<Message user={user2} {time} {msg} />
-			<Message user={user1} {time} {msg} />
-			<Message user={user2} {time} {msg} />
-			<Message user={user1} {time} {msg} />
-			<Message user={user2} {time} {msg} /> -->
-			<!-- More messages -->
 		</div>
 		<div style="align-items: center;" class="flex flex-row w-full">
 			<Editor bind:editorContent />
@@ -132,9 +102,25 @@
 						return;
 					}
 
-					console.log(editorContent);
-					if (editorContent)
-						console.log(await sendMessageTo(editorContent, user.chat_id, user.user_id));
+					if (editorContent) {
+						const messageResp = await sendMessageTo(
+							editorContent,
+							user.chat_id,
+							$currentUserStore.id
+						);
+
+						if (!messageResp.ok) {
+							alert('Something went wrong sending the message! >>> ' + messageResp.message);
+							return;
+						}
+						console.log('messageResp >>> ', messageResp);
+						messageStore.update((old) => {
+							old.push(messageResp.chatLine);
+							return old;
+						});
+						// console.log(messageResp.chatLine instanceof ChatLine);
+						sendMessageByWebsocket(user.user_id, $currentUserStore.id, messageResp.chatLine);
+					}
 					editorContent = '';
 				}}
 			>
