@@ -24,8 +24,8 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import NavigationItem from './navigation-item.svelte';
 	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
-	import { onMount } from 'svelte';
-	import { connectWebSocket } from '$lib/client/websocket';
+	import { onDestroy, onMount } from 'svelte';
+	import { closeWebSocket, connectWebSocket } from '$lib/client/websocket';
 	import { logOut } from '$lib/client/api/user-requests';
 	// import { invalidateAll } from '$app/navigation';
 	// import { webSocketStore } from '$lib/store/websocket-store.js';
@@ -35,16 +35,16 @@
 	currentUserFollowers.set(data.followers);
 	currentUserFollowing.set(data.following);
 
-
-
-
-
-
-
-
 	onMount(async () => {
 		connectWebSocket();
 	});
+
+	onDestroy(closeWebSocket);
+
+	const handleLogout = () => {
+		logOut();
+		closeWebSocket();
+	};
 </script>
 
 <ModeWatcher />
@@ -151,9 +151,7 @@
 							</DropdownMenu.Sub>
 						</DropdownMenu.Group>
 
-						<DropdownMenu.Item on:click={logOut}>
-							 Log out
-						</DropdownMenu.Item>
+						<DropdownMenu.Item on:click={handleLogout}>Log out</DropdownMenu.Item>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
 			</div>
