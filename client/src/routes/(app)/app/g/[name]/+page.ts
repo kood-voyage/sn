@@ -28,6 +28,7 @@ type LoadType = {
   posts: GroupPostJson[] | undefined,
   allusers: UserType[] | undefined,
   allevents: GroupEventJson[] | undefined,
+  allInvitedUsers: string[] 
 }
 
 

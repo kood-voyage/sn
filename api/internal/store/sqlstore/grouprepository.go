@@ -288,3 +288,24 @@ WHERE event.group_id = ?;
 
 	return events, nil
 }
+
+func (g *GroupRepository) GetInvitedUsers(group_id string) ([]string, error) {
+	query := `SELECT target_id FROM request WHERE parent_id = ? AND type_id = 3`
+
+	rows, err := g.store.Db.Query(query, group_id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var userids []string
+	for rows.Next(){
+		var user_id string
+		if err := rows.Scan(&user_id); err != nil {
+			return nil, err
+		}
+		userids = append(userids, user_id)
+	}
+
+	return userids, nil
+}

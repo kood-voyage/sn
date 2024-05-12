@@ -16,9 +16,23 @@
 	}
 
 	function isInGroup(user: UserType) {
+		// console.log("userid", user)
 		return userList.some((groupUser) => groupUser.id === user.id);
 	}
-	const filteredUsers = allUsers.filter((user) => !isInGroup(user));
+
+	function isInvited(userId: string) {
+		if (invitedUsers) {
+			return invitedUsers.some((user) => {
+				if (user === userId) {
+					return true;
+				}
+				return false;
+			});
+		}
+		return false;
+	}
+
+	const filteredUsers = allUsers.filter((user) => !isInGroup(user) && !isInvited(user.id!));
 </script>
 
 <Command.Root>

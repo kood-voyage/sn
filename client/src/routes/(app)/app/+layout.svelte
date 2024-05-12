@@ -26,6 +26,7 @@
 	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
 	import { onMount } from 'svelte';
 	import { connectWebSocket } from '$lib/client/websocket';
+	import { logOut } from '$lib/client/api/user-requests';
 	// import { invalidateAll } from '$app/navigation';
 	// import { webSocketStore } from '$lib/store/websocket-store.js';
 	// console.log(data);
@@ -34,33 +35,14 @@
 	currentUserFollowers.set(data.followers);
 	currentUserFollowing.set(data.following);
 
-	// let currentUser = $currentUserStore as User;
-	// const { username, email, first_name, last_name, avatar } = $currentUserStore;
 
-	let currentUser;
+
+
+
+
+
 
 	onMount(async () => {
-		async function getCurrentUser() {
-			const response = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/current`, {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					'Access-Control-Request-Method': 'GET'
-				},
-				credentials: 'include'
-			});
-
-			const data = await response.json();
-			currentUserStore.set(data.data);
-
-			if (response) {
-				return data.data;
-			} else {
-				throw new Error('Failed to get current user');
-			}
-		}
-		currentUser = await getCurrentUser();
-
 		connectWebSocket();
 	});
 </script>
@@ -169,10 +151,8 @@
 							</DropdownMenu.Sub>
 						</DropdownMenu.Group>
 
-						<DropdownMenu.Item>
-							<a href="/logout"> Log out </a>
-
-							<!-- <DropdownMenu.Shortcut>⇧⌘Q</DropdownMenu.Shortcut> -->
+						<DropdownMenu.Item on:click={logOut}>
+							 Log out
 						</DropdownMenu.Item>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>

@@ -48,13 +48,18 @@ export type EventJson = {
   date: Date,
 }
 
+export type InviteJson = {
+  group_id: string,
+  target_id: string,
+  message: string,
+}
+
 type Fetch = {
   (input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response>;
   (input: string | Request | URL, init?: RequestInit | undefined): Promise<Response>;
 }
 
 export type Group = ReturnEntryType<"group", GroupJson>
-
 
 export async function GetGroup(group_name: string, customFetch: Fetch = fetch): Promise<Group> {
 
@@ -224,6 +229,95 @@ export async function GetGroupEvents(group_id: string, customFetch: Fetch = fetc
       })
     }
     return { ok: true, allGroupEvents: json }
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
+
+export async function AttendGroupEvent(event_id: string, option: string) {
+  try {
+    const fetchResp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/event/${event_id}/register/${option}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include",
+    })
+    if (!fetchResp.ok) {
+      const errorMessage = await fetchResp.json();
+      return { ok: false, error: errorMessage, message: "error " }
+    }
+
+    const json = (await fetchResp.json()).data
+    console.log("Respnse from attending a group event", json)
+    return { ok: true, data: json }
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
+
+
+export type AllInvitedUsers = ReturnEntryType<"allInvitedUsers", string[]>
+
+export async function GetAllInvitedUsers(group_id: string, customFetch: Fetch = fetch) {
+  try {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/${group_id}/invited/all`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include",
+    })
+    if (!fetchResp.ok) {
+      const errorMessage = await fetchResp.json();
+      return { ok: false, error: errorMessage, message: "error " }
+    }
+
+    const json = (await fetchResp.json()).data as string[]
+    console.log("Response from getting all invited users", json)
+    return { ok: true, allInvitedUsers: json }
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+}
+
+
+export async function InviteToGroup(invite: InviteJson) {
+  try {
+    const fetchResp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/group/invite`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "POST",
+      },
+      credentials: "include",
+      body: JSON.stringify(invite)
+    })
+    if (!fetchResp.ok) {
+      const errorMessage = await fetchResp.json();
+      return { ok: false, error: errorMessage, message: "error " }
+    }
+
+    const json = (await fetchResp.json()).data
+    console.log("Response from inviting a user to a group", json)
+    return { ok: true, data: json }
 
   } catch (err) {
     if (err instanceof Error) {

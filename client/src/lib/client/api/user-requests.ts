@@ -1,7 +1,9 @@
 import { PUBLIC_LOCAL_PATH } from "$env/static/public"
 import type { ReturnEntryType, ReturnType } from "$lib/types/requests";
 import type { UserModel, UserType } from "$lib/types/user"
+import { redirect } from "@sveltejs/kit";
 import type { SignIn } from "../../../routes/(auth)/signin/type"
+import { goto } from "$app/navigation";
 
 
 type Fetch = {
@@ -61,9 +63,12 @@ export async function RegisterUser(user: UserModel) {
 
 
     if (resp.ok) {
-      return { ok: resp.ok, status: resp.statusText }
+
+      redirect(304,"/signin")
+      // return { ok: resp.ok, status: resp.statusText }
     } else {
-      return { ok: resp.ok, status: resp.statusText }
+      redirect(304,"/signin")
+      // return { ok: resp.ok, status: resp.statusText }
     }
 
   } catch (err) {
@@ -123,7 +128,6 @@ export async function currentUser(customFetch: Fetch = fetch): Promise<CurrentUs
   }
 }
 
-
 export async function LoginUser(credentials: SignIn) {
 
   try {
@@ -155,6 +159,34 @@ export async function LoginUser(credentials: SignIn) {
       return { ok: false, error: err, message: "Unknown Error" }
     }
   }
+}
+
+export async function getUserById(user_id: string, customFetch: Fetch = fetch) {
+  if (!customFetch) {
+    customFetch = fetch
+  }
+  try {
+    const fetchResp = await customFetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/get/${user_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include",
+
+    })
+    const json = (await fetchResp.json()).data
+
+    return { ok: true, data: json }
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+
 }
 
 export async function getUserFollowing(user_id: string, customFetch: Fetch = fetch) {
@@ -209,3 +241,86 @@ export async function getUserFollowers(user_id: string, customFetch: Fetch = fet
 
 }
 
+
+
+
+export async function follow(target_id:string){
+
+  try {
+    await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/follow/${target_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include",
+    })
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+
+
+}
+
+export async function unfollow(target_id:string){
+
+  try {
+    await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/unfollow/${target_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include",
+    })
+
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err, message: err.message }
+    } else {
+      return { ok: false, error: err, message: "Unknown Error" }
+    }
+  }
+
+
+}
+
+
+
+export async function logOut(){
+
+
+  try {
+    const resp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/logout`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "GET",
+      },
+      credentials: "include",
+    })
+
+    console.log(resp)
+
+    if(resp.ok){
+      goto("/signin")
+    }
+
+
+
+  } catch (err) {
+    console.log(err)
+  }
+
+
+
+
+
+
+
+}

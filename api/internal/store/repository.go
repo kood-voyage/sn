@@ -67,6 +67,7 @@ type GroupRepository interface {
 	GetAll(model.Type) (*[]model.Group, error)
 	GetPosts(group_id string) ([]*model.Post, error)
 	GetAllEvents(group_id string) ([]*model.Event, error)
+	GetInvitedUsers(group_id string) ([]string, error)
 }
 
 type PrivacyRepository interface {

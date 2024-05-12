@@ -8,26 +8,98 @@
 	import Editor from '$lib/components/Editor.svelte';
 
 	import { postSchema, type PostSchema } from '../post-schema';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import SuperDebug, { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
+
+	import { v4 as uuidv4 } from 'uuid';
+	import { browser } from '$app/environment';
 
 	export let data: SuperValidated<Infer<PostSchema>>;
 
-	let editorContent = '';
+	let files;
 
 	const form = superForm(data, {
 		validators: zodClient(postSchema),
-		onSubmit: ({ formData }) => {
-			formData.set('content', editorContent);
+
+		onSubmit: async ({ controller }) => {
+			controller.abort();
+			const imageFormData = new FormData();
+			const post_id = uuidv4();
+
+			const valid = (await validateForm()).valid;
+
+			if (!valid) {
+				console.log('FUCK THIS');
+				return;
+			}
+
+			for (const image of files) {
+				imageFormData.append('images', image);
+			}
+
+			imageFormData.append('path', `post/${post_id}`);
+
+			async function createPost() {
+				const json = {
+					id: post_id,
+					title: $formData.title,
+					content: $formData.content,
+					privacy: $formData.privacy
+				};
+
+				const resp = await fetch(PUBLIC_LOCAL_PATH + '/api/v1/auth/posts/create', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Request-Method': 'POST'
+					},
+					credentials: 'include',
+					body: JSON.stringify(json)
+				});
+
+				console.log(resp);
+				console.log(JSON.stringify(json));
+			}
+
+			async function imageStore(formData) {
+				const fetchResp = await fetch(PUBLIC_LOCAL_PATH + `/api/v1/auth/images/${post_id}`, {
+					method: 'POST',
+					headers: {
+						'Access-Control-Request-Method': 'POST'
+					},
+					credentials: 'include',
+					body: formData
+				});
+				const json = await fetchResp.json();
+				console.log(json);
+			}
+
+			await createPost();
+			await imageStore(imageFormData);
+		},
+
+		onResult: ({ result }) => {
+			console.log(result.status);
+		},
+
+		onUpdate: async ({ form: f }) => {
+			if (!f.valid) {
+				console.log('Form has errors. Cannot submit.');
+				return;
+			}
+		},
+
+		onError: (event) => {
+			console.log(event);
 		}
 	});
 
-	const { form: formData, enhance } = form;
-
-	let files;
+	const { form: formData, enhance, validateForm } = form;
 
 	function handleFileChange(event) {
 		files = event.target.files;
+		$formData.images = files;
 	}
 
 	function generateImagePreviews(files) {
@@ -59,22 +131,27 @@
 	</Carousel.Root>
 {/if}
 
-<form method="POST" action="?/postSubmit" enctype="multipart/form-data" use:enhance>
-	<RadioGroup.Root value="public">
-		<div class="flex items-center space-x-2">
-			<RadioGroup.Item value="public" id="r1" />
-			<Label for="r1">Public</Label>
-		</div>
-		<div class="flex items-center space-x-2">
-			<RadioGroup.Item value="private" id="r2" />
-			<Label for="r2">Private</Label>
-		</div>
-		<div class="flex items-center space-x-2">
-			<RadioGroup.Item value="selected" id="r3" />
-			<Label for="r3">Selected</Label>
-		</div>
-		<RadioGroup.Input name="privacy" />
-	</RadioGroup.Root>
+<form method="POST" enctype="multipart/form-data" use:enhance>
+	<Form.Field {form} name="privacy">
+		<Form.Control let:attrs
+			><RadioGroup.Root bind:value={$formData.privacy} {...attrs}>
+				<div class="flex items-center space-x-2">
+					<RadioGroup.Item value="public" id="r1" />
+					<Label for="r1">Public</Label>
+				</div>
+				<div class="flex items-center space-x-2">
+					<RadioGroup.Item value="private" id="r2" />
+					<Label for="r2">Private</Label>
+				</div>
+				<div class="flex items-center space-x-2">
+					<RadioGroup.Item value="selected" id="r3" />
+					<Label for="r3">Selected</Label>
+				</div>
+				<RadioGroup.Input name="privacy" />
+			</RadioGroup.Root></Form.Control
+		>
+		<Form.FieldErrors />
+	</Form.Field>
 
 	<Form.Field {form} name="title">
 		<Form.Control let:attrs>
@@ -85,9 +162,12 @@
 		<Form.FieldErrors />
 	</Form.Field>
 	<Form.Field {form} name="content">
-		<div class="border border-neutral-800 p-2 rounded-lg">
-			<Editor bind:editorContent />
-		</div>
+		<Form.Control let:attrs>
+			<div class="border border-neutral-800 p-2 rounded-lg">
+				<Editor bind:editorContent={$formData.content} />
+			</div></Form.Control
+		>
+		<Form.FieldErrors />
 	</Form.Field>
 
 	<Form.Field {form} name="images">
@@ -105,4 +185,8 @@
 	</Form.Field>
 
 	<Form.Button class="w-full">Submit</Form.Button>
+
+	{#if browser}
+		<SuperDebug data={$formData} />
+	{/if}
 </form>

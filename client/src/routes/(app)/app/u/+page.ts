@@ -1,6 +1,5 @@
 
 // import { PUBLIC_LOCAL_PATH } from "$env/static/public"
-
 // export const load = async () => {
 //     try {
 //     const resp = await fetch(`${PUBLIC_LOCAL_PATH}/api/v1/auth/user/all`, {

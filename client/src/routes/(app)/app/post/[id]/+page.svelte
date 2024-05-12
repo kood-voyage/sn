@@ -13,9 +13,9 @@
 
 	export let data;
 
-	const { post, postAuthor, comments } = data;
+	const { post, postAuthor } = data;
 
-	commentsStore.set(comments);
+	// commentsStore.set(comments);
 
 	let toggle = false;
 
