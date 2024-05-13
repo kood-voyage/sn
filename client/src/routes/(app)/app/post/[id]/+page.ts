@@ -4,6 +4,8 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { PUBLIC_LOCAL_PATH } from '$env/static/public';
 import { getUserById } from "$lib/client/api/user-requests";
 
+import type { UserType } from "$lib/types/user";
+
 
 export interface Post {
   id: string;
@@ -14,6 +16,7 @@ export interface Post {
   community_id: string;
   created_at: Date;
   privacy: string;
+  user_information: UserType
 }
 
 export interface Comment {
@@ -27,10 +30,6 @@ export interface Comment {
   count?: string
 
 }
-
-
-
-
 
 
 export const load: PageLoad = async ({params}) => {
@@ -59,84 +58,14 @@ export const load: PageLoad = async ({params}) => {
 
 
 
-
   const form = await superValidate(zod(commentSchema));
-
   const postJson = await postResponse.json()
   const post: Post = postJson.data
 
 
-  console.log(post)
-
-
-  const postAuthorResponse = await getUserById(post.user_id)
-  const postAuthor = await postAuthorResponse.data
 
  const   comments = await commentsResponse.json()
-// comments = commentsJson.data
 
-
-
-console.log(comments)
-
-
-
-  return { post, form, comments,postAuthor }
+  return { post, form, comments }
 
 }
-
-
-// export const actions: Actions = {
-//   commentSubmit: async (event) => {
-
-//     const { user_id } = getUserIdFromCookie(event)
-//     const formData = await event.request.formData();
-//     const post_id = formData.get('post_id') as string;
-//     const parent_id = formData.get('parent_id') as string
-//     const content = formData.get('content') as string;
-//     const user_name = formData.get('user_name') as string;
-//     const user_avatar = formData.get('user_avatar') as string;
-
-
-//     // const imagesURL: string[] = []
-//     // Extracting uploaded images
-//     // const images = formData.getAll('images') as File[];
-//     // for(const [i,image] of images.entries()){
-//     // 	const resp = await saveToS3(("post"+(i+1)),post_id,image,"post")
-//     // 	imagesURL.push(S3_BUCKET + resp)
-//     // }
-
-//     const json: Comment = {
-//       user_id,
-//       post_id,
-//       parent_id,
-//       content,
-//       user_name,
-//       user_avatar
-//     }
-
-//     try {
-//       const response = await fetch(`${LOCAL_PATH}/api/v1/auth/comment/create`, {
-//         method: 'POST',
-//         headers: {
-//           'Authorization': `Bearer ${event.cookies.get('at')}`,
-//           'Content-Type': 'application/json' // Specify JSON content type
-//         },
-//         body: JSON.stringify(json) // Convert the JSON object to a string
-//       });
-
-//       if (!response.ok) {
-//         throw new Error('Failed to create post'); // Throw an error if response is not OK
-//       }
-
-//       // Handle successful response
-//     } catch (err) {
-//       if (err instanceof Error) {
-//         return { ok: false, error: err, message: err.message }
-//       } else {
-//         return { ok: false, error: err, message: "Unknown Error" }
-//       }
-//     }
-//     redirect(304, `/app/post/${post_id}`)
-//   }
-// };

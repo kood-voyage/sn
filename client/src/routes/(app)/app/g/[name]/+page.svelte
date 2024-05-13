@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
 	import { JoinGroup, type GroupJson } from '$lib/client/api/group-requests';
+	import PostForm from '$lib/components/PostForm.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { currentUserStore } from '$lib/store/user-store';
 	import type { UserType } from '$lib/types/user';
@@ -167,7 +168,9 @@
 									<!-- data : Took from previous Form, and i dont remember why it's required  -->
 									<!-- groupId - this PROP i put intentionally because i think we need PARENT_ID for post in groups -->
 									{#if data.group?.ok}
-										<GroupPostForm data={data.form} groupId={data.group?.group.id} />
+										<!-- <GroupPostForm data={data.form} groupId={data.group?.group.id} /> -->
+
+										<PostForm data={data.form} community_id={data.group?.group.id} />
 									{:else}
 										<p class="m-2">Group Info Not found, try reloading the page!</p>
 									{/if}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
 	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
 	import { follow, unfollow } from '$lib/client/api/user-requests';
 
@@ -22,9 +23,8 @@
 	$: followersCount = followers.data !== null ? followers.data.length : 0;
 	$: followingCount = following.data !== null ? following.data.length : 0;
 	$: postsCount = posts.data !== null ? posts.data.length : 0;
-	
 
-
+	function handleFollow() {}
 </script>
 
 <svelte:head>
@@ -68,14 +68,21 @@
 						{#if isCurrentUserFollowing}
 							<button
 								class="text-sm px-5 rounded-md bg-secondary"
-								on:click={() => unfollow(user.data.id)}
+								on:click={() => {
+									unfollow(user.data.id);
+									invalidateAll();
+								}}
 							>
 								unfollow
 							</button>
 						{:else}
 							<button
 								class="text-sm px-5 rounded-md bg-primary"
-								on:click={() => follow(user.data.id)}
+								on:click={() => {
+									follow(user.data.id);
+
+									invalidateAll();
+								}}
 							>
 								follow
 							</button>

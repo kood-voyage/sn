@@ -13,10 +13,7 @@
 
 	export let data;
 
-	const { post, postAuthor } = data;
-
-	// commentsStore.set(comments);
-
+	const { post } = data;
 	let toggle = false;
 
 	$: commentsLength = $commentsStore === null ? 0 : $commentsStore.length;
@@ -24,24 +21,26 @@
 
 <div class="h-screen flex flex-col lg:flex-row dark:bg-neutral-800 overflow-y-scroll">
 	<div class="bg-black w-full h-full flex px-16 m-auto relative justify-center">
-		<Carousel.Root
-			class="flex flex-col h-full my-auto justify-center"
-			opts={{ loop: true, skipSnaps: true, watchDrag: false, dragThreshold: 0 }}
-		>
-			<Carousel.Content class="my=-auto h-full">
-				{#each post.image_path as image, i (i)}
-					<CarouselItem class="my-auto h-full">
-						<div class="">
-							<img loading="lazy" src={image} class="m-auto" alt={'' + i} />
-
-							<!-- <enhanced:img src={image} sizes="min(1280px, 100vw)" class="m-auto"/> -->
-						</div>
-					</CarouselItem>
-				{/each}
-			</Carousel.Content>
-			<CarouselPrevious />
-			<CarouselNext />
-		</Carousel.Root>
+		{#if post.image_path}
+			<Carousel.Root
+				class="flex flex-col h-full my-auto justify-center"
+				opts={{ loop: true, skipSnaps: true, watchDrag: false, dragThreshold: 0 }}
+			>
+				<Carousel.Content class="my=-auto h-full">
+					{#each post.image_path as image, i (i)}
+						<CarouselItem class="my-auto h-full">
+							<div class="">
+								<img loading="lazy" src={image} class="m-auto" alt={'' + i} />
+							</div>
+						</CarouselItem>
+					{/each}
+				</Carousel.Content>
+				<CarouselPrevious />
+				<CarouselNext />
+			</Carousel.Root>
+		{:else}
+			<p>No images</p>
+		{/if}
 
 		<button
 			class="absolute right-4 top-4 rounded-full p-2 hover:bg-neutral-800"
@@ -56,7 +55,7 @@
 	</div>
 
 	<div class="w-full lg:w-[480px] lg:overflow-y-scroll flex flex-col {toggle && 'hidden'}">
-		<Author {postAuthor} created_at={post.created_at} />
+		<Author postAuthor={post.user_information} created_at={post.created_at} />
 
 		<Content content={post.content} />
 

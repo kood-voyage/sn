@@ -2,7 +2,7 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import en from 'javascript-time-ago/locale/en';
 	import TimeAgo from 'javascript-time-ago';
-	import { afterUpdate, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { commentsStore } from '$lib/store/comments-store';
 
 	onMount(() => {
@@ -10,8 +10,6 @@
 	});
 
 	const timeAgo = new TimeAgo('en-US');
-
-	console.log($commentsStore);
 
 </script>
 
