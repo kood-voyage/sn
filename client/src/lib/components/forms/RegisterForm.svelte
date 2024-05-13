@@ -1,12 +1,12 @@
 <script lang="ts">
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import { signUpSchema, type SignUpSchema } from '../schema';
+	import { signUpSchema, type SignUpSchema } from '../../../routes/(auth)/schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { v4 as uuidv4 } from 'uuid';
 
-	import RedStar from './RedStar.svelte';
+	import RedStar from '../../../routes/(auth)/signup/RedStar.svelte';
 	import EyeOpen from 'svelte-radix/EyeOpen.svelte';
 	import EyeClosed from 'svelte-radix/EyeClosed.svelte';
 

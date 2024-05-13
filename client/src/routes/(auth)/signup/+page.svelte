@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import SettingsForm from './RegisterForm.svelte';
+	import SettingsForm from '../../../lib/components/forms/RegisterForm.svelte';
 	export let data: PageData;
 </script>
 

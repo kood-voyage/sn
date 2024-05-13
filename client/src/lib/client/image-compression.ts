@@ -1,18 +1,26 @@
 import imageCompression from "browser-image-compression";
 
+
 export async function handleImageCopression(file: File) {
-  const imageFile = file
   const options = {
-    maxSizeMB: 1,
+    maxSizeMB: 0.5,
     maxWidthOrHeight: 1920,
     useWebWorker: true,
   }
   try {
-    const compressedFile = await imageCompression(imageFile, options);
+    const compressedFile = await imageCompression(file, options);
 
-    return { ok: true, file: compressedFile }
+
+    // Create a new File object with compressed content and desired name
+    const compressedFileWithName = new File([compressedFile], file.name, {
+      type: compressedFile.type,
+    });
+
+
+    console.log(compressedFileWithName)
+
+    return { ok: true, file: compressedFileWithName };
   } catch (error) {
-    console.log("ERROR >>>", error);
     if (error instanceof Error) {
       return ({ ok: false, error: error, message: error.message })
 
@@ -23,17 +31,17 @@ export async function handleImageCopression(file: File) {
 
 }
 
-export async function uploadImages(formData: FormData) {
+// export async function uploadImages(formData: FormData) {
 
-  const response = await fetch(window.location.href, { // Or use a specific path if necessary
-    method: 'POST',
-    body: formData,
-    headers: {
-      'accept': 'application/json',
-    },
-  });
-  if (!response.ok) {
-    console.log("NETWORK RESPONSE WAS WACK")
-    throw new Error('Network response was not ok');
-  }
-}
+//   const response = await fetch(window.location.href, { // Or use a specific path if necessary
+//     method: 'POST',
+//     body: formData,
+//     headers: {
+//       'accept': 'application/json',
+//     },
+//   });
+//   if (!response.ok) {
+//     console.log("NETWORK RESPONSE WAS WACK")
+//     throw new Error('Network response was not ok');
+//   }
+// }

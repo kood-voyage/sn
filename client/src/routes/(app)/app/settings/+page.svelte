@@ -1,51 +1,59 @@
 <script lang="ts">
+	import { currentUser } from '$lib/client/api/user-requests.js';
 	import { Avatar } from 'bits-ui';
 	// import { handleSubmit } from './logic.js';
 	// import { handleImageCopression } from '$lib/client/image-compression.js';
 
-	export let data;
+	// export let data;
 
 	// const { username, email, first_name, last_name, avatar, cover, description } = data;
 
-	// $: previewAvatar = avatar;
-	// $: previewCover = cover;
 
-	// let fileInputAvatar: HTMLInputElement;
-	// async function PreviewAvatar() {
-	// 	let file = fileInputAvatar.files[0];
+	
 
-	// 	const imageResp = await handleImageCopression(file);
-	// 	if (imageResp.ok && imageResp.file) {
-	// 		file = imageResp.file;
-	// 	}
-	// 	let reader = new FileReader();
-	// 	reader.onloadend = function () {
-	// 		previewAvatar = reader.result;
-	// 	};
-	// 	if (file) {
-	// 		reader.readAsDataURL(file);
-	// 	} else {
-	// 		previewAvatar = '';
-	// 	}
-	// }
 
-	// let fileInputCover: HTMLInputElement;
-	// async function PreviewCover() {
-	// 	let file = fileInputCover.files[0];
-	// 	const imageResp = await handleImageCopression(file);
-	// 	if (imageResp.ok && imageResp.file) {
-	// 		file = imageResp.file;
-	// 	}
-	// 	let reader = new FileReader();
-	// 	reader.onloadend = function () {
-	// 		previewCover = reader.result;
-	// 	};
-	// 	if (file) {
-	// 		reader.readAsDataURL(file);
-	// 	} else {
-	// 		previewCover = '';
-	// 	}
-	// }
+	
+
+
+	$: previewAvatar = avatar;
+	$: previewCover = cover;
+
+	let fileInputAvatar: HTMLInputElement;
+	async function PreviewAvatar() {
+		let file = fileInputAvatar.files[0];
+
+		const imageResp = await handleImageCopression(file);
+		if (imageResp.ok && imageResp.file) {
+			file = imageResp.file;
+		}
+		let reader = new FileReader();
+		reader.onloadend = function () {
+			previewAvatar = reader.result;
+		};
+		if (file) {
+			reader.readAsDataURL(file);
+		} else {
+			previewAvatar = '';
+		}
+	}
+
+	let fileInputCover: HTMLInputElement;
+	async function PreviewCover() {
+		let file = fileInputCover.files[0];
+		const imageResp = await handleImageCopression(file);
+		if (imageResp.ok && imageResp.file) {
+			file = imageResp.file;
+		}
+		let reader = new FileReader();
+		reader.onloadend = function () {
+			previewCover = reader.result;
+		};
+		if (file) {
+			reader.readAsDataURL(file);
+		} else {
+			previewCover = '';
+		}
+	}
 </script>
 
 <div class="w-[420px] m-auto p-8">

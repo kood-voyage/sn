@@ -1,9 +1,9 @@
 import { PUBLIC_LOCAL_PATH } from "$env/static/public"
 import type { ReturnEntryType, ReturnType } from "$lib/types/requests";
 import type { UserModel, UserType } from "$lib/types/user"
-import { redirect } from "@sveltejs/kit";
 import type { SignIn } from "../../../routes/(auth)/signin/type"
 import { goto } from "$app/navigation";
+import toast from "svelte-french-toast";
 
 
 type Fetch = {
@@ -64,9 +64,12 @@ export async function RegisterUser(user: UserModel) {
 
     if (resp.ok) {
 
+    toast.success('Success!');
      goto("/signin")
       // return { ok: resp.ok, status: resp.statusText }
     } else {
+
+      toast.success('Success!');
       goto("/signin")
       // return { ok: resp.ok, status: resp.statusText }
     }
@@ -75,7 +78,7 @@ export async function RegisterUser(user: UserModel) {
     console.log("ERRRRRR", err)
     if (err instanceof Error) {
 
-      console.log(err)
+      toast.error(err.message)
       return { ok: false, error: err, message: err.message }
     } else {
 

@@ -4,20 +4,20 @@
 // import type { Actions, PageServerLoad } from "./$types";
 
 
-// export const load: PageServerLoad = async (event) => {
-//   const idResp = getUserIdFromCookie(event)
-//   if (!idResp.ok) {
-//     return
-//   }
+export const load: PageServerLoad = async (event) => {
+  const idResp = getUserIdFromCookie(event)
+  if (!idResp.ok) {
+    return
+  }
 
-//   const user_id = idResp.user_id as string
-//   const data = getUser(user_id)
+  const user_id = idResp.user_id as string
+  const data = getUser(user_id)
 
-//   if (data.error) {
-//     return {}
-//   }
-//   return data?.data
-// }
+  if (data.error) {
+    return {}
+  }
+  return data?.data
+}
 
 
 // export const actions: Actions = {

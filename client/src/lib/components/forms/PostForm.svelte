@@ -8,20 +8,20 @@
 	import Editor from '$lib/components/Editor.svelte';
 
 	import { postSchema, type PostSchema } from '../../../routes/(app)/app/post-schema';
-	import SuperDebug, { type SuperValidated, type Infer, superForm} from 'sveltekit-superforms';
+	import SuperDebug, { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
 
 	import { v4 as uuidv4 } from 'uuid';
 	import { browser } from '$app/environment';
+	import { handleImageCopression } from '$lib/client/image-compression';
+	import { goto } from '$app/navigation';
+	import toast from 'svelte-french-toast';
 
 	export let data: SuperValidated<Infer<PostSchema>>;
-	export let community_id : string;
+	export let community_id: string;
 
 	let files: File[];
-
-
-
 
 	const form = superForm(data, {
 		validators: zodClient(postSchema),
@@ -38,7 +38,7 @@
 			}
 
 			for (const image of files) {
-				imageFormData.append('images', image);
+				imageFormData.append('images', (await handleImageCopression(image)).file as File);
 			}
 
 			imageFormData.append('path', `post/${post_id}`);
@@ -65,8 +65,6 @@
 					credentials: 'include',
 					body: JSON.stringify(json)
 				});
-
-
 			}
 
 			async function imageStore(formData) {
@@ -87,11 +85,13 @@
 
 			await createPost();
 			await imageStore(imageFormData);
+
+			toast.success('Post created!');
+			goto('/app');
 		},
 
 		onResult: ({ result }) => {
 			console.log(result.status);
-
 		},
 
 		onUpdate: async ({ form: f }) => {

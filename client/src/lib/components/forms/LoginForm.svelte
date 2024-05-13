@@ -1,15 +1,16 @@
 <script lang="ts">
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import { signInSchema, type SignInSchema } from '../schema';
+	import { signInSchema, type SignInSchema } from '../../../routes/(auth)/schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
 	export let data: SuperValidated<Infer<SignInSchema>>;
 
-	import type { SignIn } from './type';
+	import type { SignIn } from '../../../routes/(auth)/signin/type';
 	import { LoginUser } from '$lib/client/api/user-requests';
 	import { goto } from '$app/navigation';
+	import toast from 'svelte-french-toast';
 
 	const form = superForm(data, {
 		validators: zodClient(signInSchema),
@@ -27,10 +28,13 @@
 
 			const resp = await LoginUser(credentials);
 			if (!resp.ok) {
-				alert('Username or password incorrect!');
+				toast.error('Username or password incorrect!');
 				controller.abort('User logging unsuccessful');
 				return;
 			}
+
+			toast.success('Success!');
+
 			goto('/app');
 
 			cancel();

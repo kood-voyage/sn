@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
 	import { JoinGroup, type GroupJson } from '$lib/client/api/group-requests';
+	import Post from '$lib/components/Post.svelte';
 	import PostForm from '$lib/components/forms/PostForm.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { currentUserStore } from '$lib/store/user-store';
@@ -213,17 +214,15 @@
 		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-0 sm:p-4 md:mt-80">
 			{#if groupPosts}
 				{#each groupPosts as post}
-					<div class="bg-white rounded-lg p-4 mb-4">
-						<p class="text-xl font-bold">TITLE: {post.title}</p>
-						<p class="text-gray-600">CONTENT: {post.content}</p>
-						<div class="flex items-center mt-2">
-							<p class="text-gray-700 mr-2">User ID: {post.user_id}</p>
-							<p class="text-gray-700">Created At: {post.created_at}</p>
-						</div>
-						<p class="text-gray-700">IMAGE IF THERE IS {post.image_path}</p>
-					</div>
+
+
+					<Post data={post} />
 				{/each}
 			{/if}
+
+
+
+
 			<!-- <div class="bg-pink-500 h-56 w-full sm:rounded-lg">group</div>
 			<div class="bg-purple-500 h-56 w-full sm:rounded-lg">group</div>
 			<div class="bg-red-500 h-56 w-full sm:rounded-lg">123</div>

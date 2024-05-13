@@ -4,7 +4,9 @@
 	import { follow, unfollow } from '$lib/client/api/user-requests';
 
 	import Post from '$lib/components/Post.svelte';
+	import SettingsForm from '$lib/components/forms/SettingsForm.svelte';
 	import { currentUserStore, currentUserFollowing } from '$lib/store/user-store.js';
+	import { Gear } from 'svelte-radix';
 
 	export let data;
 
@@ -91,9 +93,14 @@
 						<a href="/app/create-post"
 							><button class="text-sm px-5 rounded-md border"> Create Post</button></a
 						>
-						<a href="/app/settings">
+						<!-- <a href="/app/settings">
 							<button class="text-sm px-5 rounded-md border"> Settings</button></a
-						>
+						> -->
+
+						<div class="flex items-center">
+							
+							<SettingsForm />
+						</div>
 					{/if}
 				</div>
 

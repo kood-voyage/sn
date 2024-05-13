@@ -27,6 +27,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { closeWebSocket, connectWebSocket } from '$lib/client/websocket';
 	import { logOut } from '$lib/client/api/user-requests';
+	import SettingsForm from '$lib/components/forms/SettingsForm.svelte';
 	// import { invalidateAll } from '$app/navigation';
 	// import { webSocketStore } from '$lib/store/websocket-store.js';
 	// console.log(data);
@@ -109,13 +110,13 @@
 							</DropdownMenu.Item>
 
 							<DropdownMenu.Item>
-								<a href="/app/settings" class="flex w-full">
+						
 									<span class="mr-2">
 										<Gear class="h-[1rem] w-[1rem]" />
 									</span>
 
-									<span>Settings</span>
-								</a>
+									<SettingsForm />
+						
 							</DropdownMenu.Item>
 						</DropdownMenu.Group>
 
