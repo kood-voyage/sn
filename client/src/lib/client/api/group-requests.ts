@@ -1,7 +1,7 @@
 
 import { type ReturnEntryType, type ReturnType } from "$lib/types/requests";
 import { PUBLIC_LOCAL_PATH } from "$env/static/public";
-import type { User, UserType } from "$lib/types/user";
+import type { UserType } from "$lib/types/user";
 
 
 export type GroupJson = {
@@ -33,8 +33,8 @@ export type GroupEventJson = {
   description: string,
   created_at: Date,
   date: Date,
-  user_information: User,
-  participants: User[],
+  user_information: UserType,
+  participants: UserType[],
   is_participant: boolean,
   event_status: string,
 }

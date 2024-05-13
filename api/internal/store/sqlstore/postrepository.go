@@ -190,7 +190,7 @@ WHERE
                 WHERE parent_id = post.id
             )
         )
-    )
+    ) AND community_id = ''
 GROUP BY
     post.id`
 

@@ -4,7 +4,11 @@
 	import type { UserType } from '$lib/types/user';
 
 	const allUsers = $page.data.allusers as UserType[];
+	export let invitedUsers: string[]
 	export let userList: UserType[];
+	export let groupid: string;
+
+	console.log("INVITED USERS:", groupid)
 	function inviteUser(event: Event) {
 		// const resp = fetch(`${LOCAL_PATH}/api/v1/auth/group/invite`, {
 		//     headers:
@@ -16,7 +20,6 @@
 	}
 
 	function isInGroup(user: UserType) {
-		// console.log("userid", user)
 		return userList.some((groupUser) => groupUser.id === user.id);
 	}
 

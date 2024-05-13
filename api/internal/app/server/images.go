@@ -26,7 +26,6 @@ func (s *Server) imageUpload() http.HandlerFunc {
 
 		keys := r.MultipartForm.Value["path"][0]
 
-
 		var paths []string
 		for _, fileHeader := range fileHeaders {
 			// Open uploaded file
@@ -52,15 +51,32 @@ func (s *Server) imageUpload() http.HandlerFunc {
 			paths = append(paths, "https://profilemediabucket-voyage.s3.amazonaws.com/"+keys+fileHeader.Filename)
 
 		}
-		parent_id := r.PathValue("parent_id")
 
-		fmt.Println(paths)
-		fmt.Println(parent_id)
-
-		err = s.store.Image().Add(parent_id, paths)
-		if err != nil {
-			s.error(w, http.StatusBadRequest, err)
+		userID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 			return
+		}
+		options := r.PathValue("option")
+		switch options {
+		case "avatar":
+			if err := s.store.User().SetAvatar(userID, paths[0]); err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+		case "cover":
+			if err := s.store.User().SetCover(userID, paths[0]); err != nil {
+				s.error(w, http.StatusUnprocessableEntity, err)
+				return
+			}
+		default:
+			parent_id := r.PathValue("parent_id")
+
+			err = s.store.Image().Add(parent_id, paths)
+			if err != nil {
+				s.error(w, http.StatusBadRequest, err)
+				return
+			}
 		}
 
 		s.respond(w, http.StatusOK, Response{
