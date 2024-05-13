@@ -39,7 +39,7 @@ func NewChatServer(store store.Store) *ChatService {
 }
 
 type Payload struct {
-	Type     string `json:"type" validate:"required|contains:message,status"`
+	Type     string `json:"type" validate:"required|contains:message,status,notification"`
 	Address  string `json:"address" validate:"required|contains:group,direct,broadcast"`
 	ID       string `json:"id" validate:"required"`
 	SourceID string `json:"source_id" validate:"required"`

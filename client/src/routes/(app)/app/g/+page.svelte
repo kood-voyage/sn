@@ -4,11 +4,11 @@
 	import { onMount } from 'svelte';
 	import { Dash } from 'svelte-radix';
 	import { currentUserStore } from '$lib/store/user-store';
-	import type { User } from '$lib/types/user';
+	import type { UserType } from '$lib/types/user';
 
 	export let data: PageData;
 
-	const currentUser = $currentUserStore as User;
+	const currentUser = $currentUserStore as UserType;
 	const groups = data.groups;
 	let renderedGroupIds: string[] = [];
 

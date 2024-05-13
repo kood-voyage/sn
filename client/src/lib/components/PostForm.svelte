@@ -15,10 +15,13 @@
 	import { v4 as uuidv4 } from 'uuid';
 	import { browser } from '$app/environment';
 
+
+	
+
 	export let data: SuperValidated<Infer<PostSchema>>;
 	export let community_id;
 
-	let files;
+	let files: File[];
 
 	const form = superForm(data, {
 		validators: zodClient(postSchema),
@@ -46,6 +49,7 @@
 					id: post_id,
 					title: $formData.title,
 					content: $formData.content,
+					// community_id: 
 					privacy: $formData.privacy
 				};
 
