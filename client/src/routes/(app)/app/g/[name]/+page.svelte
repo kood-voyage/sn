@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
 	import { JoinGroup, type GroupJson } from '$lib/client/api/group-requests';
-	import PostForm from '$lib/components/PostForm.svelte';
+	import PostForm from '$lib/components/forms/PostForm.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { currentUserStore } from '$lib/store/user-store';
 	import type { UserType } from '$lib/types/user';

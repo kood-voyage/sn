@@ -7,21 +7,21 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import Editor from '$lib/components/Editor.svelte';
 
-	import { postSchema, type PostSchema } from '../../routes/(app)/app/post-schema';
-	import SuperDebug, { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { postSchema, type PostSchema } from '../../../routes/(app)/app/post-schema';
+	import SuperDebug, { type SuperValidated, type Infer, superForm} from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
 
 	import { v4 as uuidv4 } from 'uuid';
 	import { browser } from '$app/environment';
 
-
-	
-
 	export let data: SuperValidated<Infer<PostSchema>>;
-	export let community_id;
+	export let community_id : string;
 
 	let files: File[];
+
+
+
 
 	const form = superForm(data, {
 		validators: zodClient(postSchema),
@@ -34,7 +34,6 @@
 			const valid = (await validateForm()).valid;
 
 			if (!valid) {
-				console.log('FUCK THIS');
 				return;
 			}
 
@@ -49,11 +48,11 @@
 					id: post_id,
 					title: $formData.title,
 					content: $formData.content,
-					// community_id: 
+					// community_id:
 					privacy: $formData.privacy
 				};
 
-				if (community_id !== "") {
+				if (community_id !== '') {
 					json.community_id = community_id;
 				}
 
@@ -67,19 +66,21 @@
 					body: JSON.stringify(json)
 				});
 
-				console.log(resp);
-				console.log(JSON.stringify(json));
+
 			}
 
 			async function imageStore(formData) {
-				const fetchResp = await fetch(PUBLIC_LOCAL_PATH + `/api/v1/auth/images/${post_id}`, {
-					method: 'POST',
-					headers: {
-						'Access-Control-Request-Method': 'POST'
-					},
-					credentials: 'include',
-					body: formData
-				});
+				const fetchResp = await fetch(
+					PUBLIC_LOCAL_PATH + `/api/v1/auth/images/${post_id}/default`,
+					{
+						method: 'POST',
+						headers: {
+							'Access-Control-Request-Method': 'POST'
+						},
+						credentials: 'include',
+						body: formData
+					}
+				);
 				const json = await fetchResp.json();
 				console.log(json);
 			}
@@ -90,6 +91,7 @@
 
 		onResult: ({ result }) => {
 			console.log(result.status);
+
 		},
 
 		onUpdate: async ({ form: f }) => {
@@ -153,7 +155,7 @@
 					<Label for="r2">Private</Label>
 				</div>
 
-				{#if community_id === ""}
+				{#if community_id === ''}
 					<div class="flex items-center space-x-2">
 						<RadioGroup.Item value="selected" id="r3" />
 						<Label for="r3">Selected</Label>

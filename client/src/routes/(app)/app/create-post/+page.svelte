@@ -1,5 +1,5 @@
 <script lang="ts">
-	import PostFormComponent from '../../../../lib/components/PostForm.svelte';
+	import PostFormComponent from '../../../../lib/components/forms/PostForm.svelte';
 	export let data;
 </script>
 

@@ -7,42 +7,81 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { Label } from '$lib/components/ui/label/index.js';
 
-	import * as Carousel from '$lib/components/ui/carousel/index.js';
-
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
-	import { Table } from 'svelte-radix';
 	import { handleImageCopression } from '$lib/client/image-compression';
-	import { applyAction, deserialize } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
-	import type { ActionResult } from '@sveltejs/kit';
 
 	export let data: SuperValidated<Infer<GroupSchema>, any>;
-	$: test = '';
-	$: console.log(test);
+
+	import { v4 as uuidv4 } from 'uuid';
+	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
 
 	$: image = '';
 
 	const form = superForm(data, {
 		validators: zodClient(groupSchema),
-		onSubmit: async (input) => {
-			console.log('asdfasdf', input);
-			const image = input.formData.get('image') as File;
-			const imgResp = await handleImageCopression(image);
+		onSubmit: async ({ controller }) => {
+			controller.abort();
+
+			const imageFormData = new FormData();
+
+			const community_id = uuidv4();
+
+			const imgResp = await handleImageCopression($formData.image);
 			if (!imgResp.ok) {
-				input.cancel();
 				return;
 			}
+
 			const file = imgResp.file as File;
 
-			input.formData.set('image', file);
-			console.log(`compressedFile size ${file.size / 1024 / 1024} MB`);
+			imageFormData.append('images', file);
+
+			imageFormData.append('path', `group/${community_id}`);
+
+			async function createGroup() {
+				const json = {
+					id: community_id,
+					name: $formData.name,
+					description: $formData.description,
+					privacy: $formData.privacy
+				};
+
+				const resp = await fetch(PUBLIC_LOCAL_PATH + '/api/v1/auth/group/create', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Request-Method': 'POST'
+					},
+					credentials: 'include',
+					body: JSON.stringify(json)
+				});
+			}
+
+			async function imageStore(formData) {
+				const fetchResp = await fetch(
+					PUBLIC_LOCAL_PATH + `/api/v1/auth/images/${community_id}/default`,
+					{
+						method: 'POST',
+						headers: {
+							'Access-Control-Request-Method': 'POST'
+						},
+						credentials: 'include',
+						body: formData
+					}
+				);
+				await fetchResp.json();
+			}
+
+			await createGroup();
+
+			console.log(imageFormData);
+
+			await imageStore(imageFormData);
 		}
 	});
 
 	const { form: formData, enhance } = form;
 
 	async function displayImagePreviews(file: File) {
-		console.log(file instanceof File);
 		$formData.image = file;
 		const reader = new FileReader();
 		reader.onloadend = (e) => (image = reader.result as string);
@@ -56,6 +95,8 @@
 		} else {
 			image = '';
 		}
+
+		$formData.image = target.files[0];
 	}
 </script>
 
@@ -84,34 +125,40 @@
 			class="w-full my-2 h-16 object-cover rounded"
 		/>
 	{/if}
-	<Form.Field {form} name="title">
+	<Form.Field {form} name="name">
 		<Form.Control let:attrs>
 			<Form.Label>Name</Form.Label>
-			<Input {...attrs} bind:value={$formData.title} placeholder="name" />
+			<Input {...attrs} bind:value={$formData.name} placeholder="name" />
 		</Form.Control>
 
 		<Form.FieldErrors />
 	</Form.Field>
-	<Form.Field {form} name="content">
+	<Form.Field {form} name="description">
 		<Form.Control let:attrs>
 			<Form.Label>About You</Form.Label>
 
-			<Textarea {...attrs} bind:value={$formData.content} placeholder="description" />
+			<Textarea {...attrs} bind:value={$formData.description} placeholder="description" />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
-	<RadioGroup.Root class="my-3" value="public">
-		<div class="flex items-center space-x-2">
-			<RadioGroup.Item value="public" id="r1" />
-			<Label for="r1">Public</Label>
-		</div>
-		<div class="flex items-center space-x-2">
-			<RadioGroup.Item value="private" id="r2" />
-			<Label for="r2">Private</Label>
-		</div>
 
-		<RadioGroup.Input name="privacy" />
-	</RadioGroup.Root>
+	<Form.Field {form} name="privacy">
+		<Form.Control let:attrs
+			><RadioGroup.Root bind:value={$formData.privacy} {...attrs}>
+				<div class="flex items-center space-x-2">
+					<RadioGroup.Item value="public" id="r1" />
+					<Label for="r1">Public</Label>
+				</div>
+				<div class="flex items-center space-x-2">
+					<RadioGroup.Item value="private" id="r2" />
+					<Label for="r2">Private</Label>
+				</div>
+
+				<RadioGroup.Input name="privacy" />
+			</RadioGroup.Root></Form.Control
+		>
+		<Form.FieldErrors />
+	</Form.Field>
 
 	<Form.Button class="w-full">Submit</Form.Button>
 </form>

@@ -64,10 +64,10 @@ export async function RegisterUser(user: UserModel) {
 
     if (resp.ok) {
 
-      redirect(304,"/signin")
+     goto("/signin")
       // return { ok: resp.ok, status: resp.statusText }
     } else {
-      redirect(304,"/signin")
+      goto("/signin")
       // return { ok: resp.ok, status: resp.statusText }
     }
 

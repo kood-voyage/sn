@@ -9,9 +9,10 @@
 	import RedStar from './RedStar.svelte';
 	import EyeOpen from 'svelte-radix/EyeOpen.svelte';
 	import EyeClosed from 'svelte-radix/EyeClosed.svelte';
-	import { CreateUser, type CreateUserType } from '$lib/types/user';
+
 	import { RegisterUser } from '$lib/client/api/user-requests';
-	import { date } from 'zod';
+
+	import { goto } from '$app/navigation';
 
 	function toogle() {
 		isHide = !isHide;
@@ -38,10 +39,9 @@
 
 	const form = superForm(data, {
 		validators: zodClient(signUpSchema),
-		onSubmit: ({ formData, cancel }) => {
+		onSubmit: async ({ formData, cancel }) => {
 			const { username, email, dateOfBirth, password, firstName, lastName } = $formData;
 
-			// const user2 = new CreateUser({ username, email, dateOfBirth, password, firstName, lastName });
 
 			const user: UserModel = {
 				id: uuidv4(),
@@ -58,7 +58,8 @@
 				privacy: 'public'
 			};
 
-			RegisterUser(user);
+			await RegisterUser(user);
+
 
 			cancel();
 		},
