@@ -270,7 +270,7 @@ func (s *Server) groupInvite() http.HandlerFunc {
 		request.Message = req.Message
 		request.ParentID = req.GroupID
 		//check if that request it not already created
-		existing, err := s.store.Request().Get(*request)
+		existing, err := s.store.Request().GetGroups(*request)
 		if err != nil && err != sql.ErrNoRows {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return

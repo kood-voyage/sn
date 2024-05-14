@@ -8,7 +8,6 @@
 	import type { UserType } from '$lib/types/user';
 	import type { PageData } from './$types';
 	import Createeventform from './createeventform.svelte';
-	import GroupPostForm from './groupPostForm.svelte';
 	import Namelayout from './namelayout.svelte';
 	import Reactform from './reactform.svelte';
 
@@ -18,21 +17,11 @@
 	const currentUser = $currentUserStore as UserType;
 
 	const group = data.group;
-	console.log('ALL EVENTS', data);
 	let errorMessage = '';
 	const groupPosts = data.posts;
 	let isMember = false;
 
-	data.allevents?.forEach((event) => {
-		if (event.participants) {
-			event.participants.forEach((participant) => {
-				if (participant.id == currentUser.id) {
-					event.is_participant = true;
-					event.event_status = participant.event_status;
-				}
-			});
-		}
-	});
+	
 
 	if (currentUser && 'id' in currentUser && group?.ok) {
 		if (data.group?.ok && data.group.group.creator_id == currentUser.id) {
@@ -77,6 +66,18 @@
 		invalidate((url) => url.pathname == `/api/v1/auth/group/${groupInf.id}/event/all`);
 		eventDialog = false;
 	}
+
+	let reactionDialog: boolean;
+	function handleReactionSubmit() {
+		invalidate((url) => url.pathname == `/api/v1/auth/group/${groupInf.id}/event/all`);
+		reactionDialog = false;
+	}
+
+	let inviteMember:boolean;
+	function handleInviteUser() {
+		invalidate((url) => url.pathname == `/api/v1/auth/group/${groupInf.id}/invited/all`);
+		inviteMember = false;
+	}
 </script>
 
 <svelte:head>
@@ -100,7 +101,7 @@
 
 			<div class="max-w-[1096px] sm:px-2 h-16">
 				{#if data.allevents}
-					{#each data.allevents as event}
+					{#each data.allevents as event, i(i)}
 						<div
 							class="w-full bg-slate-200/30 p-1 mt-1 h-full flex justify-between items-center sm:rounded-xl"
 						>
@@ -118,11 +119,11 @@
 									I am {event.event_status}
 								</p>
 							{:else}
-								<Dialog.Root>
+								<Dialog.Root bind:open={reactionDialog}>
 									<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
 										React
 										<Dialog.Content>
-											<Reactform eventInfo={event} />
+											<Reactform eventInfo={event} on:submit={handleReactionSubmit} />
 										</Dialog.Content>
 									</Dialog.Trigger>
 								</Dialog.Root>
@@ -141,7 +142,7 @@
 					</div>
 					<div class="flex flex-row">
 						{#if isMember}
-							<Dialog.Root>
+							<Dialog.Root bind:open={inviteMember}>
 								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
 									>Invite user</Dialog.Trigger
 								>
@@ -149,7 +150,11 @@
 								<Dialog.Content>
 									{#if data.group?.ok}
 										{#if data.group.group.members}
-											<Namelayout groupid={groupInf.id} invitedUsers={data.allInvitedUsers} userList={data.group.group.members} />
+											<Namelayout
+												groupid={groupInf.id}
+												invitedUsers={data.allInvitedUsers}
+												userList={data.group.group.members}
+											/>
 										{/if}
 									{:else}
 										<p class="m-2">Group Info Not found, try reloading the page!</p>
@@ -214,14 +219,9 @@
 		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-0 sm:p-4 md:mt-80">
 			{#if groupPosts}
 				{#each groupPosts as post}
-
-
 					<Post data={post} />
 				{/each}
 			{/if}
-
-
-
 
 			<!-- <div class="bg-pink-500 h-56 w-full sm:rounded-lg">group</div>
 			<div class="bg-purple-500 h-56 w-full sm:rounded-lg">group</div>

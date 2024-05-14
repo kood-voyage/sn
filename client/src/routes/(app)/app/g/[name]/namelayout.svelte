@@ -2,21 +2,22 @@
 	import * as Command from '$lib/components/ui/command';
 	import { page } from '$app/stores';
 	import type { UserType } from '$lib/types/user';
+	import { InviteToGroup, type InviteJson } from '$lib/client/api/group-requests';
 
 	const allUsers = $page.data.allusers as UserType[];
-	export let invitedUsers: string[]
+	export let invitedUsers: string[] | undefined;
 	export let userList: UserType[];
 	export let groupid: string;
 
-	console.log("INVITED USERS:", groupid)
 	function inviteUser(event: Event) {
-		// const resp = fetch(`${LOCAL_PATH}/api/v1/auth/group/invite`, {
-		//     headers:
-		// })
-		// if(event.target){
-		// 	console.log("THis is an evet", event.target.innerHTML)
-		// }
-		console.log('Need to make API Stuff first');
+		let user = findUserId(event.target.innerHTML);
+		// console.log('user', user);
+		let invite: InviteJson = {
+			group_id: groupid,
+			target_id: user,
+			message: "have invited you to a group"
+		}
+		const resp = InviteToGroup(invite)
 	}
 
 	function isInGroup(user: UserType) {
@@ -33,6 +34,14 @@
 			});
 		}
 		return false;
+	}
+
+	function findUserId(userName: string): string {
+		const foundUser = allUsers.find((user) => user.username === userName);
+		if (foundUser) {
+			return foundUser.id;
+		}
+		return '';
 	}
 
 	const filteredUsers = allUsers.filter((user) => !isInGroup(user) && !isInvited(user.id!));

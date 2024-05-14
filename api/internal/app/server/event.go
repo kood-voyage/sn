@@ -253,8 +253,13 @@ func (s *Server) registerEvent() http.HandlerFunc {
 func (s *Server) getGroupEvents() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		group_id := r.PathValue("id")
-		
-		events, err := s.store.Group().GetAllEvents(group_id)
+		userID, ok := r.Context().Value(ctxUserID).(string)
+		if !ok {
+			s.error(w, http.StatusUnauthorized, errors.New("unauthorized"))
+			return
+		}
+
+		events, err := s.store.Group().GetAllEvents(group_id, userID)
 		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
