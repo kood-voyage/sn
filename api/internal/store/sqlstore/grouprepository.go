@@ -221,20 +221,32 @@ func (g *GroupRepository) GetPosts(group_id string) ([]*model.Post, error) {
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var postID string
 		var post model.Post
 		var imagePath sql.NullString
 
-		if err := rows.Scan(&postID, &post.Title, &post.Content, &post.UserID, &post.CommunityID, &post.CreatedAt, &imagePath); err != nil {
+		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.UserID, &post.CommunityID, &post.CreatedAt, &imagePath); err != nil {
 			return nil, err
 		}
 
-		if _, ok := postsMap[postID]; !ok {
-			postsMap[postID] = &post
+		if _, ok := postsMap[post.ID]; !ok {
+			postsMap[post.ID] = &post
 		}
 
 		if imagePath.Valid {
-			postsMap[postID].ImagePaths = append(postsMap[postID].ImagePaths, imagePath.String)
+			postsMap[post.ID].ImagePaths = append(postsMap[post.ID].ImagePaths, imagePath.String)
+		}
+
+		privacy, err := g.store.Privacy().Check(post.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		if privacy == 1 {
+			post.Privacy = "public"
+		}else if privacy == 2 {
+			post.Privacy = "private"
+		} else if privacy == 3 {
+			post.Privacy = "selected"
 		}
 	}
 
@@ -277,13 +289,13 @@ WHERE event.group_id = ?;
 		if err != nil {
 			if err == sql.ErrNoRows {
 				continue
-			}else {
+			} else {
 				return nil, err
 			}
 		}
 		event.Participants = participants
 		events = append(events, &event)
-		
+
 	}
 
 	return events, nil
@@ -299,7 +311,7 @@ func (g *GroupRepository) GetInvitedUsers(group_id string) ([]string, error) {
 	defer rows.Close()
 
 	var userids []string
-	for rows.Next(){
+	for rows.Next() {
 		var user_id string
 		if err := rows.Scan(&user_id); err != nil {
 			return nil, err

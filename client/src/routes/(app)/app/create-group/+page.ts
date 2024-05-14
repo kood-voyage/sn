@@ -11,3 +11,4 @@ export const load: PageLoad = async ({ request }) => {
 	const form = await superValidate(request, zod(groupSchema));
 	return { form };
 }
+
