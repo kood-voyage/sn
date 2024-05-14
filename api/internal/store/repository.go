@@ -34,6 +34,7 @@ type RequestRepository interface {
 	Delete(request model.Request) error
 	Get(request model.Request) (*model.Request, error)
 	DeleteByID(id string) error
+	GetGroups(request model.Request) (*model.Request, error)
 }
 
 type PostRepository interface {
@@ -66,7 +67,7 @@ type GroupRepository interface {
 	AddMember(groupId, userId string) error
 	GetAll(model.Type) (*[]model.Group, error)
 	GetPosts(group_id string) ([]*model.Post, error)
-	GetAllEvents(group_id string) ([]*model.Event, error)
+	GetAllEvents(group_id, source_id string) ([]*model.Event, error)
 	GetInvitedUsers(group_id string) ([]string, error)
 }
 

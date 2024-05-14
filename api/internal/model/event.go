@@ -15,6 +15,8 @@ type Event struct {
 	CreatedAt       time.Time `db:"created_at" json:"created_at"`
 	Date            time.Time `db:"date" json:"date"`
 	UserInformation User      `json:"user_information"`
+	IsParticipant   bool      `json:"is_participant"`
+	Status          string    `json:"event_status"`
 	Participants    []*User   `json:"participants"`
 }
 

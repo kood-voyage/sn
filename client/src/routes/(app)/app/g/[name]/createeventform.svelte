@@ -47,9 +47,7 @@
 			}
 
 			dispatch('submit', { detail: 'Created an event!' });
-			// goto('/app');
-
-			cancel();
+			// cancel();
 		},
 		onError: (event) => {
 			// console.log(event);

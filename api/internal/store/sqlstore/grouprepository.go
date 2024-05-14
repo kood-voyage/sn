@@ -28,6 +28,10 @@ func (g *GroupRepository) Create(group model.Group, privacy int) (*model.Group, 
 		return nil, err
 	}
 
+	if err = g.AddMember(group.ID, group.CreatorID); err != nil {
+		return nil, err
+	}
+
 	return &group, nil
 }
 
@@ -243,7 +247,7 @@ func (g *GroupRepository) GetPosts(group_id string) ([]*model.Post, error) {
 
 		if privacy == 1 {
 			post.Privacy = "public"
-		}else if privacy == 2 {
+		} else if privacy == 2 {
 			post.Privacy = "private"
 		} else if privacy == 3 {
 			post.Privacy = "selected"
@@ -258,7 +262,7 @@ func (g *GroupRepository) GetPosts(group_id string) ([]*model.Post, error) {
 	return posts, nil
 }
 
-func (g *GroupRepository) GetAllEvents(group_id string) ([]*model.Event, error) {
+func (g *GroupRepository) GetAllEvents(group_id, source_id string) ([]*model.Event, error) {
 	query := `SELECT event.id, event.user_id, event.group_id, event.name, event.description, event.created_at,
 	user.id, user.username, user.email, user.timestamp,
 	user.date_of_birth, user.first_name, user.last_name,
@@ -291,6 +295,12 @@ WHERE event.group_id = ?;
 				continue
 			} else {
 				return nil, err
+			}
+		}
+		for _, p := range participants {
+			if p.ID == source_id {
+				event.IsParticipant = true
+				event.Status = p.EventStatus
 			}
 		}
 		event.Participants = participants

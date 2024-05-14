@@ -222,12 +222,6 @@ export async function GetGroupEvents(group_id: string, customFetch: Fetch = fetc
 
     const json = (await fetchResp.json()).data as GroupEventJson[]
     console.log("These are all group events", json)
-    if (json) {
-      json.forEach((event) => {
-        event.is_participant = false
-        event.event_status = ""
-      })
-    }
     return { ok: true, allGroupEvents: json }
 
   } catch (err) {

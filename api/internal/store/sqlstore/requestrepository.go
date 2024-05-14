@@ -64,3 +64,16 @@ func (r *RequestRepository) Get(request model.Request) (*model.Request, error) {
 
 	return &req, nil
 }
+
+
+func (r *RequestRepository) GetGroups(request model.Request) (*model.Request, error) {
+	query := `SELECT * FROM request WHERE type_id = ? AND source_id = ? AND target_id = ? AND parent_id = ?`
+
+	var req model.Request
+	if err := r.store.Db.QueryRow(query, request.TypeID, request.SourceID, request.TargetID, request.ParentID).Scan(&req.ID, &req.TypeID, &req.SourceID, &req.TargetID, &req.ParentID, &req.Message, &req.CreatedAt); err != nil {
+		return nil, err
+	}
+
+	return &req, nil
+}
+
