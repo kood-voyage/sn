@@ -36,14 +36,14 @@
 	$: if (user) {
 		user_allocation[$currentUserStore.id] = {
 			chat_id: user.chat_id,
-			user_id: $currentUserStore.id,
-			display_name: $currentUserStore.username,
+			id: $currentUserStore.id,
+			username: $currentUserStore.username,
 			cover:
 				$currentUserStore.cover || 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Error',
 			avatar:
 				$currentUserStore.avatar || 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Error'
 		};
-		user_allocation[user.user_id] = user;
+		user_allocation[user.id] = user;
 	}
 
 	let editorContent: string;

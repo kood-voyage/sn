@@ -6,16 +6,16 @@
 
 	export let data: LayoutData;
 
-	let people: UserType[] = [];
+	let users: UserType[] = [];
 	let chats: ChatsWithUsers = {};
 	$: if (data.ok) {
-		people = data.chatLoadData.usersData;
+		users = data.chatLoadData.usersData;
 		chats = data.chatLoadData.chatsData;
 	}
 </script>
 
 <div class="flex w-full h-screen">
-	<Userlist {people} {chats} />
+	<Userlist {users} {chats} />
 
 	<slot />
 </div>

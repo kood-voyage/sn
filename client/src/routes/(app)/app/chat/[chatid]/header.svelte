@@ -1,13 +1,18 @@
 <script lang="ts">
-	export let user;
+	import UserChatCard from '$lib/components/chat/UserChatCard.svelte';
 
-	// const { id, last_name, first_name, username } = user;
+	export let user;
 </script>
 
-<div class="h-12 bg-neutral-50 dark:bg-neutral-800 px-4 w-full">
-	<div class="flex p-2 h-full">
-		<img src={user.avatar} alt="avatar" class="w-8 rounded-full mr-2" />
-		<p class="h-full text-center">{user.display_name}</p>
-		<!-- <p class="">{user.}</p> -->
+<div class="h-12 bg-neutral-50 dark:bg-neutral-800 px-1 w-full">
+	<div class="flex p-2 h-full items-center">
+		<UserChatCard {user} />
+
+		<div class="border-l-[1px] py-4 h-full mx-2 dark:border-neutral-700"></div>
+
+		<div class="flex space-x-1">
+			<p class="rounded-sm dark:bg-neutral-900 bg-neutral-200 px-1 text-xs font-bold">AKA</p>
+			<p class="px-1 text-xs">{user.first_name} {user.last_name}</p>
+		</div>
 	</div>
 </div>

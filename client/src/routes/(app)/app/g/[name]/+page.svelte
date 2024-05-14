@@ -77,6 +77,9 @@
 		invalidate((url) => url.pathname == `/api/v1/auth/group/${groupInf.id}/event/all`);
 		eventDialog = false;
 	}
+
+
+	console.log(data)
 </script>
 
 <svelte:head>
