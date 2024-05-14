@@ -3,11 +3,13 @@
 	import { page } from '$app/stores';
 	import type { UserType } from '$lib/types/user';
 	import { InviteToGroup, type InviteJson } from '$lib/client/api/group-requests';
+	import { createEventDispatcher } from 'svelte';
 
 	const allUsers = $page.data.allusers as UserType[];
 	export let invitedUsers: string[] | undefined;
 	export let userList: UserType[];
 	export let groupid: string;
+	const dispatch = createEventDispatcher();
 
 	function inviteUser(event: Event) {
 		let user = findUserId(event.target.innerHTML);
@@ -15,9 +17,11 @@
 		let invite: InviteJson = {
 			group_id: groupid,
 			target_id: user,
-			message: "have invited you to a group"
-		}
-		const resp = InviteToGroup(invite)
+			message: 'have invited you to a group'
+		};
+		const resp = InviteToGroup(invite);
+		console.log('User invite resp', resp);
+		dispatch('click', { detail: 'Invited user to a group' });
 	}
 
 	function isInGroup(user: UserType) {

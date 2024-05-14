@@ -18,10 +18,7 @@
 
 	const group = data.group;
 	let errorMessage = '';
-	const groupPosts = data.posts;
 	let isMember = false;
-
-	
 
 	if (currentUser && 'id' in currentUser && group?.ok) {
 		if (data.group?.ok && data.group.group.creator_id == currentUser.id) {
@@ -73,7 +70,7 @@
 		reactionDialog = false;
 	}
 
-	let inviteMember:boolean;
+	let inviteMember: boolean;
 	function handleInviteUser() {
 		invalidate((url) => url.pathname == `/api/v1/auth/group/${groupInf.id}/invited/all`);
 		inviteMember = false;
@@ -101,7 +98,7 @@
 
 			<div class="max-w-[1096px] sm:px-2 h-16">
 				{#if data.allevents}
-					{#each data.allevents as event, i(i)}
+					{#each data.allevents as event, i (i)}
 						<div
 							class="w-full bg-slate-200/30 p-1 mt-1 h-full flex justify-between items-center sm:rounded-xl"
 						>
@@ -119,7 +116,7 @@
 									I am {event.event_status}
 								</p>
 							{:else}
-								<Dialog.Root bind:open={reactionDialog}>
+								<Dialog.Root>
 									<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
 										React
 										<Dialog.Content>
@@ -154,6 +151,7 @@
 												groupid={groupInf.id}
 												invitedUsers={data.allInvitedUsers}
 												userList={data.group.group.members}
+												on:click={handleInviteUser}
 											/>
 										{/if}
 									{:else}
@@ -217,8 +215,8 @@
 		<!-- group activity / posts -->
 
 		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-0 sm:p-4 md:mt-80">
-			{#if groupPosts}
-				{#each groupPosts as post}
+			{#if data.posts}
+				{#each data.posts as post}
 					<Post data={post} />
 				{/each}
 			{/if}
