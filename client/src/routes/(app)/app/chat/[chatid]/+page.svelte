@@ -89,7 +89,7 @@
 			<Editor bind:editorContent />
 			<Button
 				on:click={async () => {
-					if (!user.chat_id || !user.user_id) {
+					if (!user.chat_id || !user.id) {
 						alert(
 							'Something Went Wrong - Contact Customer Support and Ask For A Refund! \n Error: user_id or chat_id Not Found'
 						);
@@ -119,7 +119,7 @@
 							return old;
 						});
 						// console.log(messageResp.chatLine instanceof ChatLine);
-						sendMessageByWebsocket(user.user_id, $currentUserStore.id, messageResp.chatLine);
+						sendMessageByWebsocket(user.id, $currentUserStore.id, messageResp.chatLine);
 					}
 					editorContent = '';
 				}}

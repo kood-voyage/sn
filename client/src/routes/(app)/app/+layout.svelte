@@ -108,16 +108,6 @@
 									<span>Profile</span>
 								</a>
 							</DropdownMenu.Item>
-
-							<DropdownMenu.Item>
-						
-									<span class="mr-2">
-										<Gear class="h-[1rem] w-[1rem]" />
-									</span>
-
-									<SettingsForm />
-						
-							</DropdownMenu.Item>
 						</DropdownMenu.Group>
 
 						<DropdownMenu.Sub>
@@ -155,6 +145,10 @@
 						<DropdownMenu.Item on:click={handleLogout}>Log out</DropdownMenu.Item>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
+
+				<div>
+					<SettingsForm />
+				</div>
 			</div>
 		</div>
 	</div>

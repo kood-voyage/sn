@@ -16,9 +16,6 @@ export async function handleImageCopression(file: File) {
       type: compressedFile.type,
     });
 
-
-    console.log(compressedFileWithName)
-
     return { ok: true, file: compressedFileWithName };
   } catch (error) {
     if (error instanceof Error) {
