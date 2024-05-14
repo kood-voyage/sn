@@ -1,9 +1,7 @@
 <script lang="ts">
 	export let data;
+	import GroupFormComponent from '../../../../lib/components/forms/GroupfForm.svelte';
 
-	import GroupFormComponent from './group-form.svelte';
-
-	// console.log(data);
 </script>
 
 <p>Create Group</p>

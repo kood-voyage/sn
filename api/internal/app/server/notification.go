@@ -21,7 +21,7 @@ import (
 func (s *Server) notificationCreate() http.HandlerFunc {
 	Notification := model.NotificationRequest()
 	return func(w http.ResponseWriter, r *http.Request) {
-		if err := s.decode(r, Notification); err != nil {
+		if err := s.decode(r, &Notification); err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}

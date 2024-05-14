@@ -1,11 +1,19 @@
 <script lang="ts">
+	import { currentUser } from '$lib/client/api/user-requests.js';
 	import { Avatar } from 'bits-ui';
-	import { handleSubmit } from './logic.js';
-	import { handleImageCopression } from '$lib/client/image-compression.js';
+	// import { handleSubmit } from './logic.js';
+	// import { handleImageCopression } from '$lib/client/image-compression.js';
 
-	export let data;
+	// export let data;
 
-	const { username, email, first_name, last_name, avatar, cover, description } = data;
+	// const { username, email, first_name, last_name, avatar, cover, description } = data;
+
+
+	
+
+
+	
+
 
 	$: previewAvatar = avatar;
 	$: previewCover = cover;

@@ -95,11 +95,14 @@ func (p *PostRepository) Get(id string) (*model.Post, error) {
                  p.user_id,
                  COALESCE(p.community_id, '') AS community_id,
                  p.created_at,
-                 i.path
+                 i.path,
+				 u.*
              FROM 
                  post p
              LEFT JOIN 
                  image i ON p.id = i.parent_id
+			 LEFT JOIN 
+			 	 user u ON p.user_id = u.id
              WHERE 
                  p.id = ?`
 
@@ -121,6 +124,17 @@ func (p *PostRepository) Get(id string) (*model.Post, error) {
 			&post.CommunityID,
 			&post.CreatedAt,
 			&path,
+			&post.UserInformation.ID,
+			&post.UserInformation.Username,
+			&post.UserInformation.Email,
+			&post.UserInformation.Password,
+			&post.UserInformation.CreatedAt,
+			&post.UserInformation.DateOfBirth,
+			&post.UserInformation.FirstName,
+			&post.UserInformation.LastName,
+			&post.UserInformation.Description,
+			&post.UserInformation.Avatar,
+			&post.UserInformation.Cover,
 		)
 		if err != nil {
 			return nil, err
@@ -134,7 +148,7 @@ func (p *PostRepository) Get(id string) (*model.Post, error) {
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
-
+	post.UserInformation.Sanitize()
 	post.ImagePaths = paths
 	return post, nil
 }
@@ -144,9 +158,10 @@ func (p *PostRepository) GetUsers(source_id, target_id string) ([]model.Post, er
     post.id,
     post.title,
     post.content,
-    post.user_id,
+    post.user_id AS post_user_id,
     post.created_at,
-    image.path
+    image.path AS image_path,
+    user.*
 FROM 
     post
 JOIN 
@@ -175,7 +190,7 @@ WHERE
                 WHERE parent_id = post.id
             )
         )
-    )
+    ) AND community_id = ''
 GROUP BY
     post.id`
 
@@ -189,7 +204,8 @@ GROUP BY
 	for rows.Next() {
 		var post model.Post
 		var path sql.NullString
-		if err = rows.Scan(&post.ID, &post.Title, &post.Content, &post.UserID, &post.CreatedAt, &path); err != nil {
+		if err = rows.Scan(&post.ID, &post.Title, &post.Content, &post.UserID, &post.CreatedAt, &path,
+			&post.UserInformation.ID, &post.UserInformation.Username, &post.UserInformation.Email, &post.UserInformation.Password, &post.UserInformation.CreatedAt, &post.UserInformation.DateOfBirth, &post.UserInformation.FirstName, &post.UserInformation.LastName, &post.UserInformation.Description, &post.UserInformation.Avatar, &post.UserInformation.Cover); err != nil {
 			return nil, err
 		}
 
@@ -199,10 +215,9 @@ GROUP BY
 				return nil, err
 			}
 		}
-
+		post.UserInformation.Sanitize()
 		posts = append(posts, post)
 	}
-	fmt.Println(posts)
 	return posts, nil
 }
 
@@ -236,15 +251,35 @@ func (p *PostRepository) RemoveSelected(userList *[]model.User, parentID string)
 }
 
 func (p *PostRepository) GetUserFeed(user_id string) ([]*model.Post, error) {
-	query := `SELECT DISTINCT p.id, p.title, p.content, p.user_id, COALESCE(p.community_id, '') AS community_id, p.created_at, image.path
-FROM post p
-LEFT JOIN image ON p.id = image.parent_id
-LEFT JOIN privacy pr ON pr.id = p.id
-LEFT JOIN follower f ON f.source_id = ? AND f.target_id = p.user_id
-LEFT JOIN selected_users su ON su.parent_id = p.id AND su.user_id = ?
-LEFT JOIN member m ON m.user_id = ? AND (m.group_id = p.community_id OR m.type_id = 1)
-WHERE (pr.type_id = 1 OR (pr.type_id = 3 AND su.id IS NOT NULL) OR m.id IS NOT NULL) AND f.id IS NOT NULL
-ORDER BY p.created_at DESC;
+	query := `SELECT DISTINCT 
+    p.id, 
+    p.title, 
+    p.content, 
+    p.user_id, 
+    COALESCE(p.community_id, '') AS community_id, 
+    p.created_at, 
+    image.path,
+	u.*
+FROM 
+    post p
+LEFT JOIN 
+    image ON p.id = image.parent_id
+LEFT JOIN 
+    privacy pr ON pr.id = p.id
+LEFT JOIN 
+    follower f ON f.source_id = ? AND f.target_id = p.user_id
+LEFT JOIN 
+    selected_users su ON su.parent_id = p.id AND su.user_id = ?
+LEFT JOIN 
+    member m ON m.user_id = ? AND (m.group_id = p.community_id OR m.type_id = 1)
+LEFT JOIN 
+    user u ON p.user_id = u.id  -- Joining the user table based on user_id
+WHERE 
+    (pr.type_id = 1 OR (pr.type_id = 3 AND su.id IS NOT NULL) OR m.id IS NOT NULL) 
+    AND f.id IS NOT NULL
+ORDER BY 
+    p.created_at DESC;
+
 `
 
 	var posts []*model.Post
@@ -257,7 +292,25 @@ ORDER BY p.created_at DESC;
 	for rows.Next() {
 		var post model.Post
 		var path sql.NullString
-		if err = rows.Scan(&post.ID, &post.Title, &post.Content, &post.UserID, &post.CommunityID, &post.CreatedAt, &path); err != nil {
+		if err = rows.Scan(&post.ID,
+			&post.Title,
+			&post.Content,
+			&post.UserID,
+			&post.CommunityID,
+			&post.CreatedAt,
+			&path,
+			&post.UserInformation.ID,
+			&post.UserInformation.Username,
+			&post.UserInformation.Email,
+			&post.UserInformation.Password,
+			&post.UserInformation.CreatedAt,
+			&post.UserInformation.DateOfBirth,
+			&post.UserInformation.FirstName,
+			&post.UserInformation.LastName,
+			&post.UserInformation.Description,
+			&post.UserInformation.Avatar,
+			&post.UserInformation.Cover,
+			); err != nil {
 			return nil, err
 		}
 
@@ -267,7 +320,7 @@ ORDER BY p.created_at DESC;
 				return nil, err
 			}
 		}
-
+		post.UserInformation.Sanitize()
 		posts = append(posts, &post)
 	}
 

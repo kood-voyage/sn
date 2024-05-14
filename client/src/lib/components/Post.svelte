@@ -20,6 +20,8 @@
 
 	const { image_path, title, content, id, created_at } = data;
 
+	console.log(id);
+
 	function formatDate(isoDateString: string): string {
 		const date: Date = new Date(isoDateString);
 		const now: Date = new Date();

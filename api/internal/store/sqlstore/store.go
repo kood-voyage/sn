@@ -18,6 +18,7 @@ type Store struct {
 	eventRepository   *EventRepository
 	chatRepository    *ChatRepository
 	imageRepository   *ImageRepository
+	sessionRepository *SessionRepository
 }
 
 func New(db *sql.DB) *Store {
@@ -36,6 +37,16 @@ func (s *Store) User() store.UserRepository {
 	}
 
 	return s.userRepository
+}
+
+func (s *Store) Session() store.SessionRepository {
+	if s.sessionRepository != nil {
+		return s.sessionRepository
+	}
+	s.sessionRepository = &SessionRepository{
+		store: s,
+	}
+	return s.sessionRepository
 }
 
 func (s *Store) Follow() store.FollowRepository {

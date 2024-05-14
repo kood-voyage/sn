@@ -1,31 +1,32 @@
 <script lang="ts">
-	import type { GroupJson } from '$lib/server/api/group-requests';
 	import Plus from 'svelte-radix/Plus.svelte';
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { Dash } from 'svelte-radix';
 	import { currentUserStore } from '$lib/store/user-store';
-	import type { User } from '$lib/types/user';
+	import type { UserType } from '$lib/types/user';
 
 	export let data: PageData;
 
-	const currentUser = $currentUserStore as User;
-	const groups = data.groups.data;
+	const currentUser = $currentUserStore as UserType;
+	const groups = data.groups;
 	let renderedGroupIds: string[] = [];
 
-	groups?.forEach((group) => {
-		if (currentUser && 'id' in currentUser) {
-			group.members?.forEach((member) => {
-				if (member.id == currentUser.id) {
-					renderedGroupIds.push(group.id);
-				} else {
-					if (group.creator_id == currentUser.id) {
+	if (groups){
+		groups.forEach((group) => {
+			if (currentUser && 'id' in currentUser) {
+				group.members?.forEach((member) => {
+					if (member.id == currentUser.id) {
 						renderedGroupIds.push(group.id);
+					} else {
+						if (group.creator_id == currentUser.id) {
+							renderedGroupIds.push(group.id);
+						}
 					}
-				}
-			});
-		}
-	});
+				});
+			}
+		});
+	}
 </script>
 
 <svelte:head>

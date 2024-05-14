@@ -1,35 +1,55 @@
 <script lang="ts">
+	import { invalidate } from '$app/navigation';
+	import { JoinGroup, type GroupJson } from '$lib/client/api/group-requests';
+	import Post from '$lib/components/Post.svelte';
+	import PostForm from '$lib/components/forms/PostForm.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import type { GroupJson } from '$lib/server/api/group-requests';
 	import { currentUserStore } from '$lib/store/user-store';
+	import type { UserType } from '$lib/types/user';
 	import type { PageData } from './$types';
+	import Createeventform from './createeventform.svelte';
 	import GroupPostForm from './groupPostForm.svelte';
 	import Namelayout from './namelayout.svelte';
+	import Reactform from './reactform.svelte';
 
 	export let data: PageData;
+
 	let id: string, name: string, description: string, image_path: string;
-	const groupResp = data.group;
-	const currentUser = $currentUserStore;
+	const currentUser = $currentUserStore as UserType;
+
+	const group = data.group;
+	console.log('ALL EVENTS', data);
 	let errorMessage = '';
 	const groupPosts = data.posts;
 	let isMember = false;
 
-	console.log('GROUP RESPOSNWTF!@!!!', groupPosts);
-	if (currentUser && 'id' in currentUser) {
-		if (groupResp.ok && groupResp.data.creator_id == currentUser.id) {
+	data.allevents?.forEach((event) => {
+		if (event.participants) {
+			event.participants.forEach((participant) => {
+				if (participant.id == currentUser.id) {
+					event.is_participant = true;
+					event.event_status = participant.event_status;
+				}
+			});
+		}
+	});
+
+	if (currentUser && 'id' in currentUser && group?.ok) {
+		if (data.group?.ok && data.group.group.creator_id == currentUser.id) {
 			isMember = true;
 		}
-		if (groupResp.ok)
-			groupResp.data.members?.forEach((user) => {
+		if (data.group?.ok)
+			data.group.group.members?.forEach((user) => {
 				if (user && user.id == currentUser.id) {
 					isMember = true;
 				}
 			});
 	}
 
-	if (groupResp.ok) {
-		const data = groupResp.data as GroupJson;
+	let groupInf: GroupJson;
+	if (group?.ok) {
+		const data = group.group;
+		groupInf = group.group;
 		id = data.id;
 		name = data.name;
 		description = data.description;
@@ -45,6 +65,21 @@
 		image_path =
 			'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg';
 	}
+
+	async function joinGroup() {
+		if (group?.ok) {
+			const result = await JoinGroup(group.group.name, fetch);
+		}
+	}
+
+	let eventDialog: boolean;
+	function handleEventSubmit() {
+		invalidate((url) => url.pathname == `/api/v1/auth/group/${groupInf.id}/event/all`);
+		eventDialog = false;
+	}
+
+
+	console.log(data)
 </script>
 
 <svelte:head>
@@ -67,6 +102,37 @@
 			</div>
 
 			<div class="max-w-[1096px] sm:px-2 h-16">
+				{#if data.allevents}
+					{#each data.allevents as event}
+						<div
+							class="w-full bg-slate-200/30 p-1 mt-1 h-full flex justify-between items-center sm:rounded-xl"
+						>
+							<p>TITLE {event.name}</p>
+							<p>Description {event.description}</p>
+							<p>Created at {event.created_at}</p>
+							<p>User information {event.user_information}</p>
+							{#if event.participants}
+								<p>Participants: {event.participants.length}</p>
+							{:else}
+								<p>Participants: 0</p>
+							{/if}
+							{#if event.is_participant}
+								<p class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
+									I am {event.event_status}
+								</p>
+							{:else}
+								<Dialog.Root>
+									<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
+										React
+										<Dialog.Content>
+											<Reactform eventInfo={event} />
+										</Dialog.Content>
+									</Dialog.Trigger>
+								</Dialog.Root>
+							{/if}
+						</div>
+					{/each}
+				{/if}
 				<div
 					class="w-full bg-slate-200/30 p-1 mt-1 h-full flex justify-between items-center sm:rounded-xl"
 				>
@@ -84,8 +150,10 @@
 								>
 
 								<Dialog.Content>
-									{#if groupResp.ok}
-										<Namelayout data={data.form} />
+									{#if data.group?.ok}
+										{#if data.group.group.members}
+											<Namelayout groupid={groupInf.id} invitedUsers={data.allInvitedUsers} userList={data.group.group.members} />
+										{/if}
 									{:else}
 										<p class="m-2">Group Info Not found, try reloading the page!</p>
 									{/if}
@@ -103,15 +171,31 @@
 									<!-- I tried to put 2 PROPS to this component  -->
 									<!-- data : Took from previous Form, and i dont remember why it's required  -->
 									<!-- groupId - this PROP i put intentionally because i think we need PARENT_ID for post in groups -->
-									{#if groupResp.ok}
-										<GroupPostForm data={data.form} groupId={groupResp.data.id} />
+									{#if data.group?.ok}
+										<!-- <GroupPostForm data={data.form} groupId={data.group?.group.id} /> -->
+
+										<PostForm data={data.form} community_id={data.group?.group.id} />
 									{:else}
 										<p class="m-2">Group Info Not found, try reloading the page!</p>
 									{/if}
 								</Dialog.Content>
 							</Dialog.Root>
+
+							<Dialog.Root bind:open={eventDialog}>
+								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
+									Create event
+									<Dialog.Content>
+										<Createeventform
+											data={data.form}
+											currUser={currentUser}
+											group={groupInf}
+											on:submit={handleEventSubmit}
+										/>
+									</Dialog.Content>
+								</Dialog.Trigger>
+							</Dialog.Root>
 						{:else}
-							<form action="?/groupJoinSubmit" method="post" class=" text-center">
+							<form on:submit={joinGroup} method="post" class=" text-center">
 								<p>
 									{#if errorMessage}
 										{errorMessage}
@@ -123,8 +207,6 @@
 								</button>
 							</form>
 						{/if}
-						<!-- 
-						-->
 					</div>
 				</div>
 			</div>
@@ -132,20 +214,18 @@
 
 		<!-- group activity / posts -->
 
-		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-0 sm:p-4 mt-5 md:mt-0">
+		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-0 sm:p-4 md:mt-80">
 			{#if groupPosts}
 				{#each groupPosts as post}
-					<div class="bg-white rounded-lg p-4 mb-4">
-						<p class="text-xl font-bold">TITLE: {post.title}</p>
-						<p class="text-gray-600">CONTENT: {post.content}</p>
-						<div class="flex items-center mt-2">
-							<p class="text-gray-700 mr-2">User ID: {post.user_id}</p>
-							<p class="text-gray-700">Created At: {post.created_at}</p>
-						</div>
-						<p class="text-gray-700">IMAGE IF THERE IS {post.image_path}</p>
-					</div>
+
+
+					<Post data={post} />
 				{/each}
 			{/if}
+
+
+
+
 			<!-- <div class="bg-pink-500 h-56 w-full sm:rounded-lg">group</div>
 			<div class="bg-purple-500 h-56 w-full sm:rounded-lg">group</div>
 			<div class="bg-red-500 h-56 w-full sm:rounded-lg">123</div>

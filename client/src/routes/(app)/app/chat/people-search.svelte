@@ -1,31 +1,24 @@
 <script lang="ts">
-	import type { UserRowType } from '$lib/server/db/user';
-	import type { User } from '$lib/types/user';
+	import type { UserType } from '$lib/types/user';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { enhance } from '$app/forms';
 	import { createEventDispatcher } from 'svelte';
-
-	type SampleData = {
-		id: string;
-		username: string;
-		first_name: string;
-		last_name: string;
-		avatar: string;
-		cover: string;
-		description: string;
-	};
+	import { newChatCreate } from './new-chat';
+	import { currentUserStore } from '$lib/store/user-store';
+	import { sendMessage } from '$lib/client/websocket';
 
 	const dispatch = createEventDispatcher();
 
 	let dialogOpen = false;
-	let people: SampleData[] = [];
+	let people: UserType[] = [];
 	let searchQuery = '';
-	let filteredPeople: SampleData[] = [];
+	let filteredPeople: UserType[] = [];
 
-	export let userInfo: SampleData[] | undefined;
+	export let userInfo: UserType[] | undefined;
 
 	if (userInfo != undefined) {
 		people = userInfo;
+		people = people.filter((person) => $currentUserStore.id != person.id);
 	}
 
 	$: if (people != undefined && people.length != 0) {
@@ -60,14 +53,32 @@
 
 					<form
 						method="post"
-						use:enhance={({ formData }) => {
-							dispatch('submit', { detail: 'Data or message from PeopleSearch' });
+						use:enhance={async ({ formData, controller, cancel }) => {
 							// console.log('FormData >>', formData);
 							formData.set('target', person.id);
 							// console.log(person.id);
+
+							const createResp = await newChatCreate(formData);
+							if (!createResp.ok) {
+								controller.abort();
+								cancel();
+								return;
+							}
+							dispatch('submit', { detail: 'Data or message from PeopleSearch' });
 							dialogOpen = false;
+							sendMessage(
+								JSON.stringify({
+									type: 'status',
+									address: 'direct',
+									id: person.id,
+									source_id: $currentUserStore.id,
+									data: 2
+								})
+							);
+
+							controller.abort();
+							cancel();
 						}}
-						action="/app/chat?/NewChat"
 					>
 						<button type="submit" class="h-full w-full">
 							<!-- {person.username} -->

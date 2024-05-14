@@ -7,28 +7,35 @@
 		type UserStatusStore
 	} from '$lib/store/websocket-store';
 	import { currentUserStore } from '$lib/store/user-store';
-	import type { User } from '$lib/types/user';
+	import type { UserType } from '$lib/types/user';
 	import { onDestroy } from 'svelte';
 	import type { PageData } from './$types';
+	import { GetAllUsers } from '$lib/client/api/user-requests';
 
 	export let data: PageData;
 
 	let messages: MessageStore = [];
 	let statuses: UserStatusStore = {};
-	let currentUser = $currentUserStore as User;
+	let currentUser = $currentUserStore as UserType;
+	$: display_statuses = Object.entries(statuses).filter(([_, bool]) => bool);
 
 	messageStore.subscribe((value) => {
 		messages = value;
 	});
 
 	userStatusStore.subscribe((value) => {
+		console.log(value);
 		statuses = value;
 	});
-	// Establish connection when component mounts
+	let allUsers: UserType[] = data.allUsers;
+
+	// $: for (const [key, value] of Object.entries(statuses)) {
+	// 	if value
+	// }
+	console.log(statuses['asdasd']);
 
 	const getName = (user_id: string) => {
-		const user = data.allUsers.data?.find((val) => {
-			// console.log(val);
+		const user = allUsers.find((val) => {
 			if (val.id == user_id) return true;
 			return false;
 		});
@@ -52,7 +59,7 @@
 				address: 'broadcast',
 				id: 'a',
 				source_id: currentUser.id,
-				data: 'Hello WebSocket!'
+				data: true
 			})
 		);
 	}}
@@ -61,9 +68,11 @@
 </form>
 
 <ul>
-	{#each Object.entries(statuses) as status (status)}
-		<li class="text-sm rounded-md w-fit border bg-sky-500 p-1 m-0.5">{getName(status[0])}</li>
-	{/each}
+	{#if allUsers != undefined && allUsers.length != 0}
+		{#each display_statuses as status (status)}
+			<li class="text-sm rounded-md w-fit border bg-sky-500 p-1 m-0.5">{getName(status[0])}</li>
+		{/each}
+	{/if}
 </ul>
 
 <!-- <h1>HERE WILL BE HOME PAGE</h1>

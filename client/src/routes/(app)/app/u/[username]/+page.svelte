@@ -1,27 +1,44 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
+	import { follow, getUserFollowing, unfollow } from '$lib/client/api/user-requests';
+
 	import Post from '$lib/components/Post.svelte';
-	import type { PageData } from './$types';
-	import { currentUserFollowing, currentUserStore } from '$lib/store/user-store';
-	export let data: PageData;
+	import { currentUserStore, currentUserFollowing } from '$lib/store/user-store.js';
+	import toast from 'svelte-french-toast';
+
+	export let data;
+
+	const { user, posts, followers, following } = data;
 
 	let isCurrentUserFollowing = false;
 
-	if ($currentUserFollowing.data !== null && $currentUserFollowing.data !== undefined) {
-		for (const following of $currentUserFollowing.data) {
-			if (following.id === data.user.id) {
+	currentUserFollowing.subscribe((val) => {
+		if (val !== null && val !== undefined) {
+			if (val.find((following) => following.id == user.data.id) !== undefined) {
 				isCurrentUserFollowing = true;
+			} else {
+				isCurrentUserFollowing = false;
 			}
+		} else {
+			isCurrentUserFollowing = false;
 		}
-	}
+	});
 
-	const followersCount = data.followers ? data.followers.length : 0;
-	const followingCount = data.following ? data.following.length : 0;
+	// $: if ($currentUserFollowing !== null && $currentUserFollowing !== undefined) {
+	// 	for (const following of $currentUserFollowing) {
+	// 		if (following.id === user.data.id) {
+	// 			isCurrentUserFollowing = true;
+	// 		}
+	// 	}
+	// }
 
-	const { posts } = data;
+	$: followersCount = followers.data !== null ? followers.data.length : 0;
+	$: followingCount = following.data !== null ? following.data.length : 0;
+	$: postsCount = posts.data !== null ? posts.data.length : 0;
 </script>
 
 <svelte:head>
-	<title>u/{data.data.username}</title>
+	<title>u/{user.data.username}</title>
 </svelte:head>
 
 <!-- user profile page -->
@@ -36,14 +53,14 @@
 				<img
 					class="h-full w-full rounded-none sm:rounded-xl object-cover relative"
 					style="object-position: 0% 0%"
-					src={data.user.cover}
+					src={user === undefined ? '' : user.data.cover}
 					alt="cover"
 				/>
 			</div>
 
 			<div class="h-8 relative mx-0 sm:mx-4">
 				<img
-					src={data.user.avatar}
+					src={user === undefined ? '' : user.data.avatar}
 					alt="avatar"
 					class="absolute bottom-[1px] left-12 h-20 w-20 rounded-full border-4 border-white object-cover dark:border-slate-950"
 				/>
@@ -51,35 +68,56 @@
 				<div
 					class="absolute bottom-1 sm:bottom-3 left-[140px] bg-white dark:bg-neutral-950 rounded-2xl flex"
 				>
-					<p class=" md:text-2xl font-bold mr-2">{data.user.username}</p>
-					<!-- <p class=" text-xs font-bold mr-2">{data.user.id}</p> -->
-
-					{#if $currentUserStore.id !== data.user.id}
-						{#if isCurrentUserFollowing}
-							<form action="?/unfollow" method="post">
-								<input type="text" hidden name="target_id" value={data.user.id} />
-
-								<button class="text-sm px-5 rounded-md bg-secondary" type="submit">
-									unfollow
-								</button>
-							</form>
-						{:else}
-							<form action="?/follow" method="post">
-								<input type="text" hidden name="target_id" value={data.user.id} />
-
-								<button class="text-sm px-5 rounded-md bg-primary" type="submit"> follow </button>
-							</form>
-						{/if}
-
-						<!-- 
-					or unfollow button -->
+					{#if user === undefined}
+						<p>Loading...</p>
 					{:else}
-						<a href="/app/create-post"
+						<p class=" md:text-2xl font-bold mr-2">{user.data.username}</p>
+					{/if}
+
+					{#if $currentUserStore.id !== user.data.id}
+						{#if isCurrentUserFollowing}
+							<button
+								class="text-sm px-5 rounded-md bg-secondary"
+								on:click={async () => {
+									await unfollow(user.data.id);
+									const followingResp = await getUserFollowing($currentUserStore.id);
+									if (!followingResp.ok) {
+										toast.error("Couldn't get following " + followingResp.message);
+										return;
+									}
+									currentUserFollowing.set(followingResp.data);
+								}}
+							>
+								unfollow
+							</button>
+						{:else}
+							<button
+								class="text-sm px-5 rounded-md bg-primary"
+								on:click={async () => {
+									await follow(user.data.id);
+									const followingResp = await getUserFollowing($currentUserStore.id);
+									if (!followingResp.ok) {
+										toast.error("Couldn't get following " + followingResp.message);
+										return;
+									}
+									currentUserFollowing.set(followingResp.data);
+								}}
+							>
+								follow
+							</button>
+						{/if}
+					{:else}
+						<a href="/app/create-post" class="flex"
 							><button class="text-sm px-5 rounded-md border"> Create Post</button></a
 						>
-						<a href="/app/settings">
+						<!-- <a href="/app/settings">
 							<button class="text-sm px-5 rounded-md border"> Settings</button></a
-						>
+						> -->
+
+						<!-- <div class="flex items-center">
+							
+							<SettingsForm />
+						</div> -->
 					{/if}
 				</div>
 
@@ -88,7 +126,7 @@
 						<div
 							class="text-xs w-1/3 border-r text-center hover:bg-neutral-200 dark:hover:bg-neutral-800 p-1"
 						>
-							<span class="font-bold">{'none'}</span> posts
+							<span class="font-bold">{postsCount}</span> posts
 						</div>
 						<div
 							class="text-xs w-1/3 border-r text-center hover:bg-neutral-200 dark:hover:bg-neutral-800 p-1"
@@ -110,7 +148,7 @@
 						<div
 							class="text-xs w-1/3 border-r text-center p-4 hover:bg-neutral-200 dark:hover:bg-neutral-800 hover:rounded-l-lg"
 						>
-							<span class="font-bold">{'none'}</span> posts
+							<span class="font-bold">{postsCount}</span> posts
 						</div>
 						<div
 							class="text-xs w-1/3 border-r text-center p-4 hover:bg-neutral-200 dark:hover:bg-neutral-800"
@@ -127,25 +165,15 @@
 			</div>
 		</div>
 
-		<!-- <p>Followers</p>
-
-		{#each data.followers as follower}
-			<p>{follower.id}</p>
-		{/each}
-
-		<p>Following</p>
-
-		{#each data.following as following}
-			<p>{following.id}</p>
-		{/each} -->
-
 		<!-- profile activity / posts -->
 
 		<div class="h-full w-full sm:grid sm:grid-cols-2 md:grid-cols-3 gap-1 p-0 sm:p-4 mt-5 md:mt-0">
-			{#if posts !== null}
-				{#each posts as data}
+			{#if posts.data !== null}
+				{#each posts.data as data}
 					<Post {data} />
 				{/each}
+			{:else}
+				<p>No posts</p>
 			{/if}
 		</div>
 	</div>

@@ -2,6 +2,7 @@ package store
 
 type Store interface {
 	User() UserRepository
+	Session() SessionRepository
 	Follow() FollowRepository
 	Request() RequestRepository
 	Post() PostRepository

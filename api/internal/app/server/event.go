@@ -220,8 +220,8 @@ func (s *Server) registerEvent() http.HandlerFunc {
 		}
 		eventID := r.PathValue("id")
 		option := r.PathValue("opt")
-		if option != "interested" && option != "going" && option != "notgoing" {
-			s.error(w, http.StatusUnprocessableEntity, errors.New("only options allowed - interested, going, notgoing"))
+		if option != "interested" && option != "going" && option != "notgoing" && option != "maybe" {
+			s.error(w, http.StatusUnprocessableEntity, errors.New("only options allowed - interested, going, notgoing, maybe"))
 			return
 		}
 		event, err := s.store.Event().Get(eventID)
@@ -247,5 +247,21 @@ func (s *Server) registerEvent() http.HandlerFunc {
 
 		s.respond(w, http.StatusOK, Response{Data: nil})
 
+	}
+}
+
+func (s *Server) getGroupEvents() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		group_id := r.PathValue("id")
+		
+		events, err := s.store.Group().GetAllEvents(group_id)
+		if err != nil {
+			s.error(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		s.respond(w, http.StatusOK, Response{
+			Data: events,
+		})
 	}
 }
