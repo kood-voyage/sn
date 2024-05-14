@@ -259,7 +259,8 @@ func (p *PostRepository) GetUserFeed(user_id string) ([]*model.Post, error) {
     COALESCE(p.community_id, '') AS community_id, 
     p.created_at, 
     image.path,
-	u.*
+	u.*,
+	c.name
 FROM 
     post p
 LEFT JOIN 
@@ -274,6 +275,8 @@ LEFT JOIN
     member m ON m.user_id = ? AND (m.group_id = p.community_id OR m.type_id = 1)
 LEFT JOIN 
     user u ON p.user_id = u.id  -- Joining the user table based on user_id
+LEFT JOIN 
+	community c ON p.community_id = c.id
 WHERE 
     (pr.type_id = 1 OR (pr.type_id = 3 AND su.id IS NOT NULL) OR m.id IS NOT NULL) 
     AND f.id IS NOT NULL
@@ -310,6 +313,7 @@ ORDER BY
 			&post.UserInformation.Description,
 			&post.UserInformation.Avatar,
 			&post.UserInformation.Cover,
+			&post.GroupName,
 			); err != nil {
 			return nil, err
 		}
