@@ -86,6 +86,7 @@ func configureRouter(s *Server) {
 
 	s.router.GET("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://ec2-3-84-51-36.compute-1.amazonaws.com:8080/swagger/doc.json"),
+		// httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
 	))
 	//---------USER---------//
 	s.router.POST("/api/v1/user/create", s.userCreate())

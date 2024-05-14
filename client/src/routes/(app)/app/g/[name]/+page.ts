@@ -28,14 +28,14 @@ type LoadType = {
   posts: GroupPostJson[] | undefined,
   allusers: UserType[] | undefined,
   allevents: GroupEventJson[] | undefined,
-  allInvitedUsers: string[] 
+  allInvitedUsers: string[]
 }
 
 
 export const load: PageLoad = async ({ fetch, url }) => {
   const form = await superValidate(zod(groupPostSchema));
   const u = new URL(url).pathname.split('/');
-  const groupId = u[u.length - 1].replace("_", " ")
+  const groupId = u[u.length - 1].replaceAll("_", " ")
 
   const info: LoadType = {
     group: undefined, form: form, posts: undefined, allusers: undefined, allevents: undefined
@@ -45,6 +45,7 @@ export const load: PageLoad = async ({ fetch, url }) => {
     console.error(groupInfo.message)
     return info
   }
+
   info.group = groupInfo
 
   const groupPostData = (await GetGroupPosts(groupId, fetch))
@@ -52,6 +53,8 @@ export const load: PageLoad = async ({ fetch, url }) => {
     console.error(groupPostData.message)
     return info
   }
+
+  console.log("GROUPOSTDATA", groupPostData.allGroupPosts)
   info.posts = groupPostData.allGroupPosts
 
   const allUsers = (await GetAllUsers(fetch))

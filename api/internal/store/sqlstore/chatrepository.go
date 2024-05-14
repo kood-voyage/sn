@@ -74,6 +74,7 @@ func (c *ChatRepository) GetUsers(chat model.Chat) ([]model.User, error) {
         ); err != nil {
             return nil, err
         }
+		user.Sanitize()
 		users = append(users, user)
 	}
 
@@ -151,6 +152,7 @@ func (c *ChatRepository) GetChatsForUser(userID string) ([]*model.User, error) {
 			return nil, err
 		}
 
+		user.Sanitize()
 		users = append(users, &user)
 	}
 
