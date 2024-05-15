@@ -167,15 +167,6 @@ export type ChatLine = {
   user_id: string
 }
 
-export function isChatLine(obj: any): obj is ChatLine {
-  return typeof obj.chat_id === 'string' &&
-    typeof obj.created_at === 'string' &&
-    typeof obj.id === 'string' &&
-    typeof obj.message === 'string' &&
-    typeof obj.user_id === 'string';
-}
-
-
 type GetLineResp = ReturnEntryType<"chatLines", ChatLine[]>
 export async function getChatLines(chat_id: string, customFetch: Fetch = fetch): Promise<GetLineResp> {
   try {

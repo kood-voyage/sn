@@ -20,13 +20,5 @@ export const sendMessageTo = async (message: string, chat_id: string, user_id: s
 }
 
 export const sendMessageByWebsocket = (target_id: string, source_id: string, message: ChatLine) => {
-  sendMessage(
-    JSON.stringify({
-      type: 'message',
-      address: 'direct',
-      id: target_id,
-      source_id: source_id,
-      data: message
-    })
-  );
+  sendMessage('message', 'direct', target_id, source_id, message);
 }

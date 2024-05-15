@@ -37,8 +37,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 function deleteTokens(event: RequestEvent<Partial<Record<string, string>>, string | null>) {
   const negTime = new Date((new Date()).getTime() - 1 * 1000)
-  event.cookies.set("rt", "", { path: "/", expires: negTime })
+  event.cookies.set("rt", "", { path: "/", expires: negTime, secure: false })
   event.cookies.set("at", "", {
-    path: "/", expires: negTime
+    path: "/", expires: negTime, secure: false
   })
 }

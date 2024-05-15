@@ -1,5 +1,6 @@
-import { messageStore, userStatusStore, webSocketStore, type ServerMessage } from "$lib/store/websocket-store";
-import { isChatLine, type ChatLine } from "./api/chat-requests";
+import { messageStore, notificationStore, userStatusStore, webSocketStore, type CustomNotification, type ServerMessage } from "$lib/store/websocket-store";
+import { isChatLine, isNotification } from "$lib/types/type-checks";
+import { type ChatLine } from "./api/chat-requests";
 
 
 
@@ -48,15 +49,7 @@ export async function connectWebSocket() {
           } else if (data == 0) {
             storeUserStatus(eventData.source_id, false)
           } else if (data == 2) {
-            sendMessage(
-              JSON.stringify({
-                type: 'status',
-                address: 'direct',
-                id: eventData.source_id,
-                source_id: eventData.id,
-                data: 1
-              })
-            );
+            sendMessage('status', 'direct', eventData.source_id, eventData.id, 1);
             storeUserStatus(eventData.source_id, true)
           }
           return
@@ -68,6 +61,14 @@ export async function connectWebSocket() {
           old.push(eventData.data as ChatLine)
           return old
         })
+        break;
+      case "notification":
+        console.log(eventData.data)
+        if (isNotification(eventData.data))
+          notificationStore.update((old) => {
+            old.push(eventData.data as CustomNotification)
+            return old
+          })
         break;
 
     }
@@ -109,8 +110,13 @@ export function closeWebSocket() {
 // export const getAllMessages = () => { return messagess }
 
 
-export function sendMessage(message: string) {
+export function sendMessage(type: string,
+  address: string,
+  id: string,
+  source_id: string,
+  data: number | ChatLine | CustomNotification) {
 
+  const message = JSON.stringify({ type, address, id, source_id, data })
   if (webSocket.readyState === WebSocket.OPEN) {
     webSocket.send(message);
   } else {
@@ -119,3 +125,6 @@ export function sendMessage(message: string) {
 }
 
 
+export function sendNotification(target_id: string, source_id: string, notification: CustomNotification) {
+  sendMessage("notification", "direct", target_id, source_id, notification)
+}

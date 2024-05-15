@@ -66,15 +66,7 @@
 							}
 							dispatch('submit', { detail: 'Data or message from PeopleSearch' });
 							dialogOpen = false;
-							sendMessage(
-								JSON.stringify({
-									type: 'status',
-									address: 'direct',
-									id: person.id,
-									source_id: $currentUserStore.id,
-									data: 2
-								})
-							);
+							sendMessage('status', 'direct', person.id, $currentUserStore.id, 2);
 
 							controller.abort();
 							cancel();
