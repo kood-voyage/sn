@@ -11,5 +11,7 @@
 <div class="w-full">
 	<p class="w-full text-2xl py-2">Create post</p>
 
-	<PostFormComponent data={data.form} community_id={''} />
+	<div class="w-2/3">
+		<PostFormComponent data={data.form} community_id={''} />
+	</div>
 </div>

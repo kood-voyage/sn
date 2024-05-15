@@ -6,10 +6,12 @@ import type { PageLoad } from "./$types";
 
 export type DisplayData = {
   chat_id: string;
-  user_id: string;
-  display_name: string;
+  id: string;
+  username: string;
   cover: string;
   avatar: string;
+  first_name:string;
+  last_name: string;
 };
 
 
@@ -37,12 +39,19 @@ export const load: PageLoad = async ({ fetch, params }): Promise<LoadOut> => {
   }
 
   const chatUsers = usersResp.data.filter((value) => value.id != current_user_id)
+
+  console.log(chatUsers[0])
+
   const display_data = {
     chat_id: params.chatid,
-    user_id: chatUsers[0].id,
-    display_name: chatUsers[0].username,
+    id: chatUsers[0].id,
+    username: chatUsers[0].username,
     cover: chatUsers[0].cover as string,
-    avatar: chatUsers[0].avatar as string
+    avatar: chatUsers[0].avatar as string,
+    first_name: chatUsers[0].first_name as string,
+    last_name: chatUsers[0].last_name as string,
+
+    
   };
 
 

@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
-	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
-	import { follow, unfollow } from '$lib/client/api/user-requests';
+	import { follow, getUserFollowing, unfollow } from '$lib/client/api/user-requests';
 
 	import Post from '$lib/components/Post.svelte';
-	import SettingsForm from '$lib/components/forms/SettingsForm.svelte';
 	import { currentUserStore, currentUserFollowing } from '$lib/store/user-store.js';
-	import { Gear } from 'svelte-radix';
+	import toast from 'svelte-french-toast';
 
 	export let data;
 
@@ -14,19 +12,29 @@
 
 	let isCurrentUserFollowing = false;
 
-	if ($currentUserFollowing !== null && $currentUserFollowing !== undefined) {
-		for (const following of $currentUserFollowing) {
-			if (following.id === user.data.id) {
+	currentUserFollowing.subscribe((val) => {
+		if (val !== null && val !== undefined) {
+			if (val.find((following) => following.id == user.data.id) !== undefined) {
 				isCurrentUserFollowing = true;
+			} else {
+				isCurrentUserFollowing = false;
 			}
+		} else {
+			isCurrentUserFollowing = false;
 		}
-	}
+	});
+
+	// $: if ($currentUserFollowing !== null && $currentUserFollowing !== undefined) {
+	// 	for (const following of $currentUserFollowing) {
+	// 		if (following.id === user.data.id) {
+	// 			isCurrentUserFollowing = true;
+	// 		}
+	// 	}
+	// }
 
 	$: followersCount = followers.data !== null ? followers.data.length : 0;
 	$: followingCount = following.data !== null ? following.data.length : 0;
 	$: postsCount = posts.data !== null ? posts.data.length : 0;
-
-	function handleFollow() {}
 </script>
 
 <svelte:head>
@@ -70,9 +78,14 @@
 						{#if isCurrentUserFollowing}
 							<button
 								class="text-sm px-5 rounded-md bg-secondary"
-								on:click={() => {
-									unfollow(user.data.id);
-									invalidateAll();
+								on:click={async () => {
+									await unfollow(user.data.id);
+									const followingResp = await getUserFollowing($currentUserStore.id);
+									if (!followingResp.ok) {
+										toast.error("Couldn't get following " + followingResp.message);
+										return;
+									}
+									currentUserFollowing.set(followingResp.data);
 								}}
 							>
 								unfollow
@@ -80,27 +93,31 @@
 						{:else}
 							<button
 								class="text-sm px-5 rounded-md bg-primary"
-								on:click={() => {
-									follow(user.data.id);
-
-									invalidateAll();
+								on:click={async () => {
+									await follow(user.data.id);
+									const followingResp = await getUserFollowing($currentUserStore.id);
+									if (!followingResp.ok) {
+										toast.error("Couldn't get following " + followingResp.message);
+										return;
+									}
+									currentUserFollowing.set(followingResp.data);
 								}}
 							>
 								follow
 							</button>
 						{/if}
 					{:else}
-						<a href="/app/create-post"
+						<a href="/app/create-post" class="flex"
 							><button class="text-sm px-5 rounded-md border"> Create Post</button></a
 						>
 						<!-- <a href="/app/settings">
 							<button class="text-sm px-5 rounded-md border"> Settings</button></a
 						> -->
 
-						<div class="flex items-center">
+						<!-- <div class="flex items-center">
 							
 							<SettingsForm />
-						</div>
+						</div> -->
 					{/if}
 				</div>
 

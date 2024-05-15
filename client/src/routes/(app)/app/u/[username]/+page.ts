@@ -12,11 +12,6 @@ export const load: PageLoad = async({ params }) => {
 	const following = await getUserFollowing(user.data.id)
 
 
-	console.log(posts)
-	
-
-	console.log(followers)
-	console.log(following)
 
 	return {params,posts,user,followers,following};
 };
