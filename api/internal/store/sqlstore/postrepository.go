@@ -251,20 +251,20 @@ func (p *PostRepository) RemoveSelected(userList *[]model.User, parentID string)
 }
 
 func (p *PostRepository) GetUserFeed(user_id string) ([]*model.Post, error) {
-	query := `SELECT DISTINCT 
+	query := `SELECT 
     p.id, 
     p.title, 
     p.content, 
     p.user_id, 
     COALESCE(p.community_id, '') AS community_id, 
     p.created_at, 
-    image.path,
-	u.*,
-	c.name
+    (SELECT GROUP_CONCAT(image.path, ', ') 
+     FROM image 
+     WHERE p.id = image.parent_id) AS image_paths,
+    u.*, 
+    COALESCE(c.name, '') AS name
 FROM 
     post p
-LEFT JOIN 
-    image ON p.id = image.parent_id
 LEFT JOIN 
     privacy pr ON pr.id = p.id
 LEFT JOIN 
@@ -274,19 +274,21 @@ LEFT JOIN
 LEFT JOIN 
     member m ON m.user_id = ? AND (m.group_id = p.community_id OR m.type_id = 1)
 LEFT JOIN 
-    user u ON p.user_id = u.id  -- Joining the user table based on user_id
+    user u ON p.user_id = u.id
 LEFT JOIN 
-	community c ON p.community_id = c.id
+    community c ON p.community_id = c.id
 WHERE 
-    (pr.type_id = 1 OR (pr.type_id = 3 AND su.id IS NOT NULL) OR m.id IS NOT NULL) 
-    AND f.id IS NOT NULL
+((pr.type_id = 1 OR (pr.type_id = 3 AND su.id IS NOT NULL) OR m.id IS NOT NULL) 
+AND (f.id IS NOT NULL OR p.user_id = ?))
+GROUP BY 
+    p.id, p.title, p.content, p.user_id, p.community_id, p.created_at, u.id, c.name
 ORDER BY 
     p.created_at DESC;
 
 `
 
 	var posts []*model.Post
-	rows, err := p.store.Db.Query(query, user_id, user_id, user_id)
+	rows, err := p.store.Db.Query(query, user_id, user_id, user_id, user_id)
 	if err != nil {
 		return nil, err
 	}

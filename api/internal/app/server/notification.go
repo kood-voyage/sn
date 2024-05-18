@@ -2,7 +2,6 @@ package server
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"social-network/internal/model"
 	"social-network/pkg/validator"
@@ -32,24 +31,20 @@ func (s *Server) notificationCreate() http.HandlerFunc {
 			return
 		}
 
-		//Random user could not make notifications for everybody
-		if user_id != Notification.SourceID {
-			s.error(w, http.StatusUnauthorized, errors.New("Unauthorized"))
-			return
-		}
+		Notification.SourceID = user_id
 
 		if err := validator.Validate(Notification); err != nil {
 			s.error(w, http.StatusNotAcceptable, err)
 			return
 		}
 
-		if err := s.store.Request().Create(*Notification); err != nil {
-			fmt.Println(err)
+		notification, err := s.store.Request().Create(*Notification)
+		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
 
-		s.respond(w, http.StatusOK, Response{Data: Notification})
+		s.respond(w, http.StatusOK, Response{Data: notification})
 	}
 }
 
