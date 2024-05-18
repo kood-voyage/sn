@@ -1,4 +1,3 @@
-import { getFeed } from '$lib/client/api/post-requests';
 import { GetAllUsers } from '$lib/client/api/user-requests';
 import type { UserType } from '$lib/types/user';
 import type { PageLoad } from './$types';
@@ -11,17 +10,5 @@ export const load: PageLoad = async ({ fetch }) => {
   if (!resp.ok) {
     return { allUsers: [] }
   }
-
-
-
-
-  const feedResp = await getFeed()
-
-
-
-  return { allUsers: resp.allUsers as UserType[], feed: feedResp };
-
-
-
-  
+  return { allUsers: resp.allUsers as UserType[] };
 };

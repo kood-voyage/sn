@@ -327,3 +327,21 @@ export async function logOut(){
 
 
 }
+
+
+
+
+export async function updateDescription(description:string) {
+			const json = {
+				description: description
+			}
+			await fetch(PUBLIC_LOCAL_PATH + '/api/v1/auth/user/description', {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Request-Method': 'PUT'
+					},
+					credentials: 'include',
+					body: JSON.stringify(json)
+				});
+}

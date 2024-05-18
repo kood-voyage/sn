@@ -1,5 +1,6 @@
 import { messageStore, notificationStore, userStatusStore, webSocketStore, type CustomNotification, type ServerMessage } from "$lib/store/websocket-store";
 import { isChatLine, isNotification } from "$lib/types/type-checks";
+import { toast } from "svelte-sonner";
 import { type ChatLine } from "./api/chat-requests";
 
 
@@ -15,21 +16,21 @@ export async function connectWebSocket() {
       obj.websocket = webSocket
       return { ...obj }
     })
-  console.log("THIS IS WEBSOCKET >>>", webSocket)
+  // console.log("THIS IS WEBSOCKET >>>", webSocket)
 
   webSocket.onmessage = function (event) {
-    console.log('Received message:', event.data);
+    // console.log('Received message:', event.data);
   };
 
   webSocket.onopen = () => {
-    console.log('WebSocket connection established');
+    // console.log('WebSocket connection established');
   };
 
   webSocket.onmessage = (event) => {
     console.log('Message from server ', event.data);
     const eventData = JSON.parse(event.data) as ServerMessage
     const data = eventData.data as Array<{ id: string }>
-    console.log(eventData.type)
+    // console.log(eventData.type)
     switch (eventData.type) {
       case "status":
         // console.log("data", data)
@@ -41,7 +42,7 @@ export async function connectWebSocket() {
           }
           return
         }
-        console.log("data of websocket ??>>>", data)
+        // console.log("data of websocket ??>>>", data)
         if (typeof data == "boolean") storeUserStatus(eventData.source_id, data)
         if (typeof data == "number") {
           if (data == 1) {
@@ -63,10 +64,11 @@ export async function connectWebSocket() {
         })
         break;
       case "notification":
-        console.log(eventData.data)
+        // console.log(eventData.data)
         if (isNotification(eventData.data))
           notificationStore.update((old) => {
             old.push(eventData.data as CustomNotification)
+            sendAlert(eventData.data as CustomNotification)
             return old
           })
         break;
@@ -76,7 +78,7 @@ export async function connectWebSocket() {
   };
 
   webSocket.onerror = (error) => {
-    console.error('WebSocket error: ', error);
+    // console.error('WebSocket error: ', error);
 
     // webSocketStore.set({ websocket: undefined, access_token: undefined })
     // if (access_token == undefined) {
@@ -86,7 +88,7 @@ export async function connectWebSocket() {
   };
 
   webSocket.onclose = () => {
-    console.log('WebSocket connection closed');
+    // console.log('WebSocket connection closed');
 
     // Optionally, implement reconnection logic here
   };
@@ -126,5 +128,12 @@ export function sendMessage(type: string,
 
 
 export function sendNotification(target_id: string, source_id: string, notification: CustomNotification) {
+
+  console.log(notification)
   sendMessage("notification", "direct", target_id, source_id, notification)
+}
+
+
+function sendAlert(notification: CustomNotification) {
+  toast.success(notification.source_information.username)
 }
