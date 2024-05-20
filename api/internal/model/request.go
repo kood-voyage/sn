@@ -9,7 +9,7 @@ import (
 type Request struct {
 	ID                string    `db:"id" json:"id" validate:"required"`
 	TypeID            int       `db:"type_id" json:"type_id" validate:"required"`
-	SourceID          string    `db:"source_id" json:"source_id" validate:"required"`
+	SourceID          string    `db:"source_id" json:"source_id"`
 	TargetID          string    `db:"target_id" json:"target_id" validate:"required"`
 	ParentID          string    `db:"parent_id" json:"parent_id"`
 	Message           string    `db:"message" json:"message"`

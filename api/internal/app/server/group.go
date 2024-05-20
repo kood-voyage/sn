@@ -281,7 +281,8 @@ func (s *Server) groupInvite() http.HandlerFunc {
 			return
 		}
 		//if not create a request
-		if err := s.store.Request().Create(*request); err != nil {
+		_, err = s.store.Request().Create(*request)
+		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}

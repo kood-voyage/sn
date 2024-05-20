@@ -1,9 +1,8 @@
-import { deleteTokens } from "$lib/client/jwt-handle"
+
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 export const prerender = false;
 
-export const load: PageServerLoad = async (event) => {
-    deleteTokens(event)
+export const load: PageServerLoad = async () => {
     redirect(303, "/signin")
 };

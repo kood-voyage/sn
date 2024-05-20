@@ -20,7 +20,7 @@ type SessionRepository interface {
 	Delete(access_id string) error
 	Update(access_id string, session model.Session) (*model.Session, error)
 	Create(session model.Session) (*model.Session, error)
-	DeleteByUser(user_id string) error 
+	DeleteByUser(user_id string) error
 	CheckByUserId(user_id string) (*model.Session, error)
 }
 
@@ -30,7 +30,7 @@ type FollowRepository interface {
 }
 
 type RequestRepository interface {
-	Create(request model.Request) error
+	Create(request model.Request) (*model.Request, error)
 	Delete(request model.Request) error
 	Get(request model.Request) (*model.Request, error)
 	DeleteByID(id string) error

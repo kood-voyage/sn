@@ -14,6 +14,8 @@
 
 	import { v4 as uuidv4 } from 'uuid';
 	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
+	import RedStar from '../../../routes/(auth)/signup/RedStar.svelte';
+	import { toast } from 'svelte-sonner';
 
 	$: image = '';
 
@@ -54,6 +56,8 @@
 					credentials: 'include',
 					body: JSON.stringify(json)
 				});
+
+				return resp;
 			}
 
 			async function imageStore(formData) {
@@ -71,11 +75,12 @@
 				await fetchResp.json();
 			}
 
-			await createGroup();
-
-			console.log(imageFormData);
+			const resp = await createGroup();
+			console.log(await resp.json());
 
 			await imageStore(imageFormData);
+
+			toast.success(`Group ${$formData.name} has been created`);
 		}
 	});
 
@@ -105,7 +110,7 @@
 
 	<Form.Field {form} name="image">
 		<Form.Control let:attrs>
-			<Form.Label>Group Image</Form.Label>
+			<Form.Label>Cover image<RedStar /></Form.Label>
 			<Input
 				type="file"
 				accept="image/gif, image/jpeg, image/png, image/webp, image/svg+xml"
@@ -127,7 +132,7 @@
 	{/if}
 	<Form.Field {form} name="name">
 		<Form.Control let:attrs>
-			<Form.Label>Name</Form.Label>
+			<Form.Label>Name <RedStar /></Form.Label>
 			<Input {...attrs} bind:value={$formData.name} placeholder="name" />
 		</Form.Control>
 
@@ -135,7 +140,7 @@
 	</Form.Field>
 	<Form.Field {form} name="description">
 		<Form.Control let:attrs>
-			<Form.Label>About You</Form.Label>
+			<Form.Label>Description</Form.Label>
 
 			<Textarea {...attrs} bind:value={$formData.description} placeholder="description" />
 		</Form.Control>
@@ -143,8 +148,9 @@
 	</Form.Field>
 
 	<Form.Field {form} name="privacy">
-		<Form.Control let:attrs
-			><RadioGroup.Root bind:value={$formData.privacy} {...attrs}>
+		<Form.Control let:attrs>
+			<Form.Label>Privacy<RedStar /></Form.Label>
+			<RadioGroup.Root bind:value={$formData.privacy} {...attrs}>
 				<div class="flex items-center space-x-2">
 					<RadioGroup.Item value="public" id="r1" />
 					<Label for="r1">Public</Label>

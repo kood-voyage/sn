@@ -1,6 +1,5 @@
 import { redirect, type Handle, type RequestEvent } from '@sveltejs/kit';
 import jwt from 'jsonwebtoken'
-// import { deleteTokens, refreshTokens } from '$lib/server/jwt-handle';
 import { JWT_KEY } from '$env/static/private';
 
 

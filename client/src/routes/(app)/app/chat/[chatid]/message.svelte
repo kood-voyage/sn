@@ -38,6 +38,6 @@
 			</Tooltip.Root>
 		</div>
 
-		<div contenteditable="false" class="text-sm">{@html msg}</div>
+		<div contenteditable="false" class="text-sm py-2 px-1 font-light">{@html msg}</div>
 	</div>
 </div>

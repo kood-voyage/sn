@@ -6,50 +6,54 @@
 
 	import { handleImageCopression } from '$lib/client/image-compression.js';
 	import { currentUserStore } from '$lib/store/user-store';
+	import { imageStore } from '$lib/client/api/image-requests';
+	import { updateDescription } from '$lib/client/api/user-requests';
 
 	$: previewAvatar = $currentUserStore.avatar;
 	$: previewCover = $currentUserStore.cover;
-	$: description = $currentUserStore.description;
 
-	let fileInputAvatar: HTMLInputElement;
-	async function PreviewAvatar() {
-		let file = fileInputAvatar.files[0];
+	let description = $currentUserStore.description;
 
-		const imageResp = await handleImageCopression(file);
-		if (imageResp.ok && imageResp.file) {
-			file = imageResp.file;
+	let avatar: File;
+	let cover: File;
+
+	async function handleImageChange(file: File, type: string) {
+		if (file === undefined) {
+			return;
 		}
-		let reader = new FileReader();
-		reader.onloadend = function () {
-			previewAvatar = reader.result;
-		};
-		if (file) {
-			reader.readAsDataURL(file);
-		} else {
-			previewAvatar = '';
+		if (file.length === 1) {
+			const fileResp = await handleImageCopression(file[0]);
+			let reader = new FileReader();
+			reader.onloadend = function () {
+				if (type === 'avatar') {
+					previewAvatar = reader.result;
+				}
+
+				if (type === 'cover') {
+					previewCover = reader.result;
+				}
+			};
+			reader.readAsDataURL(fileResp.file as File);
+
+			const fileFormData = new FormData();
+			fileFormData.append('path', `profile/${$currentUserStore.id}`);
+			fileFormData.append('images', fileResp.file as File);
+			const resp = await imageStore(fileFormData, $currentUserStore.id, type);
+
+			if ((resp.data = 'Successfully uploaded to S3')) {
+				if (type === 'avatar') {
+					$currentUserStore.avatar = previewAvatar;
+				}
+
+				if (type === 'cover') {
+					$currentUserStore.cover = previewCover;
+				}
+			}
 		}
 	}
 
-	let fileInputCover: HTMLInputElement;
-	async function PreviewCover() {
-		let file = fileInputCover.files[0];
-		const imageResp = await handleImageCopression(file);
-		if (imageResp.ok && imageResp.file) {
-			file = imageResp.file;
-		}
-		let reader = new FileReader();
-		reader.onloadend = function () {
-			previewCover = reader.result;
-		};
-		if (file) {
-			reader.readAsDataURL(file);
-		} else {
-			previewCover = '';
-		}
-	}
-
-
-
+	$: handleImageChange(avatar, 'avatar');
+	$: handleImageChange(cover, 'cover');
 </script>
 
 <Sheet.Root>
@@ -66,7 +70,7 @@
 		</Tooltip.Root>
 	</Sheet.Trigger>
 
-	<Sheet.Content side="right">
+	<Sheet.Content side="right" class="overflow-y-scroll h-screen">
 		<Sheet.Header>
 			<Sheet.Title>Settings</Sheet.Title>
 			<Sheet.Description class="text-sky-500 text-sm">
@@ -75,7 +79,7 @@
 		</Sheet.Header>
 
 		<div class=" m-auto">
-			<form id="settingForm" enctype="multipart/form-data" >
+			<form id="settingForm" enctype="multipart/form-data">
 				<!-- AVATAR -->
 				<div class="m-auto">
 					{#if previewAvatar}
@@ -90,13 +94,11 @@
 					<label for="fileInputAvatar" class="text-right">Avatar</label>
 
 					<input
-						src={previewAvatar}
 						id="fileInputAvatar"
 						name="fileInputAvatar"
 						type="file"
 						class="col-span-3 text-red-500"
-						bind:this={fileInputAvatar}
-						on:change={PreviewAvatar}
+						bind:files={avatar}
 						accept="image/png, image/jpeg"
 					/>
 				</div>
@@ -115,13 +117,11 @@
 					<label for="fileInputCover" class="text-right">Banner</label>
 
 					<input
-						src={previewCover}
 						id="fileInputCover"
 						name="fileInputCover"
 						type="file"
 						class="col-span-3 text-red-500"
-						bind:this={fileInputCover}
-						on:change={PreviewCover}
+						bind:files={cover}
 						accept="image/png, image/jpeg"
 					/>
 				</div>
@@ -130,19 +130,26 @@
 					<label for="description">Your bio</label>
 					<textarea
 						placeholder={description}
-						value={description}
+						bind:value={description}
 						id="description"
 						name="description"
 						class="max-h-48 min-h-20"
 						maxlength="400"
+						minlength="4"
 					/>
 				</div>
 
 				<Sheet.Footer>
 					<Sheet.Close asChild let:builder>
-						<Button builders={[builder]} type="submit">Save changes</Button>
+						<Button
+							builders={[builder]}
+							type="submit "
+							class="w-full mt-4"
+							on:click={() => updateDescription(description)}>Save changes</Button
+						>
 					</Sheet.Close>
 				</Sheet.Footer>
+				<img src={'../pretty.png'} alt="login" class="p-20" />
 			</form>
 		</div>
 	</Sheet.Content>
@@ -150,6 +157,6 @@
 
 <style>
 	.button {
-		@apply flex h-[58px] w-[58px] cursor-pointer rounded transition-all duration-300  hover:bg-primary hover:dark:bg-primary;
+		@apply hover:bg-primary hover:dark:bg-primary flex h-[58px] w-[58px] cursor-pointer rounded  transition-all duration-300;
 	}
 </style>

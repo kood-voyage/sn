@@ -16,7 +16,8 @@
 	import { browser } from '$app/environment';
 	import { handleImageCopression } from '$lib/client/image-compression';
 	import { goto } from '$app/navigation';
-	import toast from 'svelte-french-toast';
+	import { imageStore } from '$lib/client/api/image-requests';
+	import { toast } from 'svelte-sonner';
 
 	export let data: SuperValidated<Infer<PostSchema>>;
 	export let community_id: string;
@@ -67,24 +68,9 @@
 				});
 			}
 
-			async function imageStore(formData) {
-				const fetchResp = await fetch(
-					PUBLIC_LOCAL_PATH + `/api/v1/auth/images/${post_id}/default`,
-					{
-						method: 'POST',
-						headers: {
-							'Access-Control-Request-Method': 'POST'
-						},
-						credentials: 'include',
-						body: formData
-					}
-				);
-				const json = await fetchResp.json();
-				console.log(json);
-			}
 
 			await createPost();
-			await imageStore(imageFormData);
+			await imageStore(imageFormData, post_id);
 
 			toast.success('Post created!');
 			goto('/app');

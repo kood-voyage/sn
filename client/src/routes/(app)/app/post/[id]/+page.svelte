@@ -13,10 +13,14 @@
 
 	export let data;
 
-	const { post } = data;
+	const { post, comments } = data;
 	let toggle = false;
 
 	$: commentsLength = $commentsStore === null ? 0 : $commentsStore.length;
+
+	console.log(comments);
+
+	$: commentsStore.set(comments);
 </script>
 
 <div class="h-screen flex flex-col lg:flex-row dark:bg-neutral-800 overflow-y-scroll">

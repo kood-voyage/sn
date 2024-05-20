@@ -27,13 +27,12 @@
 			};
 
 			const resp = await LoginUser(credentials);
+
 			if (!resp.ok) {
 				toast.error('Username or password incorrect!');
 				controller.abort('User logging unsuccessful');
 				return;
 			}
-
-			toast.success('Success!');
 
 			goto('/app');
 
@@ -47,6 +46,7 @@
 </script>
 
 <form method="POST" use:enhance>
+	<img src={'power.png'} alt="login" class="p-20" />
 	<Form.Field {form} name="login">
 		<Form.Control let:attrs>
 			<Form.Label>Login</Form.Label>

@@ -12,7 +12,7 @@
 	const groups = data.groups;
 	let renderedGroupIds: string[] = [];
 
-	if (groups){
+	if (groups) {
 		groups.forEach((group) => {
 			if (currentUser && 'id' in currentUser) {
 				group.members?.forEach((member) => {
@@ -56,14 +56,13 @@
 			{#each groups as group}
 				{#if ((group.privacy == 'public' || group.members) && (!group.members || group.members.some((member) => member.id == currentUser.id))) || group.privacy == 'public'}
 					<div
-						class="flex m-auto w-[420px] p-2 hover:bg-slate-200 dark:hover:bg-slate-900 rounded-md overflow-hidden"
+						class="flex m-auto w-[420px] p-2 mb-2 hover:bg-neutral-200 dark:hover:bg-neutral-900 border rounded-md overflow-hidden {group.creator_id ===
+						$currentUserStore.id
+							? 'bg-emerald-900/20'
+							: 'bg-neutral-900/20'}"
 					>
 						<a href="/app/g/{group.name.replace(/\s/g, '_')}" class="flex w-full">
-							<img
-								src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={group.name}"
-								alt="user-avatar"
-								class="w-16 mr-2"
-							/>
+							<img src={group.image_path} alt="user-avatar" class="w-16 mr-2" />
 							<div>
 								<p class="font-bold">{group.name}</p>
 								<p class="text-sm text-blue-500">
@@ -76,6 +75,11 @@
 								</p>
 								<p class="text-sm text-slate-500">{group.description}</p>
 							</div>
+
+							<p>{group.creator_id === $currentUserStore.id ? 'creator' : ''}</p>
+							<p>
+								{group.members.some((member) => member.id == currentUser.id) ? ' ->member' : ''}
+							</p>
 						</a>
 					</div>
 				{/if}
@@ -87,11 +91,7 @@
 							class="flex m-auto w-[420px] p-2 hover:bg-slate-200 dark:hover:bg-slate-900 rounded-md overflow-hidden"
 						>
 							<div class="flex w-full opacity-50">
-								<img
-									src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed={group.name}"
-									alt="user-avatar"
-									class="w-16 mr-2"
-								/>
+								<img src={group.image_path} alt="user-avatar" class="w-16 mr-2" />
 								<div>
 									<p class="font-bold">{group.name} <span class="text-red-500">Private</span></p>
 									<p class="text-sm text-blue-500">

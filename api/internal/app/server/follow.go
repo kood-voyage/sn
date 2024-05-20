@@ -66,7 +66,8 @@ func (s *Server) handleFollow() http.HandlerFunc {
 				return
 			}
 
-			if err := s.store.Request().Create(request); err != nil {
+			_, err = s.store.Request().Create(request)
+			if err != nil {
 				s.error(w, http.StatusUnprocessableEntity, err)
 				return
 			}

@@ -63,15 +63,13 @@ export async function RegisterUser(user: UserModel) {
 
 
     if (resp.ok) {
-
-    toast.success('Success!');
-     goto("/signin")
-      // return { ok: resp.ok, status: resp.statusText }
+    toast.success('Successfully registered!');
+    
+      return { ok: resp.ok, status: resp.statusText }
     } else {
-
-      toast.success('Success!');
-      goto("/signin")
-      // return { ok: resp.ok, status: resp.statusText }
+      let msg = await resp.json()
+      toast.error(msg.error);
+      return { ok: resp.ok, status: resp.statusText }
     }
 
   } catch (err) {
@@ -326,4 +324,22 @@ export async function logOut(){
 
 
 
+}
+
+
+
+
+export async function updateDescription(description:string) {
+			const json = {
+				description: description
+			}
+			await fetch(PUBLIC_LOCAL_PATH + '/api/v1/auth/user/description', {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Request-Method': 'PUT'
+					},
+					credentials: 'include',
+					body: JSON.stringify(json)
+				});
 }

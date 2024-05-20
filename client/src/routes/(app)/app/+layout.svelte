@@ -7,14 +7,13 @@
 		currentUserFollowing,
 		currentUserStore
 	} from '$lib/store/user-store.js';
-
 	import Sun from 'svelte-radix/Sun.svelte';
 	import Moon from 'svelte-radix/Moon.svelte';
 	import Home from 'svelte-radix/Home.svelte';
 	import Person from 'svelte-radix/Person.svelte';
 	import Bell from 'svelte-radix/Bell.svelte';
-	import Gear from 'svelte-radix/Gear.svelte';
-	import Calendar from 'svelte-radix/Calendar.svelte';
+	// import Gear from 'svelte-radix/Gear.svelte';
+	// import Calendar from 'svelte-radix/Calendar.svelte';
 	import ChatBubble from 'svelte-radix/ChatBubble.svelte';
 	import Globe from 'svelte-radix/Globe.svelte';
 	import Plus from 'svelte-radix/Plus.svelte';
@@ -22,15 +21,17 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { setMode, resetMode } from 'mode-watcher';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import NavigationItem from './navigation-item.svelte';
-	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
+	import NavigationItem from '../../../lib/components/navigation/navigation-item.svelte';
+	// import { PUBLIC_LOCAL_PATH } from '$env/static/public';
 	import { onDestroy, onMount } from 'svelte';
 	import { closeWebSocket, connectWebSocket } from '$lib/client/websocket';
 	import { logOut } from '$lib/client/api/user-requests';
 	import SettingsForm from '$lib/components/forms/SettingsForm.svelte';
+	import { Toaster } from '$lib/components/ui/sonner';
 	// import { invalidateAll } from '$app/navigation';
 	// import { webSocketStore } from '$lib/store/websocket-store.js';
 	// console.log(data);
+	import { page, navigating } from '$app/stores';
 
 	currentUserStore.set(data.data);
 	currentUserFollowers.set(data.followers);
@@ -46,13 +47,18 @@
 		logOut();
 		closeWebSocket();
 	};
+
+	$page.url.pathname;
 </script>
 
 <ModeWatcher />
+<Toaster />
 
-<div class="w-screen h-screen sm:h-auto sm:flex">
+<div class="w-screen h-screen h-auto flex">
 	<!-- nav Vertical-->
-	<div class="hidden sm:block sm:w-[60px] relative shadow-md border-r">
+	<div
+		class="sm:w-[60px] relative shadow-md border-r bg-neutral-100 dark:bg-neutral-900"
+	>
 		<div class="h-screen sm:w-[60px]">
 			<div class="h-1/6"></div>
 
@@ -62,7 +68,7 @@
 				<NavigationItem href="/app/g" msg="Groups" Icon={Globe} />
 				<NavigationItem href="/app/chat" msg="Chats" Icon={ChatBubble} />
 				<NavigationItem href="/app/notification" msg="Notifications" Icon={Bell} />
-				<NavigationItem href="/app/events" msg="Events" Icon={Calendar} />
+				<!-- <NavigationItem href="/app/events" msg="Events" Icon={Calendar} /> -->
 			</div>
 
 			<!-- // profile info -->
@@ -70,16 +76,23 @@
 			<!-- profile info end  -->
 
 			<div class="h-1/6">
+				<div>
+					<SettingsForm />
+				</div>
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger asChild let:builder>
-						<Button builders={[builder]} variant="ghost" class="w-[58px] h-[58px] p-0">
+						<Button
+							builders={[builder]}
+							variant="default"
+							class="w-[58px] h-[58px] p-0 rounded bg-transparent shadow-none"
+						>
 							<div class="flex flex-col items-center justify-center h-[32px] w-[32px] p-0">
 								<img
 									src={$currentUserStore
 										? $currentUserStore.avatar
 										: 'https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg'}
 									alt="avatar"
-									class="rounded-full object-cover hover:rounded-[10px] h-[32px] w-[32px]"
+									class="rounded-full object-cover h-[32px] w-[32px]"
 								/>
 							</div></Button
 						>
@@ -145,10 +158,6 @@
 						<DropdownMenu.Item on:click={handleLogout}>Log out</DropdownMenu.Item>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
-
-				<div>
-					<SettingsForm />
-				</div>
 			</div>
 		</div>
 	</div>

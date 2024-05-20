@@ -11,16 +11,32 @@ type RequestRepository struct {
 	store *Store
 }
 
-func (r *RequestRepository) Create(request model.Request) error {
+func (r *RequestRepository) Create(request model.Request) (*model.Request, error) {
 	request.ID = uuid.New().String()
 	query := `INSERT INTO request (id, type_id, source_id, target_id, parent_id, message) VALUES (?, ?, ?, ?, ?, ?)`
 
 	_, err := r.store.Db.Exec(query, request.ID, request.TypeID, request.SourceID, request.TargetID, request.ParentID, request.Message)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	sourcUser, err := r.store.User().Get(request.SourceID)
+	if err != nil {
+		return nil, err
+	}
+	sourcUser.Sanitize()
+
+	targetUser, err := r.store.User().Get(request.TargetID)
+	if err != nil {
+		return nil, err
+	}
+	targetUser.Sanitize()
+
+	request.SourceInformation = *sourcUser
+	request.TargetInformation = *targetUser
+
+
+	return &request, nil
 }
 
 func (r *RequestRepository) Delete(request model.Request) error {

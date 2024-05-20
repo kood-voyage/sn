@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
+	import { createNotification } from '$lib/client/api/notification-requests.js';
 	import { follow, getUserFollowing, unfollow } from '$lib/client/api/user-requests';
+	import { sendNotification } from '$lib/client/websocket.js';
 
 	import Post from '$lib/components/Post.svelte';
 	import { currentUserStore, currentUserFollowing } from '$lib/store/user-store.js';
@@ -101,6 +103,14 @@
 										return;
 									}
 									currentUserFollowing.set(followingResp.data);
+									const resp = await createNotification(
+										user.data.id,
+										`${$currentUserStore.username} try to follow you`
+									);
+
+									if (resp.ok) {
+										sendNotification(user.data.id, $currentUserStore.id, resp.createdNotif);
+									}
 								}}
 							>
 								follow

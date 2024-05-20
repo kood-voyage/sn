@@ -17,12 +17,12 @@
 	{#if $commentsStore && $commentsStore.length > 0}
 		{#each $commentsStore as comment}
 			<div class="flex p-4">
-				<img src={comment.user_avatar} alt="avatar" class="w-9 h-9 object-cover rounded-full" />
+				<img src={comment.user_information.avatar} alt="avatar" class="w-9 h-9 object-cover rounded-full" />
 
 				<div class="flex flex-col max-w-[90%]">
 					<div class="flex flex-col p-2 mx-2 bg-neutral-200 dark:bg-neutral-700 rounded-xl">
 						<p class="text-[10px]">
-							{comment.user_name}
+							{comment.user_information.username}
 						</p>
 						<div class="w-full max-w-[400px] text-md break-words lg:max-w-[280px]">
 							{@html comment.content}

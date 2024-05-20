@@ -4,6 +4,6 @@
 	export let editorContent: string;
 </script>
 
-<div class="p-4 w-full align-middle">
+<div class="p-4 w-full align-middle ">
 	<Editor bind:editorContent />
 </div>
