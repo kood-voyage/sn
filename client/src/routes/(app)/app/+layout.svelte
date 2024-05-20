@@ -21,7 +21,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { setMode, resetMode } from 'mode-watcher';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import NavigationItem from './navigation-item.svelte';
+	import NavigationItem from '../../../lib/components/navigation/navigation-item.svelte';
 	// import { PUBLIC_LOCAL_PATH } from '$env/static/public';
 	import { onDestroy, onMount } from 'svelte';
 	import { closeWebSocket, connectWebSocket } from '$lib/client/websocket';
@@ -31,6 +31,7 @@
 	// import { invalidateAll } from '$app/navigation';
 	// import { webSocketStore } from '$lib/store/websocket-store.js';
 	// console.log(data);
+	import { page, navigating } from '$app/stores';
 
 	currentUserStore.set(data.data);
 	currentUserFollowers.set(data.followers);
@@ -46,6 +47,8 @@
 		logOut();
 		closeWebSocket();
 	};
+
+	$page.url.pathname;
 </script>
 
 <ModeWatcher />
@@ -73,6 +76,9 @@
 			<!-- profile info end  -->
 
 			<div class="h-1/6">
+				<div>
+					<SettingsForm />
+				</div>
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger asChild let:builder>
 						<Button
@@ -152,10 +158,6 @@
 						<DropdownMenu.Item on:click={handleLogout}>Log out</DropdownMenu.Item>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
-
-				<div>
-					<SettingsForm />
-				</div>
 			</div>
 		</div>
 	</div>

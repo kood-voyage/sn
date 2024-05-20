@@ -7,10 +7,10 @@ export const ssr = false
 
 export const load: PageLoad = async ({ fetch }) => {
 
-  const resp = await GetAllUsers(fetch)
-  if (!resp.ok) {
-    return { allUsers: [] }
-  }
+  // const resp = await GetAllUsers(fetch)
+  // if (!resp.ok) {
+  //   return { allUsers: [] }
+  // }
 
 
 
@@ -18,8 +18,13 @@ export const load: PageLoad = async ({ fetch }) => {
   const feedResp = await getFeed()
 
 
+  console.group(feedResp)
 
-  return { allUsers: resp.allUsers as UserType[], feed: feedResp };
+  
+
+
+
+  return { feed: feedResp };
 
 
 

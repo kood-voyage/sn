@@ -59,7 +59,7 @@
 	function insertLink() {
 		const link = linkInput;
 		if (link) {
-			const linkHtml = `<img src="${link}" alt"conent image" />`;
+			const linkHtml = `<img src="${link}" alt"conent image" class="max-w-[400px] w-full rounded-lg" />`;
 			editorContent += linkHtml;
 			linkInput = '';
 		}

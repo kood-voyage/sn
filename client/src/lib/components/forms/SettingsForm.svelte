@@ -18,6 +18,9 @@
 	let cover: File;
 
 	async function handleImageChange(file: File, type: string) {
+		if (file === undefined) {
+			return;
+		}
 		if (file.length === 1) {
 			const fileResp = await handleImageCopression(file[0]);
 			let reader = new FileReader();
@@ -67,7 +70,7 @@
 		</Tooltip.Root>
 	</Sheet.Trigger>
 
-	<Sheet.Content side="right">
+	<Sheet.Content side="right" class="overflow-y-scroll h-screen">
 		<Sheet.Header>
 			<Sheet.Title>Settings</Sheet.Title>
 			<Sheet.Description class="text-sky-500 text-sm">
@@ -140,11 +143,13 @@
 					<Sheet.Close asChild let:builder>
 						<Button
 							builders={[builder]}
-							type="submit"
+							type="submit "
+							class="w-full mt-4"
 							on:click={() => updateDescription(description)}>Save changes</Button
 						>
 					</Sheet.Close>
 				</Sheet.Footer>
+				<img src={'../pretty.png'} alt="login" class="p-20" />
 			</form>
 		</div>
 	</Sheet.Content>

@@ -63,15 +63,13 @@ export async function RegisterUser(user: UserModel) {
 
 
     if (resp.ok) {
-
-    toast.success('Success!');
-     goto("/signin")
-      // return { ok: resp.ok, status: resp.statusText }
+    toast.success('Successfully registered!');
+    
+      return { ok: resp.ok, status: resp.statusText }
     } else {
-
-      toast.success('Success!');
-      goto("/signin")
-      // return { ok: resp.ok, status: resp.statusText }
+      let msg = await resp.json()
+      toast.error(msg.error);
+      return { ok: resp.ok, status: resp.statusText }
     }
 
   } catch (err) {
