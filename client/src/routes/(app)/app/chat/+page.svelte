@@ -6,6 +6,8 @@
 </svelte:head>
 
 <div class="flex w-full h-full items-center">
-	<p class="m-auto ">"Pick a user to chat with"</p>
+	<div class="mx-auto">
+		<img src="../social.png" alt="social" />
+		<p class="mx-auto text-center">Pick a user to chat with</p>
+	</div>
 </div>
-

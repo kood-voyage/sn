@@ -7,6 +7,10 @@
 	import { PaperPlane } from 'svelte-radix';
 	import { commentsStore } from '$lib/store/comments-store';
 
+	import { v4 as uuidv4 } from 'uuid';
+	import { createComment } from '$lib/client/api/post-requests';
+	import { invalidate, invalidateAll } from '$app/navigation';
+
 	// import * as Form from '$lib/components/ui/form';
 
 	export let data;
@@ -16,20 +20,22 @@
 
 	const form = superForm(data, {
 		validators: zodClient(commentSchema),
-		onSubmit: ({ formData }) => {
+		onSubmit: async ({ formData }) => {
 			formData.set('post_id', post_id);
 			formData.set('content', editorContent);
 			formData.set('user_name', $page.data.data.username);
 			formData.set('user_avatar', $page.data.data.avatar);
 
 			let temporary = {
+				id: uuidv4(),
 				content: editorContent,
-				post_id: post_id,
-				user_name: $page.data.data.username,
-				user_avatar: $page.data.data.avatar,
-				created_at: Date.now()
+				post_id: post_id
 			};
-			commentsStore.update((prev) => [...prev, temporary]);
+
+			const resp = await createComment(temporary);
+
+			if (resp.ok) {
+			}
 
 			editorContent = '';
 		}
@@ -48,7 +54,6 @@
 			handleSubmit();
 		}
 	};
-
 </script>
 
 <form

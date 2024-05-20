@@ -54,10 +54,10 @@
 <ModeWatcher />
 <Toaster />
 
-<div class="w-screen h-screen sm:h-auto sm:flex">
+<div class="w-screen h-screen h-auto flex">
 	<!-- nav Vertical-->
 	<div
-		class="hidden sm:block sm:w-[60px] relative shadow-md border-r bg-neutral-100 dark:bg-neutral-900"
+		class="sm:w-[60px] relative shadow-md border-r bg-neutral-100 dark:bg-neutral-900"
 	>
 		<div class="h-screen sm:w-[60px]">
 			<div class="h-1/6"></div>

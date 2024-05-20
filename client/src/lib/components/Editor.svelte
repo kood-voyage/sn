@@ -15,11 +15,8 @@
 	let linkInput;
 
 	const { debounce } = pkg;
-
 	const searchQuery = writable('');
-
 	const debouncedFilterEmojis = debounce((value: string) => searchQuery.set(value), 100);
-
 	let filteredEmojis = [];
 	searchQuery.subscribe((value) => {
 		filteredEmojis = filterEmojis(value);
@@ -115,7 +112,7 @@
 	<div
 		id="editor"
 		contenteditable="true"
-		class="max-h-64 overflow-scroll h-full outline-none w-full"
+		class="max-h-64 overflow-scroll h-full outline-none w-full border-b"
 		on:paste={handlePaste}
 		bind:innerHTML={editorContent}
 	/>

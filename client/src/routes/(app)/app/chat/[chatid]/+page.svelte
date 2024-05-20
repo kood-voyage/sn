@@ -85,7 +85,7 @@
 				{/each}
 			{/if}
 		</div>
-		<div style="align-items: center;" class="flex flex-row w-full">
+		<div style="align-items: center;" class="flex flex-row w-full p-4">
 			<Editor bind:editorContent />
 			<Button
 				on:click={async () => {
