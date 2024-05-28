@@ -53,7 +53,7 @@ func (s *Server) imageUpload() http.HandlerFunc {
 				s.error(w, http.StatusBadRequest, fmt.Errorf("failed to upload file to S3 %v", err))
 				return
 			}
-			paths = append(paths, "https://profilemediabucket-voyage.s3.amazonaws.com/"+keys+fileHeader.Filename)
+			paths = append(paths, "https://sn-media.s3.amazonaws.com/"+keys+fileHeader.Filename)
 
 		}
 
