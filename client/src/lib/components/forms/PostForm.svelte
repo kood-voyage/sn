@@ -8,12 +8,11 @@
 	import Editor from '$lib/components/Editor.svelte';
 
 	import { postSchema, type PostSchema } from '../../../routes/(app)/app/post-schema';
-	import SuperDebug, { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { PUBLIC_LOCAL_PATH } from '$env/static/public';
 
 	import { v4 as uuidv4 } from 'uuid';
-	import { browser } from '$app/environment';
 	import { handleImageCopression } from '$lib/client/image-compression';
 	import { goto } from '$app/navigation';
 	import { imageStore } from '$lib/client/api/image-requests';
@@ -113,8 +112,7 @@
 	$: imagePreviews = files ? generateImagePreviews(files) : [];
 </script>
 
-{#if imagePreviews}
-	<p>Image Preview</p>
+{#if imagePreviews.length !== 0}
 	<Carousel.Root class="w-full max-w-xs m-auto">
 		<Carousel.Content>
 			{#each imagePreviews as file}
@@ -141,12 +139,12 @@
 					<Label for="r2">Private</Label>
 				</div>
 
-				{#if community_id === ''}
+				<!-- {#if community_id === ''}
 					<div class="flex items-center space-x-2">
 						<RadioGroup.Item value="selected" id="r3" />
 						<Label for="r3">Selected</Label>
 					</div>
-				{/if}
+				{/if} -->
 				<RadioGroup.Input name="privacy" />
 			</RadioGroup.Root></Form.Control
 		>
@@ -185,8 +183,4 @@
 	</Form.Field>
 
 	<Form.Button class="w-full">Submit</Form.Button>
-
-	{#if browser}
-		<SuperDebug data={$formData} />
-	{/if}
 </form>

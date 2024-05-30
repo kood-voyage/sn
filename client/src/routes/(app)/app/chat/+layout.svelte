@@ -14,7 +14,7 @@
 	}
 </script>
 
-<div class="flex w-full h-screen">
+<div class="flex h-screen w-full">
 	<Userlist {users} {chats} />
 
 	<slot />

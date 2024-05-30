@@ -9,9 +9,9 @@
 </svelte:head>
 
 <div class="w-full">
-	<p class="w-full text-2xl py-2">Create post</p>
+	<p class="text-2xl py-2 flex items-center justify-center">Create post</p>
 
-	<div class="w-2/3">
+	<div class="w-2/3 mx-auto">
 		<PostFormComponent data={data.form} community_id={''} />
 	</div>
 </div>

@@ -1,8 +1,5 @@
 <script lang="ts">
-	import * as Dialog from '$lib/components/ui/dialog/index.js';
-
 	import { type CarouselAPI } from '$lib/components/ui/carousel/context.js';
-	import * as Carousel from '$lib/components/ui/carousel/index.js';
 
 	let api: CarouselAPI;
 	let count = 0;
@@ -20,7 +17,6 @@
 
 	const { image_path, title, content, id, created_at } = data;
 
-	console.log(id);
 
 	function formatDate(isoDateString: string): string {
 		const date: Date = new Date(isoDateString);
@@ -66,10 +62,9 @@
 			>
 				{title}
 			</p>
-			<p class="text-xs text-ellipsis w-full text-left line-clamp-1 text-right">
+			<p class="text-xs text-ellipsis w-full line-clamp-1 text-right">
 				created at {formatDate(created_at)}
 			</p>
-			<!-- <p class="text-sm text-left text-slate-400">{content}</p> -->
 		</div>
 	</div>
 </a>

@@ -1,5 +1,4 @@
 import { z } from 'zod';
-
 export const commentSchema = z.object({
     user_id: z.string(),
     user_name: z.string(),

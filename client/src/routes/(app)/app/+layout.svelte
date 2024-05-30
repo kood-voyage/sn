@@ -54,11 +54,9 @@
 <ModeWatcher />
 <Toaster />
 
-<div class="w-screen h-screen h-auto flex">
+<div class="w-screen h-screen flex">
 	<!-- nav Vertical-->
-	<div
-		class="sm:w-[60px] relative shadow-md border-r bg-neutral-100 dark:bg-neutral-900"
-	>
+	<div class="w-[60px] relative shadow-md border-r bg-neutral-100 dark:bg-neutral-900">
 		<div class="h-screen sm:w-[60px]">
 			<div class="h-1/6"></div>
 
@@ -70,8 +68,6 @@
 				<NavigationItem href="/app/notification" msg="Notifications" Icon={Bell} />
 				<!-- <NavigationItem href="/app/events" msg="Events" Icon={Calendar} /> -->
 			</div>
-
-			<!-- // profile info -->
 
 			<!-- profile info end  -->
 
@@ -169,7 +165,7 @@
 	</div>
 
 	<!-- <div class="sm:hidden">
-		<div class="w-screen h-20 "></div>
+		<div class="w-screen h-20"></div>
 	</div> -->
 
 	<div class="sm:hidden">

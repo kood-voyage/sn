@@ -7,8 +7,6 @@ export const postSchema = z.object({
       required_error: "You need to select a notification type"
     }),
     images: z.any()
-
-
 });
 export type PostSchema = typeof postSchema
 

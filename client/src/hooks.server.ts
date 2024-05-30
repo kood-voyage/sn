@@ -6,30 +6,18 @@ import { JWT_KEY } from '$env/static/private';
 export const handle: Handle = async ({ event, resolve }) => {
   const refresh_token = event.cookies.get("rt") as string
   const pathname = event.url.pathname
-
-  // console.log(access_token)
-  // console.log(refresh_token)
-  // console.log(pathname)
-
-
-
   jwt.verify(refresh_token, process.env.JWT_KEY || JWT_KEY, (err) => {
-
     if (err != null) {
       deleteTokens(event)
       if (!(pathname.startsWith('/signin')) && !(pathname.startsWith('/signup'))) {
-        console.log("REDIRECT >> /signin")
         redirect(303, "/signin")
       }
     } else {
       if (pathname.startsWith("/signin") || pathname.startsWith("/signup")) {
-        console.log("REDIRECT >> /app")
         redirect(303, "/app")
       }
     }
-
   })
-
   const response = await resolve(event);
   return response;
 };
