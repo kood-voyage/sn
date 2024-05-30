@@ -48,7 +48,7 @@
 
 	<body class=" bg-black flex justify-center">
 		<a href={`/app/post/${post.id}`}>
-			<img src={post.image_path[0]} alt="image" class="max-h-[600px]" />
+			<img src={post.image_path[0]} alt="post_image" class="max-h-[600px]" />
 		</a>
 	</body>
 
