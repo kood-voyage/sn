@@ -11,7 +11,13 @@
 	import Namelayout from './namelayout.svelte';
 	import Reactform from './reactform.svelte';
 
+	import en from 'javascript-time-ago/locale/en';
+	import TimeAgo from 'javascript-time-ago';
+
 	export let data: PageData;
+
+	TimeAgo.addDefaultLocale(en);
+	const timeAgo = new TimeAgo('en-US');
 
 	let id: string, name: string, description: string, image_path: string;
 	const currentUser = $currentUserStore as UserType;
@@ -100,24 +106,44 @@
 				{#if data.allevents}
 					{#each data.allevents as event, i (i)}
 						<div
-							class="w-full bg-slate-200/30 p-1 mt-1 h-full flex justify-between items-center sm:rounded-xl"
+							class="w-full bg-neutral-200/30 dark:bg-neutral-800 p-1 mt-1 h-full flex justify-between items-center sm:rounded-xl"
 						>
-							<p>TITLE {event.name}</p>
-							<p>Description {event.description}</p>
-							<p>Created at {event.created_at}</p>
-							<p>User information {event.user_information}</p>
+							<div>
+								<p class="text-primary">{event.name}</p>
+								<p class="">{event.description}</p>
+							</div>
+
+							<div>
+								<p class="text-muted-foreground text-xs">created</p>
+								<p class="text-primary">
+									{timeAgo.format(new Date(event.created_at), 'mini')}
+									<span class="text-muted-foreground text-xs">ago</span>
+								</p>
+							</div>
+
+							<div>
+								<p class="text-muted-foreground text-xs">host</p>
+
+								<a href="/app/u/{event.user_information.username}" class="text-primary"
+									>{event.user_information.username}</a
+								>
+							</div>
+
 							{#if event.participants}
-								<p>Participants: {event.participants.length}</p>
+								<div class="flex flex-col items-center align-middle">
+									<p class="text-muted-foreground text-xs">Participants:</p>
+									<p class="text-primary">{event.participants.length}</p>
+								</div>
 							{:else}
 								<p>Participants: 0</p>
 							{/if}
 							{#if event.is_participant}
-								<p class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
+								<p class="text-sm rounded-md px-5 p-1 m-0.5 border bg-primary">
 									I am {event.event_status}
 								</p>
 							{:else}
 								<Dialog.Root>
-									<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
+									<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-primary">
 										React
 										<Dialog.Content>
 											<Reactform eventInfo={event} on:submit={handleReactionSubmit} />
@@ -129,18 +155,20 @@
 					{/each}
 				{/if}
 				<div
-					class="w-full bg-slate-200/30 p-1 mt-1 h-full flex justify-between items-center sm:rounded-xl"
+					class="w-full bg-neutral-200/30 p-1 mt-1 h-full flex justify-between items-center sm:rounded-xl"
 				>
 					<div class="h-full align-middle flex-col self-start">
-						<p class="md:text-xl text-lg text-ellipsis w-full bold text-left font-bold mr-2">
+						<p
+							class="md:text-xl text-lg text-ellipsis w-full bold text-left font-bold mr-2 text-primary"
+						>
 							{name}
 						</p>
-						<p class="lines3 text-sm text-left text-slate-400">{description}</p>
+						<p class="lines3 text-sm text-left text-neutral-400">{description}</p>
 					</div>
 					<div class="flex flex-row">
 						{#if isMember}
 							<Dialog.Root bind:open={inviteMember}>
-								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
+								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-primary"
 									>Invite user</Dialog.Trigger
 								>
 
@@ -163,7 +191,7 @@
 							<input type="text" hidden name="target_id" value={id} />
 
 							<Dialog.Root>
-								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500"
+								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-primary"
 									>Create Post</Dialog.Trigger
 								>
 
@@ -182,7 +210,7 @@
 							</Dialog.Root>
 
 							<Dialog.Root bind:open={eventDialog}>
-								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-sky-500">
+								<Dialog.Trigger class="text-sm rounded-md px-5 p-1 m-0.5 border bg-primary">
 									Create event
 									<Dialog.Content>
 										<Createeventform
