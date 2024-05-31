@@ -49,6 +49,7 @@
 		"@types/better-sqlite3": "^7.6.9",
 		"@types/browser-image-compression": "^1.0.9",
 		"@types/uuid": "^9.0.8",
+		"amplify-adapter": "^0.1.2",
 		"better-sqlite3": "^9.4.3",
 		"bits-ui": "^0.18.6",
 		"browser-image-compression": "^2.0.2",
