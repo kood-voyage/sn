@@ -1,3 +1,3 @@
-<div class="h-screen overflow-y-scroll">
+<div class="h-screen w-full overflow-y-scroll">
 	<slot />
 </div>

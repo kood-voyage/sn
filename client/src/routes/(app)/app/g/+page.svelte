@@ -1,16 +1,16 @@
 <script lang="ts">
 	import Plus from 'svelte-radix/Plus.svelte';
 	import type { PageData } from './$types';
-	import { onMount } from 'svelte';
-	import { Dash } from 'svelte-radix';
 	import { currentUserStore } from '$lib/store/user-store';
 	import type { UserType } from '$lib/types/user';
+	import { writable } from 'svelte/store';
 
 	export let data: PageData;
 
 	const currentUser = $currentUserStore as UserType;
 	const groups = data.groups;
 	let renderedGroupIds: string[] = [];
+	const searchQuery = writable('');
 
 	if (groups) {
 		groups.forEach((group) => {
@@ -27,17 +27,23 @@
 			}
 		});
 	}
+
+	$: filteredGroups = groups ? groups.filter(group => {
+		const lowerSearchQuery = $searchQuery.toLowerCase();
+		return group.name.toLowerCase().includes(lowerSearchQuery);
+	}) : [];
 </script>
 
 <svelte:head>
 	<title>groups</title>
 </svelte:head>
 
-<div class="p-12">
+<div class="sm:p-12">
 	<input
 		type="text"
 		class="flex mx-auto my-2 w-[420px] p-2 rounded-md border dark:bg-neutral-900"
 		placeholder="Search..."
+		bind:value={$searchQuery}
 	/>
 	<hr class="w-[440px] m-auto" />
 
@@ -52,8 +58,8 @@
 				</div>
 			</a>
 		</div>
-		{#if groups}
-			{#each groups as group}
+		{#if filteredGroups.length > 0}
+			{#each filteredGroups as group}
 				{#if ((group.privacy == 'public' || group.members) && (!group.members || group.members.some((member) => member.id == currentUser.id))) || group.privacy == 'public'}
 					<div
 						class="flex m-auto w-[420px] p-2 mb-2 hover:bg-neutral-200 dark:hover:bg-neutral-900 border rounded-md overflow-hidden {group.creator_id ===
@@ -84,7 +90,7 @@
 					</div>
 				{/if}
 			{/each}
-			{#each groups as group}
+			{#each filteredGroups as group}
 				{#if group.privacy == 'private'}
 					{#if !renderedGroupIds.includes(group.id)}
 						<div
@@ -109,6 +115,8 @@
 					{/if}
 				{/if}
 			{/each}
+		{:else}
+			<p class="text-center text-gray-500">No groups found</p>
 		{/if}
 	</div>
 </div>

@@ -10,23 +10,14 @@ username: z.string().refine((value) => /^[a-zA-Z][a-zA-Z0-9]{3,31}$/.test(value)
 	repeatPassword:z.string(),
 	firstName: z.string().min(2).max(32),
 	lastName: z.string().min(2).max(32),
-	// gender: z.string()
 }).refine(data=> data.password === data.repeatPassword,{
 	message:'Password do not match',
 	path:['repeatPassword'],
 });
 
-
-
 export const signInSchema = z.object({
 	login: z.string(),
 	password: z.string().min(8).max(32),
-
 });
-
-
-
-
 export type SignUpSchema = typeof signUpSchema;
-
 export type SignInSchema = typeof signInSchema;

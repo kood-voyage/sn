@@ -40,13 +40,10 @@
 
 	function getDisplayData(chats: ChatsWithUsers): displayData[] {
 		const users: displayData[] = Object.entries(chats).map(([chat_id, group_data]) => {
-			// console.log(chat_id);
-			// console.log(group_data);
 			const users = group_data.users;
 			const group = group_data.group;
 
 			// BEFORE ALL THIS SHOULD GO GROUP CHECK AS WELL
-
 			const output: displayData = {
 				chat_id,
 				user: userData
@@ -59,8 +56,6 @@
 
 			return output;
 		});
-
-		// console.log(users);
 		return users;
 	}
 

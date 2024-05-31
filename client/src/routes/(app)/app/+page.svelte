@@ -6,11 +6,13 @@
 	import PostFeed from '$lib/components/feed/PostFeed.svelte';
 </script>
 
-<div class=" flex flex-col items-center h-screen overflow-y-scroll">
+<div class="w-full flex flex-col items-center h-screen overflow-y-scroll">
 	{#if !empty}
-		{#each data?.feed?.data?.data as post, i (post.id)}
-			<PostFeed {post} />
-		{/each}
+		<div class="flex flex-col">
+			{#each data?.feed?.data?.data as post, i (post.id)}
+				<PostFeed {post} />
+			{/each}
+		</div>
 	{:else}
 		<div class="flex items-center h-full">
 			<div class="text-center">
