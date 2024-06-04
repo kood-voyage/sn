@@ -24,8 +24,6 @@ func (s *Server) imageUpload() http.HandlerFunc {
 		// Get the image file from the form data
 		fileHeaders := r.MultipartForm.File["images"]
 
-
-
 		if len(r.MultipartForm.Value["path"]) == 0 {
 			s.error(w, http.StatusBadRequest, errors.New("path variables are not provided"))
 		}
@@ -50,6 +48,8 @@ func (s *Server) imageUpload() http.HandlerFunc {
 
 			err = uploadToS3(file, keys+fileHeader.Filename)
 			if err != nil {
+
+				fmt.Println(err)
 				s.error(w, http.StatusBadRequest, fmt.Errorf("failed to upload file to S3 %v", err))
 				return
 			}
