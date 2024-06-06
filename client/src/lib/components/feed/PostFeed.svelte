@@ -1,12 +1,14 @@
 <script lang="ts">
-	import TimeAgo from 'javascript-time-ago';
-	import en from 'javascript-time-ago/locale/en';
 	import UserHover from '$lib/components/feed/UserHover.svelte';
 	import PostTimeAgo from './PostTimeAgo.svelte';
 	import GroupHover from './GroupHover.svelte';
 	export let post;
-	TimeAgo.addDefaultLocale(en);
-	const timeAgo = new TimeAgo('en-US');
+
+	const preview =
+		post?.image_path !== null
+			? post?.image_path[0]
+			: 'https://cdn.vectorstock.com/i/500p/65/30/default-image-icon-missing-picture-page-vector-40546530.jpg';
+
 </script>
 
 <div
@@ -38,7 +40,7 @@
 
 	<body class=" bg-black flex justify-center">
 		<a href={`/app/post/${post.id}`}>
-			<img src={post.image_path[0]} alt="post_image" class="max-h-[600px]" />
+			<img src={preview} alt="post_image" class="max-h-[600px]" />
 		</a>
 	</body>
 

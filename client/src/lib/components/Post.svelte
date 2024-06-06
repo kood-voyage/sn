@@ -17,7 +17,6 @@
 
 	const { image_path, title, content, id, created_at } = data;
 
-
 	function formatDate(isoDateString: string): string {
 		const date: Date = new Date(isoDateString);
 		const now: Date = new Date();
@@ -42,6 +41,13 @@
 			return formattedDate;
 		}
 	}
+
+	console.log(image_path);
+
+	const preview =
+		image_path !== null
+			? image_path[0]
+			: 'https://cdn.vectorstock.com/i/500p/65/30/default-image-icon-missing-picture-page-vector-40546530.jpg';
 </script>
 
 <a
@@ -49,10 +55,8 @@
 	class="h-full w-full sm:rounded mb-1 sm:mb-0 aspect-square group hover:shadow-lg"
 >
 	<div class="flex w-full h-full relative">
-		{#if image_path != null}
-			<div class="hover:bg-neutral-900/50 w-full h-full absolute"></div>
-			<img src={image_path[0]} alt="image1" class="h-full w-full object-cover sm:rounded" />
-		{/if}
+		<div class="hover:bg-neutral-900/50 w-full h-full absolute"></div>
+		<img src={preview} alt="image1" class="h-full w-full object-cover sm:rounded" />
 
 		<div
 			class="absolute w-full bg-neutral-100 dark:bg-neutral-950 bottom-0 p-2 opacity-0 group-hover:opacity-100 h-8 overflow-hidden group-hover:h-16 transition-all ease-in-out duration-100 rounded-t flex flex-col"

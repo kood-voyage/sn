@@ -70,7 +70,6 @@ func (s *Server) userLogin() http.HandlerFunc {
 			s.error(w, http.StatusUnauthorized, err)
 			return
 		}
-
 		if err := validator.Validate(loginDetails); err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
@@ -96,6 +95,7 @@ func (s *Server) userLogin() http.HandlerFunc {
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
+
 		refreshToken, err := NewRefreshToken(accesstoken_id, time.Now().Add(24*7*time.Hour))
 		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)
@@ -116,11 +116,15 @@ func (s *Server) userLogin() http.HandlerFunc {
 					s.error(w, http.StatusUnprocessableEntity, err)
 					return
 				}
+				http.SetCookie(w, accessToken)
+				http.SetCookie(w, refreshToken)
+				user.Sanitize()
+				s.respond(w, http.StatusOK, Response{Data: user})
+				return
 			}
 			s.error(w, http.StatusUnprocessableEntity, err)
 			return
 		}
-
 		_, err = s.store.Session().Update(oldSession.AcessID, session)
 		if err != nil {
 			s.error(w, http.StatusUnprocessableEntity, err)

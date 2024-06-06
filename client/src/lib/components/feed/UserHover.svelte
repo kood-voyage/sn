@@ -7,9 +7,7 @@
 
 	import { Calendar, Globe } from 'svelte-radix';
 
-
-
-	TimeAgo.addDefaultLocale(en);
+	TimeAgo.addLocale(en);
 	const timeAgo = new TimeAgo('en-US');
 
 	export let postAuthor;

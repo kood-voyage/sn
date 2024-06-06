@@ -6,7 +6,7 @@
 	import { commentsStore } from '$lib/store/comments-store';
 
 	onMount(() => {
-		TimeAgo.addDefaultLocale(en);
+		TimeAgo.addLocale(en);
 	});
 
 	const timeAgo = new TimeAgo('en-US');

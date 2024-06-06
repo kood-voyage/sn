@@ -5,7 +5,9 @@ import type { SignIn } from "../../../routes/(auth)/signin/type"
 import { goto } from "$app/navigation";
 import toast from "svelte-french-toast";
 
+
 type CurrentUser = ReturnType<UserType>
+
 
 type Fetch = {
   (input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response>;
@@ -86,6 +88,8 @@ export async function RegisterUser(user: UserModel) {
     }
   }
 }
+
+
 
 export async function currentUser(customFetch: Fetch = fetch): Promise<CurrentUser> {
   if (!customFetch) {
@@ -240,6 +244,7 @@ export async function getUserFollowers(user_id: string, customFetch: Fetch = fet
   }
 
 }
+
 
 export async function follow(target_id:string){
 

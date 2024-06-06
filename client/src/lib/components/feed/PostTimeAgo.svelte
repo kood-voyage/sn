@@ -4,7 +4,7 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { Globe } from 'svelte-radix';
 	export let created_at
-	TimeAgo.addDefaultLocale(en);
+	TimeAgo.addLocale(en);
 	const timeAgo = new TimeAgo('en-US');
 
 

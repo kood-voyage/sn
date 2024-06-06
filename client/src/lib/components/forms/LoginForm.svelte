@@ -34,12 +34,11 @@
 				return;
 			}
 
-			goto('/app');
+			if (resp.ok) {
+				goto('/app');
+			}
 
 			cancel();
-		},
-		onError: (event) => {
-			console.log(event);
 		}
 	});
 	const { form: formData, enhance, validate } = form;
